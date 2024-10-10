@@ -1,0 +1,18 @@
+{
+  "index": "Introduction",
+  "steps": "Get Started",
+  "backend": "Backend (APIs) Testing",
+  "frontend": "Frontend (UI) Testing",
+  "conclusion": "Conclusion",
+  "questions": "Common Questions",
+  "about": {
+    "title": "About",
+    "type": "page"
+  },
+  "contact": {
+    "title": "Contact ↗",
+    "type": "page",
+    "href": "https://calendly.com/contact-hmul/schedule",
+    "newWindow": true
+  }
+}
