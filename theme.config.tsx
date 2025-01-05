@@ -23,13 +23,13 @@ const config: DocsThemeConfig = {
     defaultTheme: 'dark'
   },
   footer: {
-    text: '© 2024 TestSprite, All Rights Reserved.',
+    text: '© 2025 TestSprite, All Rights Reserved.',
   },
   banner: {
     key: 'prod-release',
     text: (
-      <a href="https://www.testsprite.com" style={{ color: '#32D581' }}>
-        The upcoming release of TestSprite v1.0 is scheduled for Oct. 2024. Read more →
+      <a href="https://www.producthunt.com/posts/testsprite-1-0" style={{ color: '#32D581' }}>
+        The upcoming release of TestSprite v1.0 is scheduled for Jan. 2025. Read more →
       </a>
     )
   },
