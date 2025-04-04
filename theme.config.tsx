@@ -29,7 +29,7 @@ const config: DocsThemeConfig = {
     key: 'prod-release',
     text: (
       <a href="https://www.producthunt.com/posts/testsprite-1-0" style={{ color: '#32D581' }}>
-        The upcoming release of TestSprite v1.0 is scheduled for Jan. 2025. Read more →
+        TestSprite has already been recognized as one of the Top 10 AI tools of 2025 on Product Hunt. [Read more →]
       </a>
     )
   },

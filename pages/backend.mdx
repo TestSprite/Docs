@@ -17,11 +17,12 @@ To begin using TestSprite for back-end testing, follow these steps:
 
 ### Step 1: Set Up Your API Testing Environment
 
-1. **Log in** to your TestSprite account and go to the **Overview** section.
-2. Click on **Create New Test**, which will automatically proceed to the **Back-End (APIs) Testing** step.
-3. Select the appropriate **Authentication Type** for your API and enter the **API endpoint/URL**.
-4. Provide any necessary **Credentials/Keys**, if applicable.
-5. Upload your API documentation or use natural language to describe the API you wish to test, including details like input and output formats (API docs serve the same purpose).
+1. Navigate to https://www.testsprite.com/dashboard/testing, click the **Create a Test** button on your **Home** page, or select the **New Test** tab from the left sidebar.
+2. Enter a name for your project. Once saved, you'll be automatically directed to the **Backend Testing** step.
+3. Provide the necessary details about your APIs. You can also include additional instructions in natural language to help guide how our AI should test your APIs.
+4. If applicable, <span style={{ color: "#10A363" }}> **upload any relevant API documentation**</span> to help us better understand and test your APIs.
+
+![Backend Feature 0](../public/images/backend-feature-0.svg)
 
 > Example API documentation: [https://docs.genrex.com/docs/1.0/api-reference/request-generation](https://docs.genrex.com/docs/1.0/api-reference/request-generation)
 
@@ -44,73 +45,12 @@ Our AI testing agent generates a comprehensive test plan that includes a variety
 - Concurrency Testing
 - And more...
 
-You can expand each test type to see the detailed scenarios that have been created specifically for your software application.
+You can expand each test type to view the detailed scenarios generated specifically for your application. Feel free to modify any of the content directly within the table to better suit your specific testing needs.
 
-```json
-{
-  "example_test_plan": [
-    {
-      "category": "Authorization Tests",
-      "scenarios": [
-        "POST request without 'gx-key' header",
-        "POST request with expired timestamp in 'gx-signature'",
-        "POST request without 'gx-signature' header"
-      ]
-    },
-    {
-      "category": "Basic Functional Tests",
-      "scenarios": [
-        "POST request with valid 'duration' and 'text' parameters",
-        "POST request with minimum allowed 'duration' (5 seconds)",
-        "POST request with maximum allowed 'duration' (60 seconds)"
-      ]
-    },
-    {
-      "category": "Boundary Tests",
-      "scenarios": [
-        "POST request with empty 'text' field",
-        "POST request with 'duration' set to 61 seconds (above maximum threshold)",
-        "POST request with 'duration' set to 1 second (below minimum threshold)"
-      ]
-    },
-    {
-      "category": "Error Handling Tests",
-      "scenarios": [
-        "POST request leading to a 500 Internal Server Error",
-        "POST request handling non-JSON response format",
-        "POST request expecting a network timeout"
-      ]
-    },
-    {
-      "category": "Format Tests",
-      "scenarios": [
-        "POST request with 'Content-Type' other than 'application/json'",
-        "POST request with additional unexpected parameters in payload",
-        "POST request with incorrectly formatted JSON payload"
-      ]
-    },
-    {
-      "category": "Payload Validation Tests",
-      "scenarios": [
-        "POST request with missing 'text' parameter",
-        "POST request with missing 'duration' parameter",
-        "POST request with 'text' exceeding 250 characters"
-      ]
-    },
-    {
-      "category": "Signature Validation Tests",
-      "scenarios": [
-        "POST request with tampered payload leading to invalid 'gx-signature'",
-        "POST request with 'gx-signature' generated from incorrect API secret",
-        "POST request with invalid 'gx-signature' format"
-      ]
-    }
-  ]
-}
-```
+![Backend Feature 1](../public/images/backend-feature-1.svg)
 
-2. **Select Test Categories and Scenarios**:  
-   Based on your needs, you can choose the test categories and cases you want the AI to implement and execute for your APIs. You can also manually add test cases using natural language, but we recommend selecting all test cases to ensure comprehensive coverage for your software.
+2. **Select Test Categories and Cases**:  
+Based on your needs, you can select the test categories and cases you’d like the AI to implement and execute for your APIs. You also have the option to manually add test cases using natural language. For best results, we recommend selecting all available test cases to ensure comprehensive coverage of your software.
 
 ---
 
@@ -132,18 +72,15 @@ Each failed test case includes a **Detailed Analysis** section with four key tab
 - **Cause**: A thorough analysis of potential causes for the failure, using AI to identify root causes and contributing factors.
 - **Fix**: AI-generated suggestions for resolving the issue, including code snippets or configuration adjustments to help you quickly address the problem.
 
---- 
-
-### Step 5: Generate Test Reports
-
-TestSprite automatically generates a comprehensive test report from the executed test cases, providing actionable recommendations to optimize your application. The report is easy to share with your team, helping to enhance future testing efforts.
-
+![Backend Feature 2](../public/images/backend-feature-2.svg)
 
 ## Advanced Configuration
 
-### Using Natural Language for Feedback
+### Using Natural Language for Questions and Test Adjustments
 
-You can provide feedback using natural language to refine your test results—no specific format is required. For example:
+You can ask questions about the current test cases or suggest adjustments using natural language—no specific format required. For example:
+
+![Backend Feature 2](../public/images/backend-feature-3.svg)
 
 ```plaintext
 "Test POST /orders with invalid parameters and expect a 400 error code."
