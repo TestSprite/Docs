@@ -19,8 +19,8 @@
   "homepage": "https://testsprite.com",
   "dependencies": {
     "next": ">=14.2.30",
-    "nextra": "latest",
-    "nextra-theme-docs": "latest",
+    "nextra": "2.13.2",
+    "nextra-theme-docs": "2.13.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
