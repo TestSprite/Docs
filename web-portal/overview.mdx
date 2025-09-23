@@ -1,0 +1,157 @@
+---
+title: "Overview"
+description: "Web dashboard for API keys, test management, and automated monitoring."
+icon: "book"
+---
+
+<Frame>
+<iframe
+  className="w-full aspect-video rounded-xl"
+  height="400" 
+  src="https://www.youtube.com/embed/3mU5BJU_VHk"
+  frameBorder="0"
+  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+</Frame>
+
+## Step 1: Customer Input
+
+Simply provide your application details to get started:
+
+- **Application URLs** - Frontend and backend endpoints
+- **Authentication credentials** - API keys, login details, etc.
+- **Testing requirements** - Specific scenarios you want covered
+
+Our AI analyzes your application in real-time to create a completely customized testing plan. No templates, no generic approaches—every test suite is uniquely generated for your specific needs.
+
+## Step 2: Test Plans Auto Generation
+
+TestSprite's AI creates a detailed, customized testing plan with thoughtfully crafted test cases targeting specific scenarios for your product. Each test case includes a clear description explaining its purpose and rationale.
+
+
+<Accordion title="Example test plan for back-end API testing">
+Generated testing plan for [Amazon S3 `create_bucket` API](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/create_bucket.html):
+
+1. **Basic Bucket Creation**
+   - Create bucket with unique name and verify existence
+
+2. **Name Validation**
+   - Test invalid names (special characters, spaces) and verify error responses
+
+3. **Location Constraints**
+   - Create buckets in specific regions (us-east-1, eu-west-1)
+
+4. **Access Control (ACL)**
+   - Test different ACL settings (private, public-read, authenticated-read)
+
+5. **Versioning**
+   - Create bucket with versioning enabled and verify configuration
+
+6. **...**
+</Accordion>
+
+## Step 3: User Review & Confirmation
+
+Before proceeding, users can review the automatically generated test plans. This step allows you to <span style={{ color: "#10A363" }}> **manually adjust**</span>, add, or remove specific tests and ensure the generated plans align with your testing goals.
+## Step 4: Test Code Auto Generation (Implementation)
+
+<Steps>
+  <Step title="AI Code Generation">
+    TestSprite's AI converts your approved test plan into production-ready code
+  </Step>
+  <Step title="Cloud Compilation">
+    Code is automatically uploaded and compiled in our secure cloud environment
+  </Step>
+  <Step title="Smart Auto-Fixing">
+    AI resolves compilation issues and applies self-patching for optimal accuracy
+  </Step>
+</Steps>
+
+<Info>
+**Zero coding required!** Our AI delivers the highest accuracy among all Testing Autopilot tools through intelligent self-patching.
+</Info>
+
+
+### What the AI generates for you:
+
+Based on the test plan from Step 2, here's an example of the actual Python test code that TestSprite's AI automatically creates:
+
+<Accordion title="View Generated Test Code Example">
+```python Expandable Sample Test Code
+import unittest
+import boto3
+from botocore.exceptions import ClientError
+
+class TestCreateBucketAPI(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Initialize the S3 client
+        cls.s3_client = boto3.client('s3')
+
+    def test_basic_bucket_creation(self):
+        bucket_name = 'test-bucket-basic'
+
+        try:
+            # Test creating a new S3 bucket
+            self.s3_client.create_bucket(Bucket=bucket_name)
+        except ClientError as e:
+            self.fail(f"Error creating basic bucket: {e}")
+
+        # Verify that the bucket exists
+        response = self.s3_client.list_buckets()
+        buckets = [bucket['Name'] for bucket in response['Buckets']]
+        self.assertIn(bucket_name, buckets)
+
+    def test_invalid_bucket_name(self):
+        invalid_bucket_names = ['bucket with spaces', 'bucket_with_special_characters!']
+
+        for bucket_name in invalid_bucket_names:
+            with self.subTest(bucket_name=bucket_name):
+                with self.assertRaises(ClientError) as context:
+                    # Test creating a bucket with an invalid name
+                    self.s3_client.create_bucket(Bucket=bucket_name)
+
+                self.assertEqual(context.exception.response['Error']['Code'], 'InvalidBucketName')
+
+    # And the other test cases ...
+
+if __name__ == '__main__':
+    unittest.main()
+```
+</Accordion>
+
+## Step 5: Test Execution
+
+TestSprite automatically executes the generated test cases in our cloud environment, closely monitoring the results to promptly detect any issues.
+
+## Step 6: Review and Adjust
+
+<CardGroup cols={2}>
+  <Card title="Smart Analysis" icon="magnifying-glass">
+    AI **analyzes test failures** and suggests fixes using online research, **identifies root causes automatically**, and provides **actionable recommendations** for quick resolution.
+  </Card>
+  <Card title="Natural Language Edits" icon="message">
+    **Chat with AI** to modify tests - just describe what you want in plain English. **Zero coding required**, **instant regeneration**, and **complete control** over test scenarios.
+  </Card>
+</CardGroup>
+
+<Tip>
+**Pro tip:** Edit test prompts anytime to regenerate cases with different scenarios - no coding required!
+</Tip>
+
+
+**Available tools:**
+- **VS Code plugin** for direct console adjustments
+- **AI chat assistant** for questions and modifications  
+- **Prompt editing** to regenerate test cases
+
+## Step 7: Final Testing Report
+
+TestSprite generates a comprehensive report covering:
+
+
+- **Test results** - Pass/fail status for each case
+- **Improvement areas** - Actionable recommendations
+- **Security findings** - Vulnerabilities and fixes
+- **Team sharing** - Export and collaborate easily

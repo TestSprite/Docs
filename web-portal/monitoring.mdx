@@ -1,0 +1,133 @@
+---
+title: "Monitoring & Scheduling"
+description: "Automate your testing workflow with TestSprite's Monitoring feature."
+icon: "chart-simple"
+---
+
+## What is Monitoring?
+
+The Monitoring feature allows you to schedule **automated test executions** at regular intervals. Instead of manually running tests, you can set up schedules that automatically execute your test lists, providing **continuous monitoring** of your application's health and performance.
+
+## Key Benefits
+
+<CardGroup cols={2}>
+  <Card title="Continuous Quality Assurance" icon="shield-check">
+    Automatically detect issues before they reach users. **24/7 monitoring** and regression detection without manual effort.
+  </Card>
+  <Card title="Flexible Scheduling" icon="calendar-days">
+    **Recurring test executions** with multiple scheduling options. Monitor run times and pause/modify schedules as needed.
+  </Card>
+</CardGroup>
+
+<CardGroup cols={1}>
+  <Card title="Proactive Issue Detection" icon="magnifying-glass">
+    **Immediate notifications** when tests fail. Track trends and identify performance degradation over time.
+  </Card>
+</CardGroup>
+
+## Getting Started with Monitoring
+
+<Steps>
+  <Step title="Prerequisites">
+    Before setting up schedules:
+    - **Create Test Lists** - You need existing test lists to schedule
+    - **Verify Test Stability** - Ensure your tests run reliably
+    - **Set Up Notifications** - Configure how you want to receive alerts
+    - **Check Account Limits** - Verify your plan supports scheduling
+  </Step>
+  <Step title="Navigate to Monitoring">
+    - Go to `MONITORING` and click **"New Schedule"** to get started
+  </Step>
+  <Step title="Select Test List">
+    - Choose an existing test list to schedule
+    - Review test cases and execution settings
+    - Confirm test list is ready for automation
+  </Step>
+  <Step title="Configure Schedule">
+    - Set execution frequency (daily, weekly, monthly)
+    - Choose specific times and days
+    - Configure timezone settings
+    - Set up failure notifications
+  </Step>
+</Steps>
+
+## Schedule Configuration
+
+### Frequency Options
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Frequency Options</div>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Daily</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Execute tests every day at specified time</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Weekly</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Run tests on specific days of the week</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Monthly</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Schedule tests for specific dates each month</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Custom</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Define complex scheduling patterns</div>
+</div>
+
+**Example Configurations:**
+```yaml
+Daily Schedule:
+  Time: 06:00 AM UTC
+  Frequency: Every day
+  
+Weekly Schedule:
+  Days: Monday, Wednesday, Friday
+  Time: 09:00 AM EST
+  
+Monthly Schedule:
+  Date: 1st of every month
+  Time: 12:00 PM PST
+```
+
+### Timezone Settings
+
+**Important Notes:**
+- All schedules use UTC by default
+- Convert your local time to UTC for accuracy
+- Consider daylight saving time changes
+- Use consistent timezone across your team
+
+## Managing Schedules
+
+### Schedule Dashboard
+
+The Schedule Dashboard provides a comprehensive overview of all your automated test schedules, allowing you to monitor their status, execution history, and upcoming runs at a glance.
+
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Overview Information</div>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Schedule Name</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Descriptive name for the scheduled execution</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Test List</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Associated test list that will be executed</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Frequency</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>How often the schedule runs (daily, weekly, etc.)</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Next Run</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>When the next execution is scheduled</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Status</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Current schedule status (active, paused, completed)</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Last Result</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Result of the most recent execution</div>
+</div>
+
+### Schedule Actions
+
+Manage your test schedules with these available actions. Each schedule can be controlled individually to fit your testing workflow and requirements.
+
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Action</div>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Run Now</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Execute the schedule immediately</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Edit Schedule</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Modify timing and configuration</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Pause/Resume</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Temporarily disable or re-enable</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>View Results</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>See detailed execution history</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Delete Schedule</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Remove schedule permanently</div>
+</div>

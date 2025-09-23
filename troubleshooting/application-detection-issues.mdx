@@ -1,0 +1,75 @@
+---
+title: "Application Detection Issues"
+description: "Solutions to application detection problems with TestSprite MCP Server."
+---
+
+## "Application not accessible" Error
+
+If you experience issues where **TestSprite can't access your running application**, please follow the solution below:
+
+<Steps>
+  <Step title="Diagnostic checks">
+    Check if application is running
+    ```bash
+    curl http://localhost:3000
+    curl http://localhost:8000
+    ```
+    Check which ports are in use
+    ```bash
+    lsof -i :3000
+    lsof -i :8000
+    ```
+    Check firewall settings (Linux)
+    ```bash
+    sudo ufw status
+    ```
+    <Info>**For macOS:** Go to System `Preferences > Security & Privacy > Firewall` to check firewall settings.</Info>
+  </Step>
+
+  <Step title="Ensure application is running">
+    <Tabs>
+      <Tab title="Frontend Applications">
+        ```bash
+        npm start
+        npm run dev
+        yarn dev
+        ```
+      </Tab>
+      
+      <Tab title="Backend Applications">
+        ```bash
+        npm run server
+        python app.py
+        node server.js
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Check port configuration">
+    Find actual port
+    ```bash
+    netstat -tulpn | grep LISTEN
+    ```
+    Update bootstrap call
+    ```bash
+    testsprite_bootstrap_tests ({
+      localPort: 3000,  // Use actual port
+      type: "frontend",
+      projectPath: "/path/to/project",
+      testScope: "codebase"
+    })
+    ```
+  </Step>
+
+  <Step title="Check for port conflicts">
+    Kill conflicting processes
+    ```bash
+    lsof -ti:3000 | xargs kill -9
+    ```
+    Use different port
+    ```bash
+    PORT=3001 npm start
+    ```
+  </Step>
+</Steps>

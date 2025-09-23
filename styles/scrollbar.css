@@ -1,0 +1,807 @@
+/* Custom Scrollbar Styles for TestSprite Documentation */
+
+/* MINTLIFY SPECIFIC OVERRIDE - Target Mintlify's dark mode */
+html[data-theme="dark"],
+html.dark,
+[data-theme="dark"],
+.dark {
+  scrollbar-color: #2F3033 transparent !important;
+}
+
+html[data-theme="dark"] *,
+html.dark *,
+[data-theme="dark"] *,
+.dark * {
+  scrollbar-width: thin !important;
+  scrollbar-color: #2F3033 transparent !important;
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar,
+html.dark *::-webkit-scrollbar,
+[data-theme="dark"] *::-webkit-scrollbar,
+.dark *::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar-track,
+html.dark *::-webkit-scrollbar-track,
+[data-theme="dark"] *::-webkit-scrollbar-track,
+.dark *::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar-track:hover,
+html.dark *::-webkit-scrollbar-track:hover,
+[data-theme="dark"] *::-webkit-scrollbar-track:hover,
+.dark *::-webkit-scrollbar-track:hover {
+  background: #17181A !important;
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar-thumb,
+html.dark *::-webkit-scrollbar-thumb,
+[data-theme="dark"] *::-webkit-scrollbar-thumb,
+.dark *::-webkit-scrollbar-thumb {
+  background: #2F3033 !important;
+  border-radius: 4px !important;
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover,
+html.dark *::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover,
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a !important;
+}
+
+/* SYSTEM DARK MODE OVERRIDE */
+@media (prefers-color-scheme: dark) {
+  html,
+  body,
+  * {
+    scrollbar-width: thin !important;
+    scrollbar-color: #2F3033 transparent !important;
+  }
+  
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+  }
+  
+  html::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  
+  html::-webkit-scrollbar-track:hover,
+  body::-webkit-scrollbar-track:hover,
+  *::-webkit-scrollbar-track:hover {
+    background: #17181A !important;
+  }
+  
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb,
+  *::-webkit-scrollbar-thumb {
+    background: #2F3033 !important;
+    border-radius: 4px !important;
+  }
+  
+  html::-webkit-scrollbar-thumb:hover,
+  body::-webkit-scrollbar-thumb:hover,
+  *::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a !important;
+  }
+}
+
+/* ULTIMATE FORCE - Dark mode scrollbars everywhere */
+@media (prefers-color-scheme: dark) {
+  *,
+  *::before,
+  *::after,
+  html,
+  body,
+  div,
+  main,
+  article,
+  section {
+    scrollbar-width: thin !important;
+    scrollbar-color: #2F3033 transparent !important;
+  }
+
+  *::-webkit-scrollbar,
+  *::before::-webkit-scrollbar,
+  *::after::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  div::-webkit-scrollbar,
+  main::-webkit-scrollbar,
+  article::-webkit-scrollbar,
+  section::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  *::-webkit-scrollbar-track,
+  *::before::-webkit-scrollbar-track,
+  *::after::-webkit-scrollbar-track,
+  html::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track,
+  div::-webkit-scrollbar-track,
+  main::-webkit-scrollbar-track,
+  article::-webkit-scrollbar-track,
+  section::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  *::-webkit-scrollbar-track:hover,
+  *::before::-webkit-scrollbar-track:hover,
+  *::after::-webkit-scrollbar-track:hover,
+  html::-webkit-scrollbar-track:hover,
+  body::-webkit-scrollbar-track:hover,
+  div::-webkit-scrollbar-track:hover,
+  main::-webkit-scrollbar-track:hover,
+  article::-webkit-scrollbar-track:hover,
+  section::-webkit-scrollbar-track:hover {
+    background: #17181A !important;
+  }
+
+  *::-webkit-scrollbar-thumb,
+  *::before::-webkit-scrollbar-thumb,
+  *::after::-webkit-scrollbar-thumb,
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb,
+  div::-webkit-scrollbar-thumb,
+  main::-webkit-scrollbar-thumb,
+  article::-webkit-scrollbar-thumb,
+  section::-webkit-scrollbar-thumb {
+    background: #2F3033 !important;
+    border-radius: 4px !important;
+  }
+
+  *::-webkit-scrollbar-thumb:hover,
+  *::before::-webkit-scrollbar-thumb:hover,
+  *::after::-webkit-scrollbar-thumb:hover,
+  html::-webkit-scrollbar-thumb:hover,
+  body::-webkit-scrollbar-thumb:hover,
+  div::-webkit-scrollbar-thumb:hover,
+  main::-webkit-scrollbar-thumb:hover,
+  article::-webkit-scrollbar-thumb:hover,
+  section::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a !important;
+  }
+}
+
+/* ULTIMATE FORCE - Manual dark mode classes */
+[data-theme="dark"] *,
+[data-theme="dark"] *::before,
+[data-theme="dark"] *::after,
+[data-theme="dark"] html,
+[data-theme="dark"] body,
+[data-theme="dark"] div,
+[data-theme="dark"] main,
+[data-theme="dark"] article,
+[data-theme="dark"] section,
+.dark *,
+.dark *::before,
+.dark *::after,
+.dark html,
+.dark body,
+.dark div,
+.dark main,
+.dark article,
+.dark section {
+  scrollbar-width: thin !important;
+  scrollbar-color: #2F3033 transparent !important;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar,
+[data-theme="dark"] *::before::-webkit-scrollbar,
+[data-theme="dark"] *::after::-webkit-scrollbar,
+[data-theme="dark"] html::-webkit-scrollbar,
+[data-theme="dark"] body::-webkit-scrollbar,
+[data-theme="dark"] div::-webkit-scrollbar,
+[data-theme="dark"] main::-webkit-scrollbar,
+[data-theme="dark"] article::-webkit-scrollbar,
+[data-theme="dark"] section::-webkit-scrollbar,
+.dark *::-webkit-scrollbar,
+.dark *::before::-webkit-scrollbar,
+.dark *::after::-webkit-scrollbar,
+.dark html::-webkit-scrollbar,
+.dark body::-webkit-scrollbar,
+.dark div::-webkit-scrollbar,
+.dark main::-webkit-scrollbar,
+.dark article::-webkit-scrollbar,
+.dark section::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-track,
+[data-theme="dark"] *::before::-webkit-scrollbar-track,
+[data-theme="dark"] *::after::-webkit-scrollbar-track,
+[data-theme="dark"] html::-webkit-scrollbar-track,
+[data-theme="dark"] body::-webkit-scrollbar-track,
+[data-theme="dark"] div::-webkit-scrollbar-track,
+[data-theme="dark"] main::-webkit-scrollbar-track,
+[data-theme="dark"] article::-webkit-scrollbar-track,
+[data-theme="dark"] section::-webkit-scrollbar-track,
+.dark *::-webkit-scrollbar-track,
+.dark *::before::-webkit-scrollbar-track,
+.dark *::after::-webkit-scrollbar-track,
+.dark html::-webkit-scrollbar-track,
+.dark body::-webkit-scrollbar-track,
+.dark div::-webkit-scrollbar-track,
+.dark main::-webkit-scrollbar-track,
+.dark article::-webkit-scrollbar-track,
+.dark section::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-track:hover,
+[data-theme="dark"] *::before::-webkit-scrollbar-track:hover,
+[data-theme="dark"] *::after::-webkit-scrollbar-track:hover,
+[data-theme="dark"] html::-webkit-scrollbar-track:hover,
+[data-theme="dark"] body::-webkit-scrollbar-track:hover,
+[data-theme="dark"] div::-webkit-scrollbar-track:hover,
+[data-theme="dark"] main::-webkit-scrollbar-track:hover,
+[data-theme="dark"] article::-webkit-scrollbar-track:hover,
+[data-theme="dark"] section::-webkit-scrollbar-track:hover,
+.dark *::-webkit-scrollbar-track:hover,
+.dark *::before::-webkit-scrollbar-track:hover,
+.dark *::after::-webkit-scrollbar-track:hover,
+.dark html::-webkit-scrollbar-track:hover,
+.dark body::-webkit-scrollbar-track:hover,
+.dark div::-webkit-scrollbar-track:hover,
+.dark main::-webkit-scrollbar-track:hover,
+.dark article::-webkit-scrollbar-track:hover,
+.dark section::-webkit-scrollbar-track:hover {
+  background: #17181A !important;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb,
+[data-theme="dark"] *::before::-webkit-scrollbar-thumb,
+[data-theme="dark"] *::after::-webkit-scrollbar-thumb,
+[data-theme="dark"] html::-webkit-scrollbar-thumb,
+[data-theme="dark"] body::-webkit-scrollbar-thumb,
+[data-theme="dark"] div::-webkit-scrollbar-thumb,
+[data-theme="dark"] main::-webkit-scrollbar-thumb,
+[data-theme="dark"] article::-webkit-scrollbar-thumb,
+[data-theme="dark"] section::-webkit-scrollbar-thumb,
+.dark *::-webkit-scrollbar-thumb,
+.dark *::before::-webkit-scrollbar-thumb,
+.dark *::after::-webkit-scrollbar-thumb,
+.dark html::-webkit-scrollbar-thumb,
+.dark body::-webkit-scrollbar-thumb,
+.dark div::-webkit-scrollbar-thumb,
+.dark main::-webkit-scrollbar-thumb,
+.dark article::-webkit-scrollbar-thumb,
+.dark section::-webkit-scrollbar-thumb {
+  background: #2F3033 !important;
+  border-radius: 4px !important;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] *::before::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] *::after::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] html::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] body::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] div::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] main::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] article::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] section::-webkit-scrollbar-thumb:hover,
+.dark *::-webkit-scrollbar-thumb:hover,
+.dark *::before::-webkit-scrollbar-thumb:hover,
+.dark *::after::-webkit-scrollbar-thumb:hover,
+.dark html::-webkit-scrollbar-thumb:hover,
+.dark body::-webkit-scrollbar-thumb:hover,
+.dark div::-webkit-scrollbar-thumb:hover,
+.dark main::-webkit-scrollbar-thumb:hover,
+.dark article::-webkit-scrollbar-thumb:hover,
+.dark section::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a !important;
+}
+
+/* Extra force for main content area in dark mode */
+@media (prefers-color-scheme: dark) {
+  body::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  main::-webkit-scrollbar,
+  [role="main"]::-webkit-scrollbar,
+  .main-content::-webkit-scrollbar,
+  .content-wrapper::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  body::-webkit-scrollbar-track,
+  html::-webkit-scrollbar-track,
+  main::-webkit-scrollbar-track,
+  [role="main"]::-webkit-scrollbar-track,
+  .main-content::-webkit-scrollbar-track,
+  .content-wrapper::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  body::-webkit-scrollbar-track:hover,
+  html::-webkit-scrollbar-track:hover,
+  main::-webkit-scrollbar-track:hover,
+  [role="main"]::-webkit-scrollbar-track:hover,
+  .main-content::-webkit-scrollbar-track:hover,
+  .content-wrapper::-webkit-scrollbar-track:hover {
+    background: #17181A !important;
+  }
+
+  body::-webkit-scrollbar-thumb,
+  html::-webkit-scrollbar-thumb,
+  main::-webkit-scrollbar-thumb,
+  [role="main"]::-webkit-scrollbar-thumb,
+  .main-content::-webkit-scrollbar-thumb,
+  .content-wrapper::-webkit-scrollbar-thumb {
+    background: #2F3033 !important;
+    border-radius: 4px !important;
+  }
+
+  body::-webkit-scrollbar-thumb:hover,
+  html::-webkit-scrollbar-thumb:hover,
+  main::-webkit-scrollbar-thumb:hover,
+  [role="main"]::-webkit-scrollbar-thumb:hover,
+  .main-content::-webkit-scrollbar-thumb:hover,
+  .content-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a !important;
+  }
+}
+
+[data-theme="dark"] body::-webkit-scrollbar,
+[data-theme="dark"] html::-webkit-scrollbar,
+[data-theme="dark"] main::-webkit-scrollbar,
+[data-theme="dark"] [role="main"]::-webkit-scrollbar,
+[data-theme="dark"] .main-content::-webkit-scrollbar,
+[data-theme="dark"] .content-wrapper::-webkit-scrollbar,
+.dark body::-webkit-scrollbar,
+.dark html::-webkit-scrollbar,
+.dark main::-webkit-scrollbar,
+.dark [role="main"]::-webkit-scrollbar,
+.dark .main-content::-webkit-scrollbar,
+.dark .content-wrapper::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-track,
+[data-theme="dark"] html::-webkit-scrollbar-track,
+[data-theme="dark"] main::-webkit-scrollbar-track,
+[data-theme="dark"] [role="main"]::-webkit-scrollbar-track,
+[data-theme="dark"] .main-content::-webkit-scrollbar-track,
+[data-theme="dark"] .content-wrapper::-webkit-scrollbar-track,
+.dark body::-webkit-scrollbar-track,
+.dark html::-webkit-scrollbar-track,
+.dark main::-webkit-scrollbar-track,
+.dark [role="main"]::-webkit-scrollbar-track,
+.dark .main-content::-webkit-scrollbar-track,
+.dark .content-wrapper::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-track:hover,
+[data-theme="dark"] html::-webkit-scrollbar-track:hover,
+[data-theme="dark"] main::-webkit-scrollbar-track:hover,
+[data-theme="dark"] [role="main"]::-webkit-scrollbar-track:hover,
+[data-theme="dark"] .main-content::-webkit-scrollbar-track:hover,
+[data-theme="dark"] .content-wrapper::-webkit-scrollbar-track:hover,
+.dark body::-webkit-scrollbar-track:hover,
+.dark html::-webkit-scrollbar-track:hover,
+.dark main::-webkit-scrollbar-track:hover,
+.dark [role="main"]::-webkit-scrollbar-track:hover,
+.dark .main-content::-webkit-scrollbar-track:hover,
+.dark .content-wrapper::-webkit-scrollbar-track:hover {
+  background: #17181A !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-thumb,
+[data-theme="dark"] html::-webkit-scrollbar-thumb,
+[data-theme="dark"] main::-webkit-scrollbar-thumb,
+[data-theme="dark"] [role="main"]::-webkit-scrollbar-thumb,
+[data-theme="dark"] .main-content::-webkit-scrollbar-thumb,
+[data-theme="dark"] .content-wrapper::-webkit-scrollbar-thumb,
+.dark body::-webkit-scrollbar-thumb,
+.dark html::-webkit-scrollbar-thumb,
+.dark main::-webkit-scrollbar-thumb,
+.dark [role="main"]::-webkit-scrollbar-thumb,
+.dark .main-content::-webkit-scrollbar-thumb,
+.dark .content-wrapper::-webkit-scrollbar-thumb {
+  background: #2F3033 !important;
+  border-radius: 4px !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] html::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] main::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] [role="main"]::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .main-content::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .content-wrapper::-webkit-scrollbar-thumb:hover,
+.dark body::-webkit-scrollbar-thumb:hover,
+.dark html::-webkit-scrollbar-thumb:hover,
+.dark main::-webkit-scrollbar-thumb:hover,
+.dark [role="main"]::-webkit-scrollbar-thumb:hover,
+.dark .main-content::-webkit-scrollbar-thumb:hover,
+.dark .content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a !important;
+}
+
+/* Webkit-based browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e9ecef;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #dee2e6;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #ced4da;
+}
+
+::-webkit-scrollbar-corner {
+  background: #f8f9fa;
+}
+
+/* Dark mode scrollbar - High Priority */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  ::-webkit-scrollbar-track:hover {
+    background: #17181A !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2F3033 !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a !important;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: #4a4a4a !important;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent !important;
+  }
+}
+
+/* Manual dark mode class support - High Priority */
+[data-theme="dark"] ::-webkit-scrollbar-track,
+.dark ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track:hover,
+.dark ::-webkit-scrollbar-track:hover {
+  background: #17181A !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb {
+  background: #2F3033 !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:active,
+.dark ::-webkit-scrollbar-thumb:active {
+  background: #4a4a4a !important;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-corner,
+.dark ::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+
+/* Firefox scrollbar styling */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #e9ecef #f8f9fa;
+}
+
+/* Dark mode for Firefox - High Priority */
+@media (prefers-color-scheme: dark) {
+  html {
+    scrollbar-color: #2F3033 #17181A !important;
+  }
+}
+
+[data-theme="dark"] html,
+.dark html {
+  scrollbar-color: #2F3033 #17181A !important;
+}
+
+/* Custom scrollbar for specific containers */
+.scrollable-container {
+  scrollbar-width: thin;
+  scrollbar-color: #e9ecef #f8f9fa;
+}
+
+.scrollable-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background: #e9ecef;
+  border-radius: 3px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: #dee2e6;
+}
+
+/* Dark mode for scrollable containers */
+@media (prefers-color-scheme: dark) {
+  .scrollable-container {
+    scrollbar-color: #2F3033 transparent;
+  }
+
+  .scrollable-container::-webkit-scrollbar-track:hover {
+    background: #17181A;
+  }
+
+  .scrollable-container::-webkit-scrollbar-thumb {
+    background: #2F3033;
+  }
+
+  .scrollable-container::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a;
+  }
+}
+
+[data-theme="dark"] .scrollable-container,
+.dark .scrollable-container {
+  scrollbar-color: #2F3033 transparent;
+}
+
+[data-theme="dark"] .scrollable-container::-webkit-scrollbar-track:hover,
+.dark .scrollable-container::-webkit-scrollbar-track:hover {
+  background: #17181A;
+}
+
+[data-theme="dark"] .scrollable-container::-webkit-scrollbar-thumb,
+.dark .scrollable-container::-webkit-scrollbar-thumb {
+  background: #2F3033;
+}
+
+[data-theme="dark"] .scrollable-container::-webkit-scrollbar-thumb:hover,
+.dark .scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Specific styles for left sidebar scrollbar */
+.sidebar, .nav-sidebar, [data-testid="sidebar"], .nextra-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #e9ecef #f8f9fa;
+}
+
+.sidebar::-webkit-scrollbar,
+.nav-sidebar::-webkit-scrollbar,
+[data-testid="sidebar"]::-webkit-scrollbar,
+.nextra-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.nav-sidebar::-webkit-scrollbar-track,
+[data-testid="sidebar"]::-webkit-scrollbar-track,
+.nextra-sidebar::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.nav-sidebar::-webkit-scrollbar-thumb,
+[data-testid="sidebar"]::-webkit-scrollbar-thumb,
+.nextra-sidebar::-webkit-scrollbar-thumb {
+  background: #e9ecef;
+  border-radius: 4px;
+}
+
+/* Dark mode for left sidebar */
+@media (prefers-color-scheme: dark) {
+  .sidebar, .nav-sidebar, [data-testid="sidebar"], .nextra-sidebar {
+    scrollbar-color: #2F3033 transparent;
+  }
+
+  .sidebar::-webkit-scrollbar-track,
+  .nav-sidebar::-webkit-scrollbar-track,
+  [data-testid="sidebar"]::-webkit-scrollbar-track,
+  .nextra-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .sidebar::-webkit-scrollbar-track:hover,
+  .nav-sidebar::-webkit-scrollbar-track:hover,
+  [data-testid="sidebar"]::-webkit-scrollbar-track:hover,
+  .nextra-sidebar::-webkit-scrollbar-track:hover {
+    background: #17181A;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb,
+  .nav-sidebar::-webkit-scrollbar-thumb,
+  [data-testid="sidebar"]::-webkit-scrollbar-thumb,
+  .nextra-sidebar::-webkit-scrollbar-thumb {
+    background: #2F3033;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb:hover,
+  .nav-sidebar::-webkit-scrollbar-thumb:hover,
+  [data-testid="sidebar"]::-webkit-scrollbar-thumb:hover,
+  .nextra-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a;
+  }
+}
+
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .nav-sidebar,
+[data-theme="dark"] [data-testid="sidebar"],
+[data-theme="dark"] .nextra-sidebar,
+.dark .sidebar,
+.dark .nav-sidebar,
+.dark [data-testid="sidebar"],
+.dark .nextra-sidebar {
+  scrollbar-color: #2F3033 transparent;
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-track,
+[data-theme="dark"] .nav-sidebar::-webkit-scrollbar-track,
+[data-theme="dark"] [data-testid="sidebar"]::-webkit-scrollbar-track,
+[data-theme="dark"] .nextra-sidebar::-webkit-scrollbar-track,
+.dark .sidebar::-webkit-scrollbar-track,
+.dark .nav-sidebar::-webkit-scrollbar-track,
+.dark [data-testid="sidebar"]::-webkit-scrollbar-track,
+.dark .nextra-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-track:hover,
+[data-theme="dark"] .nav-sidebar::-webkit-scrollbar-track:hover,
+[data-theme="dark"] [data-testid="sidebar"]::-webkit-scrollbar-track:hover,
+[data-theme="dark"] .nextra-sidebar::-webkit-scrollbar-track:hover,
+.dark .sidebar::-webkit-scrollbar-track:hover,
+.dark .nav-sidebar::-webkit-scrollbar-track:hover,
+.dark [data-testid="sidebar"]::-webkit-scrollbar-track:hover,
+.dark .nextra-sidebar::-webkit-scrollbar-track:hover {
+  background: #17181A;
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb,
+[data-theme="dark"] .nav-sidebar::-webkit-scrollbar-thumb,
+[data-theme="dark"] [data-testid="sidebar"]::-webkit-scrollbar-thumb,
+[data-theme="dark"] .nextra-sidebar::-webkit-scrollbar-thumb,
+.dark .sidebar::-webkit-scrollbar-thumb,
+.dark .nav-sidebar::-webkit-scrollbar-thumb,
+.dark [data-testid="sidebar"]::-webkit-scrollbar-thumb,
+.dark .nextra-sidebar::-webkit-scrollbar-thumb {
+  background: #2F3033;
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .nav-sidebar::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] [data-testid="sidebar"]::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .nextra-sidebar::-webkit-scrollbar-thumb:hover,
+.dark .sidebar::-webkit-scrollbar-thumb:hover,
+.dark .nav-sidebar::-webkit-scrollbar-thumb:hover,
+.dark [data-testid="sidebar"]::-webkit-scrollbar-thumb:hover,
+.dark .nextra-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Specific styles for main content area */
+.main-content, .content-wrapper, main, [role="main"] {
+  scrollbar-width: thin;
+  scrollbar-color: #e9ecef #f8f9fa;
+}
+
+/* Dark mode for main content */
+@media (prefers-color-scheme: dark) {
+  .main-content, .content-wrapper, main, [role="main"] {
+    scrollbar-color: #2F3033 transparent;
+  }
+}
+
+[data-theme="dark"] .main-content,
+[data-theme="dark"] .content-wrapper,
+[data-theme="dark"] main,
+[data-theme="dark"] [role="main"],
+.dark .main-content,
+.dark .content-wrapper,
+.dark main,
+.dark [role="main"] {
+  scrollbar-color: #2F3033 transparent;
+}
+
+/* Hide scrollbar for specific elements when needed */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Force dark mode scrollbars for common frameworks and body */
+@media (prefers-color-scheme: dark) {
+  body::-webkit-scrollbar-track,
+  html::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  body::-webkit-scrollbar-track:hover,
+  html::-webkit-scrollbar-track:hover {
+    background: #17181A !important;
+  }
+
+  body::-webkit-scrollbar-thumb,
+  html::-webkit-scrollbar-thumb {
+    background: #2F3033 !important;
+  }
+
+  body::-webkit-scrollbar-thumb:hover,
+  html::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a !important;
+  }
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-track,
+[data-theme="dark"] html::-webkit-scrollbar-track,
+.dark body::-webkit-scrollbar-track,
+.dark html::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-track:hover,
+[data-theme="dark"] html::-webkit-scrollbar-track:hover,
+.dark body::-webkit-scrollbar-track:hover,
+.dark html::-webkit-scrollbar-track:hover {
+  background: #17181A !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-thumb,
+[data-theme="dark"] html::-webkit-scrollbar-thumb,
+.dark body::-webkit-scrollbar-thumb,
+.dark html::-webkit-scrollbar-thumb {
+  background: #2F3033 !important;
+}
+
+[data-theme="dark"] body::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] html::-webkit-scrollbar-thumb:hover,
+.dark body::-webkit-scrollbar-thumb:hover,
+.dark html::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a !important;
+}
