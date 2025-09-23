@@ -1,0 +1,286 @@
+---
+title: "IDE Configuration Issues"
+description: "Solutions to IDE configuration problems with TestSprite MCP Server."
+---
+
+## MCP Server Not Detected in IDE
+
+If you experience issues where your **IDE doesn't recognize TestSprite MCP Server**, please follow the solution below:
+
+<Steps>
+  <Step title="Verify JSON Configuration">
+    <Tabs>
+    <Tab title="macOS/Linux">
+    Cursor Quick Check Commands
+    ```bash
+    # Cursor project-level config (check current directory)
+    cat .cursor/mcp.json | jq .
+    # Cursor global-level config
+    cat ~/.cursor/mcp.json | jq .
+    ```
+    VS Code Quick Check Commands
+    ```bash
+    # VS Code project-level settings (check current directory)
+    cat .vscode/settings.json | jq .
+
+    # VS Code global-level settings
+    # macOS
+    cat ~/Library/Application\ Support/Code/User/settings.json | jq .
+    # Linux
+    cat ~/.config/Code/User/settings.json | jq .
+    ```
+    </Tab>
+
+    <Tab title="Windows">
+    Cursor Quick Check Commands
+    ```powershell
+    # Cursor project-level config (check current directory)
+    Get-Content .cursor\mcp.json | ConvertFrom-Json
+    # Command Prompt with jq
+    type .cursor\mcp.json | jq .
+    
+    # Cursor global-level config
+    Get-Content "$env:USERPROFILE\.cursor\mcp.json" | ConvertFrom-Json
+    # Command Prompt
+    type "%USERPROFILE%\.cursor\mcp.json" | jq .
+    ```
+    VS Code Quick Check Commands
+    ```powershell
+    # VS Code project-level settings (check current directory)
+    Get-Content .vscode\settings.json | ConvertFrom-Json
+    # Command Prompt
+    type .vscode\settings.json | jq .
+    
+    # VS Code global-level settings
+    Get-Content "$env:APPDATA\Code\User\settings.json" | ConvertFrom-Json
+    # Command Prompt
+    type "%APPDATA%\Code\User\settings.json" | jq .
+    ```
+    </Tab>
+    </Tabs>
+
+    **If you don't have `jq` installed:**
+
+    <Tabs>
+    <Tab title="Install jq">
+    For macOS/Linux
+    ```bash
+    brew install jq   #macOS
+    sudo apt-get install jq   #LinuX (Ubuntu/Debian)
+    sudo yum install jq   #LinuX (CentOS/RHEL)
+    ```
+    For Windows 
+    ```powershell
+    choco install jq   #Chocolatey
+    scoop install jq   #Using Scoop
+    ```
+    </Tab>
+
+    <Tab title="Alternative Validation">
+    1. Copy your configuration file content
+    2. Visit [jsonlint.com <Icon icon="arrow-up-right-from-square" size={12} />](https://jsonlint.com)
+    3. Paste and validate
+
+    **Copy to clipboard:**
+
+    For macOS/Linux
+    ```bash
+    cat .cursor/mcp.json | pbcopy
+    cat .cursor/mcp.json | xclip -selection clipboard
+    ```
+    For Windows
+    ``` powershell
+    Get-Content .cursor\mcp.json | Set-Clipboard  # PowerShell
+    type .cursor\mcp.json | clip  # Command Prompt
+    ```
+    </Tab>
+    <Tab title="Manual Download">
+    Download from [https://stedolan.github.io/jq/download/  <Icon icon="arrow-up-right-from-square" size={12} />](https://stedolan.github.io/jq/download/)
+    </Tab>
+    </Tabs>
+
+    <Note>If you see a parse error, fix the JSON file (missing commas, quotes, brackets, etc.)</Note>
+  </Step>
+  
+  <Step title="Check Configuration Files">
+    **Configuration File Locations:**
+
+    <div className="full-width-table three-column" style={{ gridTemplateColumns: '1fr 2fr 4fr' }}>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>IDE</div>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Project</div>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Global config</div>
+      
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Cursor</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`.cursor/mcp.json`</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`~/.cursor/mcp.json` (macOS/Linux)</div>
+      
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`%USERPROFILE%\.cursor\mcp.json` (Windows)</div>
+      
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>VS Code</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`.vscode/settings.json`</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`~/Library/Application Support/Code/User/settings.json` (macOS)</div>
+      
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`~/.config/Code/User/settings.json` (Linux)</div>
+      
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>`%APPDATA%\Code\User\settings.json` (Windows)</div>
+    </div>
+
+    <Note>Project-level configuration takes precedence over global configuration</Note>
+
+    **File Management Commands:**
+
+    <Tabs>
+    <Tab title="macOS/Linux">
+    1. **Check if files exist:**
+    ```bash
+    ls -la .cursor/mcp.json ~/.cursor/mcp.json .vscode/settings.json
+    ```
+
+    2. **Create directories if missing:**
+    ```bash
+    mkdir -p .cursor ~/.cursor .vscode
+    ```
+
+    3. **Check file permissions** (if needed):
+    ```bash
+    ls -la .cursor/mcp.json
+    chmod 644 .cursor/mcp.json  # Fix permissions if needed
+    ```
+    </Tab>
+
+    <Tab title="Windows">
+    1. **Check if files exist:**
+    ```powershell
+    Test-Path .cursor\mcp.json
+    Test-Path "$env:USERPROFILE\.cursor\mcp.json"
+    Test-Path .vscode\settings.json
+    
+    # Command Prompt
+    if exist .cursor\mcp.json echo File exists
+    if exist "%USERPROFILE%\.cursor\mcp.json" echo File exists
+    if exist .vscode\settings.json echo File exists
+    ```
+
+    2. **Create directories if missing:**
+    ```powershell
+    New-Item -ItemType Directory -Force -Path .cursor
+    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.cursor"
+    New-Item -ItemType Directory -Force -Path .vscode
+
+    #Command Prompt
+    if not exist .cursor mkdir .cursor
+    if not exist "%USERPROFILE%\.cursor" mkdir "%USERPROFILE%\.cursor"
+    if not exist .vscode mkdir .vscode
+    ```
+
+    3. **Check permissions** (if needed):
+    ```powershell
+    # Check permissions
+    Get-Acl .cursor\mcp.json
+    # Grant full control to current user
+    $user = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $acl = Get-Acl .cursor\mcp.json
+    $acl.SetOwner($user)
+    Set-Acl .cursor\mcp.json $acl
+    ```
+    </Tab>
+    </Tabs>
+  </Step>
+  
+  <Step title="Validate Configuration">
+    <Tabs>
+    <Tab title="Cursor">
+    Cursor Required Configuration Format
+    ```json
+    {
+      "mcpServers": {
+        "TestSprite": {
+          "command": "npx",
+          "args": ["@testsprite/testsprite-mcp@latest"],
+          "env": {
+            "API_KEY": "your-api-key"
+          }
+        }
+      }
+    }
+    ```
+    </Tab>
+
+    <Tab title="VS Code">
+    VS Code Required Configuration Format
+    ```json
+    {
+      "mcp.servers": {
+        "TestSprite": {
+          "command": "npx",
+          "args": ["@testsprite/testsprite-mcp@latest"],
+          "env": {
+            "API_KEY": "your-api-key"
+          }
+        }
+      }
+    }
+    ```
+    </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+### Common Issues to Avoid
+
+<AccordionGroup>
+  <Accordion title="Missing commas">
+    If there's a JSON parsing error about missing commas like `"command": "npx" "args": [...]`, make sure to add commas between JSON properties. The correct format should be `"command": "npx",` with a comma after each property except the last one.
+  </Accordion>
+
+  <Accordion title="Wrong quotes">
+    If there's an error about invalid JSON syntax with single quotes like `'command': 'npx'`, JSON requires double quotes for all strings. Change it to use double quotes: `"command": "npx"`.
+  </Accordion>
+
+  <Accordion title="Wrong property name">
+    If there's an error about server configuration not being recognized in Cursor, make sure you're using the correct property name. For Cursor, use `"mcpServers"` instead of `"servers"`. VS Code uses `"mcp.servers"`.
+  </Accordion>
+
+  <Accordion title="Missing required fields">
+    If there's an error about incomplete server configuration with no `env` section, ensure you include all required fields: `command`, `args`, and `env`. The `env` section is necessary for passing the API key to TestSprite.
+  </Accordion>
+</AccordionGroup>
+
+### Test Your Configuration
+```bash
+npx @testsprite/testsprite-mcp --version
+```
+
+## API Key Issues
+
+If you experience issues about **Invalid or missing API key**, please follow the solution below:
+
+<Steps>
+  <Step title="Get API key">
+    - Visit [TestSprite Dashboard <Icon icon="arrow-up-right-from-square" size={12} />](https://testsprite.com/dashboard)
+    - Go to `Settings > API Keys`
+    - Generate new key if needed
+  </Step>
+
+  <Step title="Update configuration">
+    ```json
+    {
+      "env": {
+        "API_KEY": "ts_live_abcd1234efgh5678ijkl"
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Verify API key format">
+    - Should start with `sk-user-`
+    - Should be 32+ characters long
+    - No extra spaces or characters
+  </Step>
+</Steps>

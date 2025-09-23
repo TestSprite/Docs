@@ -1,0 +1,156 @@
+/* Full-width table styles for TestSprite Documentation */
+
+.full-width-table {
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+/* Two-column table */
+.full-width-table.two-column {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Three-column table */
+.full-width-table.three-column {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Four-column table */
+.full-width-table.four-column {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+/* Header cells - High specificity to override any conflicts */
+div.full-width-table div.table-header,
+.full-width-table .table-header {
+  padding: 12px !important;
+  margin: 0 !important;
+  font-weight: bold !important;
+  border-bottom: 1px solid var(--table-header-border-color, var(--table-border-color, #e5e7eb)) !important;
+  background-color: var(--table-header-bg-color, #f9fafb) !important;
+  color: var(--table-header-text-color, #111827) !important;
+  box-sizing: border-box !important;
+  min-height: auto !important;
+  line-height: 1.5 !important;
+}
+
+
+/* Regular cells - High specificity to override any conflicts */
+div.full-width-table div.table-cell,
+.full-width-table .table-cell,
+div[class*="table-cell"],
+*[class*="table-cell"] {
+  padding: 12px !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: var(--table-cell-text-color, #374151) !important;
+  background-color: var(--table-cell-bg-color, #ffffff) !important;
+  box-sizing: border-box !important;
+  min-height: auto !important;
+  line-height: 1.5 !important;
+  display: block !important;
+}
+
+/* Backup approach - target any div with inline padding in a table */
+.full-width-table div[style*="padding"] {
+  box-sizing: border-box !important;
+}
+
+/* Force markdown tables to be full width */
+div[style*="width: 100%"] table,
+div[style*="width:100%"] table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+div[style*="width: 100%"] table th,
+div[style*="width: 100%"] table td,
+div[style*="width:100%"] table th,
+div[style*="width:100%"] table td {
+  width: 50% !important;
+  padding: 12px !important;
+  font-size: 14px !important;
+  box-sizing: border-box !important;
+}
+
+/* Add right border to all cells except the last one in each row */
+div.full-width-table div.table-cell:not(:last-child),
+.full-width-table .table-cell:not(:last-child) {
+  border-right: 1px solid var(--table-border-color, #e5e7eb) !important;
+}
+
+/* Add bottom border to cells that aren't in the last row */
+div.full-width-table div.table-cell:not(:nth-last-child(-n+2)),
+.full-width-table .table-cell:not(:nth-last-child(-n+2)) {
+  border-bottom: 1px solid var(--table-border-color, #e5e7eb) !important;
+}
+
+/* For three-column tables */
+div.full-width-table.three-column div.table-cell:not(:nth-last-child(-n+3)),
+.full-width-table.three-column .table-cell:not(:nth-last-child(-n+3)) {
+  border-bottom: 1px solid var(--table-border-color, #e5e7eb) !important;
+}
+
+/* For four-column tables */
+div.full-width-table.four-column div.table-cell:not(:nth-last-child(-n+4)),
+.full-width-table.four-column .table-cell:not(:nth-last-child(-n+4)) {
+  border-bottom: 1px solid var(--table-border-color, #e5e7eb) !important;
+}
+
+/* Light mode color variables */
+:root {
+  --table-bg-color: #ffffff;
+  --table-border-color: #e5e7eb;
+  --table-header-border-color: #e5e7eb;
+  --table-header-bg-color: #f9fafb;
+  --table-header-text-color: #111827;
+  --table-cell-bg-color: #ffffff;
+  --table-cell-text-color: #374151;
+}
+
+/* Dark mode color variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --table-bg-color: #101011;
+    --table-border-color: #171B1B;
+    --table-header-border-color: #242827;
+    --table-header-bg-color: #101011;
+    --table-header-text-color: #f9fafb;
+    --table-cell-bg-color: #101011;
+    --table-cell-text-color: #d1d5db;
+  }
+}
+
+/* Alternative: Manual dark mode class support */
+[data-theme="dark"] {
+  --table-bg-color: #101011;
+  --table-border-color: #171B1B;
+  --table-header-border-color: #242827;
+  --table-header-bg-color: #101011;
+  --table-header-text-color: #f9fafb;
+  --table-cell-bg-color: #101011;
+  --table-cell-text-color: #d1d5db;
+}
+
+.dark {
+  --table-border-color: #171B1B;
+  --table-header-border-color: #242827;
+  --table-header-bg-color: #0A0C0D;
+  --table-header-text-color: #f9fafb;
+  --table-cell-bg-color: #0A0C0D;
+  --table-cell-text-color: #d1d5db;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .full-width-table {
+    font-size: 14px;
+  }
+  
+  .full-width-table .table-header,
+  .full-width-table .table-cell {
+    padding: 8px;
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "TestSprite Documentation",
+  "fonts": {
+    "family": "Geist"
+  },
+  "css": [
+    "/styles/tables.css",
+    "/styles/kbd-dark-mode.css",
+    "/styles/scrollbar.css"
+  ],
+  "colors": {
+    "primary": "#16A34A",
+    "dark": "#090909",
+    "light": "#07C983"
+  },
+  "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "dark",
+    "strict": false
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Website",
+          "href": "https://www.testsprite.com/",
+          "icon": "globe"
+        },
+        {
+          "anchor": "Community",
+          "href": "https://discord.gg/QQB9tJ973e",
+          "icon": "comments"
+        },
+        {
+          "anchor": "Contact Us",
+          "href": "https://calendly.com/contact-hmul/schedule",
+          "icon": "address-book"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "introduction",
+              "get-started/Quick Start"
+            ]
+          },
+          {
+            "group": "MCP Server (IDE Integration)",
+            "pages": [
+              "mcp/overview",
+              "mcp/installation",
+              {
+                "group": "Tutorials",
+                "icon": "book",
+                "pages": [
+                  "tutorials/first-test",
+                  "tutorials/test-maintenance",
+                  "tutorials/demo-examples"
+                ]
+              },
+              {
+                "group": "Troubleshooting",
+                "icon": "bug",
+                "pages": [
+                  "troubleshooting/installation-issues",
+                  "troubleshooting/ide-configuration-issues",
+                  "troubleshooting/application-detection-issues",
+                  "troubleshooting/test-execution-issues"
+                ]
+              },
+              {
+                "group": "Concepts",
+                "icon": "route",
+                "pages": [
+                  "concepts/workflow",
+                  "concepts/tools"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Web Portal",
+            "pages": [
+              "web-portal/overview",
+              "web-portal/api-testing",
+              "web-portal/ui-testing",
+              "web-portal/test-lists",
+              "web-portal/monitoring",
+              "web-portal/api-keys"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "faq"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://www.testsprite.com/auth/cognito/sign-in"
+    }
+  },
+  "contextual": {
+    "options": [
+     "copy"
+   ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/testsprite",
+      "github": "https://github.com/wangy44624/docs",
+      "linkedin": "https://linkedin.com/company/testsprite",
+      "discord": "https://discord.gg/QQB9tJ973e"
+    }
+  }
+}

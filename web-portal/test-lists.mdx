@@ -1,0 +1,100 @@
+---
+title: "Test Lists"
+description: "Organize test collections, track execution history, and manage testing projects efficiently."
+icon: "list"
+---
+
+
+## What are Test Lists?
+
+Test Lists are organized collections of test cases that help you group related tests together. Whether you're testing different features, environments, or user flows, Test Lists provide a structured way to manage your testing efforts.
+
+
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Centralized Test Management" icon="chart-line">
+    View all test lists in one dashboard, track execution status across collections, search and filter by name or status, and sort by date, count, or type
+  </Card>
+  <Card title="Test Organization" icon="folder">
+    Organize Frontend Tests with browser automation, Backend Tests for API functionality, and Mixed Collections combining both test types
+  </Card>
+</CardGroup>
+
+<CardGroup cols={1}>
+  <Card title="Execution Tracking" icon="clock">
+    Track your **previous execution** status to view the test's last run with **status indicators** showing **Passed** (all tests completed successfully), **Attention** (some tests need review), or **Failed** (tests encountered errors).
+  </Card>
+</CardGroup>
+
+
+
+## Creating Test Lists
+
+<Steps>
+  <Step title="Navigate to Test Lists">
+    Go to Dashboard → Test Lists and click "New List" to get started
+  </Step>
+  <Step title="Add Test Cases">
+    Create new test cases through "Create Tests", configure web application information, and let TestSprite's AI generate comprehensive test cases
+  </Step>
+  <Step title="Organize and Configure">
+    Name your test list descriptively, review and customize generated test cases, and maintain your test lists as needed
+  </Step>
+</Steps>
+
+
+
+## Managing Test Lists
+
+<Tabs>
+  <Tab title="Search & Filter">
+    **Search Functionality:**
+    Search by test list name to quickly find specific collections
+    
+    **Filter Options:**
+    - **All Status** - View all test lists regardless of status
+    - **Passed** - Show only successfully executed test lists
+    - **Attention** - Filter test lists needing review
+    - **Failed** - Display test lists with execution errors
+  </Tab>
+  <Tab title="Sorting Options">
+    **Test Volume Sorting:**
+    - **Total test cases** - Order by number of tests in the list
+    - **Total frontend test** - Order by frontend test count
+    - **Total backend test** - Sort by backend test count
+    
+    **Time-Based Sorting:**
+    - **Previous execution date** - Sort by most recently executed
+  </Tab>
+</Tabs>
+
+
+
+## Test List Details
+
+
+Each test list displays:
+
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Field</div>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Test List Name</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Descriptive identifier for your test collection</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Previous Execution</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Last run date and time</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Total Test Cases</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Combined count of all tests in the list</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Total Frontend Test</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Number of UI/browser tests</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Total Backend Test</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Number of API/server tests</div>
+</div>
+
+
+## Execution Actions
+
+- **Run Tests** - Execute all tests in the list
+- **View Results** - Review detailed test reports
+- **Delete List** - Remove test list (with confirmation)

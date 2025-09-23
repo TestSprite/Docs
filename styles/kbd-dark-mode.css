@@ -1,0 +1,10 @@
+
+/* Ensure kbd tags are always visible with high specificity */
+html[data-theme="dark"] kbd,
+html.dark kbd,
+body[data-theme="dark"] kbd,
+body.dark kbd {
+  background-color: #17181A !important;
+  color: #f9fafb !important;
+  border: 1px solid #2F3033 !important;
+}
