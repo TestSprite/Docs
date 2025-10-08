@@ -11,8 +11,8 @@
     "/styles/scrollbar.css"
   ],
   "colors": {
-    "primary": "#16A34A",
-    "dark": "#090909",
+    "primary": "#19C379",
+    "dark": "#101011",
     "light": "#07C983"
   },
   "favicon": "/favicon.svg",
