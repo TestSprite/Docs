@@ -1,0 +1,1034 @@
+/* Border Radius and Background Color Customization for TestSprite Documentation */
+/* Adjust these CSS variables to change border radius and colors globally */
+
+:root {
+  /* Global border radius variables */
+  --border-radius-sm: 2px;
+  --border-radius-md: 4px;
+  --border-radius-lg: 6px;
+  --border-radius-xl: 8px;
+  --border-radius-2xl: 10px;
+  
+  /* Light mode colors (default) */
+  --component-bg-color: #FBFBFC;
+  --site-bg-color: #ffffff;
+}
+
+/* Dark mode color overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --component-bg-color: #17181A;
+    --site-bg-color: #101011;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] {
+  --component-bg-color: #17181A;
+  --site-bg-color: #101011;
+}
+
+.dark {
+  --component-bg-color: #17181A;
+  --site-bg-color: #101011;
+}
+
+/* ============================================
+   SEARCH INPUT BACKGROUND (DARK MODE)
+   ============================================ */
+
+/* Dark mode search input background */
+@media (prefers-color-scheme: dark) {
+  #search-input,
+  #search-bar-entry,
+  [id*="search"] input,
+  [class*="search"] input,
+  [class*="Search"] input,
+  input[type="search"],
+  input[placeholder*="Search"],
+  input[placeholder*="search"] {
+    background-color: #101011 !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] #search-input,
+[data-theme="dark"] #search-bar-entry,
+[data-theme="dark"] [id*="search"] input,
+[data-theme="dark"] [class*="search"] input,
+[data-theme="dark"] [class*="Search"] input,
+[data-theme="dark"] input[type="search"],
+[data-theme="dark"] input[placeholder*="Search"],
+[data-theme="dark"] input[placeholder*="search"],
+.dark #search-input,
+.dark #search-bar-entry,
+.dark [id*="search"] input,
+.dark [class*="search"] input,
+.dark [class*="Search"] input,
+.dark input[type="search"],
+.dark input[placeholder*="Search"],
+.dark input[placeholder*="search"] {
+  background-color: #101011 !important;
+}
+
+/* ============================================
+   PAGE CONTEXT MENU BUTTON (DARK MODE)
+   ============================================ */
+
+/* Remove background from page context menu button */
+@media (prefers-color-scheme: dark) {
+  #page-context-menu-button {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] #page-context-menu-button,
+.dark #page-context-menu-button {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* ============================================
+   NAVBAR BACKDROP FILTER OVERRIDE (DARK MODE)
+   ============================================ */
+
+/* Dark mode navbar transition */
+@media (prefers-color-scheme: dark) {
+  #navbar-transition {
+    background-color: rgba(16, 16, 17, 0.65) !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] #navbar-transition,
+.dark #navbar-transition {
+  background-color: rgba(16, 16, 17, 0.65) !important;
+}
+
+/* ============================================
+   SIDEBAR SHADOW (DARK MODE)
+   ============================================ */
+
+/* Dark mode sidebar shadow - targeting the sticky sidebar div */
+@media (prefers-color-scheme: dark) {
+  div.sticky.top-0.z-10.bg-gradient-to-b {
+    box-shadow: 0 4px 6px rgba(16, 16, 17, 0.65) !important;
+    background-color: rgba(16, 16, 17, 0.65) !important;
+    background-image: none !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] div.sticky.top-0.z-10.bg-gradient-to-b,
+.dark div.sticky.top-0.z-10.bg-gradient-to-b {
+  box-shadow: 0 4px 6px rgba(16, 16, 17, 0.65) !important;
+  background-color: rgba(16, 16, 17, 0.65) !important;
+  background-image: none !important;
+}
+
+/* ============================================
+   SITE BACKGROUND COLOR OVERRIDE
+   ============================================ */
+
+/* Light mode site background (default) */
+html,
+body {
+  background-color: var(--site-bg-color) !important;
+}
+
+main,
+[class*="main"],
+[class*="Main"],
+div[class*="content"],
+div[class*="Content"],
+article {
+  background-color: var(--site-bg-color) !important;
+}
+
+#root,
+#__next,
+[class*="wrapper"],
+[class*="Wrapper"],
+[class*="container"]:not([class*="Card"]):not([class*="Accordion"]) {
+  background-color: var(--site-bg-color) !important;
+}
+
+
+
+[class*="docs"],
+[class*="Docs"],
+[class*="page"],
+[class*="Page"] {
+  background-color: var(--site-bg-color) !important;
+}
+
+header,
+footer {
+  background-color: var(--site-bg-color) !important;
+}
+
+/* Dark mode overrides using media query */
+@media (prefers-color-scheme: dark) {
+  /* Override Mintlify's default dark mode background */
+  html,
+  body {
+    background-color: var(--site-bg-color) !important;
+  }
+
+  /* Main content areas */
+  main,
+  [class*="main"],
+  [class*="Main"],
+  div[class*="content"],
+  div[class*="Content"],
+  article {
+    background-color: var(--site-bg-color) !important;
+  }
+
+  /* Page wrapper and containers */
+  #root,
+  #__next,
+  [class*="wrapper"],
+  [class*="Wrapper"],
+  [class*="container"]:not([class*="Card"]):not([class*="Accordion"]) {
+    background-color: var(--site-bg-color) !important;
+  }
+
+
+
+  /* Documentation content area */
+  [class*="docs"],
+  [class*="Docs"],
+  [class*="page"],
+  [class*="Page"] {
+    background-color: var(--site-bg-color) !important;
+  }
+
+  /* Ensure header/footer respect background if needed */
+  header,
+  footer {
+    background-color: var(--site-bg-color) !important;
+  }
+}
+
+/* Apply custom background when dark mode is set via data attribute or class */
+[data-theme="dark"],
+.dark {
+  /* Override Mintlify's default dark mode background */
+  html,
+  body {
+    background-color: var(--site-bg-color) !important;
+  }
+}
+
+[data-theme="dark"] html,
+[data-theme="dark"] body,
+.dark html,
+.dark body {
+  background-color: var(--site-bg-color) !important;
+}
+
+[data-theme="dark"] main,
+[data-theme="dark"] [class*="main"],
+[data-theme="dark"] [class*="Main"],
+[data-theme="dark"] div[class*="content"],
+[data-theme="dark"] div[class*="Content"],
+[data-theme="dark"] article,
+.dark main,
+.dark [class*="main"],
+.dark [class*="Main"],
+.dark div[class*="content"],
+.dark div[class*="Content"],
+.dark article {
+  background-color: var(--site-bg-color) !important;
+}
+
+[data-theme="dark"] #root,
+[data-theme="dark"] #__next,
+[data-theme="dark"] [class*="wrapper"],
+[data-theme="dark"] [class*="Wrapper"],
+[data-theme="dark"] [class*="container"]:not([class*="Card"]):not([class*="Accordion"]),
+.dark #root,
+.dark #__next,
+.dark [class*="wrapper"],
+.dark [class*="Wrapper"],
+.dark [class*="container"]:not([class*="Card"]):not([class*="Accordion"]) {
+  background-color: var(--site-bg-color) !important;
+}
+
+
+
+[data-theme="dark"] [class*="docs"],
+[data-theme="dark"] [class*="Docs"],
+[data-theme="dark"] [class*="page"],
+[data-theme="dark"] [class*="Page"],
+.dark [class*="docs"],
+.dark [class*="Docs"],
+.dark [class*="page"],
+.dark [class*="Page"] {
+  background-color: var(--site-bg-color) !important;
+}
+
+[data-theme="dark"] header,
+[data-theme="dark"] footer,
+.dark header,
+.dark footer {
+  background-color: var(--site-bg-color) !important;
+}
+
+/* ============================================
+   OVERRIDE TAILWIND ROUNDED CLASSES
+   ============================================ */
+
+/* Override all Tailwind rounded classes with our custom values */
+.rounded,
+.rounded-sm,
+.rounded-md,
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl,
+.rounded-full {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Specific overrides for different Tailwind sizes */
+.rounded-sm {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+.rounded,
+.rounded-md {
+  border-radius: var(--border-radius-md) !important;
+}
+
+.rounded-lg {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+.rounded-xl {
+  border-radius: var(--border-radius-xl) !important;
+}
+
+.rounded-2xl,
+.rounded-3xl {
+  border-radius: var(--border-radius-2xl) !important;
+}
+
+/* ============================================
+   COMPONENT BACKGROUND COLORS
+   ============================================ */
+
+/* Exclude card groups/containers from background */
+[class*="CardGroup"],
+[class*="card-group"] {
+  background-color: transparent !important;
+}
+
+/* Mintlify Columns component should be transparent */
+div[class*="Columns"],
+div[class*="columns"] {
+  background-color: transparent !important;
+}
+
+/* Card components - target Mintlify Card components */
+/* Mintlify Cards are typically rendered as <a> tags */
+a[class*="Card"],
+a[class*="card"] {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Also target div and article cards */
+div[class*="Card"]:not([class*="Group"]):not([class*="Columns"]),
+article[class*="Card"]:not([class*="Group"]),
+section[class*="Card"]:not([class*="Group"]) {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Generic card class */
+.card {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Accordion components */
+[class*="Accordion"],
+[class*="accordion"],
+details,
+summary {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* AccordionGroup wrapper */
+[class*="AccordionGroup"],
+[class*="accordion-group"] {
+  background-color: transparent !important;
+}
+
+/* Individual accordion items */
+details[class*="Accordion"],
+div[class*="Accordion"] {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Callouts and alerts - NO background color override */
+/* Keeping default Mintlify styling for alerts/notifications */
+
+/* Step components - NO background color override */
+/* Keeping default Mintlify styling for steps */
+
+/* Tab panels */
+[class*="TabPanel"],
+[role="tabpanel"],
+div[class*="TabPanel"] {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Modal/Dialog windows */
+[class*="Modal"],
+[class*="modal"],
+[class*="Dialog"],
+[class*="dialog"],
+[role="dialog"],
+[role="alertdialog"] {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Dropdown menus */
+[class*="Dropdown"],
+[class*="dropdown"],
+[class*="Menu"],
+[class*="menu"],
+[role="menu"],
+[class*="Popover"],
+[class*="popover"] {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Feature cards and content blocks - exclude groups */
+[class*="feature"]:not([class*="group"]),
+[class*="Feature"]:not([class*="group"]),
+.feature-card,
+div[class*="feature-card"]:not([class*="group"]) {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* Param and Response fields (Mintlify specific) */
+[class*="ParamField"],
+[class*="param-field"],
+[class*="ResponseField"],
+[class*="response-field"] {
+  background-color: var(--component-bg-color) !important;
+}
+
+/* ============================================
+   MINTLIFY FRAME COMPONENT
+   ============================================ */
+
+/* Target Mintlify's Frame component and its children */
+div[class*="Frame"],
+div[class*="frame"],
+section[class*="Frame"],
+section[class*="frame"],
+article[class*="Frame"],
+article[class*="frame"] {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Frame component with images */
+div[class*="Frame"] img,
+div[class*="frame"] img,
+section[class*="Frame"] img,
+section[class*="frame"] img {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Frame component with iframes */
+div[class*="Frame"] iframe,
+div[class*="frame"] iframe,
+section[class*="Frame"] iframe,
+section[class*="frame"] iframe {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Force border radius on ALL iframes regardless of classes */
+iframe,
+iframe[class],
+iframe[className],
+iframe.w-full,
+iframe.aspect-video,
+iframe.rounded-xl,
+iframe[class*="rounded"] {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Mintlify content wrapper */
+div[class*="content"] iframe,
+main iframe,
+article iframe,
+section iframe {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+/* Primary navigation button */
+button,
+.button,
+a[role="button"],
+[class*="Button"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Navbar primary button (Dashboard) */
+nav button,
+nav a[role="button"],
+header button,
+header a[role="button"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Small buttons (icon buttons, etc.) */
+button[class*="icon"],
+.icon-button,
+[class*="IconButton"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* ============================================
+   CARDS & CONTAINERS
+   ============================================ */
+
+/* Exclude card groups/containers from border radius overrides */
+[class*="CardGroup"],
+[class*="card-group"] {
+  border-radius: 0 !important;
+}
+
+/* Mintlify Columns component */
+div[class*="Columns"],
+div[class*="columns"] {
+  border-radius: 0 !important;
+}
+
+/* Card components - Mintlify Cards (typically <a> tags) */
+a[class*="Card"],
+a[class*="card"] {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Also target div and article cards */
+div[class*="Card"]:not([class*="Group"]):not([class*="Columns"]),
+article[class*="Card"]:not([class*="Group"]),
+section[class*="Card"]:not([class*="Group"]) {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Generic card class */
+.card {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Feature cards and content blocks */
+[class*="feature"]:not([class*="group"]),
+[class*="Feature"]:not([class*="group"]),
+.feature-card {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* ============================================
+   CODE BLOCKS
+   ============================================ */
+
+/* Code blocks and pre elements */
+pre,
+code[class*="language-"],
+pre[class*="language-"],
+div[class*="CodeBlock"],
+[class*="codeblock"],
+.code-block {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Inline code */
+code:not([class*="language-"]),
+code:not(pre code) {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Code toolbar and copy button */
+[class*="code-toolbar"],
+button[class*="copy"],
+[class*="CopyButton"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Code block background color (dark mode only) */
+@media (prefers-color-scheme: dark) {
+  .code-block {
+    background-color: #17181A !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] .code-block,
+.dark .code-block {
+  background-color: #17181A !important;
+}
+
+/* Code block border color (dark mode only) */
+@media (prefers-color-scheme: dark) {
+  pre,
+  code[class*="language-"],
+  pre[class*="language-"],
+  div[class*="CodeBlock"],
+  div[class*="code-block"],
+  [class*="codeblock"],
+  .code-block {
+    border-color: #212224 !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] pre,
+[data-theme="dark"] code[class*="language-"],
+[data-theme="dark"] pre[class*="language-"],
+[data-theme="dark"] div[class*="CodeBlock"],
+[data-theme="dark"] div[class*="code-block"],
+[data-theme="dark"] [class*="codeblock"],
+[data-theme="dark"] .code-block,
+.dark pre,
+.dark code[class*="language-"],
+.dark pre[class*="language-"],
+.dark div[class*="CodeBlock"],
+.dark div[class*="code-block"],
+.dark [class*="codeblock"],
+.dark .code-block {
+  border-color: #212224 !important;
+}
+
+/* ============================================
+   BORDER COLORS (DARK MODE)
+   ============================================ */
+
+/* Change all border colors except header, tabs, alerts, and cards */
+@media (prefers-color-scheme: dark) {
+  *:not(header):not(header *):not(nav):not(nav *):not([id*="navbar"]):not([id*="navbar"] *):not([class*="Tab"]):not([class*="Tab"] *):not([class*="tab"]):not([class*="tab"] *):not([role="tab"]):not([role="tab"] *):not([role="tablist"]):not([role="tablist"] *):not([role="tabpanel"]):not([role="tabpanel"] *):not([class*="Callout"]):not([class*="Callout"] *):not([class*="callout"]):not([class*="callout"] *):not([class*="Alert"]):not([class*="Alert"] *):not([class*="alert"]):not([class*="alert"] *):not([class*="notification"]):not([class*="notification"] *):not([class*="Notification"]):not([class*="Notification"] *):not(.note):not(.note *):not(.tip):not(.tip *):not(.warning):not(.warning *):not(.info):not(.info *):not([class*="Card"]):not([class*="Card"] *):not([class*="card"]):not([class*="card"] *) {
+    border-color: #212224 !important;
+  }
+  
+  /* Card default state */
+  a[class*="Card"],
+  a[class*="card"],
+  [class*="Card"],
+  [class*="card"] {
+    border-color: #212224 !important;
+  }
+  
+  /* Card hover states - primary color border (only for link cards) */
+  a[class*="Card"]:hover,
+  a[class*="card"]:hover {
+    border-color: #19C379 !important;
+  }
+}
+
+/* Dark mode via data attribute or class */
+[data-theme="dark"] *:not(header):not(header *):not(nav):not(nav *):not([id*="navbar"]):not([id*="navbar"] *):not([class*="Tab"]):not([class*="Tab"] *):not([class*="tab"]):not([class*="tab"] *):not([role="tab"]):not([role="tab"] *):not([role="tablist"]):not([role="tablist"] *):not([role="tabpanel"]):not([role="tabpanel"] *):not([class*="Callout"]):not([class*="Callout"] *):not([class*="callout"]):not([class*="callout"] *):not([class*="Alert"]):not([class*="Alert"] *):not([class*="alert"]):not([class*="alert"] *):not([class*="notification"]):not([class*="notification"] *):not([class*="Notification"]):not([class*="Notification"] *):not(.note):not(.note *):not(.tip):not(.tip *):not(.warning):not(.warning *):not(.info):not(.info *):not([class*="Card"]):not([class*="Card"] *):not([class*="card"]):not([class*="card"] *),
+.dark *:not(header):not(header *):not(nav):not(nav *):not([id*="navbar"]):not([id*="navbar"] *):not([class*="Tab"]):not([class*="Tab"] *):not([class*="tab"]):not([class*="tab"] *):not([role="tab"]):not([role="tab"] *):not([role="tablist"]):not([role="tablist"] *):not([role="tabpanel"]):not([role="tabpanel"] *):not([class*="Callout"]):not([class*="Callout"] *):not([class*="callout"]):not([class*="callout"] *):not([class*="Alert"]):not([class*="Alert"] *):not([class*="alert"]):not([class*="alert"] *):not([class*="notification"]):not([class*="notification"] *):not([class*="Notification"]):not([class*="Notification"] *):not(.note):not(.note *):not(.tip):not(.tip *):not(.warning):not(.warning *):not(.info):not(.info *):not([class*="Card"]):not([class*="Card"] *):not([class*="card"]):not([class*="card"] *) {
+  border-color: #212224 !important;
+}
+
+[data-theme="dark"] a[class*="Card"],
+[data-theme="dark"] a[class*="card"],
+[data-theme="dark"] [class*="Card"],
+[data-theme="dark"] [class*="card"],
+.dark a[class*="Card"],
+.dark a[class*="card"],
+.dark [class*="Card"],
+.dark [class*="card"] {
+  border-color: #212224 !important;
+}
+
+[data-theme="dark"] a[class*="Card"]:hover,
+[data-theme="dark"] a[class*="card"]:hover,
+.dark a[class*="Card"]:hover,
+.dark a[class*="card"]:hover {
+  border-color: #19C379 !important;
+}
+
+/* ============================================
+   CALLOUTS & ALERTS
+   ============================================ */
+
+/* Callout boxes (info, warning, tip, etc.) */
+[class*="Callout"],
+[class*="callout"],
+[class*="Alert"],
+[class*="alert"],
+.note,
+.tip,
+.warning,
+.info,
+aside {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* ============================================
+   INPUTS & FORMS
+   ============================================ */
+
+/* Input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select,
+[class*="Input"],
+[class*="input"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Search bar */
+[class*="Search"] input,
+[class*="search"] input,
+input[placeholder*="Search"],
+input[placeholder*="search"] {
+  border-radius: var(--border-radius-xl) !important;
+}
+
+/* ============================================
+   IMAGES & MEDIA
+   ============================================ */
+
+/* Images */
+img,
+picture,
+[class*="Image"],
+[class*="image"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Video and iframe - Enhanced specificity */
+video,
+iframe,
+frame {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Frame class variations with high specificity */
+*[class*="Frame"],
+*[class*="frame"],
+div[class*="Frame"],
+div[class*="frame"],
+section[class*="Frame"],
+section[class*="frame"] {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* ============================================
+   FRAMES & CONTAINERS
+   ============================================ */
+
+/* Frame elements and containers with maximum specificity */
+html frame,
+html frameset,
+body frame,
+body frameset,
+div[class*="frame-container"],
+div[class*="frame-wrapper"],
+div[class*="Frame-container"],
+div[class*="Frame-wrapper"],
+section[class*="frame"],
+section[class*="Frame"],
+article[class*="frame"],
+article[class*="Frame"] {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Frame borders and styling */
+frame,
+iframe,
+frameset {
+  border: none !important;
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Embedded content frames */
+embed,
+object {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Specific targeting for common frame wrapper patterns */
+div[style*="border"],
+div[style*="frame"],
+iframe[style*="border"],
+iframe[style*="frame"] {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Force border radius on all possible frame scenarios */
+* {
+  &[class*="frame"] {
+    border-radius: var(--border-radius-lg) !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Target frames with any border styling */
+frame[style],
+iframe[style],
+frameset[style] {
+  border-radius: var(--border-radius-lg) !important;
+  overflow: hidden !important;
+}
+
+/* Ensure frame content doesn't overflow */
+frame *,
+iframe *,
+frameset * {
+  border-radius: inherit !important;
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+/* Sidebar navigation items */
+[class*="sidebar"] a,
+[class*="Sidebar"] a,
+nav[class*="nav"] a,
+aside[class*="nav"] a {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Active/hover state for nav items */
+[class*="sidebar"] a[class*="active"],
+[class*="Sidebar"] a[class*="active"],
+nav a[class*="active"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+/* Tab components */
+[class*="Tab"],
+[class*="tab"],
+[role="tab"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Tab panels */
+[class*="TabPanel"],
+[role="tabpanel"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* ============================================
+   ACCORDIONS
+   ============================================ */
+
+/* Accordion items */
+[class*="Accordion"],
+[class*="accordion"],
+details,
+summary {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* ============================================
+   MODALS & DIALOGS
+   ============================================ */
+
+/* Modal/Dialog windows */
+[class*="Modal"],
+[class*="modal"],
+[class*="Dialog"],
+[class*="dialog"],
+[role="dialog"],
+[role="alertdialog"] {
+  border-radius: var(--border-radius-xl) !important;
+}
+
+/* Modal overlays */
+[class*="overlay"],
+[class*="Overlay"],
+[class*="backdrop"],
+[class*="Backdrop"] {
+  backdrop-filter: blur(8px);
+}
+
+/* ============================================
+   BADGES & PILLS
+   ============================================ */
+
+/* Badge components */
+[class*="Badge"],
+[class*="badge"],
+[class*="Tag"],
+[class*="tag"],
+.badge,
+.pill {
+  border-radius: var(--border-radius-xl) !important;
+}
+
+/* Status indicators */
+[class*="status"],
+[class*="Status"],
+span[class*="indicator"] {
+  border-radius: 50% !important;
+}
+
+/* ============================================
+   DROPDOWNS & MENUS
+   ============================================ */
+
+/* Dropdown menus */
+[class*="Dropdown"],
+[class*="dropdown"],
+[class*="Menu"],
+[class*="menu"],
+[role="menu"],
+[class*="Popover"],
+[class*="popover"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Menu items */
+[role="menuitem"],
+[class*="MenuItem"],
+[class*="menuitem"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* ============================================
+   TOOLTIPS
+   ============================================ */
+
+/* Tooltip components */
+[class*="Tooltip"],
+[class*="tooltip"],
+[role="tooltip"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* ============================================
+   PROGRESS BARS & LOADERS
+   ============================================ */
+
+/* Progress bars */
+[class*="Progress"],
+[class*="progress"],
+progress {
+  border-radius: var(--border-radius-xl) !important;
+}
+
+/* Loaders/Spinners */
+[class*="Loader"],
+[class*="loader"],
+[class*="Spinner"],
+[class*="spinner"] {
+  border-radius: 50% !important;
+}
+
+/* ============================================
+   DIVIDERS & SEPARATORS
+   ============================================ */
+
+/* Horizontal dividers */
+hr,
+[class*="Divider"],
+[class*="divider"],
+[class*="Separator"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* ============================================
+   FOOTER & HEADER
+   ============================================ */
+
+/* Footer elements */
+footer [class*="container"],
+footer section {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Header elements */
+header [class*="container"] {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* ============================================
+   MINTLIFY SPECIFIC ELEMENTS
+   ============================================ */
+
+/* Step components */
+[class*="Step"],
+[class*="step"] {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+/* Anchor links */
+[class*="anchor"] a,
+a[class*="anchor"] {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Param field */
+[class*="ParamField"],
+[class*="param-field"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* Response field */
+[class*="ResponseField"],
+[class*="response-field"] {
+  border-radius: var(--border-radius-md) !important;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/* Smaller border radius on mobile for better touch targets */
+@media (max-width: 768px) {
+  :root {
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 16px;
+    --border-radius-2xl: 20px;
+  }
+}
+
+/* ============================================
+   DARK MODE ADJUSTMENTS (if needed)
+   ============================================ */
+
+/* Dark mode adjustments can be added here if needed */
+/* Example:
+@media (prefers-color-scheme: dark) {
+  :root {
+    --border-radius-lg: 16px;
+  }
+}
+*/
