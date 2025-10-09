@@ -3,12 +3,24 @@
   "theme": "mint",
   "name": "TestSprite Documentation",
   "fonts": {
-    "family": "Geist"
+    "heading": {
+      "family": "StyreneA",
+      "source": "https://sbkxeambgkceodmegdsb.supabase.co/storage/v1/object/sign/Doc-font/StyreneAWeb-Regular.woff2?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZjAwODMyNC01NTA3LTQwNTUtOTZmYi00NjQ0MzI3MWNjZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJEb2MtZm9udC9TdHlyZW5lQVdlYi1SZWd1bGFyLndvZmYyIiwiaWF0IjoxNzU5OTY5OTg2LCJleHAiOjIwNzUzMjk5ODZ9.GA8oTavmm2q3jEiAc0W468Qe2jUuFtp8yx1qSI_vh-M",
+      "format": "woff2",
+      "weight": 400
+    },
+      "body": {
+        "family": "Geist",
+        "source": "https://sbkxeambgkceodmegdsb.supabase.co/storage/v1/object/sign/Doc-font/Geist-Medium.woff2?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZjAwODMyNC01NTA3LTQwNTUtOTZmYi00NjQ0MzI3MWNjZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJEb2MtZm9udC9HZWlzdC1NZWRpdW0ud29mZjIiLCJpYXQiOjE3NTk5ODAwNzEsImV4cCI6MjA3NTM0MDA3MX0.tM7xySWDuVs8DtR1wmgxpvsujNR4Jkhn3igA9yzB8ZM",
+        "format": "woff2",
+        "weight": 500
+      }
   },
   "css": [
     "/styles/tables.css",
     "/styles/kbd-dark-mode.css",
-    "/styles/scrollbar.css"
+    "/styles/scrollbar.css",
+    "/styles/border-radius.css"
   ],
   "colors": {
     "primary": "#19C379",
@@ -108,8 +120,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light-mode.svg",
+    "dark": "/logo/dark-mode.svg"
   },
   "navbar": {
     "primary": {
@@ -126,7 +138,7 @@
   "footer": {
     "socials": {
       "x": "https://x.com/testsprite",
-      "github": "https://github.com/wangy44624/docs",
+      "github": "https://github.com/TestSprite/Docs",
       "linkedin": "https://linkedin.com/company/testsprite",
       "discord": "https://discord.gg/QQB9tJ973e"
     }
