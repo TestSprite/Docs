@@ -4,7 +4,7 @@ description: "Complete reference for all TestSprite MCP Server tools available t
 ---
 
 ## Core Tools
-TestSprite MCP Server provides **6 core tools** that work together to deliver comprehensive automated testing. Your AI assistant uses these tools automatically when you request testing.
+TestSprite MCP Server provides **7 core tools** that work together to deliver comprehensive automated testing. Your AI assistant uses these tools automatically when you request testing.
 <AccordionGroup>
   <Accordion title="testsprite_bootstrap_tests">
     **Purpose:** Initialize testing environment and configuration
@@ -189,6 +189,37 @@ TestSprite MCP Server provides **6 core tools** that work together to deliver co
     - Identifies bugs and suggests fixes
     - Creates comprehensive test reports
   </Accordion>
+
+  <Accordion title="testsprite_rerun_tests (beta)">
+    **Purpose:** Rerun the previously generated test cases
+
+    **Parameters:**
+    - `projectPath` (string): Absolute path to your project directory
+
+    **Usage:**
+    ```javascript
+    testsprite_rerun_tests({
+      projectPath: "/Users/dev/my-project"
+    })
+    ```
+
+    **Response:**
+    Executes the previously created tests and refines:
+    - Individual test files for each test case potentially if the previous run (during creation) was stopped early due to errors 
+    - Test execution results
+    - Bug reports and fix recommendations
+    - `testsprite_tests/tmp/test_results.json` with comprehensive results
+    - `tmp/report_prompt.json` for AI analysis
+    - `TestSprite_MCP_Test_Report.md` - human-readable test report
+    - `TestSprite_MCP_Test_Report.html` - HTML test report
+
+    **What it does:**
+    - Refines actual test code
+    - Executes previously created test cases against your running application
+    - Provides refined results with screenshots/videos according to the newest execution results
+    - Identifies bugs and suggests fixes
+    - Creates comprehensive test reports
+  </Accordion>
 </AccordionGroup>
 
 ## Tool Chain Workflow
@@ -210,6 +241,7 @@ graph TD
     I --> J[Execute Tests]
     J --> K[Results & Analysis]
     K --> L[IDE Fixes Issues]
+    L --> M[Rerun the tests and check the fixes]
 ```
 </Card>
 
