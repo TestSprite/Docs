@@ -12,6 +12,14 @@ TestSprite MCP Server is a
  <Tooltip tip="an open-source standard for connecting AI applications to external systems." cta="Learn more about MCP" href="https://modelcontextprotocol.io/">Model Context Protocol</Tooltip>
  integration that connects your IDE's AI assistant (like Cursor or Windsurf) with TestSprite's intelligent testing engine. It enables fully automated testing workflows directly within your development environment.
 
+<Warning>
+**Important: Cursor Sandbox Mode Configuration**
+
+Cursor has recently updated and by default will run MCP tools in the allowlist in **"Run in Sandbox"** mode. This mode limits the MCP tools' functionalities and will prevent successful invocations of TestSprite's testing procedures. 
+
+**Please run TestSprite's MCP tools in "Ask everytime" or "Run everything" mode to ensure full functionality.**
+</Warning>
+
 ## How It Works
 
 Enter the magic command to your coding agent:
