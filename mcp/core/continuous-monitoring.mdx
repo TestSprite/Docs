@@ -1,0 +1,107 @@
+---
+title: "Test Running & Monitoring"
+description: "Set up continuous test execution and monitoring for your projects."
+icon: "chart-pie"
+---
+
+## Overview
+
+Continuous monitoring enables you to automatically run your MCP tests against deployed environments on a regular schedule. This ensures your production applications remain stable and helps you catch issues before they impact users.
+
+<Info>
+**Two-Step Process:** Setting up continuous monitoring involves first deploying your tests to production, then configuring automated schedules.
+</Info>
+
+## Prerequisites
+
+Before setting up continuous monitoring, ensure you have:
+
+- Successfully created and tested your MCP tests
+- Access to your deployed application URL (staging, testing, or production)
+- Appropriate permissions to the TestSprite web portal
+
+## Step 1: Deploy Tests to Production
+
+First, you need to deploy your locally created MCP tests to run against your deployed environment.
+
+<Card title="Deploy Your Tests" icon="paper-plane" href="/mcp/core/deploy-to-production">
+  Follow the complete deployment workflow to push your local MCP tests to the web portal and configure them to run against your deployed application.
+</Card>
+
+### Quick Deployment Summary
+
+1. Navigate to the **MCP Tests** page in the web portal
+2. Select the tests you want to deploy
+3. Click **"Deploy Tests"**
+4. Enter your deployed application URL
+5. Verify the initial test results
+
+For detailed step-by-step instructions, see the [Deploy MCP Tests](/mcp/core/deploy-to-production) guide.
+
+---
+
+## Step 2: Configure Continuous Monitoring
+
+Once your tests are deployed and running successfully against your production environment, set up automated schedules to monitor your application continuously.
+
+<Card title="Set Up Monitoring & Scheduling" icon="chart-simple" href="/web-portal/maintenance/monitoring">
+  Configure automated test execution schedules to enable 24/7 continuous monitoring of your deployed application.
+</Card>
+
+### Key Monitoring Features
+
+<CardGroup cols={2}>
+  <Card title="Automated Execution" icon="calendar-days">
+    Schedule tests to run daily, weekly, or monthly without manual intervention.
+  </Card>
+  <Card title="Proactive Alerts" icon="bell">
+    Receive immediate notifications when tests fail or performance degrades.
+  </Card>
+  <Card title="Historical Tracking" icon="chart-line">
+    Monitor trends and identify issues over time with detailed execution history.
+  </Card>
+  <Card title="Flexible Scheduling" icon="clock">
+    Pause, modify, or delete schedules as your monitoring needs evolve.
+  </Card>
+</CardGroup>
+
+### Quick Monitoring Setup
+
+1. Navigate to **MONITORING** in the web portal
+2. Click **"New Schedule"**
+3. Select your deployed test list
+4. Configure execution frequency (daily, weekly, monthly)
+5. Set notification preferences
+6. Activate the schedule
+
+For comprehensive monitoring configuration options, see the [Monitoring & Scheduling](/web-portal/maintenance/monitoring) guide.
+
+---
+
+## Best Practices
+
+<Steps>
+  <Step title="Start with Stable Tests">
+    Ensure your tests run reliably before scheduling them. Flaky tests lead to alert fatigue and reduce confidence in your monitoring.
+  </Step>
+  
+  <Step title="Choose Appropriate Frequency">
+    Balance monitoring coverage with resource usage. Critical applications may need hourly checks, while others can be monitored daily or weekly.
+  </Step>
+  
+  <Step title="Configure Smart Alerts">
+    Set up notification channels that match your team's workflow. Consider using different channels for different severity levels.
+  </Step>
+  
+  <Step title="Review Results Regularly">
+    Even with automation, periodically review test results and execution trends to identify patterns and opportunities for improvement.
+  </Step>
+  
+  <Step title="Keep Tests Updated">
+    As your application evolves, update your test schedules accordingly. Remove obsolete tests and add new ones for new features.
+  </Step>
+</Steps>
+
+<Warning>
+**Important:** Always test your monitoring setup on a non-production environment first to ensure tests run correctly and notifications work as expected.
+</Warning>
