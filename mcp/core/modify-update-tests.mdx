@@ -1,0 +1,85 @@
+---
+title: "Modify or Update Tests"
+description: "Update existing tests to reflect changes in your application."
+icon: "pen-to-square"
+---
+
+## When to Use This
+Use this guide when your app changes and existing tests need updates: new UI structure, altered API responses, or refined acceptance criteria.
+
+## Options at a Glance
+- Regenerate impacted tests via plans (recommended for broad changes)
+- Apply auto-healing suggestions (selectors, waits, fixtures)
+- Manually adjust specific tests and rerun quickly
+
+## Typical Workflows
+
+### 1) Let the Agent Regenerate What Changed
+Regenerates plans and tests based on current code and PRD.
+```text
+Refresh tests for the updated checkout and auth flows.
+```
+Steps:
+1. Bootstrap in `diff` scope
+2. Recreate test plans (frontend/backend as needed)
+3. Generate and execute
+
+```javascript
+testsprite_bootstrap_tests({
+  localPort: 5173,
+  type: "frontend",
+  projectPath: "/absolute/path/to/project",
+  testScope: "diff"
+})
+
+testsprite_generate_frontend_test_plan({ projectPath: "/absolute/path/to/project", needLogin: true })
+// or
+testsprite_generate_backend_test_plan({ projectPath: "/absolute/path/to/project" })
+
+testsprite_generate_code_and_execute({
+  projectName: "your-project",
+  projectPath: "/absolute/path/to/project",
+  testIds: [],
+  additionalInstruction: "Focus on updated modules"
+})
+```
+
+### 2) Use Auto-Healing Suggestions
+For selector drift, timing, or test-data issues, apply safe healing.
+- Review recommendations in the report under `testsprite_tests/`
+- Accept proposed edits in your IDE when prompted
+- Rerun to validate
+
+### 3) Manually Edit and Rerun a Subset
+When only a few tests need tweaks.
+```text
+Run TC005 and TC006 only after I fix the locators.
+```
+```javascript
+testsprite_generate_code_and_execute({
+  projectName: "your-project",
+  projectPath: "/absolute/path/to/project",
+  testIds: ["TC005", "TC006"],
+  additionalInstruction: "Use stable role-based selectors"
+})
+```
+
+## Rerun Previously Generated Tests
+Use rerun to validate fixes without re-planning.
+```javascript
+testsprite_rerun_tests({
+  projectPath: "/absolute/path/to/project"
+})
+```
+
+## Best Practices
+- Keep PRD and acceptance criteria in sync with product decisions
+- Prefer semantic selectors and explicit waits
+- Commit changes so diff-based regeneration stays accurate
+- Use small targeted reruns for fast iteration
+
+## Related
+- [Create Tests for New Change](/mcp/core/create-tests-new-feature)
+- [Create Tests for New Projects](/mcp/core/create-tests-new-project)
+- [Healing & Observability](/mcp/concepts/healing-observability)
+- [MCP Tools Reference](/mcp/core/tools)

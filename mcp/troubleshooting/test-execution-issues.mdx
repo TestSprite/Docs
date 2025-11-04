@@ -1,0 +1,252 @@
+---
+title: "Test Execution Issues"
+description: "Solutions to test execution problems with TestSprite MCP Server."
+icon: "pause"
+---
+
+## General Test Execution Problems
+
+If you experience issues where **tests fail to run, generate, or execute properly**, please follow the solution below:
+
+<Note>Most test execution issues can be resolved by completely deleting the generated `/testsprite_tests` directory and re-running the workflow from the beginning. If the problem persists, try reinstalling the TestSprite MCP Server.</Note>
+
+    ### Cursor IDE
+    <Tabs>
+      <Tab title="Quick Reset (Recommended)">
+        1. Open Cursor IDE
+        2. Go to the **MCP Server panel/sidebar**
+        3. Find **"TestSprite"** in the server list
+        4. **Toggle** the TestSprite MCP server **OFF**
+        5. Wait 5-10 seconds
+        6. Toggle the TestSprite MCP server ON
+        7. Wait for the server to reconnect **(green status indicator)**
+      </Tab>
+      
+      <Tab title="Reload Cursor Entirely">
+        1. Press <Tooltip tip="Cmd/Ctrl + Shift + P"><kbd>⌘⇧P</kbd></Tooltip> 
+        2. Type the following command:
+        ```text 
+        "Developer: Reload Window" 
+        ```
+        3. Press  <kbd>⇧ Enter</kbd>
+      </Tab>
+    </Tabs>
+  
+  ### VS Code
+    <Tabs>
+        <Tab title="macOS/Linux">
+        1. **Stop VS Code completely**
+        ```bash
+        pkill -f "Code"
+        ```
+     
+        2. **Remove existing TestSprite MCP installation**
+        ```bash
+        npm uninstall -g @testsprite/testsprite-mcp
+        npm cache clean --force
+        ```
+
+        3. **Clear VS Code workspace cache (optional)**
+        ```bash
+        rm -rf .vscode/.mcp-cache 2>/dev/null || true
+        ```
+
+        4. **Reinstall latest version**
+        ```bash
+        npm install -g @testsprite/testsprite-mcp@latest
+        ```
+
+        5. **Verify installation**
+        ```bash
+        npx @testsprite/testsprite-mcp@latest --version
+        ```
+
+        6. **Restart VS Code**
+        ```bash
+        code .
+        ```
+
+        7. **Reload VS Code window**
+            1. Press <Tooltip tip="Cmd+Shift+P (macOS) / Ctrl+Shift+P (Linux)"><kbd>⌘⇧P</kbd></Tooltip> 
+            2. Type the following command:
+                ```text 
+                "Developer: Reload Window" 
+                ```
+            3. Press  <kbd>⇧ Enter</kbd>
+        </Tab>
+    
+        <Tab title="Windows">
+        1. **Stop VS Code completely**
+        ```powershell
+        taskkill /F /IM Code.exe
+        ```
+
+        2. **Remove existing TestSprite MCP installation**
+        ```powershell
+        npm uninstall -g @testsprite/testsprite-mcp
+        npm cache clean --force
+        ```
+
+        3. **Clear VS Code workspace cache (optional)**
+        ```powershell
+        Remove-Item -Path .vscode\.mcp-cache -Recurse -Force -ErrorAction SilentlyContinue
+        ```
+
+        4. **Reinstall latest version**
+        ```powershell
+        npm install -g @testsprite/testsprite-mcp@latest
+        ```
+
+        5. **Verify installation**
+        ```powershell
+        npx @testsprite/testsprite-mcp@latest --version
+        ```
+
+        6. **Restart VS Code**
+        ```powershell
+        code .
+        ```
+
+        7. **Reload VS Code window**
+           1. Press <Tooltip tip="Ctrl+Shift+P (Windows)"><kbd>Ctrl⇧P</kbd></Tooltip> 
+           2. Type the following command:
+               ```text 
+               "Developer: Reload Window" 
+               ```
+           3. Press  <kbd>⇧ Enter</kbd>
+        </Tab>
+         <Tab title="Using npx - No Global Installation">
+           Update your VS Code settings to use npx instead:
+
+           ```json
+           {
+             "mcp.servers": {
+               "TestSprite": {
+                 "command": "npx",
+                 "args": ["@testsprite/testsprite-mcp@latest"],
+                 "env": {
+                   "API_KEY": "your-api-key"
+                 }
+               }
+             }
+           }
+           ```
+
+           Then reload VS Code:
+            1. Press <Tooltip tip="Cmd+Shift+P (macOS) / Ctrl+Shift+P (Windows/Linux)"><kbd>⌘⇧P</kbd></Tooltip> 
+            2. Type the following command:
+                ```text 
+                "Developer: Reload Window" 
+                ```
+            3. Press  <kbd>⇧ Enter</kbd>
+         </Tab>
+    </Tabs>
+
+
+## Verification Steps
+
+After reinstalling, verify the MCP server is working:
+
+<Tabs>
+    <Tab title="In Terminal">
+    1. **Test the server directly**
+    ```bash
+    npx @testsprite/testsprite-mcp@latest --version
+    ```
+    2. **Check if the server responds**
+    ```bash
+    npx @testsprite/testsprite-mcp@latest --help
+    ```
+    </Tab>
+    <Tab title="In your IDE">
+    1. Look for TestSprite in the MCP server list
+    2. Check for green/connected status indicator
+    3. Try running a simple test command
+    4. Verify API key is properly configured
+    </Tab>
+</Tabs>
+
+## Advanced Troubleshooting
+
+If reinstallation doesn't resolve the issue:
+
+<Tabs>
+  <Tab title="System Requirements">
+    1. Verify Node.js version **(requires 22+)**
+    ```bash
+    node --version
+    ```
+    2. Update if needed
+    ```bash
+    nvm install 22
+    nvm use 22
+    ```
+  </Tab>
+  
+  <Tab title="Clear All Caches">
+     For macOS/Linus
+        ```bash
+        npm cache clean --force
+        rm -rf ~/.npm
+        rm -rf node_modules package-lock.json
+        npm install
+        ```
+      For Windows (PowerShell)
+        ```powershell
+        npm cache clean --force
+        Remove-Item -Path "$env:USERPROFILE\.npm" -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path node_modules -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path package-lock.json -Force -ErrorAction SilentlyContinue
+        npm install
+        ```
+      </Tab>
+  
+  <Tab title="Check API Connectivity">
+      Using curl
+      For macOS/Linux
+        ```bash
+        curl -H "Authorization: Bearer your-api-key" https://api.testsprite.com/health
+        ```
+      Using PowerShell (Windows)
+        ```powershell
+        Invoke-RestMethod -Uri "https://api.testsprite.com/health" -Headers @{"Authorization"="Bearer your-api-key"}
+        ```
+  </Tab>
+</Tabs>
+
+## Common Error Messages
+
+<AccordionGroup>
+  <Accordion title="'Command not found' after reinstallation">
+    - Ensure Node.js 22+ is installed
+    - Restart your terminal/IDE
+    - Check PATH environment variable
+  </Accordion>
+  
+  <Accordion title="Server connection failed">
+    - Verify internet connection
+    - Check firewall settings
+    - Validate API key format
+  </Accordion>
+  
+  <Accordion title="Permission denied">
+    - Use npx instead of global installation
+    - Fix npm permissions (see Installation Issues section)
+  </Accordion>
+</AccordionGroup>
+
+## When to Contact Support
+
+If reinstallation doesn't resolve your issue, please contact support with:
+
+  1. **System information**
+    ```bash
+    node --version
+    npm --version
+    npx @testsprite/mcp-server --version
+    ```
+  2. **IDE and configuration details**
+        - IDE name and version
+        - Operating system version
+        - Screenshot of the MCP Server panel
+        - Relevant configuration files (sanitized)

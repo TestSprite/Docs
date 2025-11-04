@@ -1,0 +1,334 @@
+---
+title: "Key Terms"
+description: "Essential TestSprite concepts explained simply."
+---
+
+## Generate & Regenerate
+
+These actions control how TestSprite creates and updates your test suite. `Generate` creates new tests for the first time, while `Regenerate` recreates existing tests from scratch when your application or requirements change significantly.
+
+### Generate
+Create tests for the **first time** based on your PRD and project.
+
+ <Frame>
+  <img src="../../images/term-generate.png"  alt="generate" />
+</Frame>
+<br />
+<Tabs>
+  <Tab title="Example prompt">
+    Use this prompt to get started with testing your project:
+    
+    ```text
+    Help me test this project with TestSprite.
+    ```
+  </Tab>
+  <Tab title="When to use">
+    Use `Generate` when you need to create tests for the first time:
+    
+    - Starting with a new project
+    - Adding tests to an existing project without tests
+    - Creating initial test coverage
+  </Tab>
+  <Tab title="What happens">
+    `Generate` follows this workflow:
+    
+    1. Analyzes your code
+    2. Creates test plans
+    3. Generates test files
+    4. Executes the tests
+  </Tab>
+</Tabs>
+
+
+### Regenerate
+**Recreate tests** from scratch based on updated PRD and code.
+
+ <Frame>
+  <img src="../../images/term-regenerate.png"  alt="regenerate" />
+</Frame>
+<br />
+<Tabs>
+  <Tab title="Example prompt">
+    Use this prompt to regenerate tests after significant changes:
+    
+    ```text
+    Regenerate tests for the updated checkout flow.
+    ```
+  </Tab>
+  <Tab title="When to use">
+    Use `Regenerate` when you need to recreate tests from scratch:
+    
+    - Your app changed significantly (new features, refactored flows)
+    - Test plans need updating to match new requirements
+    - You want fresh test coverage reflecting current state
+  </Tab>
+  <Tab title="What happens">
+    `Regenerate` follows this workflow:
+    
+    1. Re-analyzes your code
+    2. Updates test plans
+    3. Generates new test files
+    4. Executes the new tests
+  </Tab>
+</Tabs>
+
+<Card title="Regenerate Tests" href="/mcp/core/regenerate-tests" icon= "repeat">
+  Learn more about how to regenerate tests from scratch
+</Card>
+
+## Run & Rerun
+
+These actions control how TestSprite executes your tests. `Run` executes newly generated tests for the first time, while `Rerun` executes previously generated tests again without regenerating them.
+
+### Run
+**Execute newly generated tests** for the first time.
+
+ <Frame>
+  <img src="../../images/term-run.png"  alt="run" />
+</Frame>
+<br />
+
+<Tabs>
+  <Tab title="When to use">
+    Use `Run` when executing tests for the first time:
+    
+    - After generating tests
+    - Initial validation of your application
+    - First-time test execution
+  </Tab>
+  <Tab title="What happens">
+    `Run` follows this workflow:
+    
+    1. Executes generated test files
+    2. Collects results and artifacts
+    3. Generates test reports
+  </Tab>
+</Tabs>
+
+### Rerun
+Execute **previously generated tests** again without changing them.
+
+ <Frame>
+  <img src="../../images/term-rerun.png"  alt="rerun" />
+</Frame>
+<br />
+
+<Tabs>
+  <Tab title="Example prompt">
+    Use this prompt to rerun existing tests:
+    
+    ```text
+    Rerun the login and checkout tests with TestSprite.
+    ```
+  </Tab>
+  <Tab title="When to use">
+    Use `Rerun` when executing existing tests again:
+    
+    - Validating fixes you just applied
+    - Confirming tests pass after app restart
+    - Quick smoke check with existing tests
+  </Tab>
+  <Tab title="What happens">
+    `Rerun` follows this workflow:
+    
+    1. Uses existing test files (no regeneration)
+    2. Runs them against current app state
+    3. Reports updated results
+  </Tab>
+</Tabs>
+
+<Card title="Rerun Tests" href="/mcp/core/rerun-tests" icon="forward">
+  Learn more about how to rerun existing tests
+</Card>
+
+## Healing
+
+Automatic or semi-automatic **fixes to brittle tests that fail due to non-functional changes** (not real bugs), making tests robust without masking actual product issues.
+
+<Card>
+```mermaid
+flowchart LR
+    A[Detect] --> B[Classify]
+    B --> C[Propose Fix]
+    C --> D[Apply]
+    D --> E[Verify]
+```
+</Card>
+
+<Tabs>
+  <Tab title="Common healing scenarios">
+    `Healing` addresses these common test fragility issues:
+    
+    - **UI Selectors:** Updates when element IDs/classes change (e.g., `#login-btn` → `[data-testid="login"]`)
+    - **Timing Issues:** Adjusts waits for slow-loading components or animations
+    - **Test Data:** Updates fixtures when data schemas change
+    - **Environment:** Corrects port mismatches, missing credentials, or configuration issues
+    - **API Contracts:** Tightens schema assertions to match actual API responses
+  </Tab>
+  <Tab title="How it works">
+    `Healing` follows this workflow:
+    
+    1. **Detect:** TestSprite identifies test fragility (not a product bug)
+    2. **Classify:** Determines if it's a selector drift, timing mismatch, env issue, or contract violation
+    3. **Propose Fix:** Generates a safe fix (e.g., new selector, longer wait, updated fixture)
+    4. **Apply:** Automatically applies if low-risk, or asks for approval for larger changes
+    5. **Verify:** Reruns tests to validate the fix worked
+  </Tab>
+    <Tab title="Example">
+    Here's an example of how healing works:
+    
+    ```
+    Test failed: Login button selector outdated
+    Healing: Updated selector from #login-btn to [data-testid="login"]
+    Status: Auto-applied, test now passing
+    ```
+  </Tab>
+</Tabs>
+
+### What Healing Is vs. What It's Not
+
+Understanding the difference between healing and masking bugs is crucial. Healing only fixes test fragility caused by non-functional changes, never real product issues.
+
+<div className="full-width-table" style={{ gridTemplateColumns: '1fr 1fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>What Healing is Not</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>What Healing Is</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><Icon icon="x" size={16} color="#ef4444" /> Masking real product bugs</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><Icon icon="check" size={16} color="#22c55e" /> Making tests resilient to non-functional code changes</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><Icon icon="x" size={16} color="#ef4444" /> Making tests pass when they should fail</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><Icon icon="check" size={16} color="#22c55e" /> Reducing test maintenance busywork</div>
+</div>
+
+## Test Scope
+
+Defines **which parts of your codebase** TestSprite will analyze and test.
+
+ <Frame>
+  <img src="../../images/scope_setup.png"  alt="scope" />
+</Frame>
+
+TestSprite offers two scope options to balance between comprehensive coverage and speed. Choose based on your testing needs and development workflow.
+
+<div className="full-width-table" style={{ gridTemplateColumns: '0.8fr 1.1fr 1.1fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Features</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Codebase</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Code Diff</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>What it tests</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Tests the entire project</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Tests only changed files/features (based on git diff)</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Use cases</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>New projects, major releases, comprehensive audits</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Feature branches, incremental development, quick validation</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Speed</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Takes longer</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Fast feedback</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Coverage</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Full coverage</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Recent changes only</div>
+</div>
+
+<Info>Set the scope in the bootstrapping page when you call the `testsprite_bootstrap_tests` tool. </Info>
+
+<Card title="MCP Tools Reference" href="/mcp/core/tools" icon="wrench">
+  Learn more about TestSprite MCP tools and commands
+</Card>
+
+## PRD & Normalized PRD
+
+TestSprite uses Product Requirements Documents (PRD) to understand your project and generate appropriate tests. While you can provide PRDs in any format, TestSprite converts them into a standardized Normalized PRD format for consistent test generation.
+
+### PRD (Product Requirements Document)
+Your **original documentation** describing what your product should do.
+
+ <Frame>
+  <img src="../../images/term-prd.png"  alt="prd" />
+</Frame>
+
+**Can be:**
+- Informal notes or README
+- Formal specification documents
+- Jira tickets or user stories
+- Design docs or wikis
+
+### Normalized PRD
+TestSprite's **standardized Product Requirements Document format** that ensures consistent and smooth test generation regardless of your original PRD style.
+
+ <Frame>
+  <img src="../../images/term-normalized.png"  alt="normalized" />
+</Frame>
+
+<Tabs>
+  <Tab title="What's in it">
+    The `Normalized PRD` contains structured information:
+    
+    - Product overview and goals
+    - Core features with acceptance criteria
+    - User flows and validation rules
+    - Technical context from code analysis
+  </Tab>
+  <Tab title="Why it matters">
+    Understanding why `Normalized PRD` exists:
+    
+    - Your PRD might be in any format
+    - TestSprite converts it to a structured format
+    - This normalized PRD drives test plan generation
+  </Tab>
+</Tabs>
+
+<Tip>TestSprite **invented** this format to make test generation predictable across any project type.</Tip>
+
+<Card title="Create Tests for New Projects" href="/mcp/core/create-tests-new-project" icon="bars-progress">
+  Learn how to create tests using PRD and Normalized PRD
+</Card>
+
+## Test Plan
+
+A **structured list** of test cases generated by TestSprite based on your normalized PRD and code analysis.
+
+ <Frame>
+  <img src="../../images/term-testplan.png"  alt="plan" />
+</Frame>
+
+<Tabs>
+  <Tab title="Example">
+    Here's an example of a test plan entry:
+    
+    ```json
+    {
+      "id": "TC001",
+      "title": "Login with valid credentials",
+      "category": "functional",
+      "priority": "High",
+      "steps": [...]
+    }
+    ```
+  </Tab>
+  <Tab title="Contains">
+    A `Test Plan` typically includes:
+    
+    - Test case IDs (TC001, TC002, etc.)
+    - Descriptions and steps
+    - Categories (functional, security, UI, etc.)
+    - Priorities (High, Medium, Low)
+    - Expected outcomes
+  </Tab>
+</Tabs>
+
+<Info>Plans are saved as `frontend_test_plan.json` or `backend_test_plan.json`.</Info>
+
+## Where to Learn More
+
+<Columns cols={2}>
+  <Card title="Test Types & Lifecycle" href="/mcp/concepts/test-type-lifecycle">
+    Understand what we test and when
+  </Card>
+  <Card title="Healing & Observability" href="/mcp/concepts/healing-observability">
+    Deep dive into auto-healing
+  </Card>
+  <Card title="MCP Tools Reference" href="/mcp/core/tools">
+    Technical tool parameters
+  </Card>
+  <Card title="Create Tests for New Change" href="/mcp/core/create-tests-new-feature">
+    Practical diff-scope usage
+  </Card>
+</Columns>
+

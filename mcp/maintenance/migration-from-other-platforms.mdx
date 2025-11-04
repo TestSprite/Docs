@@ -1,0 +1,37 @@
+---
+title: "Import Existing Tests"
+description: "Migrate your existing tests from other testing platforms to TestSprite."
+icon: "arrow-right-arrow-left"
+---
+
+## The Simple Path
+Already have tests (e.g., Playwright, Cypress, Jest, Postman collections)? You don’t need to rewrite them.
+
+1) Add to Test Plan
+- Include your existing tests in the TestSprite test plan alongside generated ones
+- Keep the same IDs/titles where possible for clarity
+
+2) Regenerate Test Code
+- Regenerate the test code to incorporate the imported tests
+- TestSprite will reference them during code generation and execution
+
+3) Run
+- Execute like any other plan
+- Results and reports will include both generated and imported tests
+
+## Example
+```text
+Import these UI tests and add them to the TestSprite frontend testing plan, 
+then regenerate the test code and run it.
+```
+
+## Notes
+- Keep imported tests in your repo so the runner can access them
+- If needed, map environment variables/credentials in the TestSprite portal
+- Use consistent naming so maintenance is straightforward
+
+## Related
+- [Create Tests for New Projects](/mcp/core/create-tests-new-project)
+- [Create Tests for New Change](/mcp/core/create-tests-new-feature)
+- [Modify or Update Tests](/mcp/core/modify-update-tests)
+- [MCP Tools Reference](/mcp/core/tools)

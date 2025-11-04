@@ -54,65 +54,115 @@
     },
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "MCP Server",
         "icon": "square-terminal",
         "groups": [
           {
             "group": "Getting Started",
             "pages": [
-              "introduction",
-              "get-started/Quick Start"
-            ]
-          },
-          {
-            "group": "MCP Server (IDE Integration)",
-            "pages": [
-              "mcp/overview",
-              "mcp/installation",
-              {
-                "group": "Tutorials",
-                "icon": "book",
-                "pages": [
-                  "tutorials/first-test",
-                  "tutorials/test-maintenance",
-                  "tutorials/demo-examples"
-                ]
-              },
-              {
-                "group": "Troubleshooting",
-                "icon": "bug",
-                "pages": [
-                  "troubleshooting/installation-issues",
-                  "troubleshooting/ide-configuration-issues",
-                  "troubleshooting/application-detection-issues",
-                  "troubleshooting/test-execution-issues"
-                ]
-              },
+              "mcp/getting-started/introduction",
+              "mcp/getting-started/overview",
               {
                 "group": "Concepts",
-                "icon": "route",
+                "icon": "book",
                 "pages": [
-                  "concepts/workflow",
-                  "concepts/tools"
+                  "mcp/concepts/key-terms",
+                  "mcp/concepts/test-type-lifecycle",
+                  "mcp/concepts/healing-observability"
                 ]
-              }
+              },
+              "mcp/getting-started/installation",
+              "mcp/getting-started/first-test"
+
             ]
           },
           {
-            "group": "Web Portal",
+            "group": "Core",
             "pages": [
-              "web-portal/overview",
-              "web-portal/api-testing",
-              "web-portal/ui-testing",
-              "web-portal/test-lists",
-              "web-portal/monitoring",
-              "web-portal/api-keys"
+              {
+                "group": "Create Tests",
+                "icon": "folder-plus",
+                "pages": [
+                  "mcp/core/create-tests-new-project",
+                  "mcp/core/create-tests-new-feature"
+                ]
+              },
+              "mcp/core/add-extra-tests",
+              "mcp/core/modify-update-tests",
+              "mcp/core/rerun-tests",
+              "mcp/core/regenerate-tests",
+              "mcp/core/deploy-to-production",
+              "mcp/core/continuous-monitoring",
+              "mcp/core/tools"
             ]
           },
           {
-            "group": "Support",
+            "group": "Maintenance",
             "pages": [
-              "faq"
+              "mcp/maintenance/test-maintenance",
+              "mcp/maintenance/migration-from-other-platforms",
+              "mcp/maintenance/cost-performance",
+              "mcp/maintenance/security-compliance"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "mcp/troubleshooting/installation-issues",
+              "mcp/troubleshooting/ide-configuration-issues",
+              "mcp/troubleshooting/application-detection-issues",
+              "mcp/troubleshooting/test-execution-issues"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Web Portal",
+        "icon": "window-maximize",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "web-portal/getting-started/introduction",
+              "web-portal/getting-started/overview"
+            ]
+          },
+          {
+            "group": "Core",
+            "pages": [
+              "web-portal/core/api-testing",
+              "web-portal/core/ui-testing"
+            ]
+          },
+          {
+            "group": "Maintenance",
+            "pages": [
+              "web-portal/maintenance/test-lists",
+              "web-portal/maintenance/monitoring"
+            ]
+          },
+          {
+            "group": "Admin",
+            "pages": [
+              "web-portal/admin/api-keys"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Learn",
+        "icon": "graduation-cap",
+        "groups": [
+          {
+            "group": "Examples",
+            "pages": [
+              "learn/mcp-demo"
+            ]
+          },
+          {
+            "group": "Resoures & Help",
+            "pages": [
+              "learn/faq"
             ]
           }
         ]
@@ -126,7 +176,7 @@
   "navbar": {
     "primary": {
       "type": "button",
-      "label": "Dashboard",
+      "label": "Sign In",
       "href": "https://www.testsprite.com/auth/cognito/sign-in"
     }
   },

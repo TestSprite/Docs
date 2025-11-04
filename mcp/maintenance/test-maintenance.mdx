@@ -1,0 +1,50 @@
+---
+title: "Test Maintenance"
+description: "Learn how to maintain and update your test suites over time."
+icon: "hammer"
+---
+
+## Keep Tests Healthy with Minimal Effort
+Most maintenance is already handled via healing and focused regeneration. Use this page as a hub for quick practices and links.
+
+## Essentials
+- Prefer regeneration over manual rewrites for broad changes
+- Apply auto-healing for selector drift, waits, and fixtures
+- Use diff scope to update only impacted tests
+- Keep PRD and acceptance criteria current
+
+## Shift Left (TDD with TestSprite)
+Generate and run tests while coding—even before features are complete—to reveal gaps early.
+- Use `testScope: "diff"` to target in-progress changes
+- Run small subsets frequently via `testIds`
+- Let healing suggestions guide selectors, waits, and data setup from the start
+
+Learn more: [Create Tests for New Change](/mcp/core/create-tests-new-feature)
+
+## Common Tasks
+- Update changed flows
+  - [Create Tests for New Change](/mcp/core/create-tests-new-feature)
+- Fix failing or flaky tests
+  - [Healing & Observability](/mcp/concepts/healing-observability)
+  - Rerun quickly: `testsprite_rerun_tests({ projectPath: "/abs/path" })`
+- Expand coverage
+  - [Add Extra Tests](/mcp/core/add-extra-tests)
+  - [Test Types & Lifecycle](/mcp/concepts/test-type-lifecycle)
+- Migrate existing suites
+  - [Import Existing Tests](/mcp/maintenance/migration-from-other-platforms)
+
+## Tips
+- Use semantic selectors and explicit ready states
+- Keep deterministic test data and clean state between cases
+- Commit changes frequently so diff-based updates are accurate
+- Run a small subset (by `testIds`) while iterating
+
+## Where Artifacts Live
+- Results, PRD, plans, and logs under `testsprite_tests/`
+- Reports: Markdown/HTML plus machine-readable JSON for automation
+
+## Related
+- [Create Tests for New Projects](/mcp/core/create-tests-new-project)
+- [Modify or Update Tests](/mcp/core/modify-update-tests)
+- [MCP Testing Workflow](/mcp/concepts/workflow)
+- [MCP Tools Reference](/mcp/core/tools)
