@@ -4,29 +4,29 @@ description: "Organize test collections, track execution history, and manage tes
 icon: "list"
 ---
 
-
-## What are Test Lists?
-
 Test Lists are organized collections of test cases that help you group related tests together. Whether you're testing different features, environments, or user flows, Test Lists provide a structured way to manage your testing efforts.
+
+    <Frame>
+      <img src="../../images/test-list.png"  alt="plan" />
+    </Frame>
 
 
 
 ## Key Features
 
-<CardGroup cols={2}>
-  <Card title="Centralized Test Management" icon="chart-line">
-    View all test lists in one dashboard, track execution status across collections, search and filter by name or status, and sort by date, count, or type
-  </Card>
-  <Card title="Test Organization" icon="folder">
-    Organize Frontend Tests with browser automation, Backend Tests for API functionality, and Mixed Collections combining both test types
-  </Card>
-</CardGroup>
-
-<CardGroup cols={1}>
-  <Card title="Execution Tracking" icon="clock">
-    Track your **previous execution** status to view the test's last run with **status indicators** showing **Passed** (all tests completed successfully), **Attention** (some tests need review), or **Failed** (tests encountered errors).
-  </Card>
-</CardGroup>
+<div className="full-width-table" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Feature</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Centralized Test Management</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>View all test lists in one dashboard, track execution status across collections, search and filter by name or status, and sort by date, count, or type</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Test Organization</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Organize Frontend Tests with browser automation, Backend Tests for API functionality, and Mixed Collections combining both test types</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Execution Tracking</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Track your **previous execution** status to view the test's last run with **status indicators** showing **Passed** (all tests completed successfully), **Attention** (some tests need review), or **Failed** (tests encountered errors).</div>
+</div>
 
 
 
@@ -34,10 +34,16 @@ Test Lists are organized collections of test cases that help you group related t
 
 <Steps>
   <Step title="Navigate to Test Lists">
-    Go to Dashboard → Test Lists and click "New List" to get started
+    Go to <kbd>Dashboard</kbd> → <kbd>Test Lists</kbd> and click <kbd>New List</kbd> to get started
+    <Frame>
+      <img src="../../images/navigate-testlist.png"  alt="plan" />
+    </Frame>
   </Step>
   <Step title="Add Test Cases">
-    Create new test cases through "Create Tests", configure web application information, and let TestSprite's AI generate comprehensive test cases
+    Add test cases from existing creations in <kbd>All Test</kbd>, or create new tests by configuring web application information and letting TestSprite's AI generate comprehensive test cases
+    <Frame>
+    <img src="../../images/add-test.png"  alt="mcp intro" />
+    </Frame>
   </Step>
   <Step title="Organize and Configure">
     Name your test list descriptively, review and customize generated test cases, and maintain your test lists as needed
@@ -50,23 +56,52 @@ Test Lists are organized collections of test cases that help you group related t
 
 <Tabs>
   <Tab title="Search & Filter">
-    **Search Functionality:**
-    Search by test list name to quickly find specific collections
+      <Frame>
+      <img src="../../images/testlist-filter.png"  alt="plan" />
+    </Frame>
     
-    **Filter Options:**
-    - **All Status** - View all test lists regardless of status
-    - **Passed** - Show only successfully executed test lists
-    - **Attention** - Filter test lists needing review
-    - **Failed** - Display test lists with execution errors
+    <div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+      <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Option</div>
+      <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Search</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Search by test list name to quickly find specific collections</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>All Status</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>View all test lists regardless of status</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Passed</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Show only successfully executed test lists</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Attention</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Filter test lists needing review</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Failed</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Display test lists with execution errors</div>
+    </div>
   </Tab>
   <Tab title="Sorting Options">
-    **Test Volume Sorting:**
-    - **Total test cases** - Order by number of tests in the list
-    - **Total frontend test** - Order by frontend test count
-    - **Total backend test** - Sort by backend test count
+
+        <Frame>
+      <img src="../../images/testlist-sort.png"  alt="plan" />
+    </Frame>
     
-    **Time-Based Sorting:**
-    - **Previous execution date** - Sort by most recently executed
+    <div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+      <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Option</div>
+      <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Total test cases</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Order by number of tests in the list</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Total frontend test</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Order by frontend test count</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Total backend test</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Sort by backend test count</div>
+      
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Previous execution date</kbd></div>
+      <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Sort by most recently executed</div>
+    </div>
   </Tab>
 </Tabs>
 
@@ -80,21 +115,31 @@ Each test list displays:
 <div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
   <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Field</div>
   <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
-  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Test List Name</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Test List Name</kbd></div>
   <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Descriptive identifier for your test collection</div>
-  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Previous Execution</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Previous Execution</kbd></div>
   <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Last run date and time</div>
-  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Total Test Cases</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Total Test Cases</kbd></div>
   <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Combined count of all tests in the list</div>
-  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Total Frontend Test</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Total Frontend Test</kbd></div>
   <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Number of UI/browser tests</div>
-  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Total Backend Test</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}><kbd>Total Backend Test</kbd></div>
   <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Number of API/server tests</div>
 </div>
 
 
 ## Execution Actions
 
-- **Run Tests** - Execute all tests in the list
-- **View Results** - Review detailed test reports
-- **Delete List** - Remove test list (with confirmation)
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Action</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Run Tests</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Execute all tests in the list</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>View Results</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Review detailed test reports</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Delete List</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Remove test list (with confirmation)</div>
+</div>

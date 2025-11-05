@@ -4,26 +4,29 @@ description: "AI-powered backend testing for RESTful APIs with speed and precisi
 icon: "terminal"
 ---
 
+      <Frame>
+      <img src="../../images/backend-overview.png"  alt="plan" />
+      </Frame>
+
 
 ## Key Features
 
-<CardGroup cols={2}>
-  <Card title="Fast Setup" icon="rocket">
-    Get started quickly with minimal documentation—no extensive prompts or full codebases needed
-  </Card>
-  <Card title="Comprehensive Testing" icon="shield-check">
-    Covers functional, security, performance, error handling, and edge case testing automatically
-  </Card>
-</CardGroup>
-
-<CardGroup cols={2}>
-  <Card title="Smart Reports" icon="chart-bar">
-    Detailed outputs with error types, root causes, and recommended fixes
-  </Card>
-  <Card title="Natural Language" icon="message">
-    Provide feedback and adjustments using plain English—no technical commands required
-  </Card>
-</CardGroup>
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Feature</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Fast Setup</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Get started quickly with minimal documentation—no extensive prompts or full codebases needed</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Comprehensive Testing</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Covers functional, security, performance, error handling, and edge case testing automatically</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Smart Reports</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Detailed outputs with error types, root causes, and recommended fixes</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Natural Language</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Provide feedback and adjustments using plain English—no technical commands required</div>
+</div>
 
 ## Getting Started
 
@@ -32,25 +35,25 @@ To begin using TestSprite for back-end testing, follow these steps:
 
 ### Step 1: Set Up Your API Testing Environment
 
+      <Frame>
+      <img src="../../images/backend-create-test.png"  alt="plan" />
+      </Frame>
+
 <Steps>
   <Step title="Create New Test">
-    Navigate to [TestSprite Dashboard  <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard/testing) and click **Create a Test** or select **New Test** from the sidebar
+    Navigate to [TestSprite Dashboard  <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard/testing) and click <kbd>Create a Test</kbd> from the sidebar
   </Step>
   <Step title="Name Your Project">
     Enter a project name - you'll be automatically directed to Backend Testing
   </Step>
   <Step title="Provide API Details">
     Add your API information and natural language instructions to guide our AI testing
-  </Step>
-  <Step title="Upload Documentation (Optional)">
-    <span style={{ color: "#10A363" }}> **Upload API documentation**</span> to help our AI better understand your APIs
+    <Note> We highly recommend **upload API documentation** to help our AI better understand your APIs</Note>
+    <Frame>
+    <img src="../../images/backend-configuration.png"  alt="plan" />
+    </Frame>
   </Step>
 </Steps>
-
-<Frame>
-![Backend Feature 0](../../images/backend-feature-0.svg)
-</Frame>
-<br />
 
 <Accordion title="Example API Documentation">
 [GenRex API Reference  <Icon icon="arrow-up-right-from-square" size={12} />](https://docs.genrex.com/docs/1.0/api-reference/request-generation) - Shows how comprehensive API docs help our AI generate better tests
@@ -59,6 +62,13 @@ To begin using TestSprite for back-end testing, follow these steps:
 
 
 ### Step 2: Review Generated Test Plans
+<Info>
+You can expand each test type to view detailed scenarios and modify content directly to suit your specific needs.
+</Info>
+
+    <Frame>
+    <img src="../../images/backend-testplan.png"  alt="plan" />
+    </Frame>
 
 <Steps>
   <Step title="Review AI Generated Test Plan">
@@ -72,26 +82,19 @@ To begin using TestSprite for back-end testing, follow these steps:
 
 **AI generates these test types automatically:**
 
-<CardGroup cols={3}>
-  <Card title="Core Testing">
-    Functional testing, error handling, and response content validation
-  </Card>
-  <Card title="Security & Auth">
-    Security testing, authorization, authentication, and boundary testing
-  </Card>
-  <Card title="Performance">
-    Load testing, performance analysis, edge cases, and concurrency testing
-  </Card>
-</CardGroup>
-
-<Info>
-You can expand each test type to view detailed scenarios and modify content directly to suit your specific needs.
-</Info>
-
-<Frame>
-![Backend Feature 1](../../images/backend-feature-1.svg)
-</Frame>
-<br />
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Test Type</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Core Testing</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Functional testing, error handling, and response content validation</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Security & Auth</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Security testing, authorization, authentication, and boundary testing</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Performance</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Load testing, performance analysis, edge cases, and concurrency testing</div>
+</div>
 
 <Tip>
 **Best practice:** Select all available test cases to ensure comprehensive coverage. You can also add custom test cases using natural language.
@@ -101,9 +104,13 @@ You can expand each test type to view detailed scenarios and modify content dire
 
 ### Step 3: Run Your Tests
 
+    <Frame>
+    <img src="../../images/backend-runtest.png"  alt="plan" />
+    </Frame>
+
 <Steps>
   <Step title="Initiate Test Execution">
-    Click **Next** to start running your selected test plan
+    Click <kbd>Next</kbd> to start running your selected test plan
   </Step>
   <Step title="AI Generates & Executes">
     TestSprite automatically generates test code, executes tests, and analyzes results
@@ -114,11 +121,9 @@ You can expand each test type to view detailed scenarios and modify content dire
 
 ### Step 4: Review Test Results
 
-<br />
-
-<Frame>
-![Backend Feature 2](../../images/backend-feature-2.svg)
-</Frame>
+    <Frame>
+    <img src="../../images/backend-testresult.png"  alt="plan" />
+    </Frame>
 
 <Steps>
   <Step title="View Execution Report">
@@ -132,14 +137,16 @@ You can expand each test type to view detailed scenarios and modify content dire
 
 **Detailed Analysis for Failed Tests:**
 
-<CardGroup cols={2}>
-  <Card title="Error & Trace" icon="magnifying-glass">
-    Clear issue description and full code stack traceback showing exactly where problems occurred
-  </Card>
-  <Card title="Cause & Fix" icon="wrench">
-    AI-powered root cause analysis with suggested solutions and code snippets for quick resolution
-  </Card>
-</CardGroup>
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Feature</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Error & Trace</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Clear issue description and full code stack traceback showing exactly where problems occurred</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Cause & Fix</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>AI-powered root cause analysis with suggested solutions and code snippets for quick resolution</div>
+</div>
 
 
 
@@ -152,10 +159,10 @@ Ask questions or suggest test adjustments using natural language—no specific f
 </Info>
 
 
-<Frame>
-![Backend Feature 3](../../images/backend-feature-3.svg)
-</Frame>
-<br />
+    <Frame>
+    <img src="../../images/backend-chat.png"  alt="plan" />
+    </Frame>
+    <br />
 
 <Accordion title="Example Natural Language Request">
 ```plaintext

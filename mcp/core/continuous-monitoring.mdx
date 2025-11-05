@@ -24,25 +24,24 @@ Before setting up continuous monitoring, ensure you have:
 
 First, you need to deploy your locally created MCP tests to run against your deployed environment.
 
+        <Frame>
+        <img src="../../images/select-deploy.png"  alt="plan" />
+        </Frame>
+        <br />
+
 <Card title="Deploy Your Tests" icon="paper-plane" href="/mcp/core/deploy-to-production">
   Follow the complete deployment workflow to push your local MCP tests to the web portal and configure them to run against your deployed application.
 </Card>
 
-### Quick Deployment Summary
-
-1. Navigate to the **MCP Tests** page in the web portal
-2. Select the tests you want to deploy
-3. Click **"Deploy Tests"**
-4. Enter your deployed application URL
-5. Verify the initial test results
-
-For detailed step-by-step instructions, see the [Deploy MCP Tests](/mcp/core/deploy-to-production) guide.
-
----
 
 ## Step 2: Configure Continuous Monitoring
 
 Once your tests are deployed and running successfully against your production environment, set up automated schedules to monitor your application continuously.
+
+        <Frame>
+        <img src="../../images/monitoring-overview.png"  alt="plan" />
+        </Frame>
+        <br />
 
 <Card title="Set Up Monitoring & Scheduling" icon="chart-simple" href="/web-portal/maintenance/monitoring">
   Configure automated test execution schedules to enable 24/7 continuous monitoring of your deployed application.
@@ -50,57 +49,48 @@ Once your tests are deployed and running successfully against your production en
 
 ### Key Monitoring Features
 
-<CardGroup cols={2}>
-  <Card title="Automated Execution" icon="calendar-days">
-    Schedule tests to run daily, weekly, or monthly without manual intervention.
-  </Card>
-  <Card title="Proactive Alerts" icon="bell">
-    Receive immediate notifications when tests fail or performance degrades.
-  </Card>
-  <Card title="Historical Tracking" icon="chart-line">
-    Monitor trends and identify issues over time with detailed execution history.
-  </Card>
-  <Card title="Flexible Scheduling" icon="clock">
-    Pause, modify, or delete schedules as your monitoring needs evolve.
-  </Card>
-</CardGroup>
+Continuous monitoring provides automated test execution with comprehensive tracking and alerting capabilities. The following features help you maintain visibility into your application's health:
 
-### Quick Monitoring Setup
-
-1. Navigate to **MONITORING** in the web portal
-2. Click **"New Schedule"**
-3. Select your deployed test list
-4. Configure execution frequency (daily, weekly, monthly)
-5. Set notification preferences
-6. Activate the schedule
-
-For comprehensive monitoring configuration options, see the [Monitoring & Scheduling](/web-portal/maintenance/monitoring) guide.
-
----
+<div className="full-width-table" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Feature</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`Automated Execution`</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Schedule tests to run daily, weekly, or monthly without manual intervention.</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`Proactive Alerts`</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Receive immediate notifications when tests fail or performance degrades.</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`Historical Tracking`</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Monitor trends and identify issues over time with detailed execution history.</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>`Flexible Scheduling`</div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Pause, modify, or delete schedules as your monitoring needs evolve.</div>
+</div>
 
 ## Best Practices
 
-<Steps>
-  <Step title="Start with Stable Tests">
+<AccordionGroup>
+  <Accordion title="Start with Stable Tests">
     Ensure your tests run reliably before scheduling them. Flaky tests lead to alert fatigue and reduce confidence in your monitoring.
-  </Step>
+  </Accordion>
   
-  <Step title="Choose Appropriate Frequency">
+  <Accordion title="Choose Appropriate Frequency">
     Balance monitoring coverage with resource usage. Critical applications may need hourly checks, while others can be monitored daily or weekly.
-  </Step>
+  </Accordion>
   
-  <Step title="Configure Smart Alerts">
+  <Accordion title="Configure Smart Alerts">
     Set up notification channels that match your team's workflow. Consider using different channels for different severity levels.
-  </Step>
+  </Accordion>
   
-  <Step title="Review Results Regularly">
+  <Accordion title="Review Results Regularly">
     Even with automation, periodically review test results and execution trends to identify patterns and opportunities for improvement.
-  </Step>
+  </Accordion>
   
-  <Step title="Keep Tests Updated">
+  <Accordion title="Keep Tests Updated">
     As your application evolves, update your test schedules accordingly. Remove obsolete tests and add new ones for new features.
-  </Step>
-</Steps>
+  </Accordion>
+</AccordionGroup>
 
 <Warning>
 **Important:** Always test your monitoring setup on a non-production environment first to ensure tests run correctly and notifications work as expected.

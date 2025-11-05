@@ -8,49 +8,51 @@ icon: "money-bills"
 Keep feedback fast and costs predictable while maintaining strong coverage.
 
 ## Cost Controls
-- Scope smartly
-  - Use `testScope: "diff"` for day-to-day iteration
-  - Target subsets with `testIds` for quick loops
-- Run frequency
-  - Schedule nightly full runs; run diffs on PRs
-  - Use `rerun` to validate fixes without re-planning
-- Reports-first
-  - Review reports to avoid unnecessary re-executions
-- Artifact retention
-  - Retain only what you need (screenshots/videos) for CI retention windows
+- **Scope smartly**: Use `testScope: "diff"` for day-to-day iteration; target subsets with `testIds` for quick loops
+- **Run frequency**: Schedule nightly full runs; run diffs on PRs; use `rerun` to validate fixes without re-planning
+- **Reports-first**: Review reports to avoid unnecessary re-executions
+- **Artifact retention**: Retain only what you need (screenshots/videos) for CI retention windows
 
 ## Performance Tips
-- Local readiness
-  - Ensure apps start quickly and are reachable on the specified `localPort`
-  - Pre-warm test data or seed databases for faster setup
-- Selector stability
-  - Prefer role/label-based selectors to reduce retries and timeouts
-- Parallelization
-  - Keep tests independent for parallel execution in CI
-- Deterministic data
-  - Use stable fixtures to avoid slow flaky retries
+- **Local readiness**: Ensure apps start quickly and are reachable on the specified `localPort`; pre-warm test data or seed databases for faster setup
+- **Selector stability**: Prefer role/label-based selectors to reduce retries and timeouts
+- **Parallelization**: Keep tests independent for parallel execution in CI
+- **Deterministic data**: Use stable fixtures to avoid slow flaky retries
 
 ## Suggested Defaults
-- PRs: diff scope, targeted `testIds` on critical changes
-- Main branch: daily full run, artifact retention 7 days
-- Hotfixes: focused reruns on impacted suites
+- **PRs**: diff scope, targeted `testIds` on critical changes
+- **Main branch**: daily full run, artifact retention 7 days
+- **Hotfixes**: focused reruns on impacted suites
 
 ## Useful Flows
-- Diff-only execution
-```javascript
+
+Common code patterns for efficient test execution and cost optimization. Use these flows to target specific changes, run subsets, and quickly validate fixes without full regeneration.
+
+<CodeGroup>
+```javascript Diff-only execution
 testsprite_bootstrap_tests({ testScope: "diff", ... })
 ```
-- Subset during iteration
-```javascript
+```javascript Subset during iteration
 testsprite_generate_code_and_execute({ testIds: ["TC005", "TC010"] })
 ```
-- Rerun without re-planning
-```javascript
+```javascript Rerun without re-planning
 testsprite_rerun_tests({ projectPath: "/abs/path" })
 ```
+</CodeGroup>
 
 ## Related
-- [Test Running & Monitoring](/mcp/core/continuous-monitoring)
-- [Modify or Update Tests](/mcp/core/modify-update-tests)
-- [MCP Tools Reference](/mcp/core/tools)
-- [Healing & Observability](/mcp/concepts/healing-observability)
+
+<Columns cols={2}>
+  <Card title="Test Running & Monitoring" href="/mcp/core/continuous-monitoring">
+    Learn about continuous monitoring and test execution
+  </Card>
+  <Card title="Modify or Update Tests" href="/mcp/core/modify-update-tests">
+    Learn how to modify and update existing tests
+  </Card>
+  <Card title="MCP Tools Reference" href="/mcp/core/tools">
+    Reference guide for MCP tools and commands
+  </Card>
+  <Card title="Healing & Observability" href="/mcp/concepts/healing-observability">
+    Understand automatic healing and test observability
+  </Card>
+</Columns>

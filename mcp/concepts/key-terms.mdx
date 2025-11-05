@@ -5,7 +5,7 @@ description: "Essential TestSprite concepts explained simply."
 
 ## Generate & Regenerate
 
-These actions control how TestSprite creates and updates your test suite. `Generate` creates new tests for the first time, while `Regenerate` recreates existing tests from scratch when your application or requirements change significantly.
+These actions control how TestSprite creates and updates your test suite. <kbd>Generate</kbd> creates new tests for the first time, while <kbd>Regenerate</kbd> recreates existing tests from scratch when your application or requirements change significantly.
 
 ### Generate
 Create tests for the **first time** based on your PRD and project.
@@ -23,14 +23,14 @@ Create tests for the **first time** based on your PRD and project.
     ```
   </Tab>
   <Tab title="When to use">
-    Use `Generate` when you need to create tests for the first time:
+    Use <kbd>Generate</kbd> when you need to create tests for the first time:
     
     - Starting with a new project
     - Adding tests to an existing project without tests
     - Creating initial test coverage
   </Tab>
   <Tab title="What happens">
-    `Generate` follows this workflow:
+    <kbd>Generate</kbd> follows this workflow:
     
     1. Analyzes your code
     2. Creates test plans
@@ -56,14 +56,14 @@ Create tests for the **first time** based on your PRD and project.
     ```
   </Tab>
   <Tab title="When to use">
-    Use `Regenerate` when you need to recreate tests from scratch:
+    Use <kbd>Regenerate</kbd> when you need to recreate tests from scratch:
     
     - Your app changed significantly (new features, refactored flows)
     - Test plans need updating to match new requirements
     - You want fresh test coverage reflecting current state
   </Tab>
   <Tab title="What happens">
-    `Regenerate` follows this workflow:
+    <kbd>Regenerate</kbd> follows this workflow:
     
     1. Re-analyzes your code
     2. Updates test plans
@@ -78,7 +78,7 @@ Create tests for the **first time** based on your PRD and project.
 
 ## Run & Rerun
 
-These actions control how TestSprite executes your tests. `Run` executes newly generated tests for the first time, while `Rerun` executes previously generated tests again without regenerating them.
+These actions control how TestSprite executes your tests. <kbd>Run</kbd> executes newly generated tests for the first time, while <kbd>Rerun</kbd> executes previously generated tests again without regenerating them.
 
 ### Run
 **Execute newly generated tests** for the first time.
@@ -90,14 +90,14 @@ These actions control how TestSprite executes your tests. `Run` executes newly g
 
 <Tabs>
   <Tab title="When to use">
-    Use `Run` when executing tests for the first time:
+    Use <kbd>Run</kbd> when executing tests for the first time:
     
     - After generating tests
     - Initial validation of your application
     - First-time test execution
   </Tab>
   <Tab title="What happens">
-    `Run` follows this workflow:
+    <kbd>Run</kbd> follows this workflow:
     
     1. Executes generated test files
     2. Collects results and artifacts
@@ -122,14 +122,14 @@ Execute **previously generated tests** again without changing them.
     ```
   </Tab>
   <Tab title="When to use">
-    Use `Rerun` when executing existing tests again:
+    Use <kbd>Rerun</kbd> when executing existing tests again:
     
     - Validating fixes you just applied
     - Confirming tests pass after app restart
     - Quick smoke check with existing tests
   </Tab>
   <Tab title="What happens">
-    `Rerun` follows this workflow:
+    <kbd>Rerun</kbd> follows this workflow:
     
     1. Uses existing test files (no regeneration)
     2. Runs them against current app state
@@ -157,7 +157,7 @@ flowchart LR
 
 <Tabs>
   <Tab title="Common healing scenarios">
-    `Healing` addresses these common test fragility issues:
+    <kbd>Healing</kbd> addresses these common test fragility issues:
     
     - **UI Selectors:** Updates when element IDs/classes change (e.g., `#login-btn` → `[data-testid="login"]`)
     - **Timing Issues:** Adjusts waits for slow-loading components or animations
@@ -166,7 +166,7 @@ flowchart LR
     - **API Contracts:** Tightens schema assertions to match actual API responses
   </Tab>
   <Tab title="How it works">
-    `Healing` follows this workflow:
+    <kbd>Healing</kbd> follows this workflow:
     
     1. **Detect:** TestSprite identifies test fragility (not a product bug)
     2. **Classify:** Determines if it's a selector drift, timing mismatch, env issue, or contract violation
@@ -258,7 +258,7 @@ TestSprite's **standardized Product Requirements Document format** that ensures 
 
 <Tabs>
   <Tab title="What's in it">
-    The `Normalized PRD` contains structured information:
+    The <kbd>Normalized PRD</kbd> contains structured information:
     
     - Product overview and goals
     - Core features with acceptance criteria
@@ -266,7 +266,7 @@ TestSprite's **standardized Product Requirements Document format** that ensures 
     - Technical context from code analysis
   </Tab>
   <Tab title="Why it matters">
-    Understanding why `Normalized PRD` exists:
+    Understanding why <kbd>Normalized PRD</kbd> exists:
     
     - Your PRD might be in any format
     - TestSprite converts it to a structured format
@@ -303,7 +303,7 @@ A **structured list** of test cases generated by TestSprite based on your normal
     ```
   </Tab>
   <Tab title="Contains">
-    A `Test Plan` typically includes:
+    A <kbd>Test Plan</kbd> typically includes:
     
     - Test case IDs (TC001, TC002, etc.)
     - Descriptions and steps
