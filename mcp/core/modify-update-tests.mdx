@@ -14,17 +14,24 @@ Use this guide when your app changes and existing tests need updates: new UI str
 
 ## Typical Workflows
 
-### 1) Let the Agent Regenerate What Changed
+### Step 1: Let the Agent Regenerate What Changed
 Regenerates plans and tests based on current code and PRD.
-```text
-Refresh tests for the updated checkout and auth flows.
-```
+
+ <Frame>
+  <img src="../../images/bootstrap-modify.png"  alt="prd" />
+</Frame>
+
 Steps:
 1. Bootstrap in `diff` scope
 2. Recreate test plans (frontend/backend as needed)
 3. Generate and execute
 
-```javascript
+<CodeGroup>
+```text Example Prompt
+Refresh tests for the updated checkout and auth flows.
+```
+
+```javascript Expandable Tool Calls
 testsprite_bootstrap_tests({
   localPort: 5173,
   type: "frontend",
@@ -43,19 +50,32 @@ testsprite_generate_code_and_execute({
   additionalInstruction: "Focus on updated modules"
 })
 ```
+</CodeGroup>
 
-### 2) Use Auto-Healing Suggestions
+### Step 2: Use Auto-Healing Suggestions
 For selector drift, timing, or test-data issues, apply safe healing.
-- Review recommendations in the report under `testsprite_tests/`
-- Accept proposed edits in your IDE when prompted
-- Rerun to validate
 
-### 3) Manually Edit and Rerun a Subset
+ <Frame>
+  <img src="../../images/healing-suggestion.png"  alt="prd" />
+</Frame>
+
+1. Review recommendations in the report under `testsprite_tests/`
+2. Accept proposed edits in your IDE when prompted
+3. Rerun to validate
+
+### Step 3: Manually Edit and Rerun a Subset
 When only a few tests need tweaks.
-```text
+
+ <Frame>
+  <img src="../../images/modify-subset.png"  alt="prd" />
+</Frame> 
+
+<CodeGroup>
+```text Example Prompt
 Run TC005 and TC006 only after I fix the locators.
 ```
-```javascript
+
+```javascript Tool Call
 testsprite_generate_code_and_execute({
   projectName: "your-project",
   projectPath: "/absolute/path/to/project",
@@ -63,6 +83,7 @@ testsprite_generate_code_and_execute({
   additionalInstruction: "Use stable role-based selectors"
 })
 ```
+</CodeGroup>
 
 ## Rerun Previously Generated Tests
 Use rerun to validate fixes without re-planning.
@@ -73,13 +94,35 @@ testsprite_rerun_tests({
 ```
 
 ## Best Practices
-- Keep PRD and acceptance criteria in sync with product decisions
-- Prefer semantic selectors and explicit waits
-- Commit changes so diff-based regeneration stays accurate
-- Use small targeted reruns for fast iteration
 
-## Related
-- [Create Tests for New Change](/mcp/core/create-tests-new-feature)
-- [Create Tests for New Projects](/mcp/core/create-tests-new-project)
-- [Healing & Observability](/mcp/concepts/healing-observability)
-- [MCP Tools Reference](/mcp/core/tools)
+<AccordionGroup>
+  <Accordion title="Sync PRD with Product Decisions">
+    Keep PRD and acceptance criteria in sync with product decisions
+  </Accordion>
+  <Accordion title="Use Semantic Selectors">
+    Prefer semantic selectors and explicit waits
+  </Accordion>
+  <Accordion title="Commit Changes Regularly">
+    Commit changes so diff-based regeneration stays accurate
+  </Accordion>
+  <Accordion title="Targeted Reruns for Speed">
+    Use small targeted reruns for fast iteration
+  </Accordion>
+</AccordionGroup>
+
+## Next Step
+
+<Columns cols={2}>
+  <Card title="Create Tests for New Change" href="/mcp/core/create-tests-new-feature">
+    Test diff-scoped changes
+  </Card>
+  <Card title="Create Tests for New Projects" href="/mcp/core/create-tests-new-project">
+    Full codebase testing workflow
+  </Card>
+  <Card title="Healing & Observability" href="/mcp/concepts/healing-observability">
+    Learn about auto-healing
+  </Card>
+  <Card title="MCP Tools Reference" href="/mcp/core/tools">
+    Explore all available tools
+  </Card>
+</Columns>

@@ -173,6 +173,44 @@
     "light": "/logo/light-mode.svg",
     "dark": "/logo/dark-mode.svg"
   },
+  "redirects": [
+    {
+      "source": "/introduction",
+      "destination": "/mcp/getting-started/introduction"
+    },
+    {
+      "source": "/mcp/overview",
+      "destination": "/mcp/getting-started/overview"
+    },
+    {
+      "source": "/web-portal/overview",
+      "destination": "/web-portal/getting-started/overview"
+    },
+    {
+      "source": "/mcp/installation",
+      "destination": "/mcp/getting-started/installation"
+    },
+    {
+      "source": "/web-portal/ui-testing",
+      "destination": "/web-portal/core/ui-testing"
+    },
+    {
+      "source": "/web-portal/api-keys",
+      "destination": "/web-portal/admin/api-keys"
+    },
+    {
+      "source": "/concepts/tools",
+      "destination": "/mcp/core/tools"
+    },
+    {
+      "source": "/tutorials/demo-examples",
+      "destination": "/learn/mcp-demo"
+    },
+    {
+      "source": "/web-portal/monitoring",
+      "destination": "/web-portal/maintenance/monitoring"
+    }
+  ],
   "navbar": {
     "primary": {
       "type": "button",

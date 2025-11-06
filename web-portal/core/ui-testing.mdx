@@ -4,34 +4,34 @@ description: "AI-powered UI testing for web applications with comprehensive user
 icon: "window-maximize"
 ---
 
+      <Frame>
+      <img src="../../images/frontend-overview.png"  alt="plan" />
+      </Frame>
+
 ### Key Features
 
-<CardGroup cols={2}>
-  <Card title="Fast Setup" icon="rocket">
-    Get started in minutes with minimal configuration. Just provide your website URLs and let our AI agent handle the rest
-  </Card>
-  <Card title="AI-Generated Test Cases" icon="brain">
-    Dynamically creates intelligent test plans tailored to your product's content and edge cases with full customization control
-  </Card>
-</CardGroup>
-
-<CardGroup cols={2}>
-  <Card title="Smart Video Playback" icon="play">
-    Every interaction is recorded and replayable—see exactly how tests run and spot UI issues visually
-  </Card>
-  <Card title="Live Test Preview" icon="eye">
-    Watch test execution unfold in real-time to catch potential issues instantly
-  </Card>
-</CardGroup>
-
-<CardGroup cols={2}>
-  <Card title="Actionable Reports" icon="chart-bar">
-    Detailed execution reports with error analysis, root cause identification, and AI-suggested fixes
-  </Card>
-  <Card title="Natural Language Control" icon="message">
-    Refine tests using plain English—no code required for tweaking scenarios or adding edge cases
-  </Card>
-</CardGroup>
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 2fr' }}>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Feature</div>
+  <div className="table-header" style={{ padding: '12px', fontSize: '14px' }}>Description</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Fast Setup</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Get started in minutes with minimal configuration. Just provide your website URLs and let our AI agent handle the rest</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>AI-Generated Test Cases</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Dynamically creates intelligent test plans tailored to your product's content and edge cases with full customization control</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Smart Video Playback</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Every interaction is recorded and replayable—see exactly how tests run and spot UI issues visually</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Live Test Preview</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Watch test execution unfold in real-time to catch potential issues instantly</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}><kbd>Actionable Reports</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Detailed execution reports with error analysis, root cause identification, and AI-suggested fixes</div>
+  
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}><kbd>Natural Language Control</kbd></div>
+  <div className="table-cell" style={{ padding: '12px', fontSize: '14px' }}>Refine tests using plain English—no code required for tweaking scenarios or adding edge cases</div>
+</div>
 
 <Info>
 **Bonus:** TestSprite automatically generates reusable Python + Playwright test code perfect for CI/CD pipelines and regression testing.
@@ -46,12 +46,12 @@ To begin using TestSprite for front-end testing, follow these steps:
 
 ### Step 1: Set Up Your Front-End Testing Environment
 <br />
-<Frame>
-![Frontend Feature 1](../../images/fr-step1.svg)
-</Frame>
+      <Frame>
+      <img src="../../images/frontend-configuration.png"  alt="plan" />
+      </Frame>
 <Steps>
   <Step title="Access TestSprite Dashboard">
-    Log in to your TestSprite account and click **Create a Test** from the Home section
+    Navigate to [TestSprite Dashboard  <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard/testing) and click <kbd>Create a Test</kbd> from the sidebar
   </Step>
   <Step title="Enter Application Details">
     Provide your web application URL and optional authentication credentials
@@ -77,9 +77,9 @@ To begin using TestSprite for front-end testing, follow these steps:
 
 ### Step 2: Configure Test Plans
 <br />
-<Frame>
-![Frontend Feature 2](../../images/fr-step2.svg)
-</Frame>
+      <Frame>
+      <img src="../../images/frontend-testplan.png"  alt="plan" />
+      </Frame>
 
 <Steps>
   <Step title="Review AI-Generated Test Plan">
@@ -111,9 +111,14 @@ Our AI may further refine test plans after performing real-time analysis of your
 
 ### Step 3: Run Your Tests
 
+
+    <Frame>
+    <img src="../../images/frontend-runtest.png"  alt="plan" />
+    </Frame>
+
 <Steps>
   <Step title="Start Test Execution">
-    Click **Next** to begin generating and executing your selected test cases
+    Click <kbd>Next</kbd> to begin generating and executing your selected test cases
   </Step>
   <Step title="Monitor Web Preview">
     Watch real-time test execution through the Web Preview feature
@@ -128,9 +133,9 @@ Our AI may further refine test plans after performing real-time analysis of your
 ### Step 4: Review Test Results
 
 <br />
-<Frame>
-![Frontend Feature 3](../../images/fr-step3.svg)
-</Frame>
+    <Frame>
+    <img src="../../images/frontend-testresult.png"  alt="plan" />
+    </Frame>
 
 <Steps>
   <Step title="Access Detailed Report">
@@ -148,7 +153,11 @@ Our AI may further refine test plans after performing real-time analysis of your
 ### Web Preview for Context
 
 
-TestSprite includes a Web Preview feature that allows you to visualize the testing process:
+TestSprite includes a Web Preview feature that allows you to visualize the testing process
+
+    <Frame>
+    <img src="../../images/frontend-preview.png"  alt="plan" />
+    </Frame>
 
 - Watch as each element is interacted with on your web page
 - Understand how the page responds to various actions  
@@ -159,20 +168,21 @@ TestSprite includes a Web Preview feature that allows you to visualize the testi
 
 Refine tests using plain English—no technical configuration required.
 
-<Frame>
-![Frontend Feature 4](../../images/fr-step4.svg)
-</Frame>
+    <Frame>
+    <img src="../../images/frontend-chat.png"  alt="plan" />
+    </Frame>
 
 
-**How it works:**
-1. Edit the test description in plain language
-2. TestSprite automatically regenerates the test
+<Tabs>
+  <Tab title="How it works">
+    1. Edit the test description in plain language
+    2. TestSprite automatically regenerates the test
+  </Tab>
+  <Tab title="Example">
+    ```
+    Original: "Test login functionality"
 
-
-**Example:**
-
-```
-Original: "Test login functionality"
-
-Refined: "Ensure the Sign In link directs users to the login page and guides them to their dashboard after successful authentication."
-```
+    Refined: "Ensure the Sign In link directs users to the login page and guides them to their dashboard after successful authentication."
+    ```
+  </Tab>
+</Tabs>

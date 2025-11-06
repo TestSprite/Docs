@@ -7,31 +7,53 @@ icon: "arrow-right-arrow-left"
 ## The Simple Path
 Already have tests (e.g., Playwright, Cypress, Jest, Postman collections)? You don’t need to rewrite them.
 
-1) Add to Test Plan
-- Include your existing tests in the TestSprite test plan alongside generated ones
-- Keep the same IDs/titles where possible for clarity
+<Steps>
+  <Step title="Add to Test Plan">
+    Include your existing tests in the TestSprite test plan alongside generated ones
+    <Info>Keep the same IDs/titles where possible for clarity</Info>
+    <Frame>
+      <img src="../../images/frontend-json.png"  alt="plan" />
+    </Frame>
+  </Step>
+  <Step title="Regenerate Test Code">
+    Regenerate the test code to incorporate the imported tests. TestSprite will reference them during code generation and execution
+    ```text Example Prompt
+    Import these UI tests and add them to the TestSprite frontend testing plan, 
+    then regenerate the test code and run it.
+    ```
+  </Step>
+  <Step title="Run">
+    Execute like any other plan. Results and reports will include both generated and imported tests
+  </Step>
+</Steps>
 
-2) Regenerate Test Code
-- Regenerate the test code to incorporate the imported tests
-- TestSprite will reference them during code generation and execution
+## Best Practices
 
-3) Run
-- Execute like any other plan
-- Results and reports will include both generated and imported tests
-
-## Example
-```text
-Import these UI tests and add them to the TestSprite frontend testing plan, 
-then regenerate the test code and run it.
-```
-
-## Notes
-- Keep imported tests in your repo so the runner can access them
-- If needed, map environment variables/credentials in the TestSprite portal
-- Use consistent naming so maintenance is straightforward
+<AccordionGroup>
+  <Accordion title="Keep Tests in Repository">
+    Keep imported tests in your repo so the runner can access them
+  </Accordion>
+  <Accordion title="Map Environment Variables">
+    If needed, map environment variables/credentials in the TestSprite portal
+  </Accordion>
+  <Accordion title="Use Consistent Naming">
+    Use consistent naming so maintenance is straightforward
+  </Accordion>
+</AccordionGroup>
 
 ## Related
-- [Create Tests for New Projects](/mcp/core/create-tests-new-project)
-- [Create Tests for New Change](/mcp/core/create-tests-new-feature)
-- [Modify or Update Tests](/mcp/core/modify-update-tests)
-- [MCP Tools Reference](/mcp/core/tools)
+
+<Columns cols={2}>
+  <Card title="Create Tests for New Projects" href="/mcp/core/create-tests-new-project">
+    Learn how to create tests for new projects
+  </Card>
+  <Card title="Create Tests for New Change" href="/mcp/core/create-tests-new-feature">
+    Learn how to create tests for new features and changes
+  </Card>
+  <Card title="Modify or Update Tests" href="/mcp/core/modify-update-tests">
+    Learn how to modify and update existing tests
+  </Card>
+  <Card title="MCP Tools Reference" href="/mcp/core/tools">
+    Reference guide for MCP tools and commands
+  </Card>
+</Columns>
