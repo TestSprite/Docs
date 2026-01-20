@@ -44,19 +44,28 @@ Follow the instructions for your specific client to add the TestSprite MCP serve
 <Tabs>
 <Tab title="Trae">
 
+1. Get your [**API key**](#get-your-api-key). 
+2. In Trae, click `Setting` icon at the top of IDE.
   <Frame>
     <img src="../../images/trae.png"  alt="trae" />
   </Frame>
-
-1. Get your [**API key**](#get-your-api-key). 
-2. In Trae, navigate to `AI Sidebar > AI Management`.
-3. Select `MCP > Add > Add from Marketplace`.
+3. Select `MCP` in Setting page's left sidebar.
+  <Frame>
+    <img src="../../images/trae-mcp.png"  alt="trae" />
+  </Frame>
+4. Select `Add > Add from Marketplace` in Setting page's left sidebar.
+  <Frame>
+    <img src="../../images/trae-add.png"  alt="trae" />
+  </Frame>
 4. Search for **TestSprite** and add to your MCP list.
   <Frame>
     <img src="../../images/trae-marketplace.png"  alt="trae" />
   </Frame>
 5. **Enter your API key** in Trae and hit **Confirm**
-6. Select **Builder with MCP** and start testing.
+6. If you are in Trae IDE mode, select **Builder with MCP** in editor’s agent panel and start testing.
+  <Frame>
+    <img src="../../images/trae-builderwithmcp.png"  alt="trae" />
+  </Frame>
 </Tab>
 
 <Tab title="Cursor">
@@ -146,6 +155,38 @@ To ensure full functionality of TestSprite MCP Server in Cursor:
 
        <Warning>Installing the MCP server this way adds TestSprite only to Claude Code under the **current project directory**. If you're using Claude Code in another project directory, you'll need to add the MCP server again. For installing the MCP server under different scopes (e.g. global), refer to the [Claude Code MCP documentation <Icon icon="arrow-up-right-from-square" size={12} />](https://docs.anthropic.com/en/docs/claude-code/mcp)</Warning>
 
+
+
+  </Tab>
+
+  <Tab title="Antigravity">
+  1. **Open** the MCP store via the `...` dropdown at the top of the editor's agent panel.
+  <Frame>
+  <img src="../../images/Antigravity-mcp.png"  alt="Cursor Success" />
+  </Frame>
+  2. **Click** on **"Manage MCP Servers"**.
+  <Frame>
+  <img src="../../images/Antigravity-mcp-server.png"  alt="Cursor Success" />
+  </Frame>
+  3. **Click** on **"View raw config"**.
+  <Frame>
+  <img src="../../images/Antigravity-raw-config.png"  alt="Cursor Success" />
+  </Frame>
+  4. **Add** the following configuration to `mcp_config.json`:
+
+     ```json icon="code" Antigravity Configuration
+     {
+       "mcpServers": {
+         "TestSprite": {
+           "command": "npx",
+           "args": ["@testsprite/testsprite-mcp@latest"],
+           "env": {
+             "API_KEY": "your-api-key"
+           }
+         }
+       }
+     }
+     ```
 
 
   </Tab>
