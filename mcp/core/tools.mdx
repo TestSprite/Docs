@@ -5,7 +5,7 @@ icon: "wrench"
 ---
 
 ## Core Tools
-TestSprite MCP Server provides **7 core tools** that work together to deliver comprehensive automated testing. Your AI assistant uses these tools automatically when you request testing.
+TestSprite MCP Server provides **8 core tools** that work together to deliver comprehensive automated testing. Your AI assistant uses these tools automatically when you request testing.
 <AccordionGroup>
   <Accordion title="testsprite_bootstrap_tests">
     **Purpose:** Initialize testing environment and configuration
@@ -192,6 +192,29 @@ TestSprite MCP Server provides **7 core tools** that work together to deliver co
     - Creates comprehensive test reports
   </Accordion>
 
+  <Accordion title="testsprite_open_test_result_dashboard">
+    **Purpose:** Reopen the test result dashboard to review and edit past test runs
+
+    **Parameters:** None
+
+    **Usage:**
+    ```javascript
+    testsprite_open_test_result_dashboard()
+    ```
+
+    **Response:**
+    Opens the full dashboard view showing:
+    - Previously established test suite and its result
+    - Execution recordings from previous runs
+    - Step-by-step breakdowns for each test case
+
+    **What it does:**
+    - Reopens the live progress dashboard on-demand
+    - Lets you browse, filter, and sort all past test runs
+    - Allows in-place editing of any existing test case
+    - Enables re-running updated tests with your changes
+  </Accordion>
+
   <Accordion title="testsprite_rerun_tests (beta)">
     **Purpose:** Rerun the previously generated test cases
 
@@ -242,8 +265,9 @@ graph TD
     H --> I[Generate Test Code]
     I --> J[Execute Tests]
     J --> K[Results & Analysis]
-    K --> L[IDE Fixes Issues]
-    L --> M[Rerun the tests and check the fixes]
+    K --> L[Modify Tests if Needed]
+    L --> M[IDE Fixes Issues]
+    M --> N[Rerun the tests and check the fixes]
 ```
 </Card>
 
@@ -305,7 +329,7 @@ my-project/
   <Tab title="Full Testing Workflow">
     Simply prompt your AI assistant:
     ```text
-    "Help you test this project with TestSprite"
+    "Help me test this project with TestSprite"
     ```
     The AI will automatically:
 
@@ -345,7 +369,7 @@ my-project/
   <Card title="Create Tests for New Change" href="create-tests-new-feature">
     Diff-scoped testing for recent changes
   </Card>
-  <Card title="Modify or Update Tests" href="modify-update-tests">
+  <Card title="Modify or Update Tests" href="modify-tests">
     Keep tests aligned with app changes
   </Card>
 </Columns>

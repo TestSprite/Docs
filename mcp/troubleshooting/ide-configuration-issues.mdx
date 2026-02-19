@@ -106,31 +106,13 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
   <Step title="Check Configuration Files">
     **Configuration File Locations:**
 
-    <div className="full-width-table three-column" style={{ gridTemplateColumns: '1fr 2fr 4fr' }}>
-      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>IDE</div>
-      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Project</div>
-      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Global config</div>
-      
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>Cursor</div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`.cursor/mcp.json`</div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`~/.cursor/mcp.json` (macOS/Linux)</div>
-      
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`%USERPROFILE%\.cursor\mcp.json` (Windows)</div>
-      
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}>VS Code</div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`.vscode/settings.json`</div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`~/Library/Application Support/Code/User/settings.json` (macOS)</div>
-      
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}></div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>`~/.config/Code/User/settings.json` (Linux)</div>
-      
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}></div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}></div>
-      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>`%APPDATA%\Code\User\settings.json` (Windows)</div>
-    </div>
+| IDE | Project | Global config |
+| :--- | :--- | :--- |
+| <kbd>Cursor</kbd> | `.cursor/mcp.json` | `~/.cursor/mcp.json` (macOS/Linux) |
+| | | `%USERPROFILE%\.cursor\mcp.json` (Windows) |
+| <kbd>VS Code</kbd> | `.vscode/settings.json` | `~/Library/Application Support/Code/User/settings.json` (macOS) |
+| | | `~/.config/Code/User/settings.json` (Linux) |
+| | | `%APPDATA%\Code\User\settings.json` (Windows) |
 
     <Note>Project-level configuration takes precedence over global configuration</Note>
 

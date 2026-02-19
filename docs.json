@@ -4,32 +4,38 @@
   "name": "TestSprite Documentation",
   "fonts": {
     "heading": {
-      "family": "StyreneA",
-      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/StyreneAWeb-Regular.woff2+copy",
+      "family": "OpenSauceTwo",
+      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/open-sauce-two-latin-600-normal.woff2",
       "format": "woff2",
-      "weight": 400
+      "weight": 600
     },
       "body": {
-        "family": "Geist",
-        "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/Geist-Medium.woff2",
+        "family": "OpenSauceTwo",
+        "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/open-sauce-two-latin-400-normal.woff2",
         "format": "woff2",
-        "weight": 500
+        "weight": 400
       }
   },
   "css": [
-    "/styles/tables.css",
-    "/styles/kbd-dark-mode.css",
-    "/styles/scrollbar.css",
     "/styles/border-radius.css"
   ],
   "colors": {
-    "primary": "#19C379",
-    "dark": "#101011",
-    "light": "#07C983"
+    "primary": "#54B365",
+    "dark": "#54B365",
+    "light": "#54B365"
   },
-  "favicon": "/favicon.svg",
+  "favicon": {
+    "light": "/favicon-light.svg",
+    "dark": "/favicon.svg"
+  },
+  "background": {
+    "color": {
+      "light": "#F9FCF9",
+      "dark": "#181818"
+    }
+  },
   "appearance": {
-    "default": "dark",
+    "default": "system",
     "strict": false
   },
   "navigation": {
@@ -88,7 +94,8 @@
                 ]
               },
               "mcp/core/add-extra-tests",
-              "mcp/core/modify-update-tests",
+              "mcp/core/test-progress-dashboard",
+              "mcp/core/modify-tests",
               "mcp/core/rerun-tests",
               "mcp/core/regenerate-tests",
               "mcp/core/deploy-to-production",
@@ -173,88 +180,6 @@
     "light": "/logo/light-mode.svg",
     "dark": "/logo/dark-mode.svg"
   },
-  "redirects": [
-    {
-      "source": "/introduction",
-      "destination": "/mcp/getting-started/introduction"
-    },
-    {
-      "source": "/get-started/Quick Start",
-      "destination": "/mcp/getting-started/introduction"
-    },
-    {
-      "source": "/mcp/overview",
-      "destination": "/mcp/getting-started/overview"
-    },
-    {
-      "source": "/mcp/installation",
-      "destination": "/mcp/getting-started/installation"
-    },
-    {
-      "source": "/tutorials/first-test",
-      "destination": "/mcp/getting-started/first-test"
-    },
-    {
-      "source": "/tutorials/test-maintenance",
-      "destination": "/mcp/maintenance/test-maintenance"
-    },
-    {
-      "source": "/tutorials/demo-examples",
-      "destination": "/learn/mcp-demo"
-    },
-    {
-      "source": "/troubleshooting/installation-issues",
-      "destination": "/mcp/troubleshooting/installation-issues"
-    },
-    {
-      "source": "/troubleshooting/ide-configuration-issues",
-      "destination": "/mcp/troubleshooting/ide-configuration-issues"
-    },
-    {
-      "source": "/troubleshooting/application-detection-issues",
-      "destination": "/mcp/troubleshooting/application-detection-issues"
-    },
-    {
-      "source": "/troubleshooting/test-execution-issues",
-      "destination": "/mcp/troubleshooting/test-execution-issues"
-    },
-    {
-      "source": "/concepts/workflow",
-      "destination": "/mcp/concepts/test-type-lifecycle"
-    },
-    {
-      "source": "/concepts/tools",
-      "destination": "/mcp/core/tools"
-    },
-    {
-      "source": "/web-portal/overview",
-      "destination": "/web-portal/getting-started/overview"
-    },
-    {
-      "source": "/web-portal/api-testing",
-      "destination": "/web-portal/core/api-testing"
-    },
-    {
-      "source": "/web-portal/ui-testing",
-      "destination": "/web-portal/core/ui-testing"
-    },
-    {
-      "source": "/web-portal/test-lists",
-      "destination": "/web-portal/maintenance/test-lists"
-    },
-    {
-      "source": "/web-portal/api-keys",
-      "destination": "/web-portal/admin/api-keys"
-    },
-    {
-      "source": "/web-portal/monitoring",
-      "destination": "/web-portal/maintenance/monitoring"
-    },
-    {
-      "source": "faq",
-      "destination": "/learn/faq"
-    }
-  ],
   "navbar": {
     "primary": {
       "type": "button",
