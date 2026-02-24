@@ -104,6 +104,12 @@
             ]
           },
           {
+            "group": "Integrations",
+            "pages": [
+              "mcp/integrations/github-integration"
+            ]
+          },
+          {
             "group": "Maintenance",
             "pages": [
               "mcp/maintenance/test-maintenance",
