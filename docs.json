@@ -3,17 +3,14 @@
   "theme": "mint",
   "name": "TestSprite Documentation",
   "fonts": {
-    "heading": {
+    "body": {
       "family": "OpenSauceTwo",
-      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/open-sauce-two-latin-600-normal.woff2",
+      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/OpenSauceTwoVF.woff2",
       "format": "woff2",
-      "weight": 600
+      "weight": 400
     },
-      "body": {
-        "family": "OpenSauceTwo",
-        "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/open-sauce-two-latin-400-normal.woff2",
-        "format": "woff2",
-        "weight": 400
+      "heading": {
+        "family": "IBM Plex Mono"
       }
   },
   "css": [
@@ -87,7 +84,7 @@
             "pages": [
               {
                 "group": "Create Tests",
-                "icon": "folder-plus",
+                "icon": "file-circle-plus",
                 "pages": [
                   "mcp/core/create-tests-new-project",
                   "mcp/core/create-tests-new-feature"
