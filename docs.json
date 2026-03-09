@@ -3,14 +3,17 @@
   "theme": "mint",
   "name": "TestSprite Documentation",
   "fonts": {
-    "body": {
+    "heading": {
       "family": "OpenSauceTwo",
-      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/OpenSauceTwoVF.woff2",
+      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/open-sauce-two-latin-600-normal.woff2",
       "format": "woff2",
-      "weight": 400
+      "weight": 600
     },
-      "heading": {
-        "family": "IBM Plex Mono"
+      "body": {
+        "family": "OpenSauceTwo",
+        "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/open-sauce-two-latin-400-normal.woff2",
+        "format": "woff2",
+        "weight": 400
       }
   },
   "css": [
@@ -84,7 +87,7 @@
             "pages": [
               {
                 "group": "Create Tests",
-                "icon": "file-circle-plus",
+                "icon": "folder-plus",
                 "pages": [
                   "mcp/core/create-tests-new-project",
                   "mcp/core/create-tests-new-feature"
@@ -93,7 +96,6 @@
               "mcp/core/add-extra-tests",
               "mcp/core/test-progress-dashboard",
               "mcp/core/modify-tests",
-              "mcp/core/rerun-tests",
               "mcp/core/regenerate-tests",
               "mcp/core/deploy-to-production",
               "mcp/core/continuous-monitoring",

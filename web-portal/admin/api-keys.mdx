@@ -37,21 +37,32 @@ Generate API keys for MCP Server integration and other third-party tools.
   <Tab title="Each API Key Shows">
     Each API key displays key information fields that help you identify, track, and manage your keys effectively.
     
-| Field | Description |
-| :--- | :--- |
-| <kbd>Key Name</kbd> | Descriptive identifier |
-| <kbd>Key Value</kbd> | Partially hidden (e.g., `sk_test_****...****abcd`) |
-| <kbd>Created Date</kbd> | When generated |
-| <kbd>Last Used</kbd> | Most recent usage |
+    <div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Field</div>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Key Name</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Descriptive identifier</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Key Value</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Partially hidden (e.g., `sk_test_****...****abcd`)</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Created Date</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>When generated</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}><kbd>Last Used</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Most recent usage</div>
+    </div>
   </Tab>
   <Tab title="Available Actions">
     Manage your API keys with these actions to control access, monitor usage, and maintain security.
     
-| Action | Description |
-| :--- | :--- |
-| <kbd>View Details</kbd> | See usage statistics |
-| <kbd>Revoke</kbd> | Immediately disable the key |
-| <kbd>Delete</kbd> | Remove the API key permanently |
+    <div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Action</div>
+      <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>View Details</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>See usage statistics</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Revoke</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Immediately disable the key</div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}><kbd>Delete</kbd></div>
+      <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Remove the API key permanently</div>
+    </div>
   </Tab>
 </Tabs>
 
@@ -66,13 +77,20 @@ When you run tests through MCP Server in your IDE, view the results in your Web 
 
 Test Information Displayed:
 
-| Field | Description |
-| :--- | :--- |
-| **Test Name** | Description of the executed test |
-| **Execution Time** | When the test was run |
-| **Duration** | Test execution time |
-| **Status** | Passed, Failed, or In Progress |
-| **Test Type** | Frontend, Backend, or Mixed |
+<div className="full-width-table two-column" style={{ gridTemplateColumns: '1fr 3fr' }}>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Field</div>
+  <div className="table-header" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}>Description</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Test Name</kbd></div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Description of the executed test</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Execution Time</kbd></div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>When the test was run</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Duration</kbd></div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Test execution time</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)', fontWeight: 'bold' }}><kbd>Status</kbd></div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', borderBottom: '1px solid var(--table-border-color, #e5e7eb)' }}>Passed, Failed, or In Progress</div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px', fontWeight: 'bold' }}><kbd>Test Type</kbd></div>
+  <div className="table-cell" style={{ padding: '6px', fontSize: '14px' }}>Frontend, Backend, or Mixed</div>
+</div>
 
 ### Test Reports
 
@@ -98,7 +116,7 @@ Click on any test result to view **detailed test execution logs**, **individual 
   <Card title="Installation Guide" href="../../mcp/getting-started/installation">
     Step-by-step setup instructions
   </Card>
-  <Card title="Workflow Examples" href="../../mcp/concepts/test-type-lifecycle">
+  <Card title="Workflow Examples" href="../../mcp/concepts/workflow">
     Learn TestSprite MCP Server workflows
   </Card>
 </CardGroup>

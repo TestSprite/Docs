@@ -51,8 +51,8 @@ The GitHub App provides the simplest setup with automatic deployment detection â
 </Tip>
 
 <CardGroup cols={2}>
-  <Card title="GitHub App (Recommended)" icon="github">
-      Best for teams using **Vercel, Netlify, Render**, or other managed platforms.
+  <Card title="GitHub App" icon="github">
+      Best for individuals or teams using **Vercel, Netlify, Render**, or other managed platforms.
     - **Setup:** Connect in a few clicks via Web Portal
     - **Workflow files:** None required
     - **Deploys:** Auto-detects platform deployments
@@ -90,6 +90,11 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                   <Card title="Render" href="https://render.com">
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', paddingTop: '8px' }}>
                       <img src="../../decorationAssets/Render.png" alt="Render" style={{ width: '32px', height: '32px' }} />
+                    </div>
+                  </Card>
+                  <Card title="Railway" href="https://railway.app">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', paddingTop: '8px' }}>
+                    <img src="../../decorationAssets/Railway.png" alt="Railway" style={{ width: '32px', height: '32px' }} />
                     </div>
                   </Card>
                   <Card title="Fly.io" href="https://fly.io">
@@ -172,14 +177,11 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 Deploy preview builds to Vercel using the Vercel CLI inside GitHub Actions. You'll need to link your project locally with `vercel link`, then store the generated credentials as GitHub secrets.
 
                 **Secrets required:**
+                - `VERCEL_TOKEN` â€” Generate from your [Vercel account settings](https://vercel.com/account/tokens)
+                - `VERCEL_ORG_ID` â€” Found in `.vercel/project.json` after running `vercel link`
+                - `VERCEL_PROJECT_ID` â€” Found in `.vercel/project.json` after running `vercel link`
 
-                | Secret | Description |
-                | --- | --- |
-                | `VERCEL_TOKEN` | Generate from your [Vercel account settings](https://vercel.com/account/tokens) |
-                | `VERCEL_ORG_ID` | Found in `.vercel/project.json` after running `vercel link` |
-                | `VERCEL_PROJECT_ID` | Found in `.vercel/project.json` after running `vercel link` |
-
-                ```yaml Expandable deploy.yml
+                ```yaml deploy.yml
                 name: Vercel Preview Deployment
                 env:
                   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -221,13 +223,10 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 Trigger a Render deploy from GitHub Actions using the community `render-deploy` action. This calls the Render API to deploy your service and optionally waits for it to finish.
 
                 **Secrets required:**
+                - `RENDER_API_KEY` â€” Generate from your [Render account settings](https://dashboard.render.com/u/settings#api-keys)
+                - `RENDER_SERVICE_ID` â€” Found on your service's settings page in the Render dashboard
 
-                | Secret | Description |
-                | --- | --- |
-                | `RENDER_API_KEY` | Generate from your [Render account settings](https://dashboard.render.com/u/settings#api-keys) |
-                | `RENDER_SERVICE_ID` | Found on your service's settings page in the Render dashboard |
-
-                ```yaml Expandable deploy.yml
+                ```yaml deploy.yml
                 name: Render Preview Deployment
                 on:
                   pull_request:
@@ -260,13 +259,10 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 Deploy preview environments on Railway for every pull request using the community `railway-preview-deploy` action. Each PR gets its own isolated environment with a unique URL.
 
                 **Secrets required:**
+                - `RAILWAY_API_TOKEN` â€” Generate from your Railway account settings
+                - `RAILWAY_PROJECT_ID` â€” Found in Railway dashboard under Settings > General
 
-                | Secret | Description |
-                | --- | --- |
-                | `RAILWAY_API_TOKEN` | Generate from your Railway account settings |
-                | `RAILWAY_PROJECT_ID` | Found in Railway dashboard under Settings > General |
-
-                ```yaml Expandable deploy.yml
+                ```yaml deploy.yml
                 name: Railway Preview Deployment
                 on:
                   pull_request:
@@ -319,13 +315,10 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 Deploy preview builds to Netlify using the community `action-netlify-deploy` action. Each PR gets a unique preview URL that you can use for testing.
 
                 **Secrets required:**
+                - `NETLIFY_AUTH_TOKEN` â€” Generate from [Netlify personal access tokens](https://app.netlify.com/user/applications#personal-access-tokens)
+                - `NETLIFY_SITE_ID` â€” Found in your Netlify site settings under API ID
 
-                | Secret | Description |
-                | --- | --- |
-                | `NETLIFY_AUTH_TOKEN` | Generate from [Netlify personal access tokens](https://app.netlify.com/user/applications#personal-access-tokens) |
-                | `NETLIFY_SITE_ID` | Found in your Netlify site settings under API ID |
-
-                ```yaml Expandable deploy.yml
+                ```yaml deploy.yml
                 name: Netlify Preview Deployment
                 on:
                   pull_request:
@@ -359,12 +352,9 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 Deploy to Fly.io using the official `flyctl-actions` action from Superfly. The workflow installs `flyctl` and runs `flyctl deploy` against your `fly.toml` configuration.
 
                 **Secrets required:**
+                - `FLY_API_TOKEN` â€” Generate by running `fly tokens create deploy -x 999999h` locally
 
-                | Secret | Description |
-                | --- | --- |
-                | `FLY_API_TOKEN` | Generate by running `fly tokens create deploy -x 999999h` locally |
-
-                ```yaml Expandable deploy.yml
+                ```yaml deploy.yml
                 name: Fly.io Preview Deployment
                 on:
                   pull_request:
@@ -412,7 +402,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
         <Step title="Add the GitHub Actions Workflow">
             Create the file `.github/workflows/ci.yml` in your repository with the following configuration:
             <CodeGroup>
-            ```yaml Expandable ci.yml
+            ```yaml ci.yml
             name: TestSprite CI
 
             on:
@@ -444,161 +434,171 @@ The GitHub App provides the simplest setup with automatic deployment detection â
             <Accordion title="Complete workflow examples by platform">
               Full `ci.yml` examples that combine deployment and TestSprite testing in a single workflow.
 
-              <CodeGroup>
-                ```yaml Vercel
-                name: TestSprite CI
-                env:
-                  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-                  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-                on:
-                  pull_request:
-                    types: [opened, synchronize, reopened]
-                jobs:
-                  deploy:
-                    runs-on: ubuntu-latest
-                    outputs:
-                      url: ${{ steps.deploy.outputs.url }}
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: Install Vercel CLI
-                        run: npm install --global vercel@latest
-                      - name: Pull Vercel Environment Information
-                        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-                      - name: Build Project Artifacts
-                        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-                      - name: Deploy to Vercel
-                        id: deploy
-                        run: echo "url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})" >> $GITHUB_OUTPUT
-                  test:
-                    needs: deploy
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: TestSprite Action
-                        uses: TestSprite/run-action@v1
-                        with:
-                          testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
-                          base_url: ${{ needs.deploy.outputs.url }}
-                          blocking: 'true'
-                ```
-                ```yaml Render
-                name: TestSprite CI
-                on:
-                  pull_request:
-                    types: [opened, synchronize, reopened]
-                jobs:
-                  deploy:
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: JorgeLNJunior/render-deploy@v1.5.0
-                        id: deploy
-                        with:
-                          service_id: ${{ secrets.RENDER_SERVICE_ID }}
-                          api_key: ${{ secrets.RENDER_API_KEY }}
-                          wait_deploy: true
-                  test:
-                    needs: deploy
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: TestSprite Action
-                        uses: TestSprite/run-action@v1
-                        with:
-                          testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
-                          base_url: # Your Render service URL
-                          blocking: 'true'
-                ```
-                ```yaml Railway
-                name: TestSprite CI
-                on:
-                  pull_request:
-                    types: [opened, synchronize, reopened]
-                jobs:
-                  deploy:
-                    runs-on: ubuntu-latest
-                    outputs:
-                      url: ${{ steps.deploy.outputs.service_domain }}
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: Deploy to Railway
-                        id: deploy
-                        uses: ayungavis/railway-preview-deploy@v1.0.2
-                        with:
-                          railway_api_token: ${{ secrets.RAILWAY_API_TOKEN }}
-                          project_id: ${{ secrets.RAILWAY_PROJECT_ID }}
-                          environment_name: 'staging'
-                          preview_environment_name: 'pr-${{ github.event.pull_request.number }}'
-                          branch_name: ${{ github.head_ref }}
-                  test:
-                    needs: deploy
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: TestSprite Action
-                        uses: TestSprite/run-action@v1
-                        with:
-                          testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
-                          base_url: ${{ needs.deploy.outputs.url }}
-                          blocking: 'true'
-                ```
-                ```yaml Netlify
-                name: TestSprite CI
-                on:
-                  pull_request:
-                    types: [opened, synchronize, reopened]
-                jobs:
-                  deploy:
-                    runs-on: ubuntu-latest
-                    outputs:
-                      url: ${{ steps.deploy.outputs.NETLIFY_PREVIEW_URL }}
-                    steps:
-                      - uses: actions/checkout@v4
-                      - uses: jsmrcaga/action-netlify-deploy@v2.0.0
-                        id: deploy
-                        with:
-                          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-                          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-                  test:
-                    needs: deploy
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: TestSprite Action
-                        uses: TestSprite/run-action@v1
-                        with:
-                          testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
-                          base_url: ${{ needs.deploy.outputs.url }}
-                          blocking: 'true'
-                ```
-                ```yaml Fly.io
-                name: TestSprite CI
-                on:
-                  pull_request:
-                    types: [opened, synchronize, reopened]
-                jobs:
-                  deploy:
-                    runs-on: ubuntu-latest
-                    concurrency: deploy-group
-                    steps:
-                      - uses: actions/checkout@v4
-                      - uses: superfly/flyctl-actions/setup-flyctl@master
-                      - name: Deploy to Fly.io
-                        run: flyctl deploy --remote-only
-                        env:
-                          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-                  test:
-                    needs: deploy
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: actions/checkout@v4
-                      - name: TestSprite Action
-                        uses: TestSprite/run-action@v1
-                        with:
-                          testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
-                          base_url: # Your Fly.io app URL
-                          blocking: 'true'
-                ```
-              </CodeGroup>
+              <Tabs>
+                <Tab title="Vercel">
+                  ```yaml ci.yml
+                  name: TestSprite CI
+                  env:
+                    VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+                    VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+                  on:
+                    pull_request:
+                      types: [opened, synchronize, reopened]
+                  jobs:
+                    deploy:
+                      runs-on: ubuntu-latest
+                      outputs:
+                        url: ${{ steps.deploy.outputs.url }}
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: Install Vercel CLI
+                          run: npm install --global vercel@latest
+                        - name: Pull Vercel Environment Information
+                          run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+                        - name: Build Project Artifacts
+                          run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+                        - name: Deploy to Vercel
+                          id: deploy
+                          run: echo "url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})" >> $GITHUB_OUTPUT
+                    test:
+                      needs: deploy
+                      runs-on: ubuntu-latest
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: TestSprite Action
+                          uses: TestSprite/run-action@v1
+                          with:
+                            testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
+                            base_url: ${{ needs.deploy.outputs.url }}
+                            blocking: 'true'
+                  ```
+                </Tab>
+                <Tab title="Render">
+                  ```yaml ci.yml
+                  name: TestSprite CI
+                  on:
+                    pull_request:
+                      types: [opened, synchronize, reopened]
+                  jobs:
+                    deploy:
+                      runs-on: ubuntu-latest
+                      steps:
+                        - uses: JorgeLNJunior/render-deploy@v1.5.0
+                          id: deploy
+                          with:
+                            service_id: ${{ secrets.RENDER_SERVICE_ID }}
+                            api_key: ${{ secrets.RENDER_API_KEY }}
+                            wait_deploy: true
+                    test:
+                      needs: deploy
+                      runs-on: ubuntu-latest
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: TestSprite Action
+                          uses: TestSprite/run-action@v1
+                          with:
+                            testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
+                            base_url: # Your Render service URL
+                            blocking: 'true'
+                  ```
+                </Tab>
+                <Tab title="Railway">
+                  ```yaml ci.yml
+                  name: TestSprite CI
+                  on:
+                    pull_request:
+                      types: [opened, synchronize, reopened]
+                  jobs:
+                    deploy:
+                      runs-on: ubuntu-latest
+                      outputs:
+                        url: ${{ steps.deploy.outputs.service_domain }}
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: Deploy to Railway
+                          id: deploy
+                          uses: ayungavis/railway-preview-deploy@v1.0.2
+                          with:
+                            railway_api_token: ${{ secrets.RAILWAY_API_TOKEN }}
+                            project_id: ${{ secrets.RAILWAY_PROJECT_ID }}
+                            environment_name: 'staging'
+                            preview_environment_name: 'pr-${{ github.event.pull_request.number }}'
+                            branch_name: ${{ github.head_ref }}
+                    test:
+                      needs: deploy
+                      runs-on: ubuntu-latest
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: TestSprite Action
+                          uses: TestSprite/run-action@v1
+                          with:
+                            testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
+                            base_url: ${{ needs.deploy.outputs.url }}
+                            blocking: 'true'
+                  ```
+                </Tab>
+                <Tab title="Netlify">
+                  ```yaml ci.yml
+                  name: TestSprite CI
+                  on:
+                    pull_request:
+                      types: [opened, synchronize, reopened]
+                  jobs:
+                    deploy:
+                      runs-on: ubuntu-latest
+                      outputs:
+                        url: ${{ steps.deploy.outputs.NETLIFY_PREVIEW_URL }}
+                      steps:
+                        - uses: actions/checkout@v4
+                        - uses: jsmrcaga/action-netlify-deploy@v2.0.0
+                          id: deploy
+                          with:
+                            NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+                            NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+                    test:
+                      needs: deploy
+                      runs-on: ubuntu-latest
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: TestSprite Action
+                          uses: TestSprite/run-action@v1
+                          with:
+                            testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
+                            base_url: ${{ needs.deploy.outputs.url }}
+                            blocking: 'true'
+                  ```
+                </Tab>
+                <Tab title="Fly.io">
+                  ```yaml ci.yml
+                  name: TestSprite CI
+                  on:
+                    pull_request:
+                      types: [opened, synchronize, reopened]
+                  jobs:
+                    deploy:
+                      runs-on: ubuntu-latest
+                      concurrency: deploy-group
+                      steps:
+                        - uses: actions/checkout@v4
+                        - uses: superfly/flyctl-actions/setup-flyctl@master
+                        - name: Deploy to Fly.io
+                          run: flyctl deploy --remote-only
+                          env:
+                            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+                    test:
+                      needs: deploy
+                      runs-on: ubuntu-latest
+                      steps:
+                        - uses: actions/checkout@v4
+                        - name: TestSprite Action
+                          uses: TestSprite/run-action@v1
+                          with:
+                            testsprite-api-key: ${{ secrets.TESTSPRITE_API_KEY }}
+                            base_url: # Your Fly.io app URL
+                            blocking: 'true'
+                  ```
+                </Tab>
+              </Tabs>
             </Accordion>
         </Step>
     </Steps>
