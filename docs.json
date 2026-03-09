@@ -93,7 +93,6 @@
               "mcp/core/add-extra-tests",
               "mcp/core/test-progress-dashboard",
               "mcp/core/modify-tests",
-              "mcp/core/rerun-tests",
               "mcp/core/regenerate-tests",
               "mcp/core/deploy-to-production",
               "mcp/core/continuous-monitoring",
