@@ -93,7 +93,6 @@
               "mcp/core/add-extra-tests",
               "mcp/core/test-progress-dashboard",
               "mcp/core/modify-tests",
-              "mcp/core/rerun-tests",
               "mcp/core/regenerate-tests",
               "mcp/core/deploy-to-production",
               "mcp/core/continuous-monitoring",
@@ -195,6 +194,28 @@
      "copy"
    ]
   },
+  "redirects": [
+    { "source": "/introduction", "destination": "/mcp/getting-started/introduction" },
+    { "source": "/get-started/Quick Start", "destination": "/mcp/getting-started/introduction" },
+    { "source": "/mcp/overview", "destination": "/mcp/getting-started/overview" },
+    { "source": "/mcp/installation", "destination": "/mcp/getting-started/installation" },
+    { "source": "/tutorials/first-test", "destination": "/mcp/getting-started/first-test" },
+    { "source": "/tutorials/test-maintenance", "destination": "/mcp/maintenance/test-maintenance" },
+    { "source": "/tutorials/demo-examples", "destination": "/learn/mcp-demo" },
+    { "source": "/troubleshooting/installation-issues", "destination": "/mcp/troubleshooting/installation-issues" },
+    { "source": "/troubleshooting/ide-configuration-issues", "destination": "/mcp/troubleshooting/ide-configuration-issues" },
+    { "source": "/troubleshooting/application-detection-issues", "destination": "/mcp/troubleshooting/application-detection-issues" },
+    { "source": "/troubleshooting/test-execution-issues", "destination": "/mcp/troubleshooting/test-execution-issues" },
+    { "source": "/concepts/workflow", "destination": "/mcp/concepts/test-type-lifecycle" },
+    { "source": "/concepts/tools", "destination": "/mcp/core/tools" },
+    { "source": "/web-portal/overview", "destination": "/web-portal/getting-started/overview" },
+    { "source": "/web-portal/api-testing", "destination": "/web-portal/core/api-testing" },
+    { "source": "/web-portal/ui-testing", "destination": "/web-portal/core/ui-testing" },
+    { "source": "/web-portal/test-lists", "destination": "/web-portal/maintenance/test-lists" },
+    { "source": "/web-portal/api-keys", "destination": "/web-portal/admin/api-keys" },
+    { "source": "/web-portal/monitoring", "destination": "/web-portal/maintenance/monitoring" },
+    { "source": "/faq", "destination": "/learn/faq" }
+  ],
   "footer": {
     "socials": {
       "x": "https://x.com/Test_Sprite",
