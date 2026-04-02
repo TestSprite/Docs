@@ -195,6 +195,12 @@
      "copy"
    ]
   },
+  "redirects": [
+    {
+      "source": "/mcp/overview",
+      "destination": "/mcp/getting-started/introduction"
+    }
+  ],
   "footer": {
     "socials": {
       "x": "https://x.com/Test_Sprite",
