@@ -207,6 +207,7 @@
     { "source": "/troubleshooting/application-detection-issues", "destination": "/mcp/troubleshooting/application-detection-issues" },
     { "source": "/troubleshooting/test-execution-issues", "destination": "/mcp/troubleshooting/test-execution-issues" },
     { "source": "/concepts/workflow", "destination": "/mcp/concepts/test-type-lifecycle" },
+    { "source": "/mcp/concepts/workflow", "destination": "/mcp/concepts/test-type-lifecycle" },
     { "source": "/concepts/tools", "destination": "/mcp/core/tools" },
     { "source": "/web-portal/overview", "destination": "/web-portal/getting-started/overview" },
     { "source": "/web-portal/api-testing", "destination": "/web-portal/core/api-testing" },
