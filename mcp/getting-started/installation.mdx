@@ -184,15 +184,15 @@ To ensure full functionality of TestSprite MCP Server in Cursor:
 
     ```json icon="code" VS Code Configuration
     {
-      "mcpServers": {
-        "TestSprite": {
+      "servers": {
+        "testsprite": {
           "command": "npx",
-          "args": ["@testsprite/testsprite-mcp@latest"],
+          "args": ["-y", "@testsprite/testsprite-mcp@latest"],
           "env": {
             "API_KEY": "your-api-key"
           }
         }
-      }
+      },
     }
     ```
     8. After installation, click the `start` button above the TestSprite MCP entry in the `mcp.json` file you have just configured. If the server started with no errors and all the tools have been loaded, you have installed the MCP server successfully.
