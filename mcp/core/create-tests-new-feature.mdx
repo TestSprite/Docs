@@ -1,6 +1,7 @@
 ---
 title: "Create Tests for New Change"
 description: "Generate tests scoped to recent code changes using TestSprite MCP Server."
+icon: "arrow-down-arrow-up"
 ---
 
 ## When to Use This
@@ -59,7 +60,7 @@ The AI calls `testsprite_bootstrap_tests` with `testScope: "diff"` to initialize
 </Tabs>
 
 <CodeGroup>
-```javascript Configuration
+```javascript Configuration expandable
 testsprite_bootstrap_tests({
   localPort: 5173, // or your port
   type: "frontend", // or "backend"
@@ -68,7 +69,7 @@ testsprite_bootstrap_tests({
 })
 ```
 
-```json Sample Configuration
+```json Sample Configuration expandable
 {
   "projectType": "frontend",
   "localPort": 5173,
@@ -103,7 +104,7 @@ testsprite_generate_code_summary({
 })
 ```
 
-```json Expandable Example Output for Changed Feature
+```json Expandable Example Output for Changed Feature expandable
 {
   "changed_features": [
     {
@@ -138,7 +139,7 @@ The AI calls `testsprite_generate_standardized_prd` to update requirements based
 3. **Maintain Context**: Preserves overall product goals and existing features
 4. **Focus on Delta**: Emphasizes what changed rather than rewriting everything
 
-```javascript Tool Called 
+```javascript Tool Called
 testsprite_generate_standardized_prd({
   projectPath: "/absolute/path/to/your/project"
 })
@@ -161,8 +162,8 @@ The AI calls `testsprite_generate_frontend_test_plan` or `testsprite_generate_ba
 - **Edge Cases**: Covers boundary conditions in changed code
 
 <CodeGroup>
-```javascript Frontend UI/Business Flows
-// Covers: UI changes and new components, modified user flows and journeys, 
+```javascript Frontend UI/Business Flows expandable
+// Covers: UI changes and new components, modified user flows and journeys,
 // updated form validations, changed authentication logic
 testsprite_generate_frontend_test_plan({
   projectPath: "/absolute/path/to/your/project",
@@ -178,7 +179,7 @@ testsprite_generate_backend_test_plan({
 })
 ```
 
-```json Expandable Example Targeted Test Plan
+```json Expandable Example Targeted Test Plan expandable
 [
   {
     "id": "TC_DIFF_001",
@@ -237,7 +238,7 @@ The AI calls `testsprite_generate_code_and_execute` to create and run tests for 
   </Tab>
 </Tabs>
 
-```javascript Tool Call
+```javascript Tool Call expandable
 testsprite_generate_code_and_execute({
   projectName: "your-project-name",
   projectPath: "/absolute/path/to/your/project",
@@ -289,7 +290,7 @@ TestSprite provides targeted reports showing exactly what your changes affected:
     - After bug fixes or refactors
     - Before committing changes
     - In PR validation workflows
-    
+
     ❌ **When to Use Codebase Scope Instead:**
     - Initial project onboarding
     - Major refactors affecting many files
@@ -322,7 +323,7 @@ TestSprite enables true shift-left testing - run tests early and often, even on 
   </Step>
   <Step title="Early Test Run (Incomplete)">
     Run diff-scoped tests even if feature isn't complete. Ask your AI assistant: "Test my in-progress payment feature changes"
-    
+
     Outcome: Discover missing validations, edge cases, UX gaps early
   </Step>
   <Step title="Iterate & Fix">
@@ -330,7 +331,7 @@ TestSprite enables true shift-left testing - run tests early and often, even on 
   </Step>
   <Step title="Final Test Run (Complete)">
     Run again when feature is ready
-    
+
     Outcome: High confidence your change works correctly
   </Step>
   <Step title="Commit with Confidence">

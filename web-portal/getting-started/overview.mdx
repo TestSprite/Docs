@@ -1,178 +1,176 @@
 ---
 title: "Overview"
-description: "Web dashboard for API keys, test management, and automated monitoring."
-icon: "book"
+description: "What the TestSprite Web Portal is, how it works, and what it can test."
+icon: "clipboard-list"
 ---
 
-      <Frame>
-      <img src="../../images/web-overview.png"  alt="plan" />
-      </Frame>
+## What is the TestSprite Web Portal?
 
-## Step 1: Customer Input
+The TestSprite Web Portal is a browser dashboard that takes a project from "I have an app" to "I have a passing test suite running on a schedule" — without writing a single line of test code. It complements the [MCP Server](/mcp/getting-started/overview) (which lives in your IDE) by giving non-IDE users, QA, and engineering teams a shared place to configure projects, manage credentials, run tests, and review reports.
 
-Simply provide your application details to get started
+<Frame>
+  <img src="../../images/web-overview.png" alt="Web Portal dashboard" />
+</Frame>
 
-      <Frame>
-      <img src="../../images/web-input.png"  alt="plan" />
-      </Frame>
+### Spec-Driven Testing
 
-| Requirement | Description |
-| :--- | :--- |
-| <kbd>Application URLs</kbd> | Frontend and backend endpoints |
-| <kbd>Authentication credentials</kbd> | API keys, login details, etc. |
-| <kbd>Testing requirements</kbd> | Specific scenarios you want covered |
+TestSprite is **spec-driven**. Plans are derived from what your product is *supposed to do* (your PRD), what the live app *actually does* (exploration / discovery), and the gap between the two.
 
 <Tip>
-Our AI creates a completely customized testing plan in real-time—no templates or generic approaches.
+Uploading a PRD isn't required, but it is **strongly recommended** — it's how TestSprite builds an accurate feature map of your product before any test is written, and it directly improves the quality and coverage of the generated plan.
 </Tip>
+<Frame>
+  <img src="../../images/web-spec-driven.png" alt="Web Portal dashboard" />
+</Frame>
+### What It Tests
 
-## Step 2: Test Plans Auto Generation
+TestSprite covers two test types from the same dashboard:
 
-TestSprite's AI creates a detailed, customized testing plan with thoughtfully crafted test cases targeting specific scenarios for your product. Each test case includes a clear description explaining its purpose and rationale.
+<Frame>
+  <img src="../../images/web-test-type.png" alt="Web Portal dashboard" />
+</Frame>
 
-      <Frame>
-      <img src="../../images/web-plan-generate.png"  alt="plan" />
-      </Frame>
-      <br />
+<table style={{ lineHeight: "1.9" }}>
+  <thead>
+    <tr>
+      <th style={{ paddingBottom: "18px", textAlign: "left" }}>Test type</th>
+      <th style={{ paddingBottom: "18px", textAlign: "left" }}>What it covers</th>
+      <th style={{ paddingBottom: "18px", textAlign: "left" }}>Planned from</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style={{ paddingTop: "16px" }}><kbd style={{ fontFamily: "inherit", fontSize: "0.95em" }}>UI (frontend)</kbd> — Playwright-driven, runs against a live URL</td>
+      <td style={{ paddingTop: "16px" }}>User-journey flows, form validation, visual states, stateful components, auth flows, UI error handling</td>
+      <td style={{ paddingTop: "16px" }}>A feature map built from your PRD plus Feature Exploration of your live app</td>
+    </tr>
+    <tr>
+      <td><kbd style={{ fontFamily: "inherit", fontSize: "0.95em" }}>API (backend)</kbd> — Python-driven, runs against a base URL</td>
+      <td>Functional workflows, schema validation, auth flows, data integrity across calls, error handling, security</td>
+      <td>Your PRD plus OpenAPI / Swagger / Postman collections (or any free-form docs you upload) and live probes against the base URL</td>
+    </tr>
+  </tbody>
+</table>
 
+## How It Works
 
-<Accordion title="Example test plan for back-end API testing">
-Generated testing plan for [Amazon S3 `create_bucket` API](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/create_bucket.html):
-
-1. **Basic Bucket Creation**
-   - Create bucket with unique name and verify existence
-
-2. **Name Validation**
-   - Test invalid names (special characters, spaces) and verify error responses
-
-3. **Location Constraints**
-   - Create buckets in specific regions (us-east-1, eu-west-1)
-
-4. **Access Control (ACL)**
-   - Test different ACL settings (private, public-read, authenticated-read)
-
-5. **Versioning**
-   - Create bucket with versioning enabled and verify configuration
-
-6. **...**
-</Accordion>
-
-## Step 3: User Review & Confirmation
-
-Before proceeding, users can review the automatically generated test plans. This step allows you to <span style={{ color: "#10A363" }}> **manually adjust**</span>, add, or remove specific tests and ensure the generated plans align with your testing goals.
-      <Frame>
-      <img src="../../images/web-user-review.png"  alt="plan" />
-      </Frame>
-      <br />
-## Step 4: Test Code Auto Generation (Implementation)
-Based on the test plan from Step 2, here's an example of the actual Python test code that TestSprite's AI automatically creates
-
-
-      <Frame>
-      <img src="../../images/web-code.png"  alt="plan" />
-      </Frame>
+You provide a URL, credentials, and a PRD (**strongly recommended**). TestSprite builds a feature map from the PRD, explores or discovers your app, drafts a plan you can review, generates the tests, runs them in the cloud, and gives you a report you can refine in natural language.
 
 <Steps>
-  <Step title="AI Code Generation">
-    TestSprite's AI converts your approved test plan into production-ready code
+  <Step title="Project Setup & PRD Upload">
+    Name the project and upload your PRD (or any product-spec document — markdown / PDF / plain text all work). PRD upload is **strongly recommended**; it's the only thing this step asks for besides the name.
+      <Frame>
+      <img src="../../images/web-test-upload-prd.png" alt="Web Portal dashboard" />
+    </Frame>
   </Step>
-  <Step title="Cloud Compilation">
-    Code is automatically uploaded and compiled in our secure cloud environment
+  <Step title="Feature & Use-Case Extraction">
+    TestSprite reads your PRD and produces a **feature map** — a structured list of features and the use cases under each, rendered as a flow graph. This is what grounds the rest of the lifecycle; if you skipped the PRD, this step is bypassed and the wizard falls back to your URL inputs alone.
+        <Frame>
+      <img src="../../images/web-test-use-case.png" alt="Web Portal dashboard" />
+    </Frame>
   </Step>
-  <Step title="Smart Auto-Fixing">
-    AI resolves compilation issues and applies self-patching for optimal accuracy
+  <Step title="Configure">
+    Provide your live URL, test-account credentials, and — for API projects — your API documentation (OpenAPI / Swagger / Postman or any free-form docs). Add natural-language hints for what to focus on or skip.
+      <Frame>
+      <img src="../../images/web-configure.png" alt="Web Portal dashboard" />
+    </Frame>
+  </Step>
+  <Step title="Explore or Discover">
+    For UI, TestSprite walks your live app feature by feature, targeting the use cases from the feature map. For API, TestSprite reads endpoints from your docs and probes the base URL to confirm shapes.
+        <Frame>
+      <img src="../../images/web-explore.png" alt="Web Portal dashboard" />
+    </Frame>
+  </Step>
+  <Step title="Plan and Review">
+    A test plan is drafted from the feature map + what was observed. You select / deselect / edit cases before generation runs.
+      <Frame>
+      <img src="../../images/web-plan.png" alt="Web Portal dashboard" />
+    </Frame>
+  </Step>
+  <Step title="Generate, Run, Report">
+    Tests are generated and executed in our cloud. A run-level report highlights failures and suggests causes.
+  </Step>
+  <Step title="Refine and Schedule">
+    Iterate on individual tests via the Chat tab. Group tests into Test Lists. Schedule continuous runs to catch regressions.
   </Step>
 </Steps>
 
-<Info>
-**Zero coding required!** Our AI delivers the highest accuracy among all Testing Autopilot tools through intelligent self-patching.
-</Info>
+<Card title="Try it end-to-end" href="/web-portal/getting-started/your-first-test" icon="play">
+  Walk through a complete project in about 15 minutes
+</Card>
 
-<Accordion title="View Generated Test Code Example">
-```python Expandable Sample Test Code
-import unittest
-import boto3
-from botocore.exceptions import ClientError
+## Key Benefits
 
-class TestCreateBucketAPI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Initialize the S3 client
-        cls.s3_client = boto3.client('s3')
+Different roles get different value out of the same dashboard:
 
-    def test_basic_bucket_creation(self):
-        bucket_name = 'test-bucket-basic'
+- **For developers:** Skip the test-writing boilerplate. Watch your changes get exercised against real flows in minutes, not hours. Iterate in natural language when something needs to be tightened.
+- **For QA teams:** Replace handwritten regression suites with a plan TestSprite re-derives from your live app. Use Test Lists and Monitoring to keep coverage running on a cadence.
+- **For engineering leads:** Get reproducible reports, severity-ranked failures, and a defensible coverage story without standing up a test-writing organization.
 
-        try:
-            # Test creating a new S3 bucket
-            self.s3_client.create_bucket(Bucket=bucket_name)
-        except ClientError as e:
-            self.fail(f"Error creating basic bucket: {e}")
+## What Makes It Different
 
-        # Verify that the bucket exists
-        response = self.s3_client.list_buckets()
-        buckets = [bucket['Name'] for bucket in response['Buckets']]
-        self.assertIn(bucket_name, buckets)
+| Feature | Traditional Testing | TestSprite Web Portal |
+| :--- | :--- | :--- |
+| <kbd>Test case creation</kbd> | Writing test cases manually | **AI generates test cases automatically** from your live app + docs |
+| <kbd>Setup</kbd> | Setting up frameworks, fixtures, runners | Almost **zero setup** — provide a URL and credentials |
+| <kbd>Maintenance</kbd> | UI tests break on every minor tweak | **Auto-Heal** recovers UI tests when the page changes; **Auto-Auth** refreshes API tokens |
+| <kbd>Debugging</kbd> | Reading stack traces, hunting causes | **AI cause-and-fix** on every failure; refine in natural language |
+| <kbd>Coverage</kbd> | Limited to what someone wrote down | **Plan derived from observed behavior** — not just intent |
 
-    def test_invalid_bucket_name(self):
-        invalid_bucket_names = ['bucket with spaces', 'bucket_with_special_characters!']
+## Testing Capabilities
 
-        for bucket_name in invalid_bucket_names:
-            with self.subTest(bucket_name=bucket_name):
-                with self.assertRaises(ClientError) as context:
-                    # Test creating a bucket with an invalid name
-                    self.s3_client.create_bucket(Bucket=bucket_name)
+<Tabs>
+  <Tab title="UI Testing (Frontend)">
+    - **PRD-driven Feature Map** — features and use cases derived from your spec, rendered as a flow graph
+    - **Feature Exploration (Beta)** — TestSprite walks your live app before any plan is written, targeting the use cases from the feature map
+    - **Plan derived from spec + observed flows** — grounded in both intent and reality
+    - **Auto-Heal** — recover automatically when the page changes instead of marking tests Failed
+    - **Step-by-step replay** — per-step screenshots + recorded video for every run
+    - **Visual states, form flows, auth flows, error handling**
+    - Generated code in **Playwright + Python**
+  </Tab>
+  <Tab title="API Testing (Backend)">
+    - **PRD-driven coverage** — uploading a PRD lets TestSprite plan to the *intent* of each endpoint, not just its shape
+    - **Discovery** — endpoints sourced from OpenAPI / Swagger / Postman collections (or free-form docs you upload) plus live probes
+    - **Dependency Chains** — independent tests run in parallel; dependent tests wait for what they need, with values passed forward
+    - **Auto-Cleanup** — created resources are removed after the suite finishes
+    - **Auto-Auth (Pro)** — auto-refresh login tokens before every run
+    - **Dynamic Variables** — captured-at-runtime values surface in their own table
+    - **Data Flow** — Flow + Calls views for inspecting traffic across a chain
+  </Tab>
+</Tabs>
 
-                self.assertEqual(context.exception.response['Error']['Code'], 'InvalidBucketName')
+## What's Inside the Dashboard
 
-    # And the other test cases ...
-
-if __name__ == '__main__':
-    unittest.main()
-```
-</Accordion>
-
-## Step 5: Test Execution
-
-TestSprite automatically executes the generated test cases in our cloud environment, closely monitoring the results to promptly detect any issues.
-
-      <Frame>
-      <img src="../../images/web-executing.png"  alt="plan" />
-      </Frame>
-
-## Step 6: Review and Adjust
-
-TestSprite's AI **automatically analyzes test failures**, **identifies root causes**, and provides **actionable recommendations** for quick resolution. **Chat with AI** using plain English to modify tests—**zero coding required**, **instant regeneration**, and **complete control** over your test scenarios.
-
-<Tip>
-**Pro tip:** Edit test prompts anytime to regenerate cases with different scenarios - no coding required!
-</Tip>
-
-      <Frame>
-      <img src="../../images/web-modify.png"  alt="plan" />
-      </Frame>
-
-
-**Available tools:**
-
-| Tool | Description |
+| Surface | What it does |
 | :--- | :--- |
-| <kbd>VS Code plugin</kbd> | Direct console adjustments |
-| <kbd>AI chat assistant</kbd> | Questions and modifications |
-| <kbd>Prompt editing</kbd> | Regenerate test cases |
+| <kbd>Create Tests</kbd> | The wizard that drives Configuration → Exploration/Discovery → Plan → Generation |
+| <kbd>All Tests</kbd> | Every project you've created, grouped by type, with run status and quick-rerun |
+| <kbd>Test Lists</kbd> | Group tests across projects into a single executable list — see [Test Lists](/web-portal/maintenance/test-lists) |
+| <kbd>Monitoring</kbd> | Schedule Test Lists to run on a cadence with execution history — see [Monitoring](/web-portal/maintenance/monitoring) |
+| <kbd>Settings → API Keys</kbd> | Generate keys for MCP / external tooling |
+| <kbd>Settings → GitHub App</kbd> | Connect repos for PR-based test runs and code export |
+| <kbd>Settings → Plan & Billing</kbd> | Plan tier, monthly credits, and feature gating |
 
-## Step 7: Final Testing Report
+## Where to Go Next
 
-TestSprite generates a comprehensive report covering
-
-      <Frame>
-      <img src="../../images/report.png"  alt="plan" />
-      </Frame>
-
-
-| Section | Description |
-| :--- | :--- |
-| <kbd>Test results</kbd> | Pass/fail status for each case |
-| <kbd>Improvement areas</kbd> | Actionable recommendations |
-| <kbd>Security findings</kbd> | Vulnerabilities and fixes |
-| <kbd>Team sharing</kbd> | Export and collaborate easily |
+<Columns cols={2}>
+  <Card title="Your First Test" href="/web-portal/getting-started/your-first-test" icon="play">
+    Walk through configuration to report end-to-end
+  </Card>
+  <Card title="Key Terms" href="/web-portal/concepts/key-terms" icon="book">
+    Vocabulary used across the rest of the docs
+  </Card>
+  <Card title="Testing Lifecycle" href="/web-portal/concepts/testing-lifecycle" icon="circle-nodes">
+    The mental model behind TestSprite's wizard
+  </Card>
+  <Card title="UI Testing" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
+    Start a UI project from scratch
+  </Card>
+  <Card title="API Testing" href="/web-portal/core/api/api-testing" icon="terminal">
+    Start an API project from scratch
+  </Card>
+  <Card title="Join the Community" href="https://discord.gg/QQB9tJ973e" icon="comments">
+    Discord for users and the team
+  </Card>
+</Columns>

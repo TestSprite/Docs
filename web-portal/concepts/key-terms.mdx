@@ -1,0 +1,214 @@
+---
+title: "Key Terms"
+description: "Core concepts you'll encounter throughout the TestSprite Web Portal — projects, tests, lists, schedules, and the data they collect."
+icon: "square-code"
+---
+
+This page defines the building blocks the Web Portal uses. If you've already used TestSprite once, most of these will feel familiar — this is the canonical reference for when a teammate asks "wait, what's a Test List vs a Test?"
+
+## Project
+
+The top-level container for everything you do in the portal. A project represents one application (or one slice of an application — e.g. one micro-frontend or one API surface) and groups all the tests, runs, credentials, and variables that belong to it.
+
+<Tabs>
+  <Tab title="What a project is">
+    A project bundles:
+    - **Type**: UI (frontend), API (backend), or both
+    - **Configuration**: starting URL or API endpoints, auth credentials, extra context
+    - **Generated tests**: every test case TestSprite drafted for this app
+    - **Run history**: every execution of those tests, with results and recordings
+  </Tab>
+  <Tab title="Where projects appear">
+    You create a project the moment you click <kbd>Create Tests</kbd> from the dashboard sidebar. Each project has its own detail page at `/dashboard/tests/<project-id>` with sub-tabs for the report, exploration, flows, credentials, and more.
+  </Tab>
+</Tabs>
+
+<Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="layout">
+  Tour of every tab on the project detail page
+</Card>
+
+## Test
+
+A single executable check inside a project. UI tests are multi-step user-journey tests (sign in → navigate → fill a form → assert); API tests are typically per-endpoint checks (call → assert status, schema, contract).
+
+<Tabs>
+  <Tab title="What a test is">
+    A test has:
+    - A **title** (e.g. "Verify successful login with valid credentials")
+    - A **description** in natural language
+    - A list of **steps** TestSprite will execute
+    - **Expected outcomes** the test will assert against
+    - A **status** after each run: Pass, Failed, or Blocked
+  </Tab>
+  <Tab title="Where tests appear">
+    Tests appear on the project detail page under **Endpoint Tests** (for API projects) or **Integration Tests** (for UI projects). You can also see all tests across a Test List from the **Test Lists** section.
+  </Tab>
+</Tabs>
+
+## Test Run
+
+One execution of a project's tests, end to end. Each run produces results, screenshots, recordings, and (for API tests) the call logs TestSprite made to your service.
+
+<Tabs>
+  <Tab title="What a test run is">
+    A run captures, per test:
+    - **Pass / Failed / Blocked** verdict
+    - **Step-by-step screenshots** (UI) or **HTTP requests and responses** (API)
+    - **A video recording** for UI tests
+    - **An AI-authored failure analysis** when something didn't go as expected
+  </Tab>
+  <Tab title="Where runs appear">
+    Runs are surfaced on the **Test Report** tab of a project, on the test-list page (rolled up to a status pip per list), and on each schedule's run history (one row per scheduled execution).
+  </Tab>
+</Tabs>
+
+## Test List
+
+A reusable collection of tests, often spanning more than one project. Test Lists are how you assemble a regression suite, smoke check, or release-gate suite.
+
+<Tabs>
+  <Tab title="What a test list is">
+    A Test List groups individual test cases — frontend, backend, or both — under one name. The list itself has its own run history (every time it's executed) and is the unit you schedule for continuous monitoring.
+  </Tab>
+  <Tab title="Where test lists appear">
+    From the dashboard sidebar under **Test Lists**. You'll also pick a Test List when you create a Schedule on the Monitoring page.
+  </Tab>
+</Tabs>
+
+<Card title="Test Lists" href="/web-portal/maintenance/test-lists" icon="list">
+  How to create and manage Test Lists
+</Card>
+
+## Schedule
+
+A recurring rule that runs a Test List automatically — daily, weekly, monthly, or on a custom cadence. Schedules turn one-off testing into continuous monitoring.
+
+<Tabs>
+  <Tab title="What a schedule is">
+    A Schedule binds:
+    - **A Test List** (what to run)
+    - **A frequency** (when to run it)
+    - **A timezone** (so 6 AM means 6 AM where your team works)
+    - **Notification preferences** (who hears about failures)
+  </Tab>
+  <Tab title="Where schedules appear">
+    From the **Monitoring** section. Each schedule has its own run history page where you can see how runs trended over time and which tests changed status between runs.
+  </Tab>
+</Tabs>
+
+<Card title="Monitoring & Scheduling" href="/web-portal/maintenance/monitoring" icon="chart-simple">
+  Schedule continuous test runs
+</Card>
+
+## Feature Map (Use Case Flow)
+
+A structured list of **features** and the **use cases** under each, built from your PRD when you upload one at project setup. It's the spec-side input that grounds the rest of the lifecycle — exploration targets these use cases, plan generation scopes test cases to them, and the report attributes coverage back to them.
+
+<Tabs>
+  <Tab title="What the feature map is">
+    TestSprite reads your uploaded PRD (markdown / PDF / plain text — anything spec-shaped) and produces something like: *Feature: Checkout → Use Cases: Add to cart, Apply coupon, Pay with card, Pay with PayPal, Handle payment failure*. The result is rendered as a flow graph during the wizard's **Use Cases & Features** step, and persists as the **Use Case Flow** tab on the project detail page.
+  </Tab>
+  <Tab title="Where the feature map appears">
+    - In the **Create Tests** wizard, right after PRD upload — labeled "Use Cases & Features" with a flow graph and a <kbd>Re-extract</kbd> button.
+    - On the project detail page, as the **Use Case Flow** tab.
+  </Tab>
+  <Tab title="Without a PRD">
+    The wizard skips this step. TestSprite still works — it falls back to your URL inputs, instructions, and (for UI) live exploration alone — but plans aren't grounded in your spec, which materially affects coverage. Uploading a PRD is **strongly recommended**.
+  </Tab>
+</Tabs>
+
+## Feature Exploration (Beta)
+
+A pre-test phase for UI projects where TestSprite visits your live app and explores it feature by feature, targeting the use cases from the feature map. The test plan in the next step is grounded in both the spec (feature map) and real behavior (what exploration could and couldn't reach).
+
+<Tabs>
+  <Tab title="What feature exploration is">
+    Exploration walks a list of features (Sign Up, Checkout, Profile, etc.) on your live app, captures what it could and couldn't reach, and surfaces a status per feature: <kbd>Exploring</kbd> while it's running, then <kbd>Done</kbd>, <kbd>Failed</kbd>, or <kbd>Blocked</kbd> when it finishes.
+  </Tab>
+  <Tab title="Where exploration appears">
+    In the **Create Tests** wizard for UI projects, after configuration. You can also revisit recordings later from the **Site Exploration** tab on the project detail page.
+  </Tab>
+</Tabs>
+
+<Card title="Feature Exploration" href="/web-portal/core/ui/feature-exploration" icon="compass">
+  Deep dive on the exploration phase
+</Card>
+
+## Variables (Dynamic Variables)
+
+Values captured from one API test and reused as inputs in a downstream test — the way TestSprite stitches together multi-step API flows.
+
+<Tabs>
+  <Tab title="What variables are">
+    When TestSprite runs `POST /orders` and gets back `{ "orderId": "abc" }`, it can capture `orderId` as a dynamic variable. A later `GET /orders/{orderId}` test then consumes that captured value instead of a hard-coded one.
+
+    You'll see the captured variable name (e.g. `orderId`) and its values across runs on the **Dynamic Variables** tab.
+  </Tab>
+  <Tab title="Where variables appear">
+    On API projects, under the **Dynamic Variables** tab on the project detail page. The variables list builds up as tests execute — empty before the first run, populated after.
+  </Tab>
+</Tabs>
+
+## Credentials (Authentication)
+
+The keys, tokens, or login details TestSprite uses to call your APIs or sign into your app during testing.
+
+<Tabs>
+  <Tab title="What credentials are">
+    For **API projects**: per-API auth type (Bearer Token, API Key, Basic Token, or None) plus the secret value, with bulk update if one token covers many endpoints.
+
+    For **UI projects**: a test account (URL + username + password) TestSprite uses to sign into your app during exploration and runs.
+
+    Credentials are stored encrypted, masked in the UI (only first/last few chars shown), and editable any time from the **Authentication** tab.
+  </Tab>
+  <Tab title="Where credentials appear">
+    During wizard configuration (you provide them upfront), and on the **Authentication** tab of the project detail page (where you update them later).
+  </Tab>
+</Tabs>
+
+## Cleanup
+
+Post-run teardown of resources tests created — records, files, sessions — so your test environment doesn't fill with leftovers.
+
+<Tabs>
+  <Tab title="What cleanup is">
+    After API tests finish, TestSprite reviews any resources the suite created and tries to clean them up automatically. The **Cleanup** tab shows which resources were captured during the run and the status of each cleanup attempt (Has cleanup, Orphaned).
+  </Tab>
+  <Tab title="Where cleanup appears">
+    On API projects, under the **Cleanup** tab on the project detail page. You'll briefly see a *"Running cleanup sweep"* indicator at the end of a run before results land here.
+  </Tab>
+</Tabs>
+
+## Test Plan
+
+The structured list of test cases TestSprite drafts after analyzing your project. The plan is what you review and refine before any code is generated.
+
+<Tabs>
+  <Tab title="What a test plan is">
+    Each entry in a Test Plan has:
+    - A **title** and **description**
+    - A **category** (functional, security, error handling, etc.)
+    - **Steps** TestSprite will execute when the test runs
+    - **Expected outcomes** for each step
+  </Tab>
+  <Tab title="Where the test plan appears">
+    During the plan review phase of the wizard — for UI projects, right after exploration finishes; for API projects, right after configuration. You can edit, add, or remove cases here before running.
+  </Tab>
+</Tabs>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Testing Lifecycle" href="/web-portal/concepts/testing-lifecycle" icon="arrows-spin">
+    How these terms come together end to end
+  </Card>
+  <Card title="UI Testing" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
+    First UI test, step by step
+  </Card>
+  <Card title="API Testing" href="/web-portal/core/api/api-testing" icon="terminal">
+    First API test, step by step
+  </Card>
+  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="layout">
+    Every tab on the project detail page
+  </Card>
+</Columns>

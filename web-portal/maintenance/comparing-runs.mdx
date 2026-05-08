@@ -1,0 +1,139 @@
+---
+title: "Comparing Runs"
+description: "How to spot what changed between two scheduled runs — Previous Executions table, per-run pass count, Changes column, and the triage workflows built on them."
+icon: "code-compare"
+---
+
+<Frame>
+  <img src="../../../images/compare-overview.png" alt="Schedule run history with Previous Executions, Status, and Changes columns" />
+</Frame>
+
+<Info>
+**Comparing Runs depends on schedule run history**, which means it's a Pro feature too — Free accounts have no schedule slots, so there's no run history to diff. See [Schedules](/web-portal/maintenance/monitoring) for the gating details.
+</Info>
+
+## Why Comparing Runs Matters
+
+Two runs of the same Test List rarely look identical. Even when nothing should have changed, you'll see:
+
+- Flaky tests recover or break cleanly between runs
+- Real regressions appear after a backend deploy
+- UI changes break tests that were happy yesterday
+- Edge cases flip on the rate-limited 1-in-100 path
+
+The Web Portal surfaces run-vs-run differences in the **schedule run-history table**. Each row is a past run; the columns give you a per-run rollup plus a diff against the immediate predecessor.
+
+## The Schedule Run-History Table
+
+Open a schedule from <kbd>Testing → Monitoring</kbd>. Each run is a row, sorted newest-first.
+
+<Frame>
+  <img src="../../../images/compare-tests.png" alt="Schedule run history table" />
+</Frame>
+
+| Column | What it shows |
+| :--- | :--- |
+| <kbd>Previous Executions</kbd> | Timestamp of the run |
+| <kbd>Status</kbd> | `<passed>/<total> Pass` for completed runs, or **In Progress** while still running |
+| <kbd>Changes</kbd> | Test-name chips for everything that flipped vs. the **immediate predecessor** run |
+
+Click any non-running row to open that run's execution detail page, where the per-test outcomes live.
+
+### The Changes column
+
+<Frame>
+  <img src="../../../images/compare-changes.png" alt="Changes column with newly failed and newly recovered chips" />
+</Frame>
+
+| Indicator | Meaning |
+| :--- | :--- |
+| <kbd>Newly failed</kbd> red chip | A test that passed last time and failed (or was blocked) this time |
+| <kbd>Newly recovered</kbd> green chip | A test that failed (or was blocked) last time and passed this time |
+| <kbd>—</kbd> | No status changes between this run and the prior run |
+
+Up to three test names show per row, with `+N more` for longer lists; hover the `+N more` badge for the full list.
+
+#### What counts as a status change
+
+| From | To | Reported as |
+| :--- | :--- | :--- |
+| <kbd>Passed</kbd> | <kbd>Failed</kbd> | Newly failed |
+| <kbd>Passed</kbd> | <kbd>Blocked</kbd> | Newly failed |
+| <kbd>Failed</kbd> | <kbd>Passed</kbd> | Newly recovered |
+| <kbd>Blocked</kbd> | <kbd>Passed</kbd> | Newly recovered |
+| <kbd>Failed</kbd> | <kbd>Blocked</kbd> | (no chip — both still problem states) |
+| <kbd>Passed</kbd> | <kbd>Passed</kbd> | (no chip) |
+
+Tests that didn't run in both compared runs (added or removed from the Test List between them) don't appear in the Changes column.
+
+## Triage Workflow
+
+When the Changes column reports newly-failed tests:
+
+<Steps>
+  <Step title="Click the latest run row">
+    Opens the execution detail page — every test in that run with its individual status, error trace, and per-step / request-response detail.
+  </Step>
+  <Step title="Open a newly-failed test">
+    For UI tests: lands on the [Step-by-Step Walkthrough](/web-portal/core/ui/ui-step-by-step) — failed step highlighted, HTML snapshot for that moment, video recording, error / trace / fix tabs.
+
+    For API tests: the request/response panel shows the actual HTTP call, the captured response, and the assertion that fired.
+  </Step>
+  <Step title="(Optional) compare against the previous run">
+    Go back to the run-history table and click the predecessor row. The same per-test detail is there — open the same test on that run for an eyeball comparison.
+  </Step>
+  <Step title="Decide: real regression or test brittleness?">
+    - If the user-visible flow itself is broken → file a bug, fix the product
+    - If the test is too strict on something inconsequential (e.g. asserting on a timestamp that flaps) → [Refine the test](/web-portal/core/working-with-test/refining-tests)
+    - If the UI changed but the flow is fine → [Rerun with Auto-Heal](/web-portal/core/ui/auto-heal) (UI tests, Pro feature)
+  </Step>
+</Steps>
+
+<Tip>
+**Recovery sanity-check.** When a test goes from red to green, confirm the recovery is from your fix, not a flake. If you didn't ship a change in the relevant area, the recovery may be incidental — watch the next run; if the test goes red again, treat it as flaky and refine.
+</Tip>
+
+## Reading the Schedule at a Glance
+
+A streak of `—` in the Changes column means your suite is stable. Recurring red chips on the same test = real regression. Random one-off red chips that recover next run = flake.
+
+<Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen">
+  Stabilize flaky tests via natural-language refinement
+</Card>
+
+## Edge Cases & Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The Changes column shows '—' for a run I expected to have new failures">
+    Three possibilities:
+    - The test that failed this run wasn't in the previous run (added or removed). Tests that didn't run in both don't appear.
+    - The flips are between two non-conclusive states (Failed → Blocked or Blocked → Failed) which the chip rule deliberately doesn't surface — both are still failures.
+    - The previous run is still **In Progress**. Diff requires both runs to be Completed; otherwise the cell renders `—`.
+  </Accordion>
+  <Accordion title="The Changes column is loading skeleton bars instead of chips">
+    The diff is computed lazily by fetching both runs' test outcomes. Skeleton bars show while the fetch is in flight; they resolve to chips (or `—`) within a few seconds.
+  </Accordion>
+  <Accordion title="A flaky test shows up in Changes column on every other run">
+    Truly random flake. Refine the test in chat to relax the flapping assertion, or accept the test is checking real intermittent behavior in your product.
+  </Accordion>
+  <Accordion title="I want to compare two runs that aren't adjacent">
+    The Changes column diffs against the immediate predecessor. To compare arbitrary runs, open each run's execution detail in a separate tab and inspect the relevant tests directly.
+  </Accordion>
+</AccordionGroup>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Schedule Monitoring" href="/web-portal/maintenance/monitoring" icon="clock">
+    The schedules whose run history powers the Changes column
+  </Card>
+  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-magnifying-glass">
+    The home of per-test reports — where you drill in once Changes points at a test
+  </Card>
+  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen">
+    Stabilize flaky tests via natural-language refinement
+  </Card>
+  <Card title="Auto-Heal (Pro)" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
+    Absorb UI drift on rerun without changing the test
+  </Card>
+</Columns>

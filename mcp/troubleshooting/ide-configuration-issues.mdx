@@ -20,7 +20,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
     cat ~/.cursor/mcp.json | jq .
     ```
     VS Code Quick Check Commands
-    ```bash
+    ```bash expandable
     # VS Code project-level settings (check current directory)
     cat .vscode/settings.json | jq .
 
@@ -34,7 +34,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
 
     <Tab title="Windows">
     Cursor Quick Check Commands
-    ```powershell
+    ```powershell expandable
     # Cursor project-level config (check current directory)
     Get-Content .cursor\mcp.json | ConvertFrom-Json
     # Command Prompt with jq
@@ -46,7 +46,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
     type "%USERPROFILE%\.cursor\mcp.json" | jq .
     ```
     VS Code Quick Check Commands
-    ```powershell
+    ```powershell expandable
     # VS Code project-level settings (check current directory)
     Get-Content .vscode\settings.json | ConvertFrom-Json
     # Command Prompt
@@ -139,7 +139,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
 
     <Tab title="Windows">
     1. **Check if files exist:**
-    ```powershell
+    ```powershell expandable
     Test-Path .cursor\mcp.json
     Test-Path "$env:USERPROFILE\.cursor\mcp.json"
     Test-Path .vscode\settings.json
@@ -151,7 +151,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
     ```
 
     2. **Create directories if missing:**
-    ```powershell
+    ```powershell expandable
     New-Item -ItemType Directory -Force -Path .cursor
     New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.cursor"
     New-Item -ItemType Directory -Force -Path .vscode
@@ -163,7 +163,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
     ```
 
     3. **Check permissions** (if needed):
-    ```powershell
+    ```powershell expandable
     # Check permissions
     Get-Acl .cursor\mcp.json
     # Grant full control to current user
@@ -180,7 +180,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
     <Tabs>
     <Tab title="Cursor">
     Cursor Required Configuration Format
-    ```json
+    ```json expandable
     {
       "mcpServers": {
         "TestSprite": {
@@ -197,7 +197,7 @@ If you experience issues where your **IDE doesn't recognize TestSprite MCP Serve
 
     <Tab title="VS Code">
     VS Code Required Configuration Format
-    ```json
+    ```json expandable
     {
       "mcp.servers": {
         "TestSprite": {

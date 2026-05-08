@@ -1,0 +1,122 @@
+---
+title: "Agent Actions"
+description: "The video gallery of every UI test run. One tile per recording, bucketed by status, with click-to-play and search/filter."
+icon: "film"
+---
+
+<Frame>
+  <img src="../../../images/agentaction-overview.png" alt="Agent Actions video gallery" />
+</Frame>
+
+## What Agent Actions Is
+
+A project-level archive of **every UI test recording** — each tile is the video TestSprite captured while walking through one user journey. The recording itself *is* the action log: click X, type Y, navigate to Z, all captured as video.
+
+<Info>
+This is UI-only. API projects don't have it (HTTP requests don't need to be filmed; their request/response bodies are the equivalent artifact).
+</Info>
+
+<Tabs>
+  <Tab title="Where it lives">
+    The **Agent Actions** tab in the project sidebar, under the **Result** group. It sits alongside the **Test Report** tab — Test Report is the aggregated outcome view, Agent Actions is the per-recording browse view.
+      <Frame>
+      <img src="../../../images/agentaction-where-to-find.png" alt="Agent Actions video gallery" />
+    </Frame>
+  </Tab>
+  <Tab title="When you'll use it">
+    - **Replay a failing test** to see exactly what happened on screen
+    - **Hand a recording to a teammate** instead of describing the bug in chat
+    - **Audit recent runs** at a glance, filtered to just Failed
+    - **Spot-check passing tests** when something looks off in the report numbers
+  </Tab>
+</Tabs>
+
+## How the Gallery Is Organized
+
+Tiles are bucketed by status into three sections, in this order:
+
+| Bucket | What's in it |
+| :--- | :--- |
+| <kbd>Passed</kbd> | Tests whose run finished and assertions held |
+| <kbd>Failed</kbd> | Tests whose run finished and assertions didn't hold |
+| <kbd>Blocked</kbd> | Tests that couldn't complete — running, idle, or anything that didn't resolve to Pass / Fail |
+
+Each tile shows the recording thumbnail, the test title, a priority chip, and a status badge. Clicking the tile opens an inline player.
+
+<Note>
+**Tiles need a recording to appear.** Tests that ran but didn't produce a video (rare — typically a vendor-side recording timeout) are excluded from the gallery. They're still visible in the **Integration Tests** list.
+</Note>
+
+## Search and Filter
+
+The toolbar above the gallery has:
+
+- **Search** — matches against the test title and description (case-insensitive)
+- **Status filter** — Passed / Failed / Blocked
+- **Priority filter** — High / Medium / Low
+
+Filters are independent and clearable individually. The bucket sections re-render to show only matching tiles.
+
+## What You'll See When the Project Is Mid-Run
+
+Two transitional states:
+
+<Tabs>
+  <Tab title="No tiles yet">
+    First run hasn't produced any recordings. You'll see the in-progress placeholder with stages: **Running agents → Recording sessions → Processing videos**. Tiles trickle in as agents finish.
+  </Tab>
+  <Tab title="Some tiles, more coming">
+    Recordings appear shortly after each test finishes. Tiles may trickle in over the first few seconds; the buckets reflect the final state once every test has resolved.
+  </Tab>
+</Tabs>
+
+## Agent Actions vs. Step-by-Step
+
+Both are visual replay tools, but at different scopes:
+
+| | Agent Actions | Step-by-Step Walkthrough |
+| :--- | :--- | :--- |
+| **Scope** | Project — every UI recording in one gallery | Per-test — the run of a single test |
+| **Primary artifact** | Video tile | Per-step screenshots + recorded video |
+| **Surface area** | Browse / filter / triage at scale | Drill into one test's flow + assertions |
+| **When to use** | "Show me everything that failed" | "What exactly happened on step 4 of this test?" |
+
+Both pull from the same recordings — Agent Actions is the index, Step-by-Step is the inspector.
+
+<Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
+  Per-step screenshots, video, and behavior trace for a single test
+</Card>
+
+## Edge Cases & Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="A failed test has no recording in the gallery">
+    The recording wasn't captured for this run — rare, typically a transient hiccup. Rerun the test; subsequent recordings land in the gallery normally. The original failure is still in the Test Report; the gallery just hides tiles with no playable video.
+  </Accordion>
+  <Accordion title="Tile opens but the video won't play">
+    Usually a stale playback link. Refresh the page; the link is regenerated on every load.
+  </Accordion>
+  <Accordion title="Recordings from multiple projects in the same gallery">
+    Agent Actions is project-scoped. If your dashboard URL has multiple frontend projects under one parent (rare — typically a multi-URL setup), tiles show a project-name subtitle so you can tell them apart.
+  </Accordion>
+  <Accordion title="Playing a recording counts against credits?">
+    No. Recordings are static artifacts; playback doesn't trigger any agent activity. Only re-running the test consumes credits.
+  </Accordion>
+</AccordionGroup>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
+    Drill into a single test's run
+  </Card>
+  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="layout">
+    All project-level tabs, including this one
+  </Card>
+  <Card title="Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
+    Trigger a fresh run when a recording shows the wrong behavior
+  </Card>
+  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen-to-square">
+    Iterate on a test in natural language after watching its recording
+  </Card>
+</Columns>

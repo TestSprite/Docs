@@ -1,0 +1,134 @@
+---
+title: "GitHub Integration"
+description: "Install the TestSprite GitHub App to run exploratory and regression tests against your pull requests automatically."
+icon: "github"
+---
+
+## Overview
+
+Connecting TestSprite to GitHub turns one-off testing into a release gate. Once installed, the integration watches your selected repositories and runs tests automatically on every pull request — surfacing results as PR comments and (optionally) blocking merges until tests pass.
+
+<Frame>
+  <img src="../../images/githubapp-hero.png"  alt="config" />
+</Frame>
+
+## What the Integration Does
+
+Once a repository is connected, TestSprite can:
+
+- **Run tests on every pull request** to that repo
+- **Optionally include draft PRs** in the watch list
+- **Post results back as PR comments** with pass/fail counts and links to the full report
+- **Optionally block merge** until the tests pass — turning the integration into a quality gate
+
+Each behavior is configurable per repository, so a repo you're still experimenting with can run non-blocking while a release-critical repo enforces the gate.
+
+## Installation
+
+<Steps>
+  <Step title="Open the GitHub App settings">
+    Navigate to <kbd>Settings → GitHub App</kbd> in the dashboard. If the integration isn't installed yet, you'll see a banner with a <kbd>Connect With Github App</kbd> button.
+    <Frame>
+    <img src="../../images/githubapp-connect.png"  alt="config" />
+    </Frame>
+ </Step>
+  <Step title="Connect">
+    Click <kbd>Connect With Github App</kbd>. A GitHub popup opens where you choose:
+    - The **GitHub account or organization** to install into
+    - **Repository access** — every repo in the account or a selected subset
+
+    GitHub will ask you to authorize the TestSprite GitHub App. Approve to continue.
+      <Frame>
+      <img src="../../images/githubapp-connect-config.png"  alt="config" />
+    </Frame>
+  </Step>
+  <Step title="Return to TestSprite">
+    Once you complete the GitHub flow, the popup closes and the settings page refreshes automatically. You'll now see a **Connected Organization** card showing the GitHub account and a list of connected repositories.
+    <Frame>
+      <img src="../../images/githubapp-manage.png"  alt="config" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Info>
+You can install into multiple GitHub accounts or organizations. Each shows up as its own Connected Organization card on the settings page.
+</Info>
+
+## Configuring a Repository
+
+After installation, each repository you give access to can be configured independently.
+
+<Steps>
+  <Step title="Select the repository">
+    From the connected repositories list, expand the row for the repo you want to configure (or click <kbd>Add Connection</kbd> for a new one).
+    <Frame>
+      <img src="../../images/githubapp-connect-repo.png"  alt="config" />
+    </Frame>
+  </Step>
+  <Step title="Configure run behavior">
+      <Frame>
+      <img src="../../images/githubapp-request-setting.png"  alt="config" />
+    </Frame>
+    Three toggles per repository:
+
+    | Toggle | Default | Effect |
+    | :--- | :--- | :--- |
+    | <kbd>Run on Pull Requests</kbd> | On | TestSprite runs your tests when a PR is opened or updated |
+    | <kbd>Include Draft PRs</kbd> | On | Run on draft PRs in addition to ready-for-review ones |
+    | <kbd>Blocking PRs</kbd> | On | Report results as GitHub Status Checks; failures prevent the PR from being merged |
+  </Step>
+  <Step title="Save">
+    Click <kbd>Save Changes</kbd>. The repo is now wired up — the next PR opened or updated will trigger a TestSprite run.
+    <Frame>
+      <img src="../../images/githubapp-save.png"  alt="config" />
+    </Frame>
+  </Step>
+</Steps>
+
+## Disconnecting a Repository
+
+To stop testing a specific repository without uninstalling the whole app, expand that repo's card and click <kbd>Remove</kbd>, then confirm with <kbd>Revoke</kbd>. The repo's TestSprite runs stop immediately; existing run history stays accessible.
+
+## Uninstalling the App Entirely
+
+To remove the integration completely:
+
+1. From GitHub, go to **Settings → Applications → Installed GitHub Apps**
+2. Find **TestSprite** and click <kbd>Configure</kbd>
+3. Scroll to the bottom and click <kbd>Uninstall</kbd>
+
+The TestSprite settings page reverts to the not-yet-installed state. Reinstall any time to start over.
+
+## Tips
+
+<AccordionGroup>
+  <Accordion title="Start with non-blocking for new repos">
+    Turn off <kbd>Blocking PRs</kbd> for the first few PRs while you confirm tests run cleanly. Flip blocking on once you're confident the suite is stable.
+  </Accordion>
+  <Accordion title="Generate tests in your IDE first">
+    The integration runs tests that already exist for your project. The fastest way to seed tests for a repo is via the [TestSprite MCP server](/mcp/getting-started/overview) in your IDE — generate, validate, push, and the integration picks up from there.
+  </Accordion>
+  <Accordion title="Use draft PRs for quick checks">
+    Leaving <kbd>Include Draft PRs</kbd> on means you can open a draft against your branch to get a TestSprite run without ceremony. Useful for "I'm about to refactor — does the suite pass first?" sanity checks.
+  </Accordion>
+  <Accordion title="Pair with scheduled monitoring">
+    PR checks catch regressions before merge; [scheduled runs](/web-portal/maintenance/monitoring) catch regressions in production. Most teams run both.
+  </Accordion>
+</AccordionGroup>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Monitoring & Scheduling" href="/web-portal/maintenance/monitoring" icon="chart-simple">
+    Run tests on a schedule, not just on PRs
+  </Card>
+  <Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
+    Other ways to integrate TestSprite with external tools
+  </Card>
+  <Card title="MCP Server" href="/mcp/getting-started/overview" icon="square-terminal">
+    Generate tests from your IDE first
+  </Card>
+  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="layout">
+    Where PR-triggered runs land
+  </Card>
+</Columns>

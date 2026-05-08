@@ -1,6 +1,7 @@
 ---
 title: "Create Tests for New Projects"
 description: "Generate comprehensive test suites for a brand new project using TestSprite MCP Server."
+icon: "plus"
 ---
 
 ## When to Use This
@@ -31,10 +32,10 @@ TestSprite follows a systematic 8-step process to transform your code into thoro
 flowchart LR
     A["Bootstrap Environment<br/>Initialize testing setup"] --> B["Read User PRD<br/>Parse requirements"]
     A --> C["Analyze Code<br/>Understand codebase"]
-    
+
     B --> D["Generate TestSprite PRD<br/>Create normalized requirements"]
     C --> D
-    
+
     D --> E["Create Test Plans<br/>Design comprehensive tests"]
     E --> F["Generate Test Code<br/>Create executable tests"]
     F --> G["Execute Tests<br/>Run in cloud sandbox"]
@@ -60,7 +61,7 @@ The AI calls `testsprite_bootstrap_tests` to initialize the testing environment.
 4. **Scope Definition**: Determines testing scope (`codebase` for full project)
 
 <CodeGroup>
-```javascript Configuration
+```javascript Configuration expandable
 testsprite_bootstrap_tests({
   localPort: 5173, // or your port
   type: "frontend", // or "backend"
@@ -69,7 +70,7 @@ testsprite_bootstrap_tests({
 })
 ```
 
-```json Sample Configuration
+```json Sample Configuration expandable
 {
   "projectType": "frontend",
   "localPort": 5173,
@@ -119,11 +120,11 @@ testsprite_generate_code_summary({
 })
 ```
 
-```json Expandable Generated Output
+```json Expandable Generated Output expandable
 {
   "tech_stack": [
     "React",
-    "TypeScript", 
+    "TypeScript",
     "Material-UI (MUI)",
     "React Router",
     "Vite",
@@ -169,7 +170,7 @@ testsprite_generate_standardized_prd({
 })
 ```
 
-```json Expandable Generated PRD Structure
+```json Expandable Generated PRD Structure expandable
 {
   "meta": {
     "project": "Your Application Name",
@@ -195,7 +196,7 @@ testsprite_generate_standardized_prd({
   ],
   "validation_criteria": [
     "Functional requirements validation",
-    "Security and access control verification", 
+    "Security and access control verification",
     "User interface and experience validation"
   ],
   "code_summary": {
@@ -241,7 +242,7 @@ testsprite_generate_backend_test_plan({
 })
 ```
 
-```json Expandable Generated Test Plan
+```json Expandable Generated Test Plan expandable
 [
   {
     "id": "TC001",
@@ -296,7 +297,7 @@ The AI calls `testsprite_generate_code_and_execute` to create production-ready t
 5. **Configuration**: Sets up test environment configuration
 
 <CodeGroup>
-```javascript Tool Call
+```javascript Tool Call expandable
 testsprite_generate_code_and_execute({
   projectName: "your-project-name",
   projectPath: "/absolute/path/to/your/project",
@@ -305,7 +306,7 @@ testsprite_generate_code_and_execute({
 })
 ```
 
-```python Expandable Generated Test Code Example
+```python Expandable Generated Test Code Example expandable
 # TC001_Login_success_with_valid_test_credentials.py
 import asyncio
 from playwright import async_api
@@ -314,11 +315,11 @@ async def run_test():
     pw = None
     browser = None
     context = None
-    
+
     try:
         # Start a Playwright session in asynchronous mode
         pw = await async_api.async_playwright().start()
-        
+
         # Launch a Chromium browser in headless mode
         browser = await pw.chromium.launch(
             headless=True,
@@ -329,17 +330,17 @@ async def run_test():
                 "--single-process"
             ],
         )
-        
+
         # Create a new browser context
         context = await browser.new_context()
         context.set_default_timeout(5000)
-        
+
         # Open a new page in the browser context
         page = await context.new_page()
-        
+
         # Navigate to your target URL
         await page.goto("http://localhost:5174", wait_until="commit", timeout=10000)
-        
+
         # Navigate to the login page
         frame = context.pages[-1]
         elem = frame.locator('xpath=html/body/div/header/div/a[3]').nth(0)
@@ -395,7 +396,7 @@ TestSprite generates comprehensive test reports with detailed analysis, error de
 
 <Accordion title="View Detailed Report Structure">
   **Basic Information** - Every report starts with essential details:
-  - **Project Name** - The name of your application  
+  - **Project Name** - The name of your application
   - **Test Date** - When the tests were run
   - **Version** - Which version was tested
   - **Summary** - Quick overview of results
@@ -418,7 +419,7 @@ TestSprite generates comprehensive test reports with detailed analysis, error de
 
   **Quick Stats:**
   - **73% of features tested** - How much of your app was covered
-  - **56% of tests passed** - Overall success rate  
+  - **56% of tests passed** - Overall success rate
   - **Critical issues found** - Most important problems to fix
 
   **Feature-by-Feature Breakdown:**
@@ -463,7 +464,7 @@ flowchart LR
 The AI assistant automatically applies fixes based on TestSprite's recommendations. Here's a real example showing how a missing delete button was identified and added to fix a failing test.
 
 <CodeGroup>
-```javascript Before
+```javascript Before expandable
 // Missing delete button in admin panel
 const AdminProductCard = ({ product, onDelete }) => {
   return (
@@ -478,7 +479,7 @@ const AdminProductCard = ({ product, onDelete }) => {
 };
 ```
 
-```javascript After
+```javascript After expandable
 // AI-generated fix
 const AdminProductCard = ({ product, onDelete }) => {
   return (
@@ -488,7 +489,7 @@ const AdminProductCard = ({ product, onDelete }) => {
       <div className="actions">
         <button className="edit-btn">Edit</button>
         {/* AI added this button to fix failing test */}
-        <button 
+        <button
           id="admin-delete-btn"
           className="delete-btn"
           onClick={() => onDelete(product.id)}
@@ -515,16 +516,16 @@ const AdminProductCard = ({ product, onDelete }) => {
   </Accordion>
 
   <Accordion title="During Testing">
-    - Review generated PRD for accuracy  
-    - Examine test plan coverage  
-    - Monitor test execution progress  
+    - Review generated PRD for accuracy
+    - Examine test plan coverage
+    - Monitor test execution progress
     - Note any configuration adjustments needed
   </Accordion>
 
   <Accordion title="After Testing">
-    - Analyze test results thoroughly  
-    - Understand failure patterns  
-    - Apply fixes systematically  
+    - Analyze test results thoroughly
+    - Understand failure patterns
+    - Apply fixes systematically
     - Document lessons learned
     - Re-run tests to validate fixes
   </Accordion>

@@ -1,6 +1,7 @@
 ---
 title: "Key Terms"
 description: "Essential TestSprite concepts explained simply."
+icon: "square-code"
 ---
 
 ## Generate & Regenerate
@@ -17,21 +18,21 @@ Create tests for the **first time** based on your PRD and project.
 <Tabs>
   <Tab title="Example prompt">
     Use this prompt to get started with testing your project:
-    
+
     ```text
     Help me test this project with TestSprite.
     ```
   </Tab>
   <Tab title="When to use">
     Use <kbd>Generate</kbd> when you need to create tests for the first time:
-    
+
     - Starting with a new project
     - Adding tests to an existing project without tests
     - Creating initial test coverage
   </Tab>
   <Tab title="What happens">
     <kbd>Generate</kbd> follows this workflow:
-    
+
     1. Analyzes your code
     2. Creates test plans
     3. Generates test files
@@ -50,21 +51,21 @@ Create tests for the **first time** based on your PRD and project.
 <Tabs>
   <Tab title="Example prompt">
     Use this prompt to regenerate tests after significant changes:
-    
+
     ```text
     Regenerate tests for the updated checkout flow.
     ```
   </Tab>
   <Tab title="When to use">
     Use <kbd>Regenerate</kbd> when you need to recreate tests from scratch:
-    
+
     - Your app changed significantly (new features, refactored flows)
     - Test plans need updating to match new requirements
     - You want fresh test coverage reflecting current state
   </Tab>
   <Tab title="What happens">
     <kbd>Regenerate</kbd> follows this workflow:
-    
+
     1. Re-analyzes your code
     2. Updates test plans
     3. Generates new test files
@@ -91,14 +92,14 @@ These actions control how TestSprite executes your tests. <kbd>Run</kbd> execute
 <Tabs>
   <Tab title="When to use">
     Use <kbd>Run</kbd> when executing tests for the first time:
-    
+
     - After generating tests
     - Initial validation of your application
     - First-time test execution
   </Tab>
   <Tab title="What happens">
     <kbd>Run</kbd> follows this workflow:
-    
+
     1. Executes generated test files
     2. Collects results and artifacts
     3. Generates test reports
@@ -116,21 +117,21 @@ Execute **previously generated tests** again without changing them.
 <Tabs>
   <Tab title="Example prompt">
     Use this prompt to rerun existing tests:
-    
+
     ```text
     Rerun the login and checkout tests with TestSprite.
     ```
   </Tab>
   <Tab title="When to use">
     Use <kbd>Rerun</kbd> when executing existing tests again:
-    
+
     - Validating fixes you just applied
     - Confirming tests pass after app restart
     - Quick smoke check with existing tests
   </Tab>
   <Tab title="What happens">
     <kbd>Rerun</kbd> follows this workflow:
-    
+
     1. Uses existing test files (no regeneration)
     2. Runs them against current app state
     3. Reports updated results
@@ -158,7 +159,7 @@ flowchart LR
 <Tabs>
   <Tab title="Common healing scenarios">
     <kbd>Healing</kbd> addresses these common test fragility issues:
-    
+
     - **UI Selectors:** Updates when element IDs/classes change (e.g., `#login-btn` → `[data-testid="login"]`)
     - **Timing Issues:** Adjusts waits for slow-loading components or animations
     - **Test Data:** Updates fixtures when data schemas change
@@ -166,20 +167,14 @@ flowchart LR
     - **API Contracts:** Tightens schema assertions to match actual API responses
   </Tab>
   <Tab title="How it works">
-    <kbd>Healing</kbd> follows this workflow:
-    
-    1. **Detect:** TestSprite identifies test fragility (not a product bug)
-    2. **Classify:** Determines if it's a selector drift, timing mismatch, env issue, or contract violation
-    3. **Propose Fix:** Generates a safe fix (e.g., new selector, longer wait, updated fixture)
-    4. **Apply:** Automatically applies if low-risk, or asks for approval for larger changes
-    5. **Verify:** Reruns tests to validate the fix worked
+    When a test fails for reasons that look like fragility (not a product bug), TestSprite proposes a fix and verifies it works. Low-risk fixes apply automatically; larger changes ask for approval.
   </Tab>
     <Tab title="Example">
     Here's an example of how healing works:
-    
+
     ```
-    Test failed: Login button selector outdated
-    Healing: Updated selector from #login-btn to [data-testid="login"]
+    Test failed: Login button reference outdated
+    Healing: Updated test to match the new login element
     Status: Auto-applied, test now passing
     ```
   </Tab>
@@ -244,7 +239,7 @@ TestSprite's **standardized Product Requirements Document format** that ensures 
 <Tabs>
   <Tab title="What's in it">
     The <kbd>Normalized PRD</kbd> contains structured information:
-    
+
     - Product overview and goals
     - Core features with acceptance criteria
     - User flows and validation rules
@@ -252,7 +247,7 @@ TestSprite's **standardized Product Requirements Document format** that ensures 
   </Tab>
   <Tab title="Why it matters">
     Understanding why <kbd>Normalized PRD</kbd> exists:
-    
+
     - Your PRD might be in any format
     - TestSprite converts it to a structured format
     - This normalized PRD drives test plan generation
@@ -276,8 +271,8 @@ A **structured list** of test cases generated by TestSprite based on your normal
 <Tabs>
   <Tab title="Example">
     Here's an example of a test plan entry:
-    
-    ```json
+
+    ```json expandable
     {
       "id": "TC001",
       "title": "Login with valid credentials",
@@ -289,7 +284,7 @@ A **structured list** of test cases generated by TestSprite based on your normal
   </Tab>
   <Tab title="Contains">
     A <kbd>Test Plan</kbd> typically includes:
-    
+
     - Test case IDs (TC001, TC002, etc.)
     - Descriptions and steps
     - Categories (functional, security, UI, etc.)

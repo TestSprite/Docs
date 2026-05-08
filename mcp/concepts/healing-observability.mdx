@@ -1,6 +1,7 @@
 ---
 title: "Healing & Observability"
 description: "How TestSprite detects, explains, and repairs failures with strong signals and auto-healing."
+icon: "bandage"
 ---
 
 ## Why Healing & Observability
@@ -22,7 +23,7 @@ During planning, generation, and execution, TestSprite captures rich artifacts t
     </Frame>
 
     TestSprite captures detailed execution artifacts:
-    
+
     - Screenshots and videos (for UI paths)
     - Console logs and network traces
     - HTTP requests/responses with headers and payloads
@@ -34,7 +35,7 @@ During planning, generation, and execution, TestSprite captures rich artifacts t
     </Frame>
     Test results are organized with structured data:
 
-    
+
     - Per-test status with timestamps and duration
     - Assertions and failure locations
     - Categorization: functional, error handling, auth, boundary, edge, concurrency, UI/UX
@@ -44,7 +45,7 @@ During planning, generation, and execution, TestSprite captures rich artifacts t
     <img src="../../images/context.png"  alt="context" />
     </Frame>
     Context information helps understand test execution:
-    
+
     - Code summary, normalized PRD, and test plans used
     - Environment details (frameworks, ports, config)
   </Tab>
@@ -79,26 +80,26 @@ Healing focuses on making tests robust without masking real bugs.
 <Tabs>
   <Tab title="UI Selectors & Timing">
     Healing strategies for UI test stability:
-    
+
     - Prefer **role/label/text-first selectors** over brittle CSS/XPath
     - Add **deterministic waits** (network idle, specific element visible)
     - Defer actions until the page reaches a **known ready state**
   </Tab>
   <Tab title="Test Data & State">
     Healing strategies for test data and state management:
-    
+
     - Generate **deterministic test data** and fixtures
     - **Reset state between tests**; clean up leaked sessions
   </Tab>
   <Tab title="Env & Config">
     Healing strategies for environment and configuration issues:
-    
+
     - Correct known port/app start issues with **targeted guidance**
     - Suggest **missing credentials/env vars** in the portal
   </Tab>
   <Tab title="API Contracts">
     Healing strategies for API contract validation:
-    
+
     - Tighten schema assertions to **actual contract**
     - Add nullability and pagination **boundary cases** where appropriate
   </Tab>
