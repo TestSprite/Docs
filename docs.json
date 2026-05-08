@@ -57,85 +57,14 @@
     },
     "tabs": [
       {
-        "tab": "MCP Server",
-        "icon": "square-terminal",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "mcp/getting-started/introduction",
-              "mcp/getting-started/overview",
-              {
-                "group": "Concepts",
-                "icon": "book",
-                "expanded": true,
-                "pages": [
-                  "mcp/concepts/key-terms",
-                  "mcp/concepts/test-type-lifecycle",
-                  "mcp/concepts/healing-observability"
-                ]
-              },
-              "mcp/getting-started/installation",
-              "mcp/getting-started/first-test"
-
-            ]
-          },
-          {
-            "group": "Core",
-            "pages": [
-              {
-                "group": "Create Tests",
-                "icon": "file-circle-plus",
-                "expanded": true,
-                "pages": [
-                  "mcp/core/create-tests-new-project",
-                  "mcp/core/create-tests-new-feature"
-                ]
-              },
-              "mcp/core/add-extra-tests",
-              "mcp/core/test-progress-dashboard",
-              "mcp/core/modify-tests",
-              "mcp/core/regenerate-tests",
-              "mcp/core/deploy-to-production",
-              "mcp/core/continuous-monitoring",
-              "mcp/core/tools"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
-              "mcp/integrations/github-integration"
-            ]
-          },
-          {
-            "group": "Maintenance",
-            "pages": [
-              "mcp/maintenance/test-maintenance",
-              "mcp/maintenance/migration-from-other-platforms",
-              "mcp/maintenance/cost-performance",
-              "mcp/maintenance/security-compliance"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "mcp/troubleshooting/installation-issues",
-              "mcp/troubleshooting/ide-configuration-issues",
-              "mcp/troubleshooting/application-detection-issues",
-              "mcp/troubleshooting/test-execution-issues"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Web Portal",
         "icon": "window-maximize",
         "groups": [
           {
             "group": "Getting Started",
             "pages": [
-              "web-portal/getting-started/introduction",
               "web-portal/getting-started/overview",
+              "web-portal/getting-started/introduction",
               {
                 "group": "Concepts",
                 "icon": "book",
@@ -223,6 +152,76 @@
             "pages": [
               "web-portal/admin/api-keys",
               "web-portal/admin/billing-and-plans"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "MCP Server",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "mcp/getting-started/introduction",
+              "mcp/getting-started/overview",
+              {
+                "group": "Concepts",
+                "icon": "book",
+                "expanded": true,
+                "pages": [
+                  "mcp/concepts/key-terms",
+                  "mcp/concepts/test-type-lifecycle",
+                  "mcp/concepts/healing-observability"
+                ]
+              },
+              "mcp/getting-started/installation",
+              "mcp/getting-started/first-test"
+            ]
+          },
+          {
+            "group": "Core",
+            "pages": [
+              {
+                "group": "Create Tests",
+                "icon": "file-circle-plus",
+                "expanded": true,
+                "pages": [
+                  "mcp/core/create-tests-new-project",
+                  "mcp/core/create-tests-new-feature"
+                ]
+              },
+              "mcp/core/add-extra-tests",
+              "mcp/core/test-progress-dashboard",
+              "mcp/core/modify-tests",
+              "mcp/core/regenerate-tests",
+              "mcp/core/deploy-to-production",
+              "mcp/core/continuous-monitoring",
+              "mcp/core/tools"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "mcp/integrations/github-integration"
+            ]
+          },
+          {
+            "group": "Maintenance",
+            "pages": [
+              "mcp/maintenance/test-maintenance",
+              "mcp/maintenance/migration-from-other-platforms",
+              "mcp/maintenance/cost-performance",
+              "mcp/maintenance/security-compliance"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "mcp/troubleshooting/installation-issues",
+              "mcp/troubleshooting/ide-configuration-issues",
+              "mcp/troubleshooting/application-detection-issues",
+              "mcp/troubleshooting/test-execution-issues"
             ]
           }
         ]
