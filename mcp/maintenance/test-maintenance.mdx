@@ -9,7 +9,7 @@ Most maintenance is already handled via healing and focused regeneration. Use th
 
 ## Essentials
 - Prefer regeneration over manual rewrites for broad changes
-- Apply auto-healing for selector drift, waits, and fixtures
+- Apply auto-healing when the page or test environment changes but the underlying flow is fine
 - Use diff scope to update only impacted tests
 - Keep PRD and acceptance criteria current
 
@@ -21,7 +21,7 @@ Generate and run tests while coding—even before features are complete—to rev
 </Frame>
 - Use `testScope: "diff"` to target in-progress changes
 - Run small subsets frequently via `testIds`
-- Let healing suggestions guide selectors, waits, and data setup from the start
+- Let healing suggestions absorb routine adjustments so you stay focused on the feature
 
 <Card title="Create Tests for New Change" href="/mcp/core/create-tests-new-feature" icon="square-plus">
   Learn how to create tests for new features and changes

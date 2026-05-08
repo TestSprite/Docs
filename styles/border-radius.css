@@ -549,6 +549,11 @@ a[class*="anchor"] {
    DARK MODE ADJUSTMENTS (if needed)
    ============================================ */
 
+/* kbd chips render as single-line pills, never wrap mid-label */
+kbd {
+  white-space: nowrap !important;
+}
+
 /* kbd dark mode fix */
 @media (prefers-color-scheme: dark) {
   kbd {

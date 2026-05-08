@@ -1,15 +1,19 @@
 ---
-title: "Monitoring & Scheduling"
-description: "Automate your testing workflow with TestSprite's Monitoring feature."
-icon: "chart-simple"
+title: "Schedules (Pro)"
+description: "Schedule Test Lists to run on a cadence — daily, weekly, monthly — with notifications on regressions."
+icon: "calendar-clock"
 ---
 
-The Monitoring feature allows you to schedule **automated test executions** at regular intervals. Instead of manually running tests, you can set up schedules that automatically execute your test lists, providing **continuous monitoring** of your application's health and performance.
+Schedules let you run **automated test executions** at regular intervals. Instead of manually triggering runs, you set up a schedule that executes your Test Lists on a cadence, giving you **continuous monitoring** of your application's health.
 
         <Frame>
         <img src="../../images/monitoring-overview.png"  alt="plan" />
         </Frame>
         <br />
+
+<Info>
+**Schedules are a Pro feature.** Free-plan accounts have **0 schedule slots** — schedule creation is gated until you upgrade. **Starter** includes 5 schedule slots; **Standard** includes unlimited. See [Subscription Plans](/web-portal/admin/billing-and-plans).
+</Info>
 
 ## Key Benefits
 
@@ -19,14 +23,14 @@ The Monitoring feature allows you to schedule **automated test executions** at r
 
 ## Getting Started with Monitoring
 
-### Prerequisites 
+### Prerequisites
 Before setting up schedules:
   - **[Create Test Lists](/web-portal/maintenance/test-lists)**: You need existing test lists to schedule
   - **Verify Test Stability**: Ensure your tests run reliably
   - **Set Up Notifications**: Configure how you want to receive alerts
   - **Check Account Limits**: Verify your plan supports scheduling
 
-### Steps 
+### Steps
 <Steps>
   <Step title="Navigate to Monitoring">
     Go to <kbd>Monitoring</kbd> and click <kbd>New Schedule</kbd> to get started
@@ -37,16 +41,16 @@ Before setting up schedules:
   </Step>
   <Step title="Select Test List">
     Choose an existing test list to schedule
-    
+
     <Note>Review test cases and execution settings, and confirm test list is ready for automation.</Note>
-    
+
       <Frame>
       <img src="../../images/select-testlist.png"  alt="plan" />
       </Frame>
   </Step>
   <Step title="Configure Schedule">
     Set **execution frequency** (daily, weekly, monthly), choose **specific times and days**, configure **timezone settings**, and set up **failure notifications**.
-    
+
     <Frame>
       <img src="../../images/configure-schedule.png"  alt="plan" />
     </Frame>
@@ -59,7 +63,7 @@ Configure when and how often your tests run automatically. Choose from multiple 
 
 ### Frequency Options
 
-Select how frequently your tests execute. Available options include daily runs, weekly schedules on specific days, monthly executions on set dates, and custom patterns for advanced scheduling needs.
+Select how frequently your tests execute. Available options include hourly intervals, daily runs, weekly schedules on specific days, and monthly executions on set dates.
 
     <Frame>
       <img src="../../images/frequency.png"  alt="plan" />
@@ -69,27 +73,27 @@ Select how frequently your tests execute. Available options include daily runs, 
 
 <Tabs>
   <Tab title="Frequency Options">
-Choose how often your tests run automatically. Select from daily, weekly, monthly, or create custom scheduling patterns.
+Choose how often your tests run automatically. Select from hourly, daily, weekly, or monthly scheduling patterns.
 
 | Frequency Options | Description |
 | :--- | :--- |
+| <kbd>Hourly</kbd> | Execute tests every N hours |
 | <kbd>Daily</kbd> | Execute tests every day at specified time |
 | <kbd>Weekly</kbd> | Run tests on specific days of the week |
 | <kbd>Monthly</kbd> | Schedule tests for specific dates each month |
-| <kbd>Custom</kbd> | Define complex scheduling patterns |
   </Tab>
   <Tab title="Example Configurations">
 Real-world examples showing how to configure different schedule types with specific times and timezones.
 
-```yaml
+```yaml expandable
 Daily Schedule:
   Time: 06:00 AM UTC
   Frequency: Every day
-  
+
 Weekly Schedule:
   Days: Monday, Wednesday, Friday
   Time: 09:00 AM EST
-  
+
 Monthly Schedule:
   Date: 1st of every month
   Time: 12:00 PM PST
@@ -113,6 +117,18 @@ Configure the timezone for your scheduled test executions. All schedules use **U
 
 Once schedules are created, you can monitor their execution, view detailed status information, and manage them through the schedule dashboard. Track execution history, pause or modify schedules as needed, and ensure your monitoring runs smoothly.
 
+### Reviewing Run-over-Run Changes
+
+When you open a schedule, the executions table includes a **Changes** column that compares each run to the previous one and surfaces only the tests whose status changed:
+        <Frame>
+        <img src="../../images/monitoring-chage-column.png"  alt="plan" />
+        </Frame>
+
+- **Newly failed** test names appear as red chips — tests that passed last time but failed or got blocked this time
+- **Newly recovered** test names appear as green chips — tests that failed or were blocked last time and pass now
+
+Up to three names show per row, with `+N more` for longer lists. Runs with no status changes show `—`. This makes regressions and recoveries visible at a glance without opening each run.
+
 ### Schedule Dashboard
 
 The Schedule Dashboard provides a comprehensive overview of all your automated test schedules, allowing you to monitor their status, execution history, and upcoming runs at a glance.
@@ -120,11 +136,11 @@ The Schedule Dashboard provides a comprehensive overview of all your automated t
 | Overview Information | Description |
 | :--- | :--- |
 | <kbd>Schedule Name</kbd> | Descriptive name for the scheduled execution |
-| <kbd>Test List</kbd> | Associated test list that will be executed |
-| <kbd>Frequency</kbd> | How often the schedule runs (daily, weekly, etc.) |
+| <kbd>Test List Name</kbd> | Associated test list that will be executed |
+| <kbd>Recent Execution</kbd> | Result of the most recent execution |
+| <kbd>Recurring</kbd> | How often the schedule runs (hourly, daily, weekly, monthly) |
 | <kbd>Next Run</kbd> | When the next execution is scheduled |
-| <kbd>Status</kbd> | Current schedule status (active, paused, completed) |
-| <kbd>Last Result</kbd> | Result of the most recent execution |
+| <kbd>Schedule Status</kbd> | Current schedule status (Active, Paused, Finished) |
 
 ### Schedule Actions
 
@@ -132,8 +148,5 @@ Manage your test schedules with these available actions. Each schedule can be co
 
 | Action | Description |
 | :--- | :--- |
-| <kbd>Run Now</kbd> | Execute the schedule immediately |
-| <kbd>Edit Schedule</kbd> | Modify timing and configuration |
-| <kbd>Pause/Resume</kbd> | Temporarily disable or re-enable |
-| <kbd>View Results</kbd> | See detailed execution history |
-| <kbd>Delete Schedule</kbd> | Remove schedule permanently |
+| <kbd>Edit</kbd> | Modify timing and configuration |
+| <kbd>Deactivate</kbd> | Stop a schedule from running going forward |

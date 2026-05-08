@@ -18,7 +18,7 @@ Test Lists are organized collections of test cases that help you group related t
 | :--- | :--- |
 | <kbd>Centralized Test Management</kbd> | View all test lists in one dashboard, track execution status across collections, search and filter by name or status, and sort by date, count, or type |
 | <kbd>Test Organization</kbd> | Organize Frontend Tests with browser automation, Backend Tests for API functionality, and Mixed Collections combining both test types |
-| <kbd>Execution Tracking</kbd> | Track your **previous execution** status to view the test's last run with **status indicators** showing **Passed** (all tests completed successfully), **Attention** (some tests need review), or **Failed** (tests encountered errors). |
+| <kbd>Execution Tracking</kbd> | Track your **previous execution** status to view the test's last run with **status indicators** showing **Passed** (all tests completed successfully), **Warning** (some tests need review), or **Failed** (tests encountered errors). |
 
 
 
@@ -32,7 +32,7 @@ Test Lists are organized collections of test cases that help you group related t
     </Frame>
   </Step>
   <Step title="Add Test Cases">
-    Add test cases from existing creations in <kbd>All Test</kbd>, or create new tests by configuring web application information and letting TestSprite's AI generate comprehensive test cases
+    Add test cases from existing creations in <kbd>All Tests</kbd>, or create new tests by configuring web application information and letting TestSprite's AI generate comprehensive test cases
     <Frame>
     <img src="../../images/add-test.png"  alt="mcp intro" />
     </Frame>
@@ -55,10 +55,11 @@ Test Lists are organized collections of test cases that help you group related t
 | Option | Description |
 | :--- | :--- |
 | <kbd>Search</kbd> | Search by test list name to quickly find specific collections |
-| <kbd>All Status</kbd> | View all test lists regardless of status |
 | <kbd>Passed</kbd> | Show only successfully executed test lists |
-| <kbd>Attention</kbd> | Filter test lists needing review |
+| <kbd>In Progress</kbd> | Filter test lists currently running |
+| <kbd>Warning</kbd> | Filter test lists with mixed pass/fail results that need review |
 | <kbd>Failed</kbd> | Display test lists with execution errors |
+| <kbd>Blocked</kbd> | Filter test lists that were blocked from completing |
   </Tab>
   <Tab title="Sorting Options">
 
@@ -95,6 +96,6 @@ Each test list displays:
 
 | Action | Description |
 | :--- | :--- |
-| <kbd>Run Tests</kbd> | Execute all tests in the list |
-| <kbd>View Results</kbd> | Review detailed test reports |
-| <kbd>Delete List</kbd> | Remove test list (with confirmation) |
+| <kbd>Add Tests</kbd> | Open the test picker to add tests from existing projects |
+| <kbd>Run Test List</kbd> | Execute all tests in the list |
+| <kbd>Delete Test List</kbd> | Remove test list (with confirmation) |

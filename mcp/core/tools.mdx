@@ -18,7 +18,7 @@ TestSprite MCP Server provides **8 core tools** that work together to deliver co
     - `testScope` (string): Testing scope - "codebase" or "diff"
 
     **Usage:**
-    ```javascript
+    ```javascript expandable
     testsprite_bootstrap_tests({
       localPort: 3000,
       type: "frontend",
@@ -165,7 +165,7 @@ TestSprite MCP Server provides **8 core tools** that work together to deliver co
     - `additionalInstruction` (string): Additional testing instructions (default: "")
 
     **Usage:**
-    ```javascript
+    ```javascript expandable
     testsprite_generate_code_and_execute({
       projectName: "my-ecommerce-app",
       projectPath: "/Users/dev/my-project",
@@ -275,7 +275,7 @@ graph TD
 
 After running the tools, your project will have:
 
-```text Expandable File Structure
+```text Expandable File Structure expandable
 my-project/
 ├── testsprite_tests/
 │   ├── tmp/
@@ -346,7 +346,7 @@ my-project/
     "Run tests TC001 and TC002 with focus on security"
     ```
     The AI will call:
-    ```bash
+    ```bash expandable
     testsprite_generate_code_and_execute ({
       projectName: "my-project",
       projectPath: "/path/to/project",

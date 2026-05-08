@@ -68,6 +68,7 @@
               {
                 "group": "Concepts",
                 "icon": "book",
+                "expanded": true,
                 "pages": [
                   "mcp/concepts/key-terms",
                   "mcp/concepts/test-type-lifecycle",
@@ -85,6 +86,7 @@
               {
                 "group": "Create Tests",
                 "icon": "file-circle-plus",
+                "expanded": true,
                 "pages": [
                   "mcp/core/create-tests-new-project",
                   "mcp/core/create-tests-new-feature"
@@ -133,27 +135,94 @@
             "group": "Getting Started",
             "pages": [
               "web-portal/getting-started/introduction",
-              "web-portal/getting-started/overview"
+              "web-portal/getting-started/overview",
+              {
+                "group": "Concepts",
+                "icon": "book",
+                "expanded": true,
+                "pages": [
+                  "web-portal/concepts/key-terms",
+                  "web-portal/concepts/testing-lifecycle"
+                ]
+              },
+              "web-portal/getting-started/your-first-test"
             ]
           },
           {
             "group": "Core",
             "pages": [
-              "web-portal/core/api-testing",
-              "web-portal/core/ui-testing"
+              {
+                "group": "UI Testing",
+                "icon": "window-maximize",
+                "expanded": true,
+                "pages": [
+                  "web-portal/core/ui/ui-testing",
+                  "web-portal/core/ui/quickstart",
+                  "web-portal/core/ui/feature-exploration",
+                  "web-portal/core/ui/ui-plan-gen",
+                  "web-portal/core/ui/ui-test-gen",
+                  "web-portal/core/ui/ui-step-by-step",
+                  "web-portal/core/ui/agent-actions",
+                  "web-portal/core/ui/ui-rerun",
+                  "web-portal/core/ui/auto-heal"
+                ]
+              },
+              {
+                "group": "API Testing",
+                "icon": "terminal",
+                "expanded": true,
+                "pages": [
+                  "web-portal/core/api/api-testing",
+                  "web-portal/core/api/quickstart",
+                  "web-portal/core/api/api-discovery",
+                  "web-portal/core/api/api-plan-gen",
+                  "web-portal/core/api/endpoint-tests",
+                  "web-portal/core/api/integration-tests",
+                  "web-portal/core/api/dynamic-variables",
+                  "web-portal/core/api/dependency-chains",
+                  "web-portal/core/api/auto-cleanup",
+                  "web-portal/core/api/data-flow",
+                  "web-portal/core/api/auto-auth",
+                  "web-portal/core/api/api-rerun"
+                ]
+              },
+              {
+                "group": "Working with Tests",
+                "icon": "wrench",
+                "expanded": true,
+                "pages": [
+                  "web-portal/core/working-with-test/test-detail",
+                  "web-portal/core/working-with-test/refining-tests"
+                ]
+              }
             ]
           },
           {
             "group": "Maintenance",
             "pages": [
               "web-portal/maintenance/test-lists",
-              "web-portal/maintenance/monitoring"
+              {
+                "group": "Monitoring",
+                "icon": "chart-simple",
+                "expanded": true,
+                "pages": [
+                  "web-portal/maintenance/monitoring",
+                  "web-portal/maintenance/comparing-runs"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "web-portal/integrations/github-integration"
             ]
           },
           {
             "group": "Admin",
             "pages": [
-              "web-portal/admin/api-keys"
+              "web-portal/admin/api-keys",
+              "web-portal/admin/billing-and-plans"
             ]
           }
         ]
@@ -194,29 +263,6 @@
      "copy"
    ]
   },
-  "redirects": [
-    { "source": "/introduction", "destination": "/mcp/getting-started/introduction" },
-    { "source": "/get-started/Quick Start", "destination": "/mcp/getting-started/introduction" },
-    { "source": "/mcp/overview", "destination": "/mcp/getting-started/overview" },
-    { "source": "/mcp/installation", "destination": "/mcp/getting-started/installation" },
-    { "source": "/tutorials/first-test", "destination": "/mcp/getting-started/first-test" },
-    { "source": "/tutorials/test-maintenance", "destination": "/mcp/maintenance/test-maintenance" },
-    { "source": "/tutorials/demo-examples", "destination": "/learn/mcp-demo" },
-    { "source": "/troubleshooting/installation-issues", "destination": "/mcp/troubleshooting/installation-issues" },
-    { "source": "/troubleshooting/ide-configuration-issues", "destination": "/mcp/troubleshooting/ide-configuration-issues" },
-    { "source": "/troubleshooting/application-detection-issues", "destination": "/mcp/troubleshooting/application-detection-issues" },
-    { "source": "/troubleshooting/test-execution-issues", "destination": "/mcp/troubleshooting/test-execution-issues" },
-    { "source": "/concepts/workflow", "destination": "/mcp/concepts/test-type-lifecycle" },
-    { "source": "/mcp/concepts/workflow", "destination": "/mcp/concepts/test-type-lifecycle" },
-    { "source": "/concepts/tools", "destination": "/mcp/core/tools" },
-    { "source": "/web-portal/overview", "destination": "/web-portal/getting-started/overview" },
-    { "source": "/web-portal/api-testing", "destination": "/web-portal/core/api-testing" },
-    { "source": "/web-portal/ui-testing", "destination": "/web-portal/core/ui-testing" },
-    { "source": "/web-portal/test-lists", "destination": "/web-portal/maintenance/test-lists" },
-    { "source": "/web-portal/api-keys", "destination": "/web-portal/admin/api-keys" },
-    { "source": "/web-portal/monitoring", "destination": "/web-portal/maintenance/monitoring" },
-    { "source": "/faq", "destination": "/learn/faq" }
-  ],
   "footer": {
     "socials": {
       "x": "https://x.com/Test_Sprite",

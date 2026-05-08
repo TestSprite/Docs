@@ -179,7 +179,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 | `VERCEL_ORG_ID` | Found in `.vercel/project.json` after running `vercel link` |
                 | `VERCEL_PROJECT_ID` | Found in `.vercel/project.json` after running `vercel link` |
 
-                ```yaml Expandable deploy.yml
+                ```yaml Expandable deploy.yml expandable
                 name: Vercel Preview Deployment
                 env:
                   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -227,7 +227,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 | `RENDER_API_KEY` | Generate from your [Render account settings](https://dashboard.render.com/u/settings#api-keys) |
                 | `RENDER_SERVICE_ID` | Found on your service's settings page in the Render dashboard |
 
-                ```yaml Expandable deploy.yml
+                ```yaml Expandable deploy.yml expandable
                 name: Render Preview Deployment
                 on:
                   pull_request:
@@ -266,7 +266,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 | `RAILWAY_API_TOKEN` | Generate from your Railway account settings |
                 | `RAILWAY_PROJECT_ID` | Found in Railway dashboard under Settings > General |
 
-                ```yaml Expandable deploy.yml
+                ```yaml Expandable deploy.yml expandable
                 name: Railway Preview Deployment
                 on:
                   pull_request:
@@ -325,7 +325,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 | `NETLIFY_AUTH_TOKEN` | Generate from [Netlify personal access tokens](https://app.netlify.com/user/applications#personal-access-tokens) |
                 | `NETLIFY_SITE_ID` | Found in your Netlify site settings under API ID |
 
-                ```yaml Expandable deploy.yml
+                ```yaml Expandable deploy.yml expandable
                 name: Netlify Preview Deployment
                 on:
                   pull_request:
@@ -364,7 +364,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                 | --- | --- |
                 | `FLY_API_TOKEN` | Generate by running `fly tokens create deploy -x 999999h` locally |
 
-                ```yaml Expandable deploy.yml
+                ```yaml Expandable deploy.yml expandable
                 name: Fly.io Preview Deployment
                 on:
                   pull_request:
@@ -412,7 +412,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
         <Step title="Add the GitHub Actions Workflow">
             Create the file `.github/workflows/ci.yml` in your repository with the following configuration:
             <CodeGroup>
-            ```yaml Expandable ci.yml
+            ```yaml Expandable ci.yml expandable
             name: TestSprite CI
 
             on:
@@ -445,7 +445,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
               Full `ci.yml` examples that combine deployment and TestSprite testing in a single workflow.
 
               <CodeGroup>
-                ```yaml Vercel
+                ```yaml Vercel expandable
                 name: TestSprite CI
                 env:
                   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -481,7 +481,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                           base_url: ${{ needs.deploy.outputs.url }}
                           blocking: 'true'
                 ```
-                ```yaml Render
+                ```yaml Render expandable
                 name: TestSprite CI
                 on:
                   pull_request:
@@ -508,7 +508,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                           base_url: # Your Render service URL
                           blocking: 'true'
                 ```
-                ```yaml Railway
+                ```yaml Railway expandable
                 name: TestSprite CI
                 on:
                   pull_request:
@@ -541,7 +541,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                           base_url: ${{ needs.deploy.outputs.url }}
                           blocking: 'true'
                 ```
-                ```yaml Netlify
+                ```yaml Netlify expandable
                 name: TestSprite CI
                 on:
                   pull_request:
@@ -570,7 +570,7 @@ The GitHub App provides the simplest setup with automatic deployment detection â
                           base_url: ${{ needs.deploy.outputs.url }}
                           blocking: 'true'
                 ```
-                ```yaml Fly.io
+                ```yaml Fly.io expandable
                 name: TestSprite CI
                 on:
                   pull_request:
