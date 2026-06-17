@@ -1,0 +1,250 @@
+---
+title: "Key Terms"
+description: "Core CLI concepts — projects, tests, runs, statuses, credits, scopes, and failure bundles — all in one place."
+icon: "square-code"
+---
+
+This page defines the building blocks you'll see across every `testsprite` command. If a term in the docs feels unfamiliar, this is the place to land.
+
+## Project
+
+A **project** is the top-level named container for your tests. Frontend projects target a live public URL; backend projects point at a codebase. Every project has a stable `projectId` you use in most commands.
+
+<Tabs>
+  <Tab title="What a project is">
+    A project has:
+    - **Type**: `frontend` or `backend`
+    - **Target**: a public `https://` URL (frontend) or a codebase (backend)
+    - **Tests**: every test case you have created inside it
+    - **Run history**: every execution of those tests, across all surfaces
+
+    Frontend projects must use a public, non-localhost URL. The CLI validates this before sending anything to the cloud.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    You reference a project by `projectId` whenever you list tests, trigger a run, or create a new test:
+
+    ```bash
+    testsprite project list
+    testsprite test list --project proj_8f0f6
+    testsprite test run test_3a9f21c7 --wait
+    ```
+
+    Create a project from the CLI with `project create`, or from the Web Portal — both write to the same backend.
+
+    ```bash
+    testsprite project create --type frontend --name "Checkout App" --url https://app.example.com
+    ```
+  </Tab>
+</Tabs>
+
+## Test
+
+A **test** lives inside a project and is the unit the CLI runs, reruns, and reads results from. Every test has a type, a status, and a run history.
+
+<Tabs>
+  <Tab title="What a test is">
+    A test has:
+    - **Type**: `frontend` (an ordered plan of browser steps) or `backend` (executable test code, typically Python)
+    - **Status**: one of the nine normalized values in the [Status](#status) table below
+    - **Run history**: every time the test was executed, across CLI, Portal, MCP, and scheduled runs
+    - **Test ID**: a stable `testId` used with `test get`, `test run`, `test failure get`, and more
+
+    Frontend tests describe intent as a list of steps (`planSteps[]`). Backend tests carry executable code (typically Python) with optional variable dependencies (`--produces` / `--needs`).
+  </Tab>
+  <Tab title="How the CLI uses it">
+    Read a test's current state:
+
+    ```bash
+    testsprite test get test_3a9f21c7
+    testsprite test result test_3a9f21c7
+    ```
+
+    Run it and wait for a verdict:
+
+    ```bash
+    testsprite test run test_3a9f21c7 --wait
+    ```
+
+    Pull the failure bundle when it does not pass:
+
+    ```bash
+    testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
+    ```
+  </Tab>
+</Tabs>
+
+## Run and Run ID
+
+A **run** is one execution of a test, from trigger to terminal verdict. Every run is identified by a stable `runId` minted by the backend before the cloud test engine starts.
+
+<Tabs>
+  <Tab title="What a run is">
+    A run captures:
+    - **Verdict**: one of `passed`, `failed`, `blocked`, or `cancelled`
+    - **Steps**: a log of every step executed during that run
+    - **Artifacts**: DOM snapshots (rendered as text), root-cause hypothesis, recommended fix target — all tied to a single `snapshotId`
+    - **Source**: which surface triggered it — `cli`, `portal`, `mcp`, `schedule`, or `github_action`
+
+    Runs are durable. A concurrent Portal or scheduled run never overwrites your run's artifacts.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    The CLI surfaces the `runId` at trigger time and after `--wait`. Use it to resume a poll or pin the failure bundle to exactly that run:
+
+    ```bash
+    # Resume waiting for a run that was still in flight
+    testsprite test wait run_5c1d...
+
+    # Pin the failure bundle to one specific run (immune to later runs)
+    testsprite test artifact get run_5c1d... --out ./.testsprite/runs/run_5c1d
+    ```
+
+    Compare this to `test failure get <test-id>`, which always returns the *latest* failure — useful but mutable if runs overlap.
+  </Tab>
+</Tabs>
+
+## Status
+
+**Status** is the normalized state of a test or a run. The CLI displays it in text mode and includes it in `--output json` responses. Use status values to filter lists and drive CI branching logic.
+
+### Test status (9 values)
+
+| Value | Meaning | Terminal? |
+| :--- | :--- | :--- |
+| <kbd>draft</kbd> | Test exists but has no executable code yet | No |
+| <kbd>ready</kbd> | Has code or a plan, never been run | No |
+| <kbd>queued</kbd> | Run accepted; cloud engine not yet started | No |
+| <kbd>running</kbd> | Execution in flight (pre-exec, exec, or post-exec analysis) | No |
+| <kbd>passed</kbd> | Latest completed run passed | Yes |
+| <kbd>failed</kbd> | Latest completed run failed (including infrastructure crash) | Yes |
+| <kbd>blocked</kbd> | Run rejected before a real verdict was reached | Yes |
+| <kbd>cancelled</kbd> | Run was cancelled before a verdict | Yes |
+| <kbd>unknown</kbd> | Status cannot be derived | — |
+
+<Note>
+Terminal statuses are the states the CLI considers "done" when polling with `--wait`. Exit 0 means <kbd>passed</kbd>; exit 1 means <kbd>failed</kbd>, <kbd>blocked</kbd>, or <kbd>cancelled</kbd>.
+</Note>
+
+### Run status (6 values)
+
+Run-level status is a subset: <kbd>queued</kbd>, <kbd>running</kbd>, <kbd>passed</kbd>, <kbd>failed</kbd>, <kbd>blocked</kbd>, <kbd>cancelled</kbd>. Terminal run statuses are the same four: passed, failed, blocked, cancelled.
+
+Filter a test's run history by status or other dimensions:
+
+```bash
+testsprite test list --project proj_8f0f6 --status failed,blocked
+testsprite test result test_3a9f21c7 --history --source cli --since 7d
+```
+
+## Run Source
+
+Every run is tagged with the surface that triggered it. The **run source** lets you filter history and understand where a pass or failure came from.
+
+<Tabs>
+  <Tab title="What run source is">
+    The five source values are:
+
+    | Source | When it appears |
+    | :--- | :--- |
+    | <kbd>cli</kbd> | Any `testsprite test run` or `testsprite test rerun` invocation |
+    | <kbd>portal</kbd> | A manual run from the Web Portal dashboard |
+    | <kbd>mcp</kbd> | A run triggered by the MCP Server plugin in your IDE |
+    | <kbd>schedule</kbd> | A scheduled run configured in the Portal |
+    | <kbd>github_action</kbd> | A run triggered from a GitHub Actions workflow |
+
+    All CLI-triggered runs — including reruns — carry `source: "cli"`.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    Filter run history to only CLI runs over the last 7 days:
+
+    ```bash
+    testsprite test result test_3a9f21c7 --history --source cli --since 7d
+    ```
+
+    This is useful when a Portal or scheduled run has also fired recently and you want to isolate your agent's invocations.
+  </Tab>
+</Tabs>
+
+## Credits
+
+**Credits** are the consumption unit for test execution. The CLI reports your balance via `testsprite usage` and exits non-zero when balance is insufficient.
+
+<Tabs>
+  <Tab title="What credits are">
+    Key rules:
+    - A fresh `testsprite test run` **charges credits**.
+    - A `testsprite test rerun` verbatim replay does **not** charge credits.
+    - Auto-heal is on by default and uses a small amount of credit only when it actually repairs a step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
+    - Backend test runs are **free**.
+    - Insufficient balance → the CLI exits with a non-zero code. See [Exit Codes](/cli/reference/exit-codes) for the exact value and what to do.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    Check your balance before a large batch run:
+
+    ```bash
+    testsprite usage
+    ```
+
+    Opt out of auto-heal for a rerun to avoid the heal charge when healing isn't needed:
+
+    ```bash
+    testsprite test rerun test_3a9f21c7 --wait --no-auto-heal
+    ```
+  </Tab>
+</Tabs>
+
+## Scopes
+
+**Scopes** are permissions that an API key carries. The CLI checks scopes before sending write or run requests, and when access is denied it prints which scope was required and which scopes your key holds. Read commands need read scopes, writes need `write:tests`, and runs need `run:tests`; purely local commands like `init` and `agent install` need none.
+
+See [Authentication → Scopes](/cli/core/authentication#scopes) for the full table of which scope gates which command.
+
+## Failure Bundle
+
+A **failure bundle** is one self-consistent, run-scoped package of everything needed to understand and fix a test failure — assembled by the backend and downloaded by the CLI in a single command.
+
+<Tabs>
+  <Tab title="What a failure bundle is">
+    A bundle contains:
+    - The **failing step** and its immediate neighbors (±1 step)
+    - **DOM snapshots** at the point of failure — HTML text your coding agent can read without a vision model, each with a short text description of what the step shows
+    - The **test source** (plan or code) at run time
+    - A **root-cause hypothesis** — the backend's best guess at what broke
+    - A **recommended fix target** — which part of the code to look at
+
+    Every item in a bundle shares one `snapshotId`, so the agent is always reasoning over a single consistent moment in the run. The CLI refuses to stitch data from two different runs.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    Download the bundle for the latest failing run of a test:
+
+    ```bash
+    testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
+    ```
+
+    `test failure get` follows the latest failure, while `test artifact get <run-id>` pins the bundle to one specific run — see [Reading Results](/cli/core/reading-results#pinning-to-a-specific-run) for when to use each.
+
+    Get a one-screen triage card without downloading the full bundle:
+
+    ```bash
+    testsprite test failure summary test_3a9f21c7
+    ```
+
+    Use `--failed-only` on either command to keep only the failing step and its ±1 neighbors, trimming the bundle to what the agent needs most.
+  </Tab>
+</Tabs>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="The Agent Loop" href="/cli/concepts/the-agent-loop" icon="arrows-rotate">
+    The verification loop, idempotency, and where the CLI fits in the bigger picture
+  </Card>
+  <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
+    Create your first test, run it, and read the result end to end
+  </Card>
+  <Card title="Reading Results" href="/cli/core/reading-results" icon="clipboard-list">
+    Statuses, failure bundles, run history, and artifact downloads
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
+    Every command, flag, and example in one place
+  </Card>
+</Columns>

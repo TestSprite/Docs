@@ -1,0 +1,153 @@
+---
+title: "Exit Codes & Errors"
+description: "Every exit code, error code, and test status value the CLI emits — your branching contract for agents and CI."
+icon: "list-ol"
+---
+
+Every `testsprite` command returns a stable exit code. Agents and CI pipelines branch on the exit code; the JSON error envelope supplies the machine-readable detail. Exit codes and error codes will not change within a major version.
+
+## Exit codes
+
+| Code | Meaning |
+| :--- | :--- |
+| `0` | Success |
+| `1` | Generic failure — non-passed run status, or unhandled server error (<kbd>INTERNAL</kbd>) |
+| `2` | Not yet implemented |
+| `3` | Auth error — key missing, unparseable, revoked, or forbidden scope |
+| `4` | Not found — ID doesn't exist or belongs to another tenant |
+| `5` | Validation error — bad field/enum, payload too large, missing required flag, or bad `--output` value |
+| `6` | Conflict or precondition — snapshot in flight, run already in flight, idempotency body mismatch, a newer `codeVersion` was seen, or agent install blocked (target exists and differs, no `--force`) |
+| `7` | Timeout or unsupported — polling ceiling reached (resume with `testsprite test wait <run-id>`), or feature not on current backend |
+| `8`, `9` | Reserved (unused) |
+| `10` | Unavailable or transport failure — retriable with backoff |
+| `11` | Rate limited — honor the `Retry-After` header |
+| `12` | Insufficient credits — non-retriable; top up in the dashboard |
+| `130` | <kbd>SIGINT</kbd> cancellation (Ctrl-C) |
+| `143` | <kbd>SIGTERM</kbd> cancellation |
+
+<Note>
+The `--help` and `--version` flags always exit 0. Flag-parse errors exit 5.
+</Note>
+
+## Error codes
+
+Every error response carries a machine-readable `code` string alongside the HTTP status and CLI exit code.
+
+| Code | HTTP | Exit | When | Retriable |
+| :--- | :--- | :--- | :--- | :--- |
+| `AUTH_REQUIRED` | 401 | 3 | No auth header present | No |
+| `AUTH_INVALID` | 401 | 3 | Key unparseable or revoked | No |
+| `AUTH_FORBIDDEN` | 403 | 3 | Missing scope or cross-tenant access | No — text mode also prints `required:` / `granted:` scopes |
+| `NOT_FOUND` | 404 | 4 | ID doesn't exist or belongs to another tenant | No |
+| `VALIDATION_ERROR` | 400 | 5 | Bad field, enum value, or cursor | No |
+| `PAYLOAD_TOO_LARGE` | 413 | 5 | Body over the size cap | No |
+| `CONFLICT` | 409 | 6 | Snapshot in flight or run already in flight | Yes — once, 1 s delay |
+| `PRECONDITION_FAILED` | 412 | 6 | The test changed since you fetched it (newer `codeVersion`) | No — re-fetch then retry |
+| `IDEMPOTENCY_BODY_MISMATCH` | 409 | 6 | Same idempotency key reused with a different body | No |
+| `RATE_LIMITED` | 429 | 11 | 60 triggers/min/key exceeded | Yes — honor `Retry-After`, cap 3 retries |
+| `INSUFFICIENT_CREDITS` | 402 | 12 | Credit balance insufficient | No |
+| `UNSUPPORTED` | 501 | 7 | Feature not on current backend version | No |
+| `INTERNAL` | 500 | 1 | Unhandled server error | Yes — once |
+| `UNAVAILABLE` | 503 | 10 | A downstream service is temporarily unavailable | Yes — exponential backoff, cap 4 retries |
+
+## Error output
+
+Every command emits the same JSON error envelope when something goes wrong, regardless of `--output` mode:
+
+```json
+{
+  "error": {
+    "code": "AUTH_REQUIRED",
+    "message": "Authentication is required.",
+    "nextAction": "Run `testsprite auth configure`, or set TESTSPRITE_API_KEY in the environment.",
+    "requestId": "req_2026_05_05_abc123",
+    "details": {}
+  }
+}
+```
+
+In text mode, the CLI prints `message` and `nextAction` as human-readable lines. For `AUTH_FORBIDDEN`, text mode also prints the required scope list and the granted scope list so you can immediately identify what's missing.
+
+## Test and run status
+
+### Test status
+
+The test-level **normalized status** reflects the outcome of the most recent completed run. The CLI exposes 9 values.
+
+| Status | Meaning | Terminal? |
+| :--- | :--- | :--- |
+| <kbd>draft</kbd> | Exists, but no executable code yet | No |
+| <kbd>ready</kbd> | Has code, never run | No |
+| <kbd>queued</kbd> | Run accepted; cloud engine not started | No |
+| <kbd>running</kbd> | Run in flight (pre-exec, exec, or post-exec analysis) | No |
+| <kbd>passed</kbd> | Latest completed run passed | Yes |
+| <kbd>failed</kbd> | Latest completed run failed (includes infra crash) | Yes |
+| <kbd>blocked</kbd> | Run rejected before a real verdict | Yes |
+| <kbd>cancelled</kbd> | Cancelled before verdict | Yes |
+| <kbd>unknown</kbd> | Backend cannot derive a status | n/a |
+
+### Run status
+
+An individual run has 6 possible statuses. Terminal statuses are the four that produce a final verdict.
+
+| Status | Terminal? |
+| :--- | :--- |
+| <kbd>queued</kbd> | No |
+| <kbd>running</kbd> | No |
+| <kbd>passed</kbd> | Yes |
+| <kbd>failed</kbd> | Yes |
+| <kbd>blocked</kbd> | Yes |
+| <kbd>cancelled</kbd> | Yes |
+
+### Step status
+
+Each step in a run is: <kbd>passed</kbd>, <kbd>failed</kbd>, or `null` (not yet executed or not applicable).
+
+### Run source
+
+The `source` field on a run identifies which surface triggered it.
+
+| Value | Meaning |
+| :--- | :--- |
+| `cli` | Any CLI-triggered run, including `test rerun` |
+| `portal` | Web Portal |
+| `mcp` | MCP Server (IDE integration) |
+| `schedule` | Automated schedule |
+| `github_action` | GitHub Actions integration |
+
+## Retrying safely
+
+**Retriable codes** — use an idempotency key so retries are deduplicated server-side:
+
+- Exit `6` (`CONFLICT`) — retry once after 1 second. For `PRECONDITION_FAILED`, re-fetch `codeVersion` first, then retry.
+- Exit `10` (`UNAVAILABLE`) — retry with exponential backoff (capped at 4 retries automatically by the CLI).
+- Exit `11` (`RATE_LIMITED`) — wait for the `Retry-After` duration before retrying (cap 3 retries automatically).
+
+**Non-retriable codes** — fix the root cause before retrying:
+
+- Exit `4` (`NOT_FOUND`) — verify the ID.
+- Exit `5` (`VALIDATION_ERROR`, `PAYLOAD_TOO_LARGE`) — fix the input.
+- Exit `12` (`INSUFFICIENT_CREDITS`) — top up your balance.
+
+Reuse `--idempotency-key` on write commands when retrying manually so the backend dedupes server-side.
+
+<Card title="Safe retries" href="/cli/concepts/the-agent-loop#safe-retries" icon="rotate">
+  How idempotency keys make manual retries safe
+</Card>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="wrench">
+    Every command and flag in one place
+  </Card>
+  <Card title="Configuration" href="/cli/reference/configuration" icon="gear">
+    Environment variables, profiles, and the JSON output contract
+  </Card>
+  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+    Gate pipelines on exit codes
+  </Card>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Triggering runs and handling results
+  </Card>
+</Columns>

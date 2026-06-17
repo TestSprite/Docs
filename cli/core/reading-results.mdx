@@ -1,0 +1,190 @@
+---
+title: "Reading Results"
+description: "Inspect individual tests, step-by-step execution logs, run history, and failure bundles from the CLI."
+icon: "list-check"
+---
+
+## Inspecting a test
+
+Get the current state of a single test by ID:
+
+```bash
+testsprite test get test_3a9f21c7
+```
+
+The response shows the test's status, type, plan step count, when it was created, and which surface last authored it:
+
+```text
+id:            test_3a9f21c7
+projectId:     proj_8f0f6
+name:          Checkout flow — guest user
+type:          frontend
+createdFrom:   cli
+status:        passed
+planStepCount: 12
+createdAt:     2026-06-10T08:14:22Z
+updatedAt:     2026-06-15T10:04:38Z
+```
+
+List all tests in a project with filters:
+
+```bash
+testsprite test list --project proj_8f0f6
+```
+
+Narrow by type, originating surface, or status:
+
+```bash
+testsprite test list --project proj_8f0f6 --type frontend --status failed,blocked
+testsprite test list --project proj_8f0f6 --created-from cli
+```
+
+| Flag | Values | Description |
+| :--- | :--- | :--- |
+| `--type` | `frontend` \| `backend` | Filter by test type |
+| `--created-from` | `portal` \| `mcp` \| `cli` | Filter by authoring surface |
+| `--status` | comma-separated list | Any of: `draft`, `ready`, `queued`, `running`, `passed`, `failed`, `blocked`, `cancelled`, `unknown` |
+| `--page-size <n>` | 1–100, default 25 | Items per page |
+| `--starting-token <token>` | opaque cursor | Continue from a previous page |
+
+## Step-by-step results
+
+`test steps` returns the cumulative execution log for a test — every step from every run, in order:
+
+```bash
+testsprite test steps test_3a9f21c7
+```
+
+Scope the output to a single run with `--run-id`:
+
+```bash
+testsprite test steps test_3a9f21c7 --run-id run_5c1d9a2b
+```
+
+Each entry shows the step name, its status (<kbd>passed</kbd> or <kbd>failed</kbd>), and the run it belongs to. Use `--page-size` and `--max-items` for large histories.
+
+<Note>
+Steps logged before run IDs were tracked are excluded when you supply `--run-id`. If you need those older entries, query without the flag.
+</Note>
+
+## The latest result
+
+`test result` returns the outcome of the most recent completed run for a test:
+
+```bash
+testsprite test result test_3a9f21c7
+```
+
+Add `--include-analysis` to attach the AI triage block — root-cause hypothesis, recommended fix target, failure kind, and the snapshot ID that ties all artifacts together:
+
+```bash
+testsprite test result test_3a9f21c7 --include-analysis
+```
+
+The analysis fields are especially useful when piping to an agent:
+
+```bash
+testsprite test result test_3a9f21c7 --include-analysis --output json \
+  | jq '{hypothesis: .analysis.rootCauseHypothesis, fix: .analysis.recommendedFixTarget}'
+```
+
+## Run history
+
+Pass `--history` to list prior runs instead of the latest result:
+
+```bash
+testsprite test result test_3a9f21c7 --history
+```
+
+Filter by trigger source or time window:
+
+```bash
+testsprite test result test_3a9f21c7 --history --source cli --since 7d
+testsprite test result test_3a9f21c7 --history --source portal --since 2026-06-10T00:00:00Z
+```
+
+Paginate long histories:
+
+```bash
+testsprite test result test_3a9f21c7 --history --page-size 10 --cursor <token>
+```
+
+| Flag | Values | Description |
+| :--- | :--- | :--- |
+| `--source` | `cli` \| `portal` \| `mcp` \| `schedule` \| `github_action` | Filter by what triggered the run |
+| `--since` | `24h`, `7d`, or ISO timestamp | Earliest `createdAt` to include |
+| `--page-size <n>` | 1–100, default 20 | Items per page |
+| `--cursor <token>` | opaque cursor | Continue from a previous page |
+
+## Triaging a failure
+
+When a test is <kbd>failed</kbd>, start with the one-screen triage card:
+
+```bash
+testsprite test failure summary test_3a9f21c7
+```
+
+This prints the status, failure kind, root-cause hypothesis, and recommended fix target — everything you need to decide what to do next, without downloading anything.
+
+To pull the full failure bundle to disk:
+
+```bash
+testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
+```
+
+The bundle is one self-consistent, run-scoped package — failing step, DOM snapshots as text, test source, and root-cause analysis, all anchored to one `snapshotId`. See [Failure Bundle](/cli/concepts/key-terms#failure-bundle) for the full contents.
+
+Add `--failed-only` to keep only the failing step and its neighbors (±1), trimming the bundle for faster agent context loading:
+
+```bash
+testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure --failed-only
+```
+
+## Pinning to a specific run
+
+`test failure get` always returns the *latest* failing run for a test — that pointer moves if a new run comes in. When multiple runs might be in flight simultaneously, pin to an exact run with `test artifact get`:
+
+```bash
+testsprite test artifact get run_5c1d9a2b --out ./.testsprite/runs/run_5c1d9a2b
+```
+
+The artifact bundle for a specific run is immutable — a concurrent Portal or schedule run cannot overwrite it. This is the safe path for agents and CI pipelines where two runs of the same test might overlap.
+
+<Tip>
+Use `test failure get <test-id>` for the interactive triage loop. Use `test artifact get <run-id>` in scripts and CI where you need a stable, run-scoped bundle that a concurrent run can't shift under you.
+</Tip>
+
+The default output directory is `./.testsprite/runs/<run-id>/`. The parent directory must exist before you run the command.
+
+## Reading test code
+
+Print the generated test code to stdout:
+
+```bash
+testsprite test code get test_3a9f21c7
+```
+
+Save it to a file instead:
+
+```bash
+testsprite test code get test_3a9f21c7 --out ./tests/checkout_flow.py
+```
+
+The response includes the language, framework, code content, and the `codeVersion` token — useful if you plan to update the code with `testsprite test code put` and want protection against overwriting a concurrent edit.
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Trigger runs, wait for verdicts, and understand exit codes
+  </Card>
+  <Card title="Rerun & Auto-Heal" href="/cli/core/rerun-and-auto-heal" icon="arrow-rotate-right">
+    Replay a test cheaply or let AI repair UI drift
+  </Card>
+  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
+    runId, codeVersion, snapshotId, and the rest of the vocabulary
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code">
+    Full flag listing for every CLI command
+  </Card>
+</Columns>

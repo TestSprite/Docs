@@ -1,0 +1,146 @@
+---
+title: "Coding Agent Integration"
+description: "Let your coding agent drive the TestSprite verification loop on its own — create, run, read failures, fix, and rerun without a human in the middle."
+icon: "robot"
+---
+
+## What the skill does
+
+`testsprite agent install` writes a **verification-loop skill file** into your repository. Once the file is in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own:
+
+1. Describe a behavior as a plan file and create a test.
+2. Trigger a real cloud run and wait for the verdict.
+3. On failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target.
+4. Edit the code and replay cheaply — no credits for a verbatim FE rerun.
+
+The skill is **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
+
+<Tip>
+**We strongly recommend installing the skill.** It's the fastest way to get consistent results — the skill teaches your agent exactly when to verify, how to read the failure bundle, and how to loop until the test is green, so you don't have to spell it out each time. Run `testsprite init` (or `testsprite agent install`) once per project.
+</Tip>
+
+## Install the skill
+
+```bash
+testsprite agent install --target claude
+```
+
+Run this from your project root. The skill file is written immediately.
+
+**Flags:**
+
+| Flag | Description |
+| :--- | :--- |
+| `--target <t>` | Agent target: `claude`, `cursor`, `cline`, `antigravity`, `codex`. Comma-separated or repeated. Prompts if omitted in a terminal. |
+| `--dir <path>` | Project root to write the skill into (default: current directory). |
+| `--force` | Overwrite an existing skill file. A `.bak` backup is kept. For `codex`, replaces only the managed section — your other `AGENTS.md` content is preserved. |
+
+To install for multiple agents at once:
+
+```bash
+testsprite agent install --target claude --target cursor
+```
+
+Or comma-separated:
+
+```bash
+testsprite agent install --target claude,cursor
+```
+
+<Note>
+If the destination file already exists and differs from the current skill, the install is blocked until you pass `--force`. The original is always backed up as `<filename>.bak`.
+</Note>
+
+## Supported agents
+
+| Target | Status | Mode | Landing path |
+| :--- | :--- | :--- | :--- |
+| `claude` | <kbd>GA</kbd> | own-file | `.claude/skills/testsprite-verify/SKILL.md` |
+| `antigravity` | <kbd>experimental</kbd> | own-file | `.agents/skills/testsprite-verify/SKILL.md` |
+| `cursor` | <kbd>experimental</kbd> | own-file | `.cursor/rules/testsprite-verify.mdc` |
+| `cline` | <kbd>experimental</kbd> | own-file | `.clinerules/testsprite-verify.md` |
+| `codex` | <kbd>experimental</kbd> | managed-section | `AGENTS.md` |
+
+<Note>
+For `codex`, the skill is written as a managed section inside `AGENTS.md`. Your existing content in that file is not modified — only the TestSprite section is added or updated.
+</Note>
+
+## Listing targets
+
+To see all supported targets, their current status, and where the skill lands:
+
+```bash
+testsprite agent list
+```
+
+```text
+TARGET       STATUS        MODE              PATH
+claude       GA            own-file          .claude/skills/testsprite-verify/SKILL.md
+antigravity  experimental  own-file          .agents/skills/testsprite-verify/SKILL.md
+cursor       experimental  own-file          .cursor/rules/testsprite-verify.mdc
+cline        experimental  own-file          .clinerules/testsprite-verify.md
+codex        experimental  managed-section   AGENTS.md
+```
+
+## One-shot onboarding
+
+`testsprite init` configures your API key **and** installs the skill in a single step — the recommended path when you're setting up a project for the first time.
+
+```bash
+testsprite init
+```
+
+`init` chains `auth configure` → `auth whoami` → `agent install` and prints a unified summary.
+
+<Card title="Installation" href="/cli/getting-started/installation" icon="download" horizontal>
+  The full onboarding walkthrough, including the non-interactive (`--from-env --yes`) form for CI bootstrap.
+</Card>
+
+## How the agent uses it
+
+Once the skill file is in place, a coding agent like Claude Code picks it up automatically when it enters your project. It knows to:
+
+1. **Create** a test from a plan you or the agent authors — describing the behavior in intent terms, not driver code.
+2. **Run** it against the live app and wait for a pass/fail verdict.
+3. On failure, **pull the failure bundle** — one consistent artifact with everything needed to diagnose and fix.
+4. **Fix** the code, then **rerun** as a cheap verbatim replay.
+
+The command sequence the agent follows:
+
+```bash
+# Create a test from a plan file and immediately run it
+testsprite test create \
+  --project proj_8f0f6 --type frontend \
+  --plan-from ./checkout-flow.plan.json \
+  --run --wait --output json
+
+# On failure: pull the self-consistent failure bundle
+testsprite test failure get test_3a9f21c7 \
+  --out ./.testsprite/failure
+
+# After fixing the code: replay cheaply (no credit for verbatim FE rerun)
+testsprite test rerun test_3a9f21c7 --wait
+```
+
+Exit 0 means the test passed and is banked into the durable suite. The agent doesn't need to know how the test was driven — only what a real user experienced.
+
+<Tip>
+Every passing rerun compounds your coverage. The agent builds a lasting record of every requirement it has verified — far bigger than any context window.
+</Tip>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
+    Walk through the full create → run → fix loop end-to-end
+  </Card>
+  <Card title="CI/CD" href="/cli/integrations/ci-cd" icon="github">
+    Gate your pipeline on TestSprite results
+  </Card>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="list-check">
+    All flags and modes for triggering and waiting on runs
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
+    Full flag reference for every command
+  </Card>
+</Columns>

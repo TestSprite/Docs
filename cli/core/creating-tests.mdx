@@ -1,0 +1,165 @@
+---
+title: "Creating Tests"
+description: "Author frontend test plans and backend test code, then create individual tests or batches from the CLI."
+icon: "file-circle-plus"
+---
+
+## Two kinds of tests
+
+TestSprite has two test types, and the authoring model differs between them:
+
+| | **Frontend** | **Backend** |
+| :--- | :--- | :--- |
+| What it is | An ordered list of steps — interactions a real browser performs against your live app | Code that calls your API and asserts on the responses — typically Python with `pytest` |
+| You author | A plan file (JSON) | The test code locally |
+| Pass it with | `--plan-from` | `--code-file` |
+| TestSprite runs it as | A real browser session in the cloud | Code in an isolated cloud sandbox |
+
+A backend test's language and framework are recorded as properties of the test (typically Python/`pytest`), not fixed by the test type.
+
+## Create a frontend test from a plan
+
+```bash
+testsprite test create \
+  --plan-from ./checkout-flow.plan.json
+```
+
+The plan file is a JSON document that holds the full test definition — `projectId`, `type`, `name`, and the `planSteps` array. Because everything is in the file, `--project`, `--type`, `--name`, `--description`, and `--priority` are ignored when `--plan-from` is set; use the fields inside the JSON instead.
+
+Plan files must be ≤ 256 KB.
+
+Example plan file structure:
+
+```json
+{
+  "projectId": "proj_8f0f6",
+  "type": "frontend",
+  "name": "Guest checkout — credit card",
+  "planSteps": [
+    { "action": "navigate", "value": "https://app.example.com/cart" },
+    { "action": "click", "selector": "[data-testid='checkout-btn']" },
+    { "action": "fill", "selector": "#card-number", "value": "4242424242424242" },
+    { "action": "click", "selector": "[data-testid='pay-btn']" },
+    { "action": "assert", "selector": ".order-confirmation", "condition": "visible" }
+  ]
+}
+```
+
+On success, the CLI prints the new `testId`, `codeVersion`, `createdAt`, and — when the backend supplies it — a `dashboardUrl` deep-linking to the Portal.
+
+## Create a backend test from code
+
+```bash
+testsprite test create \
+  --project proj_8f0f6 \
+  --type backend \
+  --name "Create order" \
+  --code-file ./tests/create_order.py
+```
+
+Code files must be ≤ 350 KB. In code-file mode, `--project`, `--type`, and `--name` are all required.
+
+| Flag | Description |
+| :--- | :--- |
+| `--project <id>` | **Required.** Project this test belongs to |
+| `--type <frontend\|backend>` | **Required.** Test type |
+| `--name <name>` | **Required.** Display name (≤ 200 characters) |
+| `--code-file <path>` | **Required.** File containing the test code (≤ 350 KB). Mutually exclusive with `--plan-from` |
+| `--description <text>` | Optional description (≤ 2000 characters) |
+| `--priority <p0\|p1\|p2\|p3>` | Optional priority level |
+
+## Backend dependency authoring
+
+Backend tests can declare the variables they produce and consume. TestSprite uses these declarations to determine run order — producers execute before consumers, and teardown tests run last — both on `test run --all` and on rerun.
+
+| Flag | Description |
+| :--- | :--- |
+| `--produces <var>` | Variable this test captures (repeatable). Example: `--produces orderId` |
+| `--needs <var>` | Variable this test requires from an upstream producer (repeatable). Example: `--needs orderId` |
+| `--category <str>` | Use `teardown` or `cleanup` to mark a final-wave cleanup test |
+
+These flags are backend-only and are ignored for frontend tests.
+
+```bash
+# Producer: creates an order, exposes orderId downstream
+testsprite test create \
+  --project proj_8f0f6 --type backend \
+  --name "Create order" \
+  --code-file ./tests/create_order.py \
+  --produces orderId
+
+# Consumer: needs orderId from the producer above
+testsprite test create \
+  --project proj_8f0f6 --type backend \
+  --name "Fetch order details" \
+  --code-file ./tests/fetch_order.py \
+  --needs orderId
+
+# Teardown: runs after all others, cleans up state
+testsprite test create \
+  --project proj_8f0f6 --type backend \
+  --name "Delete test orders" \
+  --code-file ./tests/cleanup.py \
+  --category teardown
+```
+
+## Create and run in one command
+
+Pass `--run` to trigger a cloud run immediately after the test is created. Add `--wait` to block until the run reaches a terminal status. Add `--output json` to get a machine-readable result your agent can parse.
+
+```bash
+testsprite test create \
+  --project proj_8f0f6 \
+  --type frontend \
+  --plan-from ./checkout-flow.plan.json \
+  --run --wait \
+  --output json
+```
+
+Exit 0 means the run passed. Any non-zero exit means the run failed, was blocked, or timed out — your script can branch directly on `$?`. See [Running Tests](/cli/core/running-tests) for the full run surface, including `--timeout`, `--target-url`, and how to resume a timed-out run with `test wait <run-id>`.
+
+## Creating many tests at once
+
+Use `test create-batch` to create up to 50 frontend tests in a single call. This command is frontend-only.
+
+```bash
+# From a JSONL file — one plan-from spec per line
+testsprite test create-batch --plans ./flows.jsonl
+
+# From a directory of *.json plan files, sorted by filename
+testsprite test create-batch --plan-from-dir ./plans/
+```
+
+| Flag | Description |
+| :--- | :--- |
+| `--plans <path>` | JSONL file, one plan spec per line (≤ 50 specs, ≤ 5 MB). Mutually exclusive with `--plan-from-dir` |
+| `--plan-from-dir <dir>` | Directory of `*.json` plan files, one spec each (≤ 50 files, ≤ 5 MB total; processed in filename order) |
+| `--run` | Trigger a run for each created test |
+| `--wait` | With `--run`, block until all runs reach a terminal status |
+| `--timeout <s>` | With `--run --wait`, max seconds to wait (default 600) |
+| `--target-url <url>` | With `--run`, override the project default target URL for all triggered runs |
+| `--max-concurrency <n>` | With `--run`, max in-flight run triggers (1–100, default 50) |
+| `--idempotency-key <token>` | Pin for safe retries |
+
+<Note>
+The server caps run triggers at 60 per minute per key. The CLI throttles to 50 per minute and auto-retries rate-limited requests — you do not need to handle this yourself.
+</Note>
+
+Editing a test's metadata, replacing its plan or code, and deleting tests all live in [Editing & Deleting Tests](/cli/core/editing-tests).
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Editing & Deleting Tests" href="/cli/core/editing-tests" icon="pen-to-square">
+    Update metadata, replace a plan or code, and delete tests
+  </Card>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Trigger runs, poll for verdicts, and handle timeouts
+  </Card>
+  <Card title="Reading Results" href="/cli/core/reading-results" icon="clipboard-check">
+    Fetch failure bundles, steps, and run history
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code">
+    Full flag listing for every command
+  </Card>
+</Columns>

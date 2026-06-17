@@ -1,0 +1,167 @@
+---
+title: "Installation"
+description: "Install the TestSprite CLI and sign in in under 2 minutes."
+icon: "download"
+---
+
+## Prerequisites
+
+Before installing, make sure you have:
+
+- **Node.js >= 20** (Node 22 recommended)
+- A **TestSprite account** — [Sign up for free <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/auth/cognito/sign-up)
+- A **TestSprite API key** (you'll create one in the next section)
+
+<AccordionGroup>
+  <Accordion title="How do I check my Node version?">
+    Run the following in your terminal:
+
+    ```bash
+    node --version
+    ```
+
+    If the output is below `v20.0.0`, download a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/). Node 22 is the recommended version.
+  </Accordion>
+  <Accordion title="Where do I get an API key?">
+    Sign in to your TestSprite dashboard, navigate to <kbd>Settings → API Keys</kbd>, and click <kbd>Create new key</kbd>. The key is shown exactly once — copy it before closing the dialog. If you lose it, just create a new one.
+
+    See [API Keys](/web-portal/admin/api-keys) for the full walkthrough.
+  </Accordion>
+</AccordionGroup>
+
+## Install
+
+Install the CLI globally with npm:
+
+```bash
+npm install -g @testsprite/testsprite-cli
+```
+
+Alternatively, run it without installing using npx:
+
+```bash
+npx @testsprite/testsprite-cli --version
+```
+
+Verify the installation:
+
+```bash
+testsprite --version
+```
+
+```text
+0.1.x
+```
+
+The CLI's source code, releases, and issue tracker live on [GitHub](https://github.com/TestSprite/testsprite-cli).
+
+## Get Your API Key
+
+1. Sign in to your [TestSprite dashboard <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard).
+2. Navigate to <kbd>Settings → API Keys</kbd> and click <kbd>Create new key</kbd>.
+
+<Frame>
+  <img src="../../images/api-key.png" alt="API Keys page with the Create new key button" />
+</Frame>
+
+3. Copy the key — it is shown **once only**. If you lose it, delete the key and create a new one.
+
+<Frame>
+  <img src="../../images/created-api-key.png" alt="API Key Created dialog with the copy button" />
+</Frame>
+
+New and grandfathered keys both default to the scopes the CLI needs: `read:me`, `read:projects`, `read:tests`, `write:tests`, and `run:tests`.
+
+## Sign In
+
+<Tabs>
+  <Tab title="One-shot (recommended)">
+    Run `testsprite init`. It prompts for your API key, verifies it against the platform, and installs the verification skill into your project's agent configuration — all in one step:
+
+    ```bash
+    testsprite init
+    ```
+
+    ```text
+    ? API key: sk-...
+    ✔ Authenticated as alice@example.com
+    ✔ Agent skill installed → .claude/skills/testsprite-verify/SKILL.md
+    TestSprite initialized.
+    ```
+
+    `init` chains credential configuration → identity verification → agent skill install. You only need to run it once per project.
+  </Tab>
+  <Tab title="Manual">
+    Configure credentials and verify separately:
+
+    ```bash
+    testsprite auth configure
+    ```
+
+    ```text
+    ? API key: sk-...
+    Profile "default" configured. Endpoint: https://api.testsprite.com
+    ```
+
+    Then confirm the identity bound to the key:
+
+    ```bash
+    testsprite auth whoami
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+Use `testsprite init` — it configures credentials, verifies them, and installs the agent skill in one pass. `auth configure` is for cases where you want fine-grained profile control or are scripting a headless setup.
+</Tip>
+
+## Verify
+
+After signing in, confirm the active profile:
+
+```bash
+testsprite auth whoami
+```
+
+```text
+userId    u_01abc...
+name      Alice Example
+email     alice@example.com
+keyId     key_01xyz...
+endpoint  https://api.testsprite.com
+env       production
+scopes    read:me read:projects read:tests write:tests run:tests
+```
+
+If any scopes are missing, the CLI prints a `note:` line telling you which commands will be blocked.
+
+## Using It in CI
+
+In a CI environment, set `TESTSPRITE_API_KEY` as a secret and use the non-interactive init flag:
+
+```bash
+TESTSPRITE_API_KEY=$TS_KEY testsprite init --from-env --yes
+```
+
+`--from-env` reads the key from the environment instead of prompting. `--yes` accepts all defaults without interactive prompts. The CLI never accepts the API key as a positional argument or writes it to logs.
+
+<Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+  The full CI setup — pipeline examples and exit code handling
+</Card>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
+    Create a test, run it, and read the failure bundle end to end
+  </Card>
+  <Card title="Authentication" href="/cli/core/authentication" icon="key">
+    Profiles, env vars, scope errors, and rotating keys
+  </Card>
+  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
+    Projects, tests, runs, and the object model
+  </Card>
+  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+    Pipeline examples and non-interactive setup
+  </Card>
+</Columns>
