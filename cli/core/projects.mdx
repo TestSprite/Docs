@@ -1,0 +1,132 @@
+---
+title: "Projects"
+description: "List, inspect, create, and update the projects that hold your frontend and backend tests."
+icon: "folder-open"
+---
+
+A **project** is the top-level container in TestSprite. It carries a name, a type (<kbd>frontend</kbd> or <kbd>backend</kbd>), and — for frontend projects — a target URL that TestSprite opens when it runs your tests. Every test belongs to exactly one project, identified by its `projectId`.
+
+<Note>
+Projects created or updated through the CLI are immediately visible in the Web Portal, and vice versa. All surfaces share the same data.
+</Note>
+
+## Listing projects
+
+```bash
+testsprite project list
+```
+
+Text output is a table with five columns:
+
+```text
+ID              NAME               TYPE       FROM     CREATED
+proj_8f0f6      Checkout App       frontend   cli      2026-05-10
+proj_a3c12      Orders API         backend    portal   2026-04-22
+```
+
+| Flag | Description |
+| :--- | :--- |
+| `--page-size <n>` | Number of results per page (1–100, default 25) |
+| `--starting-token <token>` | Opaque cursor from a previous response to fetch the next page |
+| `--max-items <n>` | Stop after this many total items across auto-paged requests |
+
+When there are more results, the CLI appends a `nextToken` line to the text output. Pass that value as `--starting-token` on the next call to continue.
+
+```bash
+testsprite project list --page-size 10 --starting-token eyJsYXN...
+```
+
+## Getting a project
+
+```bash
+testsprite project get <project-id>
+```
+
+Text output:
+
+```text
+id          proj_8f0f6
+name        Checkout App
+type        frontend
+createdFrom cli
+createdAt   2026-05-10T14:32:00Z
+updatedAt   2026-05-11T09:15:00Z
+```
+
+## Creating a project
+
+```bash
+testsprite project create --type frontend --name "Checkout App" --url https://app.example.com
+```
+
+| Flag | Description |
+| :--- | :--- |
+| `--type <frontend\|backend>` | **Required.** Project type |
+| `--name <name>` | **Required.** Display name for the project |
+| `--url <url>` | **Required for frontend.** Target URL — must be a public `http://` or `https://` address. Localhost and private IP ranges are not accepted |
+| `--description <text>` | Optional description (≤ 2000 characters) |
+| `--username <user>` | Optional basic-auth username for the target URL |
+| `--password <pw>` | Optional basic-auth password (prefer `--password-file` in scripts) |
+| `--password-file <path>` | Read the password from a file — safer than inline for non-interactive use |
+| `--instruction <text>` | Optional hint passed to the frontend plan-generation step |
+| `--idempotency-key <token>` | Defaults to a UUIDv4 per invocation; pin a stable value for safe retries |
+
+**Frontend project example:**
+
+```bash
+testsprite project create \
+  --type frontend \
+  --name "Checkout App" \
+  --url https://app.example.com \
+  --description "End-to-end checkout and payment flows" \
+  --instruction "Focus on the cart and payment pages"
+```
+
+**Backend project example:**
+
+```bash
+testsprite project create \
+  --type backend \
+  --name "Orders API" \
+  --description "REST API for order management"
+```
+
+<Warning>
+`--url` must be a public `http(s)` address — `localhost` and private IPs are rejected before any network call. To test a local app, use the [MCP Server](/mcp/getting-started/introduction); see [Common Issues](/cli/troubleshooting/common-issues) if a URL is rejected.
+</Warning>
+
+## Updating a project
+
+```bash
+testsprite project update <project-id> --name "Checkout App v2"
+```
+
+You must pass at least one mutable flag — an update with no changes exits with a validation error (exit 5).
+
+| Flag | Description |
+| :--- | :--- |
+| `--name <name>` | New display name |
+| `--url <url>` | New target URL (frontend only; same public-URL rules as create) |
+| `--username <user>` | Updated basic-auth username |
+| `--password <pw>` | Updated password (prefer `--password-file`) |
+| `--password-file <path>` | Read updated password from a file |
+| `--description <text>` | Updated description (≤ 2000 characters) |
+| `--instruction <text>` | Updated plan-generation hint |
+| `--idempotency-key <token>` | Pin for safe retries |
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
+    Author a frontend plan or backend code file inside a project
+  </Card>
+  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
+    Project, test, run — definitions and relationships
+  </Card>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Trigger runs and poll for verdicts
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code">
+    Full flag listing for every command
+  </Card>
+</Columns>

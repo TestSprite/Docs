@@ -1,0 +1,129 @@
+---
+title: "Configuration"
+description: "Credentials file, profiles, environment variables, and the JSON output contract."
+icon: "gear"
+---
+
+The CLI resolves credentials and settings from three sources in priority order: environment variables, the credentials file (`~/.testsprite/credentials`), and built-in defaults. Per-invocation flags override everything else.
+
+## Global flags
+
+Global flags override both environment variables and the credentials file for a single invocation. They must appear before the subcommand. Full descriptions are in the [Command Reference](/cli/reference/command-reference#global-flags).
+
+| Flag | Overrides | Default |
+| :--- | :--- | :--- |
+| `--output <json\|text>` | — | `text` |
+| `--profile <name>` | `TESTSPRITE_PROFILE` | `default` |
+| `--verbose` | — | false |
+| `--debug` | — | false |
+| `--dry-run` | — | false |
+| `--request-timeout <seconds>` | `TESTSPRITE_REQUEST_TIMEOUT_MS` | `120` |
+
+## Credentials file
+
+The CLI stores API keys in `~/.testsprite/credentials`, an INI-style file. The directory is created with mode `0700` and the file with mode `0600`. Writes are atomic — a partial write never corrupts an existing key.
+
+```text
+~/.testsprite/credentials
+```
+
+Sample file:
+
+```ini
+[default]
+api_key = sk-...
+
+[ci]
+api_key = sk-...
+```
+
+Run `testsprite auth configure` to write a profile interactively. Use `--from-env` in CI to skip the prompt.
+
+## Profiles
+
+A **profile** is a named section in the credentials file. Each profile holds an `api_key`. You can maintain as many profiles as you like — for example, one for interactive use and one with a separate API key for CI.
+
+There's no separate "select profile" command — you apply a profile to whichever command you run. For a single command, prepend the global `--profile` flag (here `project list` is just an example command):
+
+```bash
+testsprite --profile ci project list
+```
+
+To use a profile for the rest of a shell session, set the environment variable so every command picks it up:
+
+```bash
+export TESTSPRITE_PROFILE=ci
+testsprite project list
+```
+
+The active profile defaults to `default` if neither `--profile` nor `TESTSPRITE_PROFILE` is set.
+
+## Environment variables
+
+Environment variables override the credentials file but are overridden by their corresponding flag.
+
+| Variable | Purpose | Overridden by |
+| :--- | :--- | :--- |
+| `TESTSPRITE_API_KEY` | API key to use | — (highest precedence for the key) |
+| `TESTSPRITE_PROFILE` | Active profile name | `--profile` |
+| `TESTSPRITE_REQUEST_TIMEOUT_MS` | Per-request timeout in **milliseconds** | `--request-timeout` (seconds) |
+
+<Tip>
+In CI, set `TESTSPRITE_API_KEY` in your secrets store and pass `--from-env` to `testsprite init` or `testsprite auth configure`. The CLI never logs the key value.
+</Tip>
+
+## Resolution precedence
+
+The CLI resolves each setting through a fixed chain. First match wins.
+
+**Profile selection:**
+1. `--profile` flag
+2. `TESTSPRITE_PROFILE` environment variable
+3. Literal `"default"`
+
+**API key:**
+1. `TESTSPRITE_API_KEY` environment variable
+2. `api_key` in the active profile from `~/.testsprite/credentials`
+
+## The JSON output contract
+
+`--output json` is the stable, parseable contract every command supports, and exit codes are stable independently of output mode — so agents and CI scripts branch on the exit code rather than parsing stderr. See [Output & Scripting](/cli/reference/output-and-scripting#the-json-contract).
+
+On error, every command emits a consistent JSON envelope regardless of `--output` mode; for its shape and the full error-code table see [Exit Codes & Errors](/cli/reference/exit-codes).
+
+## Request timeouts
+
+`--request-timeout <seconds>` sets the client-side timeout for each individual HTTP request (range 1–600, default 120). Set it via the environment variable as milliseconds: `TESTSPRITE_REQUEST_TIMEOUT_MS=30000`.
+
+This timeout governs single HTTP round-trips only. It does **not** affect the `--timeout` ceiling on `test run --wait`, `test wait`, or `test rerun --wait` — those polling loops run until the run reaches a terminal status or the wait timeout expires, independent of per-request timeouts.
+
+## The dashboard link
+
+When a run completes, the JSON output includes a `dashboardUrl` field and text mode prints a `Dashboard:` line. This deep-links directly into the Web Portal run view for that test.
+
+```json
+{
+  "runId": "run_5c1d...",
+  "status": "failed",
+  "dashboardUrl": "https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7"
+}
+```
+
+The `dashboardUrl` field is **absent** under `--dry-run`.
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Authentication" href="/cli/core/authentication" icon="key">
+    Configure API keys, profiles, and non-interactive CI auth
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="wrench">
+    Every command, flag, and output shape
+  </Card>
+  <Card title="Exit Codes & Errors" href="/cli/reference/exit-codes" icon="list-ol">
+    Every exit code and error code in one table
+  </Card>
+  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+    Use the CLI in GitHub Actions and other pipelines
+  </Card>
+</Columns>

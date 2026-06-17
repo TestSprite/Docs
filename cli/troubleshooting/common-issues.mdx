@@ -1,0 +1,94 @@
+---
+title: "Common Issues"
+description: "Fixes for the problems you're most likely to hit with the TestSprite CLI."
+icon: "wrench"
+---
+
+<AccordionGroup>
+
+<Accordion title="command not found: testsprite" icon="terminal">
+The global install didn't put the binary on your `PATH`, or it isn't installed yet.
+
+- Confirm Node ≥ 20: `node --version`.
+- Reinstall globally: `npm install -g @testsprite/testsprite-cli`.
+- Or skip the global install entirely and run via `npx @testsprite/testsprite-cli --version`.
+</Accordion>
+
+<Accordion title="Auth error (exit 3) / AUTH_FORBIDDEN" icon="key">
+The CLI couldn't authenticate, or your key is missing a scope.
+
+- Run `testsprite auth whoami` to see which profile, key, and scopes are active.
+- Reconfigure: `testsprite auth configure` (interactive) or `TESTSPRITE_API_KEY=sk-... testsprite auth configure --from-env`.
+- On `AUTH_FORBIDDEN`, the missing scope is named in `details.requiredScope`. Generate a new key with the full [scope set](/cli/core/authentication#scopes) from the [dashboard](/web-portal/admin/api-keys).
+- In CI, set `TESTSPRITE_API_KEY` in the environment — it overrides the credentials file.
+</Accordion>
+
+<Accordion title="--target-url rejected as a local address" icon="globe">
+`test run` and `project create` pre-flight `--target-url` and reject local addresses (`localhost`, `127.x`, `::1`, `0.0.0.0`, link-local, and RFC 1918 ranges), because the cloud runner must be able to reach the URL over the public internet.
+
+To test a **localhost** app, use the [TestSprite MCP Server](/mcp/getting-started/introduction), which opens a tunnel for you. Otherwise point `--target-url` at a publicly reachable preview or staging URL.
+</Accordion>
+
+<Accordion title="test run --wait timed out (exit 7)" icon="clock">
+The run hadn't reached a terminal status before `--timeout` elapsed — this is **not** a failure.
+
+The JSON response carries the `runId`. Resume polling without re-triggering the run:
+
+```bash
+testsprite test wait <run-id> --timeout 600 --output json
+```
+</Accordion>
+
+<Accordion title="test artifact get returns 404 (exit 4)" icon="file-magnifying-glass">
+There's no failure bundle for that run. The `details.reason` tells you why:
+
+- `no_failing_run` — the run **passed**, so there's nothing to download.
+- `run_not_ready` — the run is still in flight; wait with `testsprite test wait <run-id>`.
+- `cancelled_no_artifacts` — the run was cancelled before producing artifacts.
+- `no_code` — the test was deleted.
+</Accordion>
+
+<Accordion title="Conflict / precondition failed (exit 6) on test code put" icon="code-merge">
+The test's code changed since you fetched it — the `codeVersion` you passed no longer matches the latest.
+
+- Re-fetch the latest with `testsprite test code get <test-id>`, reapply your edit, and put again.
+- Pin a known version with `--expected-version <v>`.
+- Or skip the guard with `--force` (last writer wins).
+</Accordion>
+
+<Accordion title="Delete refused with a validation error (exit 5)" icon="trash">
+`test delete` and `test delete-batch` require `--confirm`. Without it, the CLI exits 5 with a local validation error before touching the network. Add `--confirm`.
+</Accordion>
+
+<Accordion title="Rate limited (exit 11) / batch rerun deferred[]" icon="gauge-high">
+A per-key run-rate limit shed some work.
+
+- For a single command (exit 11), back off and retry — it's retriable, and the CLI already retries automatically a few times.
+- For a batch rerun, inspect `deferred[]` in the JSON and retry those tests with a **fresh** `--idempotency-key`.
+</Accordion>
+
+<Accordion title="Insufficient credits (exit 12)" icon="credit-card">
+This is terminal, not retriable.
+
+- **12** — your account is out of credits; top up from [Billing & Plans](/web-portal/admin/billing-and-plans).
+</Accordion>
+
+<Accordion title="I want to see what a command does without running it for real" icon="flask">
+Append `--dry-run --output json` to any command. It runs end-to-end with no network, credentials, or filesystem writes and emits canned data matching the real response shape — the safest way to learn a command's structure or debug a script.
+</Accordion>
+
+</AccordionGroup>
+
+## Still stuck?
+
+<CardGroup cols={3}>
+  <Card title="Discord" href="https://discord.gg/QQB9tJ973e" icon="discord">
+    Join the community.
+  </Card>
+  <Card title="Issues & feature requests" href="https://github.com/TestSprite/testsprite-cli/issues" icon="github">
+    File a bug or request a feature on GitHub.
+  </Card>
+  <Card title="In the terminal" icon="terminal">
+    Run `testsprite --help`, or `testsprite test run --help` for any command's full flag list.
+  </Card>
+</CardGroup>

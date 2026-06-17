@@ -1,0 +1,91 @@
+---
+title: "Editing & Deleting Tests"
+description: "Update a test's metadata, replace its plan steps or code safely, and delete tests one at a time or in bulk."
+icon: "pen-to-square"
+---
+
+Once a test exists, you can change its metadata, replace its plan or code, or remove it — all from the CLI.
+
+<Card title="Creating Tests" href="/cli/core/creating-tests" icon="plus" horizontal>
+  Author new tests from the CLI.
+</Card>
+
+## Editing a test
+
+**Metadata** (name, description, priority) — use `test update`:
+
+```bash
+testsprite test update test_3a9f21c7 --name "Guest checkout v2" --priority p0
+```
+
+**Frontend plan steps** — use `test plan put`:
+
+```bash
+testsprite test plan put test_3a9f21c7 --steps ./updated-steps.json
+```
+
+The `--steps` file must contain a JSON object with a `planSteps` array (≤ 200 steps, ≤ 256 KB). Pass `--expected-step-count <n>` as an optional concurrency check — the server returns 412 if the current step count differs, preventing a silent overwrite.
+
+**Backend test code** — use `test code put`:
+
+```bash
+# Safe update: supply the codeVersion you read from the last create/update
+testsprite test code put test_3a9f21c7 \
+  --code-file ./tests/create_order_v2.py \
+  --expected-version v3
+
+# Force overwrite regardless of current version (audit-logged)
+testsprite test code put test_3a9f21c7 \
+  --code-file ./tests/create_order_v2.py \
+  --force
+```
+
+`--expected-version` checks the `codeVersion` (e.g. `v3`) you received from the last create or update. If the test has a newer version, the CLI exits with a conflict (exit 6) — re-fetch the current code and retry. `--force` overwrites regardless of the current version. The two flags are mutually exclusive.
+
+**codeVersion** is an opaque version token that changes on every code change. It prevents two agents (or a human and an agent) from silently overwriting each other's edits.
+
+<Card title="The Agent Loop" href="/cli/concepts/the-agent-loop" icon="arrows-rotate" horizontal>
+  More on safe concurrent edits.
+</Card>
+
+## Deleting tests
+
+Delete a single test — `--confirm` is required:
+
+```bash
+testsprite test delete test_3a9f21c7 --confirm
+```
+
+Delete multiple tests in one call:
+
+```bash
+# By explicit IDs
+testsprite test delete-batch test_3a9f21c7 test_b1e04f2a --confirm
+
+# All tests in a project
+testsprite test delete-batch --all --project proj_8f0f6 --confirm
+
+# All failed tests in a project
+testsprite test delete-batch --all --project proj_8f0f6 --status failed --confirm
+```
+
+The CLI prints a summary line: `Deleted N, Skipped M, Failed K`. A 404 response counts as skipped rather than an error, so it is safe to pass IDs that may have already been deleted.
+
+Exit codes: 0 if all targeted tests were deleted or skipped; 1 if any deletion failed; 5 for validation errors.
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
+    Author frontend plans and backend code, single or in batches
+  </Card>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Trigger runs, poll for verdicts, and handle timeouts
+  </Card>
+  <Card title="Reading Results" href="/cli/core/reading-results" icon="clipboard-check">
+    Fetch failure bundles, steps, and run history
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code">
+    Full flag listing for every command
+  </Card>
+</Columns>

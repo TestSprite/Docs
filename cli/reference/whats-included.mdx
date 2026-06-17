@@ -1,0 +1,122 @@
+---
+title: "What's Included"
+description: "What the TestSprite CLI can do today, what's on the roadmap, and what stays in the Web Portal or MCP."
+icon: "clipboard-check"
+---
+
+The TestSprite CLI is production-ready for the workflows listed below, with a stable `--output json` contract that agents and CI can rely on today. Changes are strictly additive: new fields may appear, but existing fields, exit codes, and command shapes will not change.
+
+<Info>
+**Stability promise:** the JSON output contract and exit codes are stable. New commands or flags may be added, but nothing currently documented will be removed or renamed without a major version bump.
+</Info>
+
+## What's included
+
+### Auth
+
+| Capability | Command |
+| :--- | :--- |
+| Configure an API key (with `--from-env` for CI) | `auth configure` |
+| Verify the active profile | `auth whoami` |
+| Remove credentials | `auth logout` |
+
+### Projects
+
+| Capability | Command |
+| :--- | :--- |
+| List, get, create, and update projects (frontend and backend types) | — |
+
+### Tests
+
+| Capability | Command |
+| :--- | :--- |
+| List and get tests | — |
+| Create a single test | `test create` |
+| Bulk-create frontend tests | `test create-batch`, `test create-batch --plan-from-dir` |
+| Update test metadata | — |
+| Delete a single test or bulk-delete | `test delete`, `test delete-batch` |
+
+### Authoring
+- **Frontend:** create from an agent-supplied plan file (`--plan-from`) with full `planSteps[]`; replace plan steps (`test plan put`)
+- **Backend:** create from a test code file (`--code-file`, typically Python/`pytest`); declare captured variables (`--produces`/`--needs`) and teardown tests (`--category teardown`) for wave-ordered dependency runs; replace code with ETag-guarded optimistic concurrency (`test code put`)
+- Read the generated test code (`test code get`)
+
+### Running
+
+| Capability | Command |
+| :--- | :--- |
+| Trigger a single test run | `test run` |
+| All backend tests in wave order | `test run --all` |
+| Block until terminal | `--wait`, `--timeout` |
+| Resume a detached run | `test wait <run-id>` |
+| Create and run in a single command | `test create --run --wait` |
+
+### Rerun & auto-heal
+
+| Capability | Command |
+| :--- | :--- |
+| Replay a frontend test verbatim (no credit charge) or re-run a backend dependency closure | `test rerun` |
+| Rerun all tests matching a filter | `test rerun --all` |
+| Auto-heal on by default for frontend reruns — uses a small amount of credit only when AI healing actually engages; opt out | `--no-auto-heal` |
+
+### Reading results
+
+| Capability | Command |
+| :--- | :--- |
+| Cumulative step log, scoped to a run with `--run-id` | `test steps` |
+| Latest result, with inline analysis via `--include-analysis` | `test result` |
+| Run history list, filterable by source and time range | `test result --history` |
+| One-screen failure triage | `test failure summary` |
+| Full failure bundle for latest failing run | `test failure get` |
+| Run-scoped, immutable failure bundle — unaffected by concurrent runs | `test artifact get <run-id>` |
+
+### Onboarding
+
+| Capability | Command |
+| :--- | :--- |
+| One command to configure credentials and install the agent skill, with a unified summary | `testsprite init` |
+
+### Coding-agent skill
+
+| Capability | Command |
+| :--- | :--- |
+| Write the TestSprite verification-loop skill file for Claude Code (GA), Cursor, Cline, Antigravity, or Codex (all experimental except Claude) | `agent install` |
+| See all supported targets, modes, and landing paths | `agent list` |
+
+### Global capabilities
+
+| Capability | Command |
+| :--- | :--- |
+| Try any command offline without an API key | `--dry-run` |
+| Stable, parseable contract for agents and CI | `--output json` |
+| Named profiles and environment variables for flexible credential management | — |
+| On run completion — deep-link into the Web Portal | `dashboardUrl` |
+
+## On the roadmap
+
+These capabilities are designed and coming in a future release. No version promises.
+
+- **Test Lists (suites)** — create and run named collections of tests spanning multiple projects
+- **Schedule and monitoring reads** — read scheduled run history and monitoring status from the CLI
+- **Project-level test reports** — aggregate pass/fail summary across all tests in a project
+
+## Feedback
+
+The CLI gets better when you share what's rough. Join the community to tell us what broke, what was confusing, or what you wished the CLI could do — your feedback directly shapes the roadmap.
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Overview" href="/cli/getting-started/overview" icon="clipboard-list">
+    What the CLI is and how it fits alongside the Web Portal and MCP
+  </Card>
+  <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
+    Install, configure, and run your first test in minutes
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="wrench">
+    Every command, flag, and output shape in one place
+  </Card>
+  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
+    How coding agents use the CLI as a verification loop
+  </Card>
+</Columns>

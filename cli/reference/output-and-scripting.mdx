@@ -1,0 +1,100 @@
+---
+title: "Output & Scripting"
+description: "The stable JSON contract, piping into jq, and composing the verification loop in a script or CI job."
+icon: "terminal"
+---
+
+The CLI is built to be driven by scripts and agents, not just typed by hand. Two guarantees make that safe: a **stable JSON output contract** and **stable exit codes**. Together they let you compose the full loop without ever parsing human-readable text.
+
+## The JSON contract
+
+`--output json` is the **stable, machine-readable** contract — the shape an agent or script can depend on across releases. Changes are additive: new fields may appear, but existing fields and exit codes won't change within a major version. `--output text` is human-friendly and may change freely. When in doubt, script against JSON.
+
+```bash
+testsprite project list --output json
+```
+
+Every command also runs under [`--dry-run`](/cli/reference/configuration#global-flags), which emits canned data whose *shape* matches the live response — perfect for writing and testing a script before you wire up auth.
+
+```bash
+testsprite --dry-run test run example_test --wait --output json
+```
+
+## Piping into jq
+
+JSON output pipes straight into `jq` or an LLM:
+
+```bash
+# Grab the runId of a freshly triggered run
+RUN_ID=$(testsprite test run test_3a9f21c7 --output json | jq -r '.run.runId')
+
+# Wait on it and branch on the exit code
+testsprite test wait "$RUN_ID" --timeout 600 --output json || echo "run did not pass"
+```
+
+Pull just the analysis fields an agent needs to triage a failure:
+
+```bash
+testsprite test result test_3a9f21c7 --include-analysis --output json \
+  | jq '{hypothesis: .analysis.rootCauseHypothesis, fix: .analysis.recommendedFixTarget}'
+```
+
+## Branching on exit codes
+
+The CLI's [exit codes](/cli/reference/exit-codes) are stable and meaningful, so scripts can branch without parsing output at all:
+
+```bash
+testsprite test rerun test_3a9f21c7 --wait --output json
+case $? in
+  0)  echo "passed ✅" ;;
+  1)  echo "failed — pulling the bundle"; testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure ;;
+  7)  echo "timed out — resume with: testsprite test wait <run-id>" ;;
+  12) echo "out of credits" ;;
+  *)  echo "other error" ;;
+esac
+```
+
+## A minimal CI gate
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+# Auth comes entirely from the environment — the credentials file is never touched.
+export TESTSPRITE_API_KEY="$TESTSPRITE_API_KEY"
+
+# Replay the whole suite against the deployed preview URL and fail the build on any non-pass.
+testsprite test rerun --all --project "$PROJECT_ID" \
+  --wait --timeout 900 --max-concurrency 4 --output json
+```
+
+<Card title="CI/CD" href="/cli/integrations/ci-cd" icon="github">
+  A full GitHub Actions workflow — including failure-artifact upload and rate-limit handling
+</Card>
+
+<Tip>
+For agents, `testsprite agent install` writes a skill file that already encodes these patterns — exit codes, the failure-bundle layout, and the `create → run → failure get → fix → rerun` loop. See [Agent Integration](/cli/core/agent-integration).
+</Tip>
+
+## Debugging a script
+
+- `--verbose` — human-readable retry / backoff / polling messages to stderr.
+- `--debug` — HTTP method, path, request id, latency, and retry decisions to stderr. The API key is **never** included.
+
+Both write to **stderr**, so they never pollute the JSON on stdout that you're piping into `jq`.
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Exit Codes & Errors" href="/cli/reference/exit-codes" icon="list-ol">
+    The full branching contract for scripts and agents
+  </Card>
+  <Card title="Configuration" href="/cli/reference/configuration" icon="gear">
+    Profiles, environment variables, and global flags
+  </Card>
+  <Card title="CI/CD" href="/cli/integrations/ci-cd" icon="github">
+    A complete GitHub Actions pipeline
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="wrench">
+    Every command, flag, and output shape
+  </Card>
+</Columns>

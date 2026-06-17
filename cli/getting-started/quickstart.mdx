@@ -1,0 +1,167 @@
+---
+title: "Quickstart"
+description: "Create a test, run it against your live app, and read exactly what broke — in about 10 minutes."
+icon: "play"
+---
+
+By the end of this guide you'll have created a test, run it against your live app, and read exactly what broke — no code on your side.
+
+<Tip>
+Prepend `--dry-run` to any command to try the surface offline with no API key. The CLI emits a canned sample matching the real response shape — useful for learning the structure before you have credentials.
+</Tip>
+
+## Step 1: Install and sign in
+
+Install the CLI globally and run the one-shot onboarding:
+
+```bash
+npm install -g @testsprite/testsprite-cli
+testsprite init
+```
+
+`testsprite init` prompts for your API key, verifies it, and installs the TestSprite verification skill into your agent's project configuration. Run it once per project.
+
+For CI or non-interactive environments:
+
+```bash
+TESTSPRITE_API_KEY=$TS_KEY testsprite init --from-env --yes
+```
+
+## Step 2: Find your project
+
+List the projects already on your account:
+
+```bash
+testsprite project list
+```
+
+```text
+ID             NAME             TYPE       FROM      CREATED
+proj_8f0f6...  Checkout App     frontend   portal    2026-05-01
+proj_2c4a1...  Orders API       backend    cli       2026-05-10
+```
+
+If you need to create a new frontend project, pass the target URL:
+
+```bash
+testsprite project create \
+  --type frontend \
+  --name "Checkout App" \
+  --url https://app.example.com
+```
+
+<Note>
+The CLI only supports public `http://` or `https://` URLs. For `localhost` targets, use the [MCP Server](/mcp/getting-started/introduction), which owns the tunnel that exposes your local app to the cloud runner.
+</Note>
+
+## Step 3: Create and run a test
+
+Supply a plan file that describes the behavior to verify. The `--plan-from` flag accepts a JSON file with `projectId`, `type`, `name`, and a `planSteps[]` array. Then `--run --wait` triggers a real cloud run and blocks until the verdict:
+
+```bash
+testsprite test create \
+  --project proj_8f0f6 \
+  --type frontend \
+  --plan-from ./checkout-flow.plan.json \
+  --run --wait \
+  --output json
+```
+
+The CLI runs the test against your live app using a real browser — not mocks — and returns a structured result:
+
+```text
+exit 0  →  test passed
+exit 1  →  test failed or blocked
+```
+
+Your agent or CI pipeline branches on the exit code. The `--output json` shape is a stable contract you can parse.
+
+<Tip>
+Use `--output json > result.json` to capture the full result for downstream processing. The JSON includes a `dashboardUrl` field on completion that deep-links into the Portal for the human review.
+</Tip>
+
+## Step 4: When it fails, get the bundle
+
+First, get a one-screen triage card to orient yourself:
+
+```bash
+testsprite test failure summary test_3a9f21c7
+```
+
+```text
+testId              test_3a9f21c7
+status              failed
+failureKind         element_not_found
+snapshotId          snap_9b2c...
+rootCauseHypothesis The "Place Order" button selector changed after the recent redesign.
+recommendedFixTarget checkout.tsx line 42 — button aria-label
+```
+
+Then download the full failure bundle:
+
+```bash
+testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
+```
+
+The bundle is self-contained: failing step and its neighbors, DOM snapshots rendered as text your agent can read, the test source, the root-cause hypothesis, and the recommended fix target — all sharing one `snapshotId`. Your agent reads the bundle and has everything it needs to fix the code without another round trip.
+
+<Note>
+`test failure get` always fetches the **latest** failure for the test. If multiple runs are in flight at once, use `testsprite test artifact get <run-id>` to pin the bundle to a specific run by its `runId`.
+</Note>
+
+## Step 5: Fix and rerun
+
+After editing the code, replay the test cheaply. Frontend reruns replay the saved script — no credits charged for a verbatim pass:
+
+```bash
+testsprite test rerun test_3a9f21c7 --wait
+```
+
+```text
+runId      run_5c1d...
+status     passed
+startedAt  2026-06-15T10:22:14Z
+finishedAt 2026-06-15T10:23:01Z
+Dashboard: https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7
+```
+
+Exit 0. The test is banked into the durable suite. The next time your agent ships a change, it reruns rather than recreates — coverage compounds into a lasting record of every requirement it has ever gotten right.
+
+<Info>
+**Auto-heal** is on by default and uses a small amount of credit only when it actually repairs a drifted step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
+</Info>
+
+## Step 6: Let your agent drive it
+
+Install the TestSprite verification skill into your agent's project. `testsprite init` already did this, but you can re-run the agent install step standalone for any target:
+
+```bash
+testsprite agent install --target claude
+```
+
+```text
+.claude/skills/testsprite-verify/SKILL.md  →  written
+```
+
+The skill tells your agent when to run tests (after shipping a feature or fix), how to read the failure bundle, and how to loop until the test passes. From this point forward, your agent drives the create → run → failure get → fix → rerun loop without any human in the middle.
+
+<Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
+  All five supported agent targets (claude, cursor, cline, antigravity, codex) and how the skill works
+</Card>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
+    Plan files, code files, batch create, and dependency authoring
+  </Card>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Run, wait, run --all wave batches, and the credits model
+  </Card>
+  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
+    All five agent targets and how the skill loop works
+  </Card>
+  <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
+    Every command, flag, and exit code in one place
+  </Card>
+</Columns>

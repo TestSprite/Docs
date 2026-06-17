@@ -1,0 +1,169 @@
+---
+title: "Authentication"
+description: "Configure an API key, check your active identity, and manage named profiles for multiple accounts or environments."
+icon: "key"
+---
+
+## Signing in
+
+Before you can run any command that talks to the TestSprite API, you need to store a valid API key.
+
+The fastest path is `testsprite init` — it prompts for the key, verifies it against the server, installs the agent skill into your repo, and prints a unified summary, all in one step:
+
+```bash
+testsprite init
+```
+
+<Card title="Installation" href="/cli/getting-started/installation" icon="download">
+  The full onboarding walkthrough
+</Card>
+
+If you want credentials only — no skill install — run:
+
+```bash
+testsprite auth configure
+```
+
+The CLI calls `GET /me` with the key you provide before writing anything to disk. A rejected or malformed key never overwrites a working profile.
+
+```text
+# interactive prompt
+? API key: sk-...
+Profile "default" configured. Endpoint: https://api.testsprite.com
+```
+
+For non-interactive environments (CI, Dockerfiles, scripted setup), pass `--from-env` instead of typing at a prompt:
+
+```bash
+TESTSPRITE_API_KEY=sk-... testsprite auth configure --from-env
+```
+
+<Warning>
+**Important:** The CLI never accepts an API key as an inline positional argument or flag — that would expose it in shell history and process listings. Use the interactive prompt, `--from-env`, or the `TESTSPRITE_API_KEY` environment variable.
+</Warning>
+
+## Checking who you are
+
+Run `testsprite auth whoami` (alias: `testsprite auth status`) to confirm which key and profile are active:
+
+```bash
+testsprite auth whoami
+```
+
+Sample text output:
+
+```text
+userId    usr_1478d468
+name      Your Name
+email     you@example.com
+keyId     key_a1b2c3d4
+endpoint  https://api.testsprite.com
+env       production
+scopes    read:me, read:projects, read:tests, write:tests, run:tests
+```
+
+If your key is missing `write:tests` or `run:tests`, the output appends a `note:` line listing the gap. For machine-readable output, add `--output json`.
+
+## Signing out
+
+To remove credentials for the active profile:
+
+```bash
+testsprite auth logout
+```
+
+The credentials entry for the selected profile is deleted from `~/.testsprite/credentials`. Other profiles are not touched.
+
+## Where credentials live
+
+The CLI stores credentials in `~/.testsprite/credentials`, an INI-style file. The directory is created with mode `0700` and the file with mode `0600`. All writes are atomic.
+
+```ini
+[default]
+api_key = sk-...
+
+[ci]
+api_key = sk-...
+```
+
+Each section is a named **profile**. The section name matches the profile you activated when you ran `auth configure`.
+
+## Profiles
+
+Profiles let you manage multiple accounts or API keys (for example, an interactive key and a CI key) without re-entering credentials each time.
+
+To configure a named profile, pass `--profile` before the subcommand:
+
+```bash
+testsprite --profile ci auth configure
+```
+
+To use a profile for any subsequent command, pass `--profile` as a global flag:
+
+```bash
+testsprite --profile ci project list
+```
+
+Or set the environment variable so every command in the session picks it up automatically:
+
+```bash
+export TESTSPRITE_PROFILE=ci
+testsprite project list
+```
+
+The active profile determines which `api_key` is read from `~/.testsprite/credentials`. If the named section does not exist, the CLI exits with a validation error (exit 5).
+
+## Environment variables
+
+Environment variables override the credentials file. This is the recommended pattern for CI and container environments.
+
+| Variable | Purpose | Precedence |
+| :--- | :--- | :--- |
+| `TESTSPRITE_API_KEY` | API key to use for all requests | Wins over the credentials file |
+| `TESTSPRITE_PROFILE` | Active profile name (default: `"default"`) | Overridden by `--profile` |
+
+Full resolution order:
+
+- **Profile:** `--profile` flag > `TESTSPRITE_PROFILE` env > `"default"`
+- **API key:** `TESTSPRITE_API_KEY` env > credentials file value for the active profile
+
+For the complete precedence table including the request-timeout setting, see [Configuration](/cli/reference/configuration).
+
+## Scopes
+
+API keys carry a list of **scopes** that gate which operations the CLI can perform. All new keys and grandfathered keys default to the full working set.
+
+| Scope | Gates |
+| :--- | :--- |
+| `read:me` | `auth whoami`, `usage` |
+| `read:projects` | `project list`, `project get` |
+| `read:tests` | `test list`, `test get`, `test steps`, `test result`, `test code get`, `test failure get`, `test failure summary`, `test artifact get` |
+| `write:tests` | `test create`, `test create-batch`, `test update`, `test delete`, `test delete-batch`, `test code put`, `test plan put`, `project create`, `project update` |
+| `run:tests` | `test run`, `test wait`, `test rerun` |
+
+<Note>
+`testsprite agent install` is a pure-local operation — it only writes files to your project directory and never calls the API, so no scope is required. `testsprite init` *does* call the API to verify your key (`GET /me`) and fetch your identity, but it works with any valid key and needs no write or run scope.
+</Note>
+
+If a command fails with a scope error, the CLI prints the required and granted scopes in both text and JSON modes. You can generate a new key with the needed scopes in the dashboard at <kbd>Settings → API Keys</kbd> → <kbd>Create new key</kbd>.
+
+<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
+  The Web Portal key management walkthrough
+</Card>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Projects" href="/cli/core/projects" icon="layout">
+    Create and manage the projects your tests live in
+  </Card>
+  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
+    Author frontend plans and backend code files
+  </Card>
+  <Card title="Configuration" href="/cli/reference/configuration" icon="gear">
+    Full flag and environment variable precedence reference
+  </Card>
+  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+    Non-interactive auth patterns for pipelines
+  </Card>
+</Columns>

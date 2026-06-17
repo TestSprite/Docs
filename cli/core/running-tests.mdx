@@ -1,0 +1,172 @@
+---
+title: "Running Tests"
+description: "Trigger a test run from the CLI, wait for a verdict, and understand every exit code the runner emits."
+icon: "play"
+---
+
+## Trigger a run
+
+Pass a test ID to kick off a run immediately:
+
+```bash
+testsprite test run test_3a9f21c7
+```
+
+Without `--wait`, the command returns as soon as the run is accepted by the backend — exit 0. You get a `runId` you can use later:
+
+```text
+Run queued.
+runId:  run_5c1d9a2b
+status: queued
+```
+
+The test starts executing in the cloud. Come back to it with `testsprite test wait <run-id>` whenever you're ready.
+
+## Wait for the verdict
+
+Add `--wait` to block until the run reaches a terminal status:
+
+```bash
+testsprite test run test_3a9f21c7 --wait
+```
+
+Control how long the CLI polls before giving up with `--timeout <seconds>` (range 1–3600, default 600):
+
+```bash
+testsprite test run test_3a9f21c7 --wait --timeout 300
+```
+
+Exit codes when `--wait` is used:
+
+| Exit | Meaning |
+| :--- | :--- |
+| 0 | Run reached <kbd>passed</kbd> |
+| 1 | Run reached <kbd>failed</kbd>, <kbd>blocked</kbd>, or <kbd>cancelled</kbd> |
+| 7 | Timeout elapsed before a terminal status — resume with `testsprite test wait <run-id>` |
+
+## Resuming a run
+
+If a run times out or you triggered it without `--wait`, resume polling with the run ID:
+
+```bash
+testsprite test wait run_5c1d9a2b
+```
+
+`test wait` accepts the same `--timeout` flag and emits the same exit codes as `test run --wait`. When a terminal status arrives, you see the run card:
+
+```text
+runId:      run_5c1d9a2b
+status:     passed
+targetUrl:  https://app.example.com
+codeVersion: v4
+startedAt:  2026-06-15T10:02:11Z
+finishedAt: 2026-06-15T10:04:38Z
+steps:      12 passed, 0 failed
+dashboard:  https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7
+```
+
+## Overriding the target URL
+
+By default the run hits the URL stored on the project. Override it for a single run with `--target-url`:
+
+```bash
+testsprite test run test_3a9f21c7 --wait --target-url https://staging.example.com
+```
+
+The URL must be a public `http(s)` address; `localhost` and private IPs are rejected before any network call (exit 5).
+
+<Card title="Common Issues" href="/cli/troubleshooting/common-issues" icon="circle-question">
+  What to check if a URL is rejected
+</Card>
+
+<Note>
+Testing against a `localhost` target requires the MCP Server and its built-in tunnel, not the CLI. The CLI is designed for cloud-accessible environments and CI.
+</Note>
+
+## Running a whole backend suite
+
+Run every backend test in a project in a single wave-ordered batch:
+
+```bash
+testsprite test run --all --project proj_8f0f6 --wait
+```
+
+`--all` requires `--project`. The run respects dependency waves derived from `--produces` / `--needs` annotations set at test-creation time — producer tests run before the consumers that depend on their output variables.
+
+<Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
+  How to declare `--produces` / `--needs` annotations
+</Card>
+
+Narrow the batch with a name substring filter:
+
+```bash
+testsprite test run --all --project proj_8f0f6 --filter "checkout" --wait
+```
+
+Control how many runs execute simultaneously:
+
+```bash
+testsprite test run --all --project proj_8f0f6 --wait --max-concurrency 10
+```
+
+| Flag | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `--all` | bool | — | Run all BE tests in the project (wave-ordered) |
+| `--project <id>` | string | — | Required with `--all` |
+| `--filter <substr>` | string | — | Case-insensitive name filter |
+| `--max-concurrency <n>` | number | 50 | Max simultaneous triggers (1–100) |
+
+<Tip>
+`--all` is backend-only in the current release. To batch-trigger frontend tests, use `testsprite test create-batch --run --wait` when creating, or rerun an existing suite with `testsprite test rerun --all --project`.
+</Tip>
+
+## Run status and exit codes
+
+Every `test run` and `test wait` exits with a code your script or agent can branch on:
+
+| Exit code | Meaning |
+| :--- | :--- |
+| 0 | <kbd>passed</kbd> (or run queued without `--wait`) |
+| 1 | <kbd>failed</kbd>, <kbd>blocked</kbd>, or <kbd>cancelled</kbd> |
+| 3 | Auth error — check your API key or scopes |
+| 4 | Test or run not found |
+| 5 | Validation error — bad flag value or URL rejected |
+| 6 | Conflict — this test already has a run in flight |
+| 7 | Timeout — resume with `testsprite test wait <run-id>` |
+| 10 | Transport failure — retriable |
+| 11 | Rate limited — honor Retry-After |
+
+<Card title="Exit Codes" href="/cli/reference/exit-codes" icon="square-code">
+  The full exit-code table, including codes for other commands
+</Card>
+
+<Note>
+Exit 6 means a run is already in flight for this test. Wait for it to finish (or use `testsprite test wait <run-id>`) before triggering another.
+</Note>
+
+## The dashboard link
+
+When a run completes, the CLI prints a `dashboard:` line in text mode and includes `dashboardUrl` in JSON output. That link deep-dives directly into the Portal run view — steps, screenshots, analysis, and the full failure bundle — without any manual navigation.
+
+```bash
+testsprite test run test_3a9f21c7 --wait --output json | jq '.run.dashboardUrl'
+```
+
+The `dashboardUrl` is absent under `--dry-run`.
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Reading Results" href="/cli/core/reading-results" icon="list-check">
+    Inspect steps, pull failure bundles, and navigate run history
+  </Card>
+  <Card title="Rerun & Auto-Heal" href="/cli/core/rerun-and-auto-heal" icon="arrow-rotate-right">
+    Replay a saved script cheaply, or let AI repair UI drift automatically
+  </Card>
+  <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="square-code">
+    Complete exit-code reference for scripts and CI pipelines
+  </Card>
+  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+    Wire the CLI into GitHub Actions or any pipeline
+  </Card>
+</Columns>
