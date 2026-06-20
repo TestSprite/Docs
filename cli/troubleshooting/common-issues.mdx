@@ -17,8 +17,8 @@ The global install didn't put the binary on your `PATH`, or it isn't installed y
 <Accordion title="Auth error (exit 3) / AUTH_FORBIDDEN" icon="key">
 The CLI couldn't authenticate, or your key is missing a scope.
 
-- Run `testsprite auth whoami` to see which profile, key, and scopes are active.
-- Reconfigure: `testsprite auth configure` (interactive) or `TESTSPRITE_API_KEY=sk-... testsprite auth configure --from-env`.
+- Run `testsprite auth status` to see which profile, key, and scopes are active.
+- Reconfigure: `testsprite setup --no-agent` (interactive) or `TESTSPRITE_API_KEY=sk-... testsprite setup --from-env --yes --no-agent`.
 - On `AUTH_FORBIDDEN`, the missing scope is named in `details.requiredScope`. Generate a new key with the full [scope set](/cli/core/authentication#scopes) from the [dashboard](/web-portal/admin/api-keys).
 - In CI, set `TESTSPRITE_API_KEY` in the environment — it overrides the credentials file.
 </Accordion>

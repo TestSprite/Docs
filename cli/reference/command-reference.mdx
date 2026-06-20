@@ -25,11 +25,10 @@ These flags must appear **before** the subcommand (e.g. `testsprite --output jso
 
 ```text
 testsprite
-├── init                              One-shot onboarding (configure key + install agent skill)
+├── setup                             One-shot onboarding (configure key + install agent skill)
 ├── auth
-│   ├── configure                     Store an API key (validated against /me before writing)
-│   ├── whoami  (alias: status)       Show user/key/scopes for active profile
-│   └── logout                        Remove credentials for active profile
+│   ├── status                        Show user/key/env/scopes for active profile
+│   └── remove                        Remove credentials for active profile
 ├── project
 │   ├── list                          List projects
 │   ├── get <project-id>              Get a project by id
@@ -64,11 +63,11 @@ testsprite
 
 <AccordionGroup>
 
-  <Accordion title="init — one-shot onboarding">
-    Chains `auth configure` → `auth whoami` → `agent install` and prints a unified summary. Installs credentials and the coding-agent skill in one step.
+  <Accordion title="setup — one-shot onboarding">
+    Configures your API key (validated against `GET /me` before writing) and installs the coding-agent skill in one step, then prints a unified summary. This is the only command that writes credentials.
 
     ```bash
-    testsprite init [options]
+    testsprite setup [options]
     ```
 
     | Flag | Description |
@@ -85,40 +84,26 @@ testsprite
     No TTY + no `--api-key` + no `--from-env` → exit 5. Use `--from-env` in CI.
     </Note>
 
-    Text output: `TestSprite initialized.` followed by profile, endpoint, scopes, agent result, and next steps.
+    Text output: `TestSprite initialized.` followed by profile, scopes, agent result, and next steps.
   </Accordion>
 
-  <Accordion title="auth — configure / whoami / logout">
-    Manage API keys and profiles.
+  <Accordion title="auth — status / remove">
+    Inspect and remove credentials. Credentials are written by `setup` (add `--no-agent` for credentials only).
 
-    **auth configure** — store an API key for the active profile. Validates against `GET /me` before writing; never overwrites a working profile with a rejected key.
+    **auth status** — show the user, API key, env, and scopes for the active profile. No flags.
 
     ```bash
-    testsprite auth configure [--from-env]
+    testsprite auth status
     ```
 
-    | Flag | Description |
-    | :--- | :--- |
-    | `--from-env` | Read `TESTSPRITE_API_KEY` from the environment |
-
-    Text output: `Profile "<name>" configured. Endpoint: <url>`
+    Text output lines: `userId / name / email / keyId / env / scopes`. Prints a `note:` line if write or run scopes are missing.
 
     ---
 
-    **auth whoami** (alias: `auth status`) — show the user, API key, and scopes for the active profile. No flags.
+    **auth remove** — remove credentials for the active profile. No flags.
 
     ```bash
-    testsprite auth whoami
-    ```
-
-    Text output lines: `userId / name / email / keyId / endpoint / env / scopes`. Prints a `note:` line if write or run scopes are missing.
-
-    ---
-
-    **auth logout** — remove credentials for the active profile. No flags.
-
-    ```bash
-    testsprite auth logout
+    testsprite auth remove
     ```
   </Accordion>
 

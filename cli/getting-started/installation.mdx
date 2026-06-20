@@ -75,44 +75,49 @@ New and grandfathered keys both default to the scopes the CLI needs: `read:me`, 
 ## Sign In
 
 <Tabs>
-  <Tab title="One-shot (recommended)">
-    Run `testsprite init`. It prompts for your API key, verifies it against the platform, and installs the verification skill into your project's agent configuration — all in one step:
+  <Tab title="With the agent skill (recommended)">
+    Run `testsprite setup`. It prompts for your API key, verifies it against the platform, and installs the verification skill into your project's agent configuration — all in one step:
 
     ```bash
-    testsprite init
+    testsprite setup
     ```
 
     ```text
-    ? API key: sk-...
-    ✔ Authenticated as alice@example.com
-    ✔ Agent skill installed → .claude/skills/testsprite-verify/SKILL.md
+    TestSprite API key: ********
     TestSprite initialized.
+
+      profile:  default
+      env:      production
+      email:    alice@example.com
+      scopes:   read:me, read:projects, read:tests, write:tests, run:tests
+
+      agent:    claude (installed)
+
+    Next steps:
+      testsprite test list            # list tests in the current project
+      testsprite agent list           # check installed agent targets
+      testsprite agent install --target=<t>  # re-install or install additional targets
     ```
 
-    `init` chains credential configuration → identity verification → agent skill install. You only need to run it once per project.
+    `setup` chains credential configuration → identity verification → agent skill install. You only need to run it once per project. Pass `--agent <target>` to pick a different coding agent (default `claude`).
   </Tab>
-  <Tab title="Manual">
-    Configure credentials and verify separately:
+  <Tab title="Credentials only">
+    Add `--no-agent` to configure credentials without installing the agent skill:
 
     ```bash
-    testsprite auth configure
-    ```
-
-    ```text
-    ? API key: sk-...
-    Profile "default" configured. Endpoint: https://api.testsprite.com
+    testsprite setup --no-agent
     ```
 
     Then confirm the identity bound to the key:
 
     ```bash
-    testsprite auth whoami
+    testsprite auth status
     ```
   </Tab>
 </Tabs>
 
 <Tip>
-Use `testsprite init` — it configures credentials, verifies them, and installs the agent skill in one pass. `auth configure` is for cases where you want fine-grained profile control or are scripting a headless setup.
+`testsprite setup` is the single onboarding command — it configures credentials, verifies them, and installs the agent skill in one pass. Add `--no-agent` when you only want credentials.
 </Tip>
 
 ## Verify
@@ -120,7 +125,7 @@ Use `testsprite init` — it configures credentials, verifies them, and installs
 After signing in, confirm the active profile:
 
 ```bash
-testsprite auth whoami
+testsprite auth status
 ```
 
 ```text
@@ -128,19 +133,18 @@ userId    u_01abc...
 name      Alice Example
 email     alice@example.com
 keyId     key_01xyz...
-endpoint  https://api.testsprite.com
 env       production
-scopes    read:me read:projects read:tests write:tests run:tests
+scopes    read:me, read:projects, read:tests, write:tests, run:tests
 ```
 
 If any scopes are missing, the CLI prints a `note:` line telling you which commands will be blocked.
 
 ## Using It in CI
 
-In a CI environment, set `TESTSPRITE_API_KEY` as a secret and use the non-interactive init flag:
+In a CI environment, set `TESTSPRITE_API_KEY` as a secret and run setup non-interactively:
 
 ```bash
-TESTSPRITE_API_KEY=$TS_KEY testsprite init --from-env --yes
+TESTSPRITE_API_KEY=$TS_KEY testsprite setup --from-env --yes
 ```
 
 `--from-env` reads the key from the environment instead of prompting. `--yes` accepts all defaults without interactive prompts. The CLI never accepts the API key as a positional argument or writes it to logs.

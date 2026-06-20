@@ -8,34 +8,40 @@ icon: "key"
 
 Before you can run any command that talks to the TestSprite API, you need to store a valid API key.
 
-The fastest path is `testsprite init` — it prompts for the key, verifies it against the server, installs the agent skill into your repo, and prints a unified summary, all in one step:
+The fastest path is `testsprite setup` — it prompts for the key, verifies it against the server, installs the agent skill into your repo, and prints a unified summary, all in one step:
 
 ```bash
-testsprite init
+testsprite setup
 ```
 
 <Card title="Installation" href="/cli/getting-started/installation" icon="download">
   The full onboarding walkthrough
 </Card>
 
-If you want credentials only — no skill install — run:
+If you want credentials only — no skill install — add `--no-agent`:
 
 ```bash
-testsprite auth configure
+testsprite setup --no-agent
 ```
 
-The CLI calls `GET /me` with the key you provide before writing anything to disk. A rejected or malformed key never overwrites a working profile.
+The CLI calls `GET /me` with the key you provide before writing anything to disk. A rejected or malformed key never overwrites a working profile. You are only ever prompted for the API key.
 
 ```text
-# interactive prompt
-? API key: sk-...
-Profile "default" configured. Endpoint: https://api.testsprite.com
+TestSprite API key: ********
+TestSprite initialized.
+
+  profile:  default
+  env:      production
+  email:    you@example.com
+  scopes:   read:me, read:projects, read:tests, write:tests, run:tests
+
+  agent:    skipped (--no-agent)
 ```
 
 For non-interactive environments (CI, Dockerfiles, scripted setup), pass `--from-env` instead of typing at a prompt:
 
 ```bash
-TESTSPRITE_API_KEY=sk-... testsprite auth configure --from-env
+TESTSPRITE_API_KEY=sk-... testsprite setup --from-env --yes --no-agent
 ```
 
 <Warning>
@@ -44,10 +50,10 @@ TESTSPRITE_API_KEY=sk-... testsprite auth configure --from-env
 
 ## Checking who you are
 
-Run `testsprite auth whoami` (alias: `testsprite auth status`) to confirm which key and profile are active:
+Run `testsprite auth status` to confirm which key and profile are active:
 
 ```bash
-testsprite auth whoami
+testsprite auth status
 ```
 
 Sample text output:
@@ -57,7 +63,6 @@ userId    usr_1478d468
 name      Your Name
 email     you@example.com
 keyId     key_a1b2c3d4
-endpoint  https://api.testsprite.com
 env       production
 scopes    read:me, read:projects, read:tests, write:tests, run:tests
 ```
@@ -69,7 +74,7 @@ If your key is missing `write:tests` or `run:tests`, the output appends a `note:
 To remove credentials for the active profile:
 
 ```bash
-testsprite auth logout
+testsprite auth remove
 ```
 
 The credentials entry for the selected profile is deleted from `~/.testsprite/credentials`. Other profiles are not touched.
@@ -86,7 +91,7 @@ api_key = sk-...
 api_key = sk-...
 ```
 
-Each section is a named **profile**. The section name matches the profile you activated when you ran `auth configure`.
+Each section is a named **profile**. The section name matches the profile you activated when you ran `setup`.
 
 ## Profiles
 
@@ -95,7 +100,7 @@ Profiles let you manage multiple accounts or API keys (for example, an interacti
 To configure a named profile, pass `--profile` before the subcommand:
 
 ```bash
-testsprite --profile ci auth configure
+testsprite --profile ci setup --no-agent
 ```
 
 To use a profile for any subsequent command, pass `--profile` as a global flag:
@@ -135,14 +140,14 @@ API keys carry a list of **scopes** that gate which operations the CLI can perfo
 
 | Scope | Gates |
 | :--- | :--- |
-| `read:me` | `auth whoami`, `usage` |
+| `read:me` | `auth status`, `usage` |
 | `read:projects` | `project list`, `project get` |
 | `read:tests` | `test list`, `test get`, `test steps`, `test result`, `test code get`, `test failure get`, `test failure summary`, `test artifact get` |
 | `write:tests` | `test create`, `test create-batch`, `test update`, `test delete`, `test delete-batch`, `test code put`, `test plan put`, `project create`, `project update` |
 | `run:tests` | `test run`, `test wait`, `test rerun` |
 
 <Note>
-`testsprite agent install` is a pure-local operation — it only writes files to your project directory and never calls the API, so no scope is required. `testsprite init` *does* call the API to verify your key (`GET /me`) and fetch your identity, but it works with any valid key and needs no write or run scope.
+`testsprite agent install` is a pure-local operation — it only writes files to your project directory and never calls the API, so no scope is required. `testsprite setup` *does* call the API to verify your key (`GET /me`) and fetch your identity, but it works with any valid key and needs no write or run scope.
 </Note>
 
 If a command fails with a scope error, the CLI prints the required and granted scopes in both text and JSON modes. You can generate a new key with the needed scopes in the dashboard at <kbd>Settings → API Keys</kbd> → <kbd>Create new key</kbd>.

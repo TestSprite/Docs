@@ -16,9 +16,9 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 
 | Capability | Command |
 | :--- | :--- |
-| Configure an API key (with `--from-env` for CI) | `auth configure` |
-| Verify the active profile | `auth whoami` |
-| Remove credentials | `auth logout` |
+| Configure an API key and install the agent skill (with `--from-env` for CI) | `setup` |
+| Verify the active profile | `auth status` |
+| Remove credentials | `auth remove` |
 
 ### Projects
 
@@ -74,7 +74,7 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 
 | Capability | Command |
 | :--- | :--- |
-| One command to configure credentials and install the agent skill, with a unified summary | `testsprite init` |
+| One command to configure credentials and install the agent skill, with a unified summary | `testsprite setup` |
 
 ### Coding-agent skill
 
