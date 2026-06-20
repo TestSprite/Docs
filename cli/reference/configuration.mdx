@@ -37,7 +37,7 @@ api_key = sk-...
 api_key = sk-...
 ```
 
-Run `testsprite auth configure` to write a profile interactively. Use `--from-env` in CI to skip the prompt.
+Run `testsprite setup` to write a profile interactively. Use `--from-env` in CI to skip the prompt.
 
 ## Profiles
 
@@ -69,7 +69,7 @@ Environment variables override the credentials file but are overridden by their 
 | `TESTSPRITE_REQUEST_TIMEOUT_MS` | Per-request timeout in **milliseconds** | `--request-timeout` (seconds) |
 
 <Tip>
-In CI, set `TESTSPRITE_API_KEY` in your secrets store and pass `--from-env` to `testsprite init` or `testsprite auth configure`. The CLI never logs the key value.
+In CI, set `TESTSPRITE_API_KEY` in your secrets store and pass `--from-env` to `testsprite setup`. The CLI never logs the key value.
 </Tip>
 
 ## Resolution precedence

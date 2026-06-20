@@ -27,25 +27,19 @@ env:
   TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
 ```
 
-The CLI resolves `TESTSPRITE_API_KEY` before the credentials file, so no `testsprite auth configure` step is needed in CI.
+The CLI resolves `TESTSPRITE_API_KEY` before the credentials file, so no `testsprite setup` step is needed in CI.
 
 <Warning>
 **Important:** Never inline an API key in a workflow file or a script committed to version control. Always source it from a secret store.
 </Warning>
 
-In most pipelines the env var alone is enough — you don't need to run any auth command. If you do need a credentials file on disk (for other tooling), write one non-interactively from the same env var:
+In most pipelines the env var alone is enough — you don't need to run any setup command. If you do need a credentials file on disk (for other tooling), write one non-interactively from the same env var with `--no-agent` to skip the skill install:
 
 ```bash
-testsprite auth configure --from-env
+testsprite setup --from-env --yes --no-agent
 ```
 
-Or run the full one-shot onboarding without the agent-skill install:
-
-```bash
-testsprite init --from-env --yes --no-agent
-```
-
-Both read `TESTSPRITE_API_KEY` from the environment and write `~/.testsprite/credentials`; `init` also verifies the key and prints an identity summary.
+This reads `TESTSPRITE_API_KEY` from the environment, verifies the key, writes `~/.testsprite/credentials`, and prints an identity summary.
 
 ## Gating on the result
 

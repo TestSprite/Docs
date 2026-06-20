@@ -16,15 +16,15 @@ Install the CLI globally and run the one-shot onboarding:
 
 ```bash
 npm install -g @testsprite/testsprite-cli
-testsprite init
+testsprite setup
 ```
 
-`testsprite init` prompts for your API key, verifies it, and installs the TestSprite verification skill into your agent's project configuration. Run it once per project.
+`testsprite setup` prompts for your API key, verifies it, and installs the TestSprite verification skill into your agent's project configuration. Run it once per project.
 
 For CI or non-interactive environments:
 
 ```bash
-TESTSPRITE_API_KEY=$TS_KEY testsprite init --from-env --yes
+TESTSPRITE_API_KEY=$TS_KEY testsprite setup --from-env --yes
 ```
 
 ## Step 2: Find your project
@@ -133,7 +133,7 @@ Exit 0. The test is banked into the durable suite. The next time your agent ship
 
 ## Step 6: Let your agent drive it
 
-Install the TestSprite verification skill into your agent's project. `testsprite init` already did this, but you can re-run the agent install step standalone for any target:
+Install the TestSprite verification skill into your agent's project. `testsprite setup` already did this, but you can re-run the agent install step standalone for any target:
 
 ```bash
 testsprite agent install --target claude

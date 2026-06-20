@@ -194,7 +194,7 @@ Every run is tagged with the surface that triggered it. The **run source** lets 
 
 ## Scopes
 
-**Scopes** are permissions that an API key carries. The CLI checks scopes before sending write or run requests, and when access is denied it prints which scope was required and which scopes your key holds. Read commands need read scopes, writes need `write:tests`, and runs need `run:tests`; purely local commands like `init` and `agent install` need none.
+**Scopes** are permissions that an API key carries. The CLI checks scopes before sending write or run requests, and when access is denied it prints which scope was required and which scopes your key holds. Read commands need read scopes, writes need `write:tests`, and runs need `run:tests`; the purely local `agent install` command needs none, and `setup` works with any valid key.
 
 See [Authentication → Scopes](/cli/core/authentication#scopes) for the full table of which scope gates which command.
 

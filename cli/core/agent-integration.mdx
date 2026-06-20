@@ -16,7 +16,7 @@ icon: "robot"
 The skill is **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
 
 <Tip>
-**We strongly recommend installing the skill.** It's the fastest way to get consistent results — the skill teaches your agent exactly when to verify, how to read the failure bundle, and how to loop until the test is green, so you don't have to spell it out each time. Run `testsprite init` (or `testsprite agent install`) once per project.
+**We strongly recommend installing the skill.** It's the fastest way to get consistent results — the skill teaches your agent exactly when to verify, how to read the failure bundle, and how to loop until the test is green, so you don't have to spell it out each time. Run `testsprite setup` (or `testsprite agent install`) once per project.
 </Tip>
 
 ## Install the skill
@@ -84,13 +84,13 @@ codex        experimental  managed-section   AGENTS.md
 
 ## One-shot onboarding
 
-`testsprite init` configures your API key **and** installs the skill in a single step — the recommended path when you're setting up a project for the first time.
+`testsprite setup` configures your API key **and** installs the skill in a single step — the recommended path when you're setting up a project for the first time.
 
 ```bash
-testsprite init
+testsprite setup
 ```
 
-`init` chains `auth configure` → `auth whoami` → `agent install` and prints a unified summary.
+`setup` chains credential configuration → identity verification → agent skill install, and prints a unified summary.
 
 <Card title="Installation" href="/cli/getting-started/installation" icon="download" horizontal>
   The full onboarding walkthrough, including the non-interactive (`--from-env --yes`) form for CI bootstrap.
