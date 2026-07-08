@@ -54,7 +54,7 @@ testsprite
 │   ├── failure summary <test-id>     One-screen triage card
 │   └── artifact get <run-id>         Download failure bundle for a SPECIFIC run
 ├── agent
-│   ├── install                       Write the TestSprite skill file into a project
+│   ├── install                       Write the TestSprite skill files into a project
 │   └── list                          List supported agent targets
 └── usage  (alias: credits)           Show credit balance & plan info
 ```
@@ -465,7 +465,7 @@ testsprite
   </Accordion>
 
   <Accordion title="agent — install / list">
-    **agent install** — write the TestSprite verification-loop skill file into a project for a coding agent. Pure local — no network, no credentials.
+    **agent install** — write the TestSprite skill files into a project for a coding agent: `testsprite-verify` (verification loop) and `testsprite-onboard` (first-run setup) by default. Pass `--skill` to install a subset. Pure local — no network, no credentials.
 
     ```bash
     testsprite agent install [options]
@@ -474,6 +474,7 @@ testsprite
     | Flag | Description |
     | :--- | :--- |
     | `--target <t>` | Agent target (repeatable/comma-separated; prompts if TTY): `claude`, `cursor`, `cline`, `antigravity`, `codex` |
+    | `--skill <name>` | Skill to install (repeatable/comma-separated): `testsprite-verify`, `testsprite-onboard`. Default: both |
     | `--dir <path>` | Project root (default: cwd) |
     | `--force` | Overwrite existing (a `.bak` backup is kept); for `codex`, replaces only the managed section |
 
@@ -481,17 +482,19 @@ testsprite
 
     | Target | Status | Mode | Landing path |
     | :--- | :--- | :--- | :--- |
-    | `claude` | GA | own-file | `.claude/skills/testsprite-verify/SKILL.md` |
-    | `antigravity` | experimental | own-file | `.agents/skills/testsprite-verify/SKILL.md` |
-    | `cursor` | experimental | own-file | `.cursor/rules/testsprite-verify.mdc` |
-    | `cline` | experimental | own-file | `.clinerules/testsprite-verify.md` |
+    | `claude` | GA | own-file | `.claude/skills/{skill}/SKILL.md` |
+    | `antigravity` | experimental | own-file | `.agents/skills/{skill}/SKILL.md` |
+    | `cursor` | experimental | own-file | `.cursor/rules/{skill}.mdc` |
+    | `cline` | experimental | own-file | `.clinerules/{skill}.md` |
     | `codex` | experimental | managed-section | `AGENTS.md` |
+
+    `{skill}` is `testsprite-verify` or `testsprite-onboard`. Own-file targets get one file per installed skill; `codex` merges every installed skill's contribution into the single managed section.
 
     Exit 6 if any target is blocked (exists and differs, no `--force`).
 
     ---
 
-    **agent list** — list supported agent targets, their status, and landing paths. Pure local, no flags. Text columns: `TARGET STATUS MODE PATH`.
+    **agent list** — list supported agent targets, their status, and landing paths (one row per target × installed skill). Pure local, no flags. Text columns: `TARGET SKILL STATUS MODE PATH`.
 
     ```bash
     testsprite agent list

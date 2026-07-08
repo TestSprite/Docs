@@ -146,7 +146,7 @@ Exit 6 means a run is already in flight for this test. Wait for it to finish (or
 
 ## The dashboard link
 
-When a run completes, the CLI prints a `dashboard:` line in text mode and includes `dashboardUrl` in JSON output. That link deep-dives directly into the Portal run view — steps, screenshots, analysis, and the full failure bundle — without any manual navigation.
+When a run completes, the CLI prints a `dashboard:` line in text mode and includes `dashboardUrl` in JSON output (when available). That link deep-dives directly into the Portal run view — steps, video recording, analysis, and the full failure bundle — without any manual navigation.
 
 ```bash
 testsprite test run test_3a9f21c7 --wait --output json | jq '.run.dashboardUrl'

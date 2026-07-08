@@ -16,7 +16,7 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 
 | Capability | Command |
 | :--- | :--- |
-| Configure an API key and install the agent skill (with `--from-env` for CI) | `setup` |
+| Configure an API key and install the agent skills (with `--from-env` for CI) | `setup` |
 | Verify the active profile | `auth status` |
 | Remove credentials | `auth remove` |
 
@@ -74,13 +74,13 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 
 | Capability | Command |
 | :--- | :--- |
-| One command to configure credentials and install the agent skill, with a unified summary | `testsprite setup` |
+| One command to configure credentials and install the agent skills, with a unified summary | `testsprite setup` |
 
 ### Coding-agent skill
 
 | Capability | Command |
 | :--- | :--- |
-| Write the TestSprite verification-loop skill file for Claude Code (GA), Cursor, Cline, Antigravity, or Codex (all experimental except Claude) | `agent install` |
+| Write the TestSprite skill files — verification-loop (`testsprite-verify`) and first-run onboarding (`testsprite-onboard`) — for Claude Code (GA), Cursor, Cline, Antigravity, or Codex (all experimental except Claude) | `agent install` |
 | See all supported targets, modes, and landing paths | `agent list` |
 
 ### Global capabilities

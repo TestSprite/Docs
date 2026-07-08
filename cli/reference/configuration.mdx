@@ -99,7 +99,7 @@ This timeout governs single HTTP round-trips only. It does **not** affect the `-
 
 ## The dashboard link
 
-When a run completes, the JSON output includes a `dashboardUrl` field and text mode prints a `Dashboard:` line. This deep-links directly into the Web Portal run view for that test.
+When a run completes, the JSON output includes an optional `dashboardUrl` field and text mode prints a `Dashboard:` line when the link is available. The field is present only when both `projectId` and `testId` are known client-side; it is not guaranteed on every completion. It deep-links directly into the Web Portal run view for that test.
 
 ```json
 {

@@ -157,64 +157,6 @@
         ]
       },
       {
-        "tab": "CLI",
-        "icon": "terminal",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "cli/getting-started/overview",
-              "cli/getting-started/installation",
-              "cli/getting-started/quickstart",
-              {
-                "group": "Agent",
-                "icon": "robot",
-                "expanded": true,
-                "pages": [
-                  "cli/concepts/the-agent-loop",
-                  "cli/core/agent-integration"
-                ]
-              },
-              "cli/concepts/key-terms"
-            ]
-          },
-          {
-            "group": "Core",
-            "pages": [
-              "cli/core/authentication",
-              "cli/core/projects",
-              "cli/core/creating-tests",
-              "cli/core/editing-tests",
-              "cli/core/running-tests",
-              "cli/core/reading-results",
-              "cli/core/rerun-and-auto-heal"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
-              "cli/integrations/ci-cd"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "cli/reference/command-reference",
-              "cli/reference/configuration",
-              "cli/reference/output-and-scripting",
-              "cli/reference/exit-codes",
-              "cli/reference/whats-included"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "cli/troubleshooting/common-issues"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "MCP Server",
         "icon": "square-terminal",
         "groups": [
@@ -280,6 +222,64 @@
               "mcp/troubleshooting/ide-configuration-issues",
               "mcp/troubleshooting/application-detection-issues",
               "mcp/troubleshooting/test-execution-issues"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI",
+        "icon": "terminal",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "cli/getting-started/overview",
+              "cli/getting-started/installation",
+              "cli/getting-started/quickstart",
+              {
+                "group": "Concepts",
+                "icon": "book",
+                "expanded": true,
+                "pages": [
+                  "cli/concepts/key-terms",
+                  "cli/concepts/the-agent-loop"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Core",
+            "pages": [
+              "cli/core/authentication",
+              "cli/core/projects",
+              "cli/core/creating-tests",
+              "cli/core/editing-tests",
+              "cli/core/running-tests",
+              "cli/core/reading-results",
+              "cli/core/rerun-and-auto-heal",
+              "cli/core/agent-integration"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "cli/integrations/ci-cd"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "cli/reference/command-reference",
+              "cli/reference/configuration",
+              "cli/reference/output-and-scripting",
+              "cli/reference/exit-codes",
+              "cli/reference/whats-included"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "cli/troubleshooting/common-issues"
             ]
           }
         ]

@@ -36,11 +36,11 @@ Example plan file structure:
   "type": "frontend",
   "name": "Guest checkout — credit card",
   "planSteps": [
-    { "action": "navigate", "value": "https://app.example.com/cart" },
-    { "action": "click", "selector": "[data-testid='checkout-btn']" },
-    { "action": "fill", "selector": "#card-number", "value": "4242424242424242" },
-    { "action": "click", "selector": "[data-testid='pay-btn']" },
-    { "action": "assert", "selector": ".order-confirmation", "condition": "visible" }
+    { "type": "action", "description": "Navigate to https://app.example.com/cart" },
+    { "type": "action", "description": "Click the checkout button" },
+    { "type": "action", "description": "Fill the card number field with a test card number" },
+    { "type": "action", "description": "Click the Pay button" },
+    { "type": "assertion", "description": "The order confirmation message is visible" }
   ]
 }
 ```
