@@ -67,6 +67,9 @@ Environment variables override the credentials file but are overridden by their 
 | `TESTSPRITE_API_KEY` | API key to use | — (highest precedence for the key) |
 | `TESTSPRITE_PROFILE` | Active profile name | `--profile` |
 | `TESTSPRITE_REQUEST_TIMEOUT_MS` | Per-request timeout in **milliseconds** | `--request-timeout` (seconds) |
+| `TESTSPRITE_NO_UPDATE_NOTIFIER` | Set to any non-empty value to disable the "new version available" stderr notice | — |
+| `NO_COLOR` | Set to any non-empty value to disable colored/styled terminal output ([no-color.org](https://no-color.org/)) | — |
+| `HTTPS_PROXY` / `HTTP_PROXY` / `NO_PROXY` | Route CLI requests through a corporate/CI proxy (standard proxy conventions; lower-case spellings also work) | — |
 
 <Tip>
 In CI, set `TESTSPRITE_API_KEY` in your secrets store and pass `--from-env` to `testsprite setup`. The CLI never logs the key value.
@@ -99,7 +102,7 @@ This timeout governs single HTTP round-trips only. It does **not** affect the `-
 
 ## The dashboard link
 
-When a run completes, the JSON output includes a `dashboardUrl` field and text mode prints a `Dashboard:` line. This deep-links directly into the Web Portal run view for that test.
+When a run completes, the JSON output includes an optional `dashboardUrl` field and text mode prints a `Dashboard:` line when the link is available. The field is present only when both `projectId` and `testId` are known client-side; it is not guaranteed on every completion. It deep-links directly into the Web Portal run view for that test.
 
 ```json
 {

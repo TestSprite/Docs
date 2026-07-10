@@ -4,12 +4,16 @@ description: "Fixes for the problems you're most likely to hit with the TestSpri
 icon: "wrench"
 ---
 
+<Tip>
+Run `testsprite doctor` first. It checks your CLI version, Node runtime, active profile, API endpoint, credentials, live connectivity, and whether the verify skill is installed — often the fastest way to find out what's wrong before digging through the sections below.
+</Tip>
+
 <AccordionGroup>
 
 <Accordion title="command not found: testsprite" icon="terminal">
 The global install didn't put the binary on your `PATH`, or it isn't installed yet.
 
-- Confirm Node ≥ 20: `node --version`.
+- Confirm your Node version is 20.19+, 22.13+, or 24+ (21.x/23.x are not supported): `node --version`.
 - Reinstall globally: `npm install -g @testsprite/testsprite-cli`.
 - Or skip the global install entirely and run via `npx @testsprite/testsprite-cli --version`.
 </Accordion>

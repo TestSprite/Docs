@@ -4,36 +4,39 @@ description: "Let your coding agent drive the TestSprite verification loop on it
 icon: "robot"
 ---
 
-## What the skill does
+## What the skills do
 
-`testsprite agent install` writes a **verification-loop skill file** into your repository. Once the file is in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own:
+`testsprite agent install` writes two **skill files** into your repository by default:
 
-1. Describe a behavior as a plan file and create a test.
-2. Trigger a real cloud run and wait for the verdict.
-3. On failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target.
-4. Edit the code and replay cheaply — no credits for a verbatim FE rerun.
+- **`testsprite-verify`** — the verification-loop skill. Once in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own: describe a behavior as a plan file and create a test; trigger a real cloud run and wait for the verdict; on failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target; edit the code and replay cheaply.
+- **`testsprite-onboard`** — the onboarding skill. Guides the agent through initial project setup (running `testsprite setup`, creating the first project and test) the first time TestSprite is used in a repo.
 
-The skill is **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
+Both skills are **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
 
 <Tip>
-**We strongly recommend installing the skill.** It's the fastest way to get consistent results — the skill teaches your agent exactly when to verify, how to read the failure bundle, and how to loop until the test is green, so you don't have to spell it out each time. Run `testsprite setup` (or `testsprite agent install`) once per project.
+**We strongly recommend installing the skills.** It's the fastest way to get consistent results — they teach your agent exactly when to verify, how to read the failure bundle, and how to loop until the test is green, so you don't have to spell it out each time. Run `testsprite setup` (or `testsprite agent install`) once per project.
 </Tip>
 
-## Install the skill
+## Install the skills
 
 ```bash
 testsprite agent install --target claude
 ```
 
-Run this from your project root. The skill file is written immediately.
+Run this from your project root. The skill files (both `testsprite-verify` and `testsprite-onboard` by default) are written immediately.
 
 **Flags:**
 
 | Flag | Description |
 | :--- | :--- |
-| `--target <t>` | Agent target: `claude`, `cursor`, `cline`, `antigravity`, `codex`. Comma-separated or repeated. Prompts if omitted in a terminal. |
-| `--dir <path>` | Project root to write the skill into (default: current directory). |
+| `--target <t>` | Agent target: `claude`, `cursor`, `cline`, `antigravity`, `kiro`, `windsurf`, `copilot`, `codex`. Comma-separated or repeated. Prompts if omitted in a terminal. |
+| `--skill <name>` | Skill to install: `testsprite-verify`, `testsprite-onboard`. Comma-separated or repeated. Default: both. |
+| `--dir <path>` | Project root to write the skill(s) into (default: current directory). |
 | `--force` | Overwrite an existing skill file. A `.bak` backup is kept. For `codex`, replaces only the managed section — your other `AGENTS.md` content is preserved. |
+
+<Note>
+If `--target` is omitted in an interactive terminal, the CLI prompts for one (default `claude`). Outside a terminal — CI, a script, a piped invocation — it skips the prompt and defaults straight to `claude`, printing an `[info]` line to stderr so the choice is visible in logs.
+</Note>
 
 To install for multiple agents at once:
 
@@ -55,36 +58,77 @@ If the destination file already exists and differs from the current skill, the i
 
 | Target | Status | Mode | Landing path |
 | :--- | :--- | :--- | :--- |
-| `claude` | <kbd>GA</kbd> | own-file | `.claude/skills/testsprite-verify/SKILL.md` |
-| `antigravity` | <kbd>experimental</kbd> | own-file | `.agents/skills/testsprite-verify/SKILL.md` |
-| `cursor` | <kbd>experimental</kbd> | own-file | `.cursor/rules/testsprite-verify.mdc` |
-| `cline` | <kbd>experimental</kbd> | own-file | `.clinerules/testsprite-verify.md` |
+| `claude` | <kbd>GA</kbd> | own-file | `.claude/skills/{skill}/SKILL.md` |
+| `antigravity` | <kbd>experimental</kbd> | own-file | `.agents/skills/{skill}/SKILL.md` |
+| `cursor` | <kbd>experimental</kbd> | own-file | `.cursor/rules/{skill}.mdc` |
+| `cline` | <kbd>experimental</kbd> | own-file | `.clinerules/{skill}.md` |
+| `kiro` | <kbd>experimental</kbd> | own-file | `.kiro/skills/{skill}/SKILL.md` |
+| `windsurf` | <kbd>experimental</kbd> | own-file | `.windsurf/rules/{skill}.md` |
+| `copilot` | <kbd>experimental</kbd> | own-file | `.github/instructions/{skill}.instructions.md` |
 | `codex` | <kbd>experimental</kbd> | managed-section | `AGENTS.md` |
 
+`{skill}` is `testsprite-verify` or `testsprite-onboard`. Own-file targets write one file per installed skill; only the requested skill(s) land, so `--skill testsprite-verify` writes just that one file.
+
 <Note>
-For `codex`, the skill is written as a managed section inside `AGENTS.md`. Your existing content in that file is not modified — only the TestSprite section is added or updated.
+For `codex`, every installed skill is merged into one managed section inside `AGENTS.md`. Your existing content in that file is not modified — only the TestSprite section is added or updated.
 </Note>
 
 ## Listing targets
 
-To see all supported targets, their current status, and where the skill lands:
+To see all supported targets, their current status, and where each skill lands:
 
 ```bash
 testsprite agent list
 ```
 
 ```text
-TARGET       STATUS        MODE              PATH
-claude       GA            own-file          .claude/skills/testsprite-verify/SKILL.md
-antigravity  experimental  own-file          .agents/skills/testsprite-verify/SKILL.md
-cursor       experimental  own-file          .cursor/rules/testsprite-verify.mdc
-cline        experimental  own-file          .clinerules/testsprite-verify.md
-codex        experimental  managed-section   AGENTS.md
+TARGET       SKILL                STATUS        MODE              PATH
+claude       testsprite-verify    GA            own-file          .claude/skills/testsprite-verify/SKILL.md
+claude       testsprite-onboard   GA            own-file          .claude/skills/testsprite-onboard/SKILL.md
+antigravity  testsprite-verify    experimental  own-file          .agents/skills/testsprite-verify/SKILL.md
+antigravity  testsprite-onboard   experimental  own-file          .agents/skills/testsprite-onboard/SKILL.md
+cursor       testsprite-verify    experimental  own-file          .cursor/rules/testsprite-verify.mdc
+cursor       testsprite-onboard   experimental  own-file          .cursor/rules/testsprite-onboard.mdc
+cline        testsprite-verify    experimental  own-file          .clinerules/testsprite-verify.md
+cline        testsprite-onboard   experimental  own-file          .clinerules/testsprite-onboard.md
+kiro         testsprite-verify    experimental  own-file          .kiro/skills/testsprite-verify/SKILL.md
+kiro         testsprite-onboard   experimental  own-file          .kiro/skills/testsprite-onboard/SKILL.md
+windsurf     testsprite-verify    experimental  own-file          .windsurf/rules/testsprite-verify.md
+windsurf     testsprite-onboard   experimental  own-file          .windsurf/rules/testsprite-onboard.md
+copilot      testsprite-verify    experimental  own-file          .github/instructions/testsprite-verify.instructions.md
+copilot      testsprite-onboard   experimental  own-file          .github/instructions/testsprite-onboard.instructions.md
+codex        testsprite-verify    experimental  managed-section   AGENTS.md
+codex        testsprite-onboard   experimental  managed-section   AGENTS.md
+```
+
+## Checking skill health
+
+Once skills are installed, confirm they're still in sync with the CLI version that installed them — useful right after upgrading the CLI, or in CI to catch a hand-edited skill file:
+
+```bash
+testsprite agent status
+```
+
+Each installed skill file is classified into one state:
+
+| State | Meaning |
+| :--- | :--- |
+| `ok` | Matches exactly what this CLI version would install |
+| `stale` | Installed by an older CLI version whose canonical content has since changed |
+| `modified` | Edited by hand after install |
+| `unmarked` | Present, but predates the provenance marker this check relies on |
+| `absent` | Not installed for this target/skill |
+| `corrupt` | `codex` only — the managed `AGENTS.md` section's sentinels are malformed |
+
+Pass `--dir <path>` to inspect a project other than the current directory. `agent status` exits `1` when anything needs attention (any state other than `ok` or `absent`), so it's CI-gateable:
+
+```bash
+testsprite agent status --dir ./apps/web && echo "skills are in sync"
 ```
 
 ## One-shot onboarding
 
-`testsprite setup` configures your API key **and** installs the skill in a single step — the recommended path when you're setting up a project for the first time.
+`testsprite setup` configures your API key **and** installs the skills in a single step — the recommended path when you're setting up a project for the first time.
 
 ```bash
 testsprite setup
@@ -98,7 +142,7 @@ testsprite setup
 
 ## How the agent uses it
 
-Once the skill file is in place, a coding agent like Claude Code picks it up automatically when it enters your project. It knows to:
+Once the skill files are in place, a coding agent like Claude Code picks them up automatically when it enters your project. It knows to:
 
 1. **Create** a test from a plan you or the agent authors — describing the behavior in intent terms, not driver code.
 2. **Run** it against the live app and wait for a pass/fail verdict.

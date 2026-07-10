@@ -15,7 +15,7 @@ TestSprite has two test types, and the authoring model differs between them:
 | Pass it with | `--plan-from` | `--code-file` |
 | TestSprite runs it as | A real browser session in the cloud | Code in an isolated cloud sandbox |
 
-A backend test's language and framework are recorded as properties of the test (typically Python/`pytest`), not fixed by the test type.
+TestSprite stores and executes all test code as Python: frontend tests run as async Playwright scripts, backend tests as `requests` + pytest-style assertions. Accordingly, `test code put --language` accepts only `python`.
 
 ## Create a frontend test from a plan
 
@@ -36,11 +36,11 @@ Example plan file structure:
   "type": "frontend",
   "name": "Guest checkout — credit card",
   "planSteps": [
-    { "action": "navigate", "value": "https://app.example.com/cart" },
-    { "action": "click", "selector": "[data-testid='checkout-btn']" },
-    { "action": "fill", "selector": "#card-number", "value": "4242424242424242" },
-    { "action": "click", "selector": "[data-testid='pay-btn']" },
-    { "action": "assert", "selector": ".order-confirmation", "condition": "visible" }
+    { "type": "action", "description": "Navigate to https://app.example.com/cart" },
+    { "type": "action", "description": "Click the checkout button" },
+    { "type": "action", "description": "Fill the card number field with a test card number" },
+    { "type": "action", "description": "Click the Pay button" },
+    { "type": "assertion", "description": "The order confirmation message is visible" }
   ]
 }
 ```

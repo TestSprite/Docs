@@ -22,12 +22,27 @@ Every `testsprite` command returns a stable exit code. Agents and CI pipelines b
 | `10` | Unavailable or transport failure — retriable with backoff |
 | `11` | Rate limited — honor the `Retry-After` header |
 | `12` | Insufficient credits — non-retriable; top up in the dashboard |
+| `129` | <kbd>SIGHUP</kbd> cancellation (terminal or SSH session closed) |
 | `130` | <kbd>SIGINT</kbd> cancellation (Ctrl-C) |
 | `143` | <kbd>SIGTERM</kbd> cancellation |
 
 <Note>
 The `--help` and `--version` flags always exit 0. Flag-parse errors exit 5.
 </Note>
+
+## Signals & pipes
+
+`129`, `130`, and `143` are the conventional `128 + signal` codes for SIGHUP, SIGINT, and SIGTERM respectively. Before exiting, the CLI prints one line to stderr:
+
+```text
+Interrupted (SIGINT). Any run already started keeps executing on the server; check it with `testsprite test list` or `testsprite test wait <runId>`.
+```
+
+<Warning>
+**Ctrl-C does not cancel the run.** The CLI only polls for status — the run itself keeps executing (and billing, where it applies) on the server whether or not the CLI is still attached. There is no cancel command today. Reattach with `testsprite test wait <run-id>`, or check `testsprite test list`.
+</Warning>
+
+Separately, if stdout is piped into a reader that closes early — `testsprite test list --output json | head -n 1` — the next write raises `EPIPE`. The CLI swallows it silently and exits `0`, the conventional outcome for "the reader went away," not a failure.
 
 ## Error codes
 

@@ -44,6 +44,10 @@ Exit codes when `--wait` is used:
 | 1 | Run reached <kbd>failed</kbd>, <kbd>blocked</kbd>, or <kbd>cancelled</kbd> |
 | 7 | Timeout elapsed before a terminal status — resume with `testsprite test wait <run-id>` |
 
+<Note>
+A timeout doesn't cost you the `runId`: even on exit 7, the CLI prints a partial object (`{ "runId": "...", "status": "running" }`) to stdout before exiting, so a script can grab the ID and resume without having captured it earlier.
+</Note>
+
 ## Resuming a run
 
 If a run times out or you triggered it without `--wait`, resume polling with the run ID:
@@ -83,15 +87,15 @@ The URL must be a public `http(s)` address; `localhost` and private IPs are reje
 Testing against a `localhost` target requires the MCP Server and its built-in tunnel, not the CLI. The CLI is designed for cloud-accessible environments and CI.
 </Note>
 
-## Running a whole backend suite
+## Running a whole suite
 
-Run every backend test in a project in a single wave-ordered batch:
+Run every test in a project in a single wave-ordered batch:
 
 ```bash
 testsprite test run --all --project proj_8f0f6 --wait
 ```
 
-`--all` requires `--project`. The run respects dependency waves derived from `--produces` / `--needs` annotations set at test-creation time — producer tests run before the consumers that depend on their output variables.
+`--all` requires `--project`. It triggers every test in the project (each billed like any run) and respects dependency waves derived from `--produces` / `--needs` annotations set at backend test-creation time — producer tests run before the consumers that depend on their output variables, with teardown tests last.
 
 <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
   How to declare `--produces` / `--needs` annotations
@@ -111,13 +115,13 @@ testsprite test run --all --project proj_8f0f6 --wait --max-concurrency 10
 
 | Flag | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `--all` | bool | — | Run all BE tests in the project (wave-ordered) |
+| `--all` | bool | — | Run all tests in the project (wave-ordered) |
 | `--project <id>` | string | — | Required with `--all` |
 | `--filter <substr>` | string | — | Case-insensitive name filter |
 | `--max-concurrency <n>` | number | 50 | Max simultaneous triggers (1–100) |
 
 <Tip>
-`--all` is backend-only in the current release. To batch-trigger frontend tests, use `testsprite test create-batch --run --wait` when creating, or rerun an existing suite with `testsprite test rerun --all --project`.
+`--all` runs every test in the project in wave order. A project holds a single type of test — frontend or backend, set by `--type` at `project create` — so don't mix both in one project. For backend projects, producers run first and teardown tests last, so dependencies are always satisfied. If a batch is served by the legacy backend-only engine, frontend tests come back in `skippedFrontend` with an advisory — trigger those individually with `testsprite test run <test-id>`.
 </Tip>
 
 ## Run status and exit codes
@@ -146,7 +150,7 @@ Exit 6 means a run is already in flight for this test. Wait for it to finish (or
 
 ## The dashboard link
 
-When a run completes, the CLI prints a `dashboard:` line in text mode and includes `dashboardUrl` in JSON output. That link deep-dives directly into the Portal run view — steps, screenshots, analysis, and the full failure bundle — without any manual navigation.
+When a run completes, the CLI prints a `dashboard:` line in text mode and includes `dashboardUrl` in JSON output (when available). That link deep-dives directly into the Portal run view — steps, video recording, analysis, and the full failure bundle — without any manual navigation.
 
 ```bash
 testsprite test run test_3a9f21c7 --wait --output json | jq '.run.dashboardUrl'

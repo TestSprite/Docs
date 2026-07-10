@@ -9,9 +9,9 @@
       "format": "woff2",
       "weight": 400
     },
-      "heading": {
-        "family": "IBM Plex Mono"
-      }
+    "heading": {
+      "family": "IBM Plex Mono"
+    }
   },
   "css": [
     "/styles/border-radius.css"
@@ -167,15 +167,14 @@
               "cli/getting-started/installation",
               "cli/getting-started/quickstart",
               {
-                "group": "Agent",
-                "icon": "robot",
+                "group": "Concepts",
+                "icon": "book",
                 "expanded": true,
                 "pages": [
-                  "cli/concepts/the-agent-loop",
-                  "cli/core/agent-integration"
+                  "cli/concepts/key-terms",
+                  "cli/concepts/the-agent-loop"
                 ]
-              },
-              "cli/concepts/key-terms"
+              }
             ]
           },
           {
@@ -187,7 +186,8 @@
               "cli/core/editing-tests",
               "cli/core/running-tests",
               "cli/core/reading-results",
-              "cli/core/rerun-and-auto-heal"
+              "cli/core/rerun-and-auto-heal",
+              "cli/core/agent-integration"
             ]
           },
           {
@@ -317,8 +317,8 @@
   },
   "contextual": {
     "options": [
-     "copy"
-   ]
+      "copy"
+    ]
   },
   "footer": {
     "socials": {
