@@ -1,6 +1,6 @@
 ---
 title: "Projects"
-description: "List, inspect, create, and update the projects that hold your frontend and backend tests."
+description: "List, inspect, create, and update the typed (frontend or backend) projects that hold your tests."
 icon: "folder-open"
 ---
 
@@ -64,7 +64,6 @@ testsprite project create --type frontend --name "Checkout App" --url https://ap
 | `--type <frontend\|backend>` | **Required.** Project type |
 | `--name <name>` | **Required.** Display name for the project |
 | `--url <url>` | **Required for frontend.** Target URL — must be a public `http://` or `https://` address. Localhost and private IP ranges are not accepted |
-| `--description <text>` | Optional description (≤ 2000 characters) |
 | `--username <user>` | Optional basic-auth username for the target URL |
 | `--password <pw>` | Optional basic-auth password (prefer `--password-file` in scripts) |
 | `--password-file <path>` | Read the password from a file — safer than inline for non-interactive use |
@@ -78,17 +77,13 @@ testsprite project create \
   --type frontend \
   --name "Checkout App" \
   --url https://app.example.com \
-  --description "End-to-end checkout and payment flows" \
   --instruction "Focus on the cart and payment pages"
 ```
 
 **Backend project example:**
 
 ```bash
-testsprite project create \
-  --type backend \
-  --name "Orders API" \
-  --description "REST API for order management"
+testsprite project create --type backend --name "Orders API"
 ```
 
 <Warning>
@@ -110,9 +105,27 @@ You must pass at least one mutable flag — an update with no changes exits with
 | `--username <user>` | Updated basic-auth username |
 | `--password <pw>` | Updated password (prefer `--password-file`) |
 | `--password-file <path>` | Read updated password from a file |
-| `--description <text>` | Updated description (≤ 2000 characters) |
 | `--instruction <text>` | Updated plan-generation hint |
 | `--idempotency-key <token>` | Pin for safe retries |
+
+## Backend test credentials
+
+Backend projects can inject auth into every backend test run, either as a static credential or as a recurring, auto-refreshed token:
+
+```bash
+# Static credential (free tier) — Bearer token, API key, or Basic auth
+testsprite project credential <project-id> --type "Bearer token" --credential-file ./token.txt
+
+# Recurring-token auto-refresh login (Pro) — fetches a fresh token on every run
+testsprite project auto-auth <project-id> --method refresh_token --inject bearer \
+  --token-endpoint https://auth.example.com/oauth/token \
+  --client-id my-client-id --client-secret-file ./client-secret.txt \
+  --refresh-token-file ./refresh-token.txt
+```
+
+<Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code" horizontal>
+  Full flag reference for `project credential` and `project auto-auth`
+</Card>
 
 ## Where to Go Next
 

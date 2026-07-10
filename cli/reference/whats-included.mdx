@@ -16,15 +16,23 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 
 | Capability | Command |
 | :--- | :--- |
-| Configure an API key and install the agent skill (with `--from-env` for CI) | `setup` |
+| Configure an API key and install the agent skills (with `--from-env` for CI) | `setup` |
 | Verify the active profile | `auth status` |
 | Remove credentials | `auth remove` |
+
+### Diagnostics
+
+| Capability | Command |
+| :--- | :--- |
+| One-shot environment check — CLI version, Node runtime, profile, endpoint, credentials, live connectivity, and verify-skill install status | `doctor` |
 
 ### Projects
 
 | Capability | Command |
 | :--- | :--- |
 | List, get, create, and update projects (frontend and backend types) | — |
+| Set the static backend credential injected into every backend test (free tier) | `project credential` |
+| Configure recurring-token auto-refresh login for backend tests (Pro) | `project auto-auth` |
 
 ### Tests
 
@@ -38,18 +46,21 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 
 ### Authoring
 - **Frontend:** create from an agent-supplied plan file (`--plan-from`) with full `planSteps[]`; replace plan steps (`test plan put`)
-- **Backend:** create from a test code file (`--code-file`, typically Python/`pytest`); declare captured variables (`--produces`/`--needs`) and teardown tests (`--category teardown`) for wave-ordered dependency runs; replace code with ETag-guarded optimistic concurrency (`test code put`)
+- **Backend:** create from a test code file (`--code-file`, executed as Python — `requests` + pytest-style); declare captured variables (`--produces`/`--needs`) and teardown tests (`--category teardown`) for wave-ordered dependency runs; replace code with ETag-guarded optimistic concurrency (`test code put --language python`)
 - Read the generated test code (`test code get`)
+- Scaffold a schema-correct starter plan or backend code skeleton, entirely offline (`test scaffold`)
+- Lint plan/steps files offline with the same validators `create` runs, before spending a network round-trip (`test lint`)
 
 ### Running
 
 | Capability | Command |
 | :--- | :--- |
 | Trigger a single test run | `test run` |
-| All backend tests in wave order | `test run --all` |
+| All tests in the project, in wave order | `test run --all` |
 | Block until terminal | `--wait`, `--timeout` |
-| Resume a detached run | `test wait <run-id>` |
+| Resume a detached run — one run ID, or several at once under one shared timeout | `test wait <run-id...>` |
 | Create and run in a single command | `test create --run --wait` |
+| Export a JUnit XML report after a batch `--wait` run (also on batch `test rerun --wait`) | `--report junit --report-file <path>` |
 
 ### Rerun & auto-heal
 
@@ -58,6 +69,7 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 | Replay a frontend test verbatim (no credit charge) or re-run a backend dependency closure | `test rerun` |
 | Rerun all tests matching a filter | `test rerun --all` |
 | Auto-heal on by default for frontend reruns — uses a small amount of credit only when AI healing actually engages; opt out | `--no-auto-heal` |
+| Replay a test repeatedly with auto-heal off and report a stability score | `test flaky` |
 
 ### Reading results
 
@@ -69,19 +81,21 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 | One-screen failure triage | `test failure summary` |
 | Full failure bundle for latest failing run | `test failure get` |
 | Run-scoped, immutable failure bundle — unaffected by concurrent runs | `test artifact get <run-id>` |
+| Compare two runs — verdict, failureKind, failed step, code-version drift | `test diff <run-a> <run-b>` |
 
 ### Onboarding
 
 | Capability | Command |
 | :--- | :--- |
-| One command to configure credentials and install the agent skill, with a unified summary | `testsprite setup` |
+| One command to configure credentials and install the agent skills, with a unified summary | `testsprite setup` |
 
 ### Coding-agent skill
 
 | Capability | Command |
 | :--- | :--- |
-| Write the TestSprite verification-loop skill file for Claude Code (GA), Cursor, Cline, Antigravity, or Codex (all experimental except Claude) | `agent install` |
+| Write the TestSprite skill files — verification-loop (`testsprite-verify`) and first-run onboarding (`testsprite-onboard`) — for Claude Code (GA), or Cursor, Cline, Antigravity, Kiro, Windsurf, Copilot, and Codex (all experimental except Claude) | `agent install` |
 | See all supported targets, modes, and landing paths | `agent list` |
+| Check installed skill files against this CLI version (ok/stale/modified/unmarked/absent/corrupt) | `agent status` |
 
 ### Global capabilities
 

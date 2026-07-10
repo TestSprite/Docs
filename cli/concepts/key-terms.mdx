@@ -174,7 +174,7 @@ Every run is tagged with the surface that triggered it. The **run source** lets 
     - A fresh `testsprite test run` **charges credits**.
     - A `testsprite test rerun` verbatim replay does **not** charge credits.
     - Auto-heal is on by default and uses a small amount of credit only when it actually repairs a step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
-    - Backend test runs are **free**.
+    - Backend test runs consume credits too, billed per your plan — the exact per-run cost isn't exposed by the API, so check `testsprite usage` or the pricing page before a large batch.
     - Insufficient balance → the CLI exits with a non-zero code. See [Exit Codes](/cli/reference/exit-codes) for the exact value and what to do.
   </Tab>
   <Tab title="How the CLI uses it">

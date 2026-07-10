@@ -41,6 +41,14 @@ testsprite setup --from-env --yes --no-agent
 
 This reads `TESTSPRITE_API_KEY` from the environment, verifies the key, writes `~/.testsprite/credentials`, and prints an identity summary.
 
+<Tip>
+Add `testsprite doctor` as a preflight step to catch a missing key, a bad endpoint, or an unreachable API before the real test step runs. It exits non-zero only on a genuine failure — warnings like a missing skill install don't fail the step:
+
+```bash
+testsprite doctor && testsprite test run --all --project "$PROJECT_ID" --wait
+```
+</Tip>
+
 ## Gating on the result
 
 The CLI exits non-zero whenever a run does not pass — failed, blocked, cancelled, or timed out. Your shell or CI runner treats that as a job failure automatically.
@@ -105,8 +113,35 @@ jobs:
 ```
 
 <Tip>
-`--all` runs every backend test in the project in wave order — producers first, teardown last — so dependencies are always satisfied. For frontend tests, pass an explicit `test-id` or loop over `testsprite test list --project "$PROJECT_ID" --output json`.
+`--all` runs every test in the project in wave order — producers first, teardown last — so backend dependencies are always satisfied. Keep each project to a single test type (frontend or backend, set at `project create`); don't mix both in one project. To target one test explicitly, pass its `test-id`, or loop over `testsprite test list --project "$PROJECT_ID" --output json`.
 </Tip>
+
+## JUnit XML reports
+
+For CI systems that render JUnit natively (GitHub Actions test reporters, GitLab, Jenkins), add `--report junit --report-file <path>` to a **batch, `--wait`** run or rerun. The CLI writes the XML sidecar atomically once polling finishes — `--output json` on stdout is unchanged, so you can use both together. Extending the "Run tests" step from the workflow above:
+
+```yaml
+      - name: Run tests
+        run: |
+          testsprite test run --all --project "$PROJECT_ID" \
+            --wait --output json \
+            --report junit --report-file ./results.xml > result.json
+
+      - name: Publish test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: TestSprite
+          path: results.xml
+          reporter: java-junit
+```
+
+`--report` is gated to the batch `--wait` path:
+
+- Available on `test run --all --wait` and on a batch `test rerun --wait` (`--all`, or several `test-ids...`) — **not** on a single-test run or rerun.
+- Requires `--wait` (the report is written after polling completes) and `--report-file <path>`.
+- `--report-suite-name <name>` optionally overrides the `<testsuite name="...">` attribute; it defaults to `testsprite:<projectId>`.
+- Only `junit` is accepted for `--report` today.
 
 ## Parsing JSON output
 

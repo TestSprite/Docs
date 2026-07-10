@@ -54,6 +54,20 @@ case $? in
 esac
 ```
 
+## Timeouts still leave you something to parse
+
+When a `--wait` poll hits its `--timeout` ceiling, the exit code is `7` — but the CLI still writes a partial result object to stdout **before** exiting, so a script never loses the `runId` on the unhappy path:
+
+```json
+{ "runId": "run_5c1d9a2b", "status": "running" }
+```
+
+```bash
+testsprite test run test_3a9f21c7 --wait --timeout 30 --output json > result.json
+# exit 7 — result.json still has {"runId": "run_5c1d9a2b", "status": "running"}
+testsprite test wait "$(jq -r .runId result.json)" --output json
+```
+
 ## A minimal CI gate
 
 ```bash
@@ -72,7 +86,7 @@ testsprite test rerun --all --project "$PROJECT_ID" \
 </Card>
 
 <Tip>
-For agents, `testsprite agent install` writes a skill file that already encodes these patterns — exit codes, the failure-bundle layout, and the `create → run → failure get → fix → rerun` loop. See [Agent Integration](/cli/core/agent-integration).
+For agents, `testsprite agent install` writes skill files that already encode these patterns — exit codes, the failure-bundle layout, and the `create → run → failure get → fix → rerun` loop. See [Agent Integration](/cli/core/agent-integration).
 </Tip>
 
 ## Debugging a script
@@ -80,7 +94,9 @@ For agents, `testsprite agent install` writes a skill file that already encodes 
 - `--verbose` — human-readable retry / backoff / polling messages to stderr.
 - `--debug` — HTTP method, path, request id, latency, and retry decisions to stderr. The API key is **never** included.
 
-Both write to **stderr**, so they never pollute the JSON on stdout that you're piping into `jq`.
+Both write to **stderr**, so they never pollute the JSON on stdout that you're piping into `jq`. The same stdout-purity rule holds everywhere in the CLI: interactive prompts (the API key prompt in `testsprite setup`, the `--target` prompt in `agent install`) and any onboarding preamble also print to stderr, so stdout stays a single parseable payload even in an interactive terminal session.
+
+Once every 24 hours, an interactive run also probes npm for a newer CLI version and, if one exists, prints a one-line notice to stderr. It's automatically skipped in CI, when stderr isn't a TTY, under `--output json`, and under `--dry-run` — disable it explicitly with `TESTSPRITE_NO_UPDATE_NOTIFIER=1`.
 
 ## Where to Go Next
 

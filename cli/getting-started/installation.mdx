@@ -8,7 +8,7 @@ icon: "download"
 
 Before installing, make sure you have:
 
-- **Node.js >= 20** (Node 22 recommended)
+- **Node.js 20.19+, 22.13+, or 24+** (the odd-numbered releases 21.x and 23.x are not supported)
 - A **TestSprite account** — [Sign up for free <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/auth/cognito/sign-up)
 - A **TestSprite API key** (you'll create one in the next section)
 
@@ -20,7 +20,7 @@ Before installing, make sure you have:
     node --version
     ```
 
-    If the output is below `v20.0.0`, download a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/). Node 22 is the recommended version.
+    The CLI requires **20.19+**, **22.13+**, or **24+** — the odd-numbered releases (21.x, 23.x) aren't supported. If your version doesn't fall in one of those ranges, download a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/). The CLI also checks the Node version at startup and exits with a clear message if it's too old.
   </Accordion>
   <Accordion title="Where do I get an API key?">
     Sign in to your TestSprite dashboard, navigate to <kbd>Settings → API Keys</kbd>, and click <kbd>Create new key</kbd>. The key is shown exactly once — copy it before closing the dialog. If you lose it, just create a new one.
@@ -50,7 +50,7 @@ testsprite --version
 ```
 
 ```text
-0.1.x
+0.3.x
 ```
 
 The CLI's source code, releases, and issue tracker live on [GitHub](https://github.com/TestSprite/testsprite-cli).
@@ -94,9 +94,16 @@ New and grandfathered keys both default to the scopes the CLI needs: `read:me`, 
       agent:    claude (installed)
 
     Next steps:
-      testsprite test list            # list tests in the current project
-      testsprite agent list           # check installed agent targets
-      testsprite agent install --target=<t>  # re-install or install additional targets
+      # 1. Create your first project (frontend example) — prints a projectId
+      testsprite project create --type frontend --name "My App" --url https://your-app.com
+
+      # 2. Generate tests: ask your coding agent (the testsprite-onboard skill is
+      #    installed), or create one yourself, then run them:
+      testsprite test run --all --project <projectId>
+
+      # Manage installed agent skills
+      testsprite agent list
+      testsprite agent install --target=<t>   # re-install or install additional targets
     ```
 
     `setup` chains credential configuration → identity verification → agent skill install. You only need to run it once per project. Pass `--agent <target>` to pick a different coding agent (default `claude`).
