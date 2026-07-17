@@ -1,0 +1,133 @@
+---
+title: "Cancelling a Run"
+description: "Ctrl-C detaches, it never cancels — testsprite test cancel is the real stop button. What each one does to the run, your credits, and your exit codes."
+icon: "circle-stop"
+---
+
+Two different things can end your involvement with a run in flight, and they are deliberately not the same:
+
+| Action | What stops | What keeps going |
+| :--- | :--- | :--- |
+| **Ctrl-C** during `--wait` | Only your local CLI (it detaches) | The run — it keeps executing **and billing** on the server |
+| `testsprite test cancel <run-id>` | The run, server-side | Only work already started in the cloud, which finishes in the background with its result discarded — the run stays <kbd>cancelled</kbd> and the test is immediately free to run again |
+
+## Ctrl-C is a detach, not a cancel
+
+Pressing Ctrl-C while `test run --wait`, `test wait`, `test rerun --wait`, or `test flaky` is polling stops the *watching*, never the *run*. The CLI tells you exactly that on the way out:
+
+```text
+Interrupted (SIGINT). Run run_5c1d9a2b is still executing on the server and will keep running (and billing) until it finishes.
+  Re-attach with: testsprite test wait run_5c1d9a2b
+  Cancel with:    testsprite test cancel run_5c1d9a2b
+```
+
+Just like a `--timeout` expiry, the CLI prints a partial object (`{ "runId": "...", "status": "running" }`) to stdout before exiting, so a script that gets interrupted still captures the `runId`. The exit code is the conventional `128 + signal`: `130` for SIGINT (Ctrl-C), `143` for SIGTERM, `129` for SIGHUP.
+
+In `--output json` mode, stderr carries a machine-readable envelope instead of prose:
+
+```json
+{
+  "error": {
+    "code": "INTERRUPTED",
+    "message": "Interrupted by SIGINT.",
+    "nextAction": "The server-side run (if any) keeps executing and billing. Re-attach with: testsprite test wait <runId>, or stop it with: testsprite test cancel <runId> (runId is in the partial JSON on stdout).",
+    "requestId": "local",
+    "details": { "signal": "SIGINT" }
+  }
+}
+```
+
+<Note>
+A second Ctrl-C while the first is being handled exits immediately, no cleanup — the escape hatch when even the goodbye message is too slow.
+</Note>
+
+Interrupting a **batch** (`test run --all --wait`, multi-id `test wait`/`test rerun`) prints the same partial listing every run that was already dispatched, so nothing already billed goes unaccounted for.
+
+## Actually stopping a run
+
+```bash
+testsprite test cancel run_5c1d9a2b
+```
+
+The run flips to <kbd>cancelled</kbd> and the CLI prints the final run card:
+
+```text
+runId       run_5c1d9a2b
+testId      test_3a9f21c7
+status      cancelled
+createdAt   2026-07-10T02:11:04Z
+startedAt   2026-07-10T02:11:09Z
+failureKind user_cancel
+```
+
+What cancel does — and deliberately does not do:
+
+- **The test is immediately re-runnable.** Cancelling frees the test's run slot, so a follow-up `test run` won't hit the "run already in flight" conflict.
+- **The test's last verdict is untouched.** A test that was <kbd>passed</kbd> before the cancelled run stays <kbd>passed</kbd> — cancelling never overwrites history with a fake failure.
+- **No refund.** Credits charged when the run was triggered stay charged. Cancelling limits *future* cost (a pending auto-heal pass that hasn't engaged yet won't, so its fee is never charged) but never claws back a charge already made.
+- **The engine may finish in the background.** Work already started in the cloud can run to completion, but its result is discarded — it will never overwrite the <kbd>cancelled</kbd> status or the test's verdict.
+- **Cancelled runs stay in history.** `testsprite test result <test-id> --history` lists them like any other run.
+
+## Idempotent by design
+
+Cancelling the same run twice is a success, not an error — the second call exits `0` with an advisory:
+
+```text
+[advisory] run run_5c1d9a2b was already cancelled
+```
+
+That makes cancel safe to retry blindly from scripts and cleanup traps. Only two things are refused:
+
+| Situation | Exit | Why |
+| :--- | :--- | :--- |
+| Run already finished (<kbd>passed</kbd> / <kbd>failed</kbd> / <kbd>blocked</kbd>) | 6 | There is nothing left to stop — the verdict already exists |
+| Run ID unknown (or belongs to another tenant) | 4 | Check the ID |
+
+## Cancelling several runs at once
+
+`test cancel` is variadic — after interrupting a batch, paste every ID from the hint:
+
+```bash
+testsprite test cancel run_5c1d9a2b run_7f2e1c04 run_9a01b3e5
+```
+
+Multi-id output is a summary instead of a run card:
+
+```json
+{
+  "cancelled": ["run_5c1d9a2b", "run_7f2e1c04"],
+  "alreadyCancelled": [],
+  "conflicts": [{ "runId": "run_9a01b3e5", "status": "passed" }],
+  "notFound": [],
+  "errors": []
+}
+```
+
+The exit code reports the *worst* outcome: any `notFound` → `4` (a wrong ID is a caller bug worth failing loudly on), else any transport/auth `errors` → `1`, else any `conflicts` → `6`, else `0`. Runs that were fresh-cancelled or already cancelled both count as success.
+
+## CI cleanup pattern
+
+Cancel's idempotency makes it a natural `trap` target — detach honestly on interrupt, then stop the spend:
+
+```bash
+RUN_ID=$(testsprite test run test_3a9f21c7 --output json | jq -r '.runId')
+trap 'testsprite test cancel "$RUN_ID"' INT TERM
+testsprite test wait "$RUN_ID"
+```
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
+    Triggering runs, waiting for verdicts, and resuming
+  </Card>
+  <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="list-ol">
+    The full exit-code and signal contract
+  </Card>
+  <Card title="Reading Results" href="/cli/core/reading-results" icon="list-check">
+    Run history, steps, and failure bundles
+  </Card>
+  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
+    Wire the CLI into GitHub Actions or any pipeline
+  </Card>
+</Columns>

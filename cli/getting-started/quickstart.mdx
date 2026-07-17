@@ -146,9 +146,14 @@ testsprite agent install --target claude
 
 The skill tells your agent when to run tests (after shipping a feature or fix), how to read the failure bundle, and how to loop until the test passes. From this point forward, your agent drives the create → run → failure get → fix → rerun loop without any human in the middle.
 
-<Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
-  All eight supported agent targets (claude, cursor, cline, antigravity, kiro, windsurf, copilot, codex) and how the skills work
-</Card>
+<Columns cols={2}>
+  <Card title="Quickstart for Coding Agents" href="/cli/getting-started/quickstart-for-agents" icon="wand-magic-sparkles">
+    The agent-first walkthrough: what the skills do, what to say to your agent, and how the loop runs without you
+  </Card>
+  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
+    All eight supported agent targets (claude, codex, cursor, cline, antigravity, kiro, windsurf, copilot) and how the skills work
+  </Card>
+</Columns>
 
 ## Where to Go Next
 

@@ -81,6 +81,10 @@ Add `--include-analysis` to attach the AI triage block — root-cause hypothesis
 testsprite test result test_3a9f21c7 --include-analysis
 ```
 
+<Note>
+For **backend tests**, the result also surfaces the run's captured stdout (`apiOutput`) and Python traceback (`trace`) — full content under `--output json` (and inside failure bundles as `result.json` / `failure.json`); text mode prints a bounded 20-line tail of each.
+</Note>
+
 The analysis fields are especially useful when piping to an agent:
 
 ```bash

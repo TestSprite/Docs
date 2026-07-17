@@ -22,9 +22,10 @@ Every `testsprite` command returns a stable exit code. Agents and CI pipelines b
 | `10` | Unavailable or transport failure — retriable with backoff |
 | `11` | Rate limited — honor the `Retry-After` header |
 | `12` | Insufficient credits — non-retriable; top up in the dashboard |
-| `129` | <kbd>SIGHUP</kbd> cancellation (terminal or SSH session closed) |
-| `130` | <kbd>SIGINT</kbd> cancellation (Ctrl-C) |
-| `143` | <kbd>SIGTERM</kbd> cancellation |
+| `14` | Client too old — the backend requires a newer CLI (HTTP 426 <kbd>CLIENT_TOO_OLD</kbd>); upgrade to proceed |
+| `129` | <kbd>SIGHUP</kbd> interrupt (terminal or SSH session closed) — CLI detaches; server-side runs keep executing |
+| `130` | <kbd>SIGINT</kbd> interrupt (Ctrl-C) — CLI detaches; server-side runs keep executing |
+| `143` | <kbd>SIGTERM</kbd> interrupt — CLI detaches; server-side runs keep executing |
 
 <Note>
 The `--help` and `--version` flags always exit 0. Flag-parse errors exit 5.
@@ -32,14 +33,18 @@ The `--help` and `--version` flags always exit 0. Flag-parse errors exit 5.
 
 ## Signals & pipes
 
-`129`, `130`, and `143` are the conventional `128 + signal` codes for SIGHUP, SIGINT, and SIGTERM respectively. Before exiting, the CLI prints one line to stderr:
+`129`, `130`, and `143` are the conventional `128 + signal` codes for SIGHUP, SIGINT, and SIGTERM respectively. When a signal lands while the CLI is polling a run (`--wait`, `test wait`, `test flaky`), it detaches gracefully: stdout gets the same partial object a `--timeout` would print (`{ "runId": "...", "status": "running" }`), and stderr names the run and both ways forward:
 
 ```text
-Interrupted (SIGINT). Any run already started keeps executing on the server; check it with `testsprite test list` or `testsprite test wait <runId>`.
+Interrupted (SIGINT). Run run_5c1d9a2b is still executing on the server and will keep running (and billing) until it finishes.
+  Re-attach with: testsprite test wait run_5c1d9a2b
+  Cancel with:    testsprite test cancel run_5c1d9a2b
 ```
 
+In `--output json` mode, stderr instead carries an `INTERRUPTED` error envelope with `details.signal` — deliberately outside the error-code table below, since no request failed. Outside a polling wait (at a prompt, mid-listing), the CLI prints a one-line generic reminder and exits with the same codes. A second signal exits immediately.
+
 <Warning>
-**Ctrl-C does not cancel the run.** The CLI only polls for status — the run itself keeps executing (and billing, where it applies) on the server whether or not the CLI is still attached. There is no cancel command today. Reattach with `testsprite test wait <run-id>`, or check `testsprite test list`.
+**Ctrl-C does not cancel the run.** The CLI only polls for status — the run itself keeps executing (and billing, where it applies) on the server whether or not the CLI is still attached. Reattach with `testsprite test wait <run-id>`, or actually stop it with [`testsprite test cancel <run-id>`](/cli/core/cancelling-runs).
 </Warning>
 
 Separately, if stdout is piped into a reader that closes early — `testsprite test list --output json | head -n 1` — the next write raises `EPIPE`. The CLI swallows it silently and exits `0`, the conventional outcome for "the reader went away," not a failure.
@@ -56,11 +61,12 @@ Every error response carries a machine-readable `code` string alongside the HTTP
 | `NOT_FOUND` | 404 | 4 | ID doesn't exist or belongs to another tenant | No |
 | `VALIDATION_ERROR` | 400 | 5 | Bad field, enum value, or cursor | No |
 | `PAYLOAD_TOO_LARGE` | 413 | 5 | Body over the size cap | No |
-| `CONFLICT` | 409 | 6 | Snapshot in flight or run already in flight | Yes — once, 1 s delay |
+| `CONFLICT` | 409 | 6 | Snapshot in flight, run already in flight, or cancelling a run that already finished | Yes — once, 1 s delay (cancel conflicts are not retried) |
 | `PRECONDITION_FAILED` | 412 | 6 | The test changed since you fetched it (newer `codeVersion`) | No — re-fetch then retry |
 | `IDEMPOTENCY_BODY_MISMATCH` | 409 | 6 | Same idempotency key reused with a different body | No |
 | `RATE_LIMITED` | 429 | 11 | 60 triggers/min/key exceeded | Yes — honor `Retry-After`, cap 3 retries |
 | `INSUFFICIENT_CREDITS` | 402 | 12 | Credit balance insufficient | No |
+| `CLIENT_TOO_OLD` | 426 | 14 | CLI below the backend's minimum supported version | No — upgrade the CLI |
 | `UNSUPPORTED` | 501 | 7 | Feature not on current backend version | No |
 | `INTERNAL` | 500 | 1 | Unhandled server error | Yes — once |
 | `UNAVAILABLE` | 503 | 10 | A downstream service is temporarily unavailable | Yes — exponential backoff, cap 4 retries |
@@ -98,7 +104,7 @@ The test-level **normalized status** reflects the outcome of the most recent com
 | <kbd>passed</kbd> | Latest completed run passed | Yes |
 | <kbd>failed</kbd> | Latest completed run failed (includes infra crash) | Yes |
 | <kbd>blocked</kbd> | Run rejected before a real verdict | Yes |
-| <kbd>cancelled</kbd> | Cancelled before verdict | Yes |
+| <kbd>cancelled</kbd> | In the enum for run-status symmetry, but never emitted at test level — [cancelling a run](/cli/core/cancelling-runs) leaves the test's previous status in place | n/a |
 | <kbd>unknown</kbd> | Backend cannot derive a status | n/a |
 
 ### Run status
