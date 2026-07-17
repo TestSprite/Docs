@@ -12,7 +12,7 @@ Once a test exists, you can change its metadata, replace its plan or code, or re
 
 ## Editing a test
 
-**Metadata** (name, description, priority) — use `test update`:
+**Metadata** (name, description, priority) — and, for backend tests, the **dependency declarations** (`--produces` / `--needs` / `--category`, repeatable; echoed back by `test get`) — use `test update`:
 
 ```bash
 testsprite test update test_3a9f21c7 --name "Guest checkout v2" --priority p0

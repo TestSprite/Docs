@@ -166,6 +166,7 @@
               "cli/getting-started/overview",
               "cli/getting-started/installation",
               "cli/getting-started/quickstart",
+              "cli/getting-started/quickstart-for-agents",
               {
                 "group": "Concepts",
                 "icon": "book",
@@ -185,6 +186,7 @@
               "cli/core/creating-tests",
               "cli/core/editing-tests",
               "cli/core/running-tests",
+              "cli/core/cancelling-runs",
               "cli/core/reading-results",
               "cli/core/rerun-and-auto-heal",
               "cli/core/agent-integration"

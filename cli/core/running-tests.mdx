@@ -69,6 +69,20 @@ steps:      12 passed, 0 failed
 dashboard:  https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7
 ```
 
+## Interrupting a wait vs cancelling the run
+
+Ctrl-C during any `--wait` only detaches the CLI — **the run keeps executing (and billing) on the server**. The CLI exits `130` after printing the partial `{ "runId": "...", "status": "running" }` plus a re-attach hint and a cancel hint, so nothing is lost. To actually stop the run server-side:
+
+```bash
+testsprite test cancel run_5c1d9a2b
+```
+
+The run flips to <kbd>cancelled</kbd>, the test is immediately re-runnable, and the test's last verdict is untouched. Already-charged credits are not refunded.
+
+<Card title="Cancelling a Run" href="/cli/core/cancelling-runs" icon="circle-stop">
+  Detach vs cancel, idempotent re-cancel, multi-id summaries, and the CI cleanup pattern
+</Card>
+
 ## Overriding the target URL
 
 By default the run hits the URL stored on the project. Override it for a single run with `--target-url`:

@@ -35,6 +35,7 @@ testsprite
 │   ├── get <project-id>              Get a project by id
 │   ├── create                        Create a new project
 │   ├── update <project-id>           Update project metadata
+│   ├── delete <project-id>           Permanently delete a project and everything under it
 │   ├── credential <project-id>       Set the static backend credential for BE tests (free tier)
 │   └── auto-auth <project-id>        Configure recurring-token auto-refresh login for BE tests (Pro)
 ├── test
@@ -52,6 +53,7 @@ testsprite
 │   ├── diff <run-a> <run-b>          Compare two runs' verdicts and step deltas
 │   ├── run [test-id]                 Trigger a run (or --all for a wave-ordered batch)
 │   ├── wait <run-id...>              Wait for one or more runs to reach terminal status
+│   ├── cancel <run-id...>            Cancel queued/running runs (Ctrl-C only detaches)
 │   ├── rerun [test-ids...]           Re-execute as replay (FE no-credit; BE closure)
 │   ├── flaky <test-id>               Replay a test N times and report a stability score
 │   ├── code get <test-id>            Print generated test code
@@ -143,7 +145,7 @@ testsprite
     ```
   </Accordion>
 
-  <Accordion title="project — list / get / create / update">
+  <Accordion title="project — list / get / create / update / delete">
     Manage projects. A project is a named container with a target URL (frontend) or codebase (backend).
 
     **project list**
@@ -193,6 +195,15 @@ testsprite
 
     ```bash
     testsprite project update <project-id> --name "New Name"
+    ```
+
+    ---
+
+    **project delete `<project-id>`** — permanently delete a project and **everything under it**: its frontend/backend sub-projects, all their tests, and backend fixtures (mirrors the Portal's cascade delete). There is **no restore window**. `--confirm` is required — the CLI never prompts; absent it, exit 5 with a local validation error. `--dry-run` previews the response shape without a network call. Exit codes: 0 success, 3 auth, 4 not found (or already deleted), 5 validation.
+
+    ```bash
+    testsprite project delete <project-id> --confirm
+    testsprite project delete <project-id> --dry-run --output json
     ```
   </Accordion>
 
@@ -337,8 +348,8 @@ testsprite
     ```
   </Accordion>
 
-  <Accordion title="test update — update test metadata">
-    Update a test's name, description, or priority.
+  <Accordion title="test update — update test metadata & BE dependencies">
+    Update a test's name, description, or priority — and, for **backend tests**, its dependency declarations. Updated declarations are echoed back by `test get`.
 
     ```bash
     testsprite test update <test-id> [options]
@@ -349,6 +360,9 @@ testsprite
     | `--name <name>` | New title |
     | `--description <text>` | Up to 2000 characters |
     | `--priority <p0\|p1\|p2\|p3>` | Test priority |
+    | `--produces <var>` | BE only, repeatable — variable this test produces for the wave engine |
+    | `--needs <var>` | BE only, repeatable — variable this test consumes |
+    | `--category <setup\|main\|teardown>` | BE only — wave-ordering category |
     | `--idempotency-key <token>` | For safe retries |
   </Accordion>
 
@@ -401,7 +415,7 @@ testsprite
 
     ---
 
-    **test get `<test-id>`** — no flags. JSON: `{ id, projectId, projectName?, name, type, createdFrom, status, createdAt, updatedAt, planStepCount?, details?, priority? }`.
+    **test get `<test-id>`** — no flags. JSON: `{ id, projectId, projectName?, name, type, createdFrom, status, createdAt, updatedAt, planStepCount?, details?, priority?, produces?, consumes?, category? }` (the last three appear on backend tests with dependency declarations).
 
     ```bash
     testsprite test get <test-id>
@@ -439,7 +453,7 @@ testsprite
     | `--page-size <n>` | Default 20 (1–100) |
     | `--cursor <token>` | Pagination cursor |
 
-    Default JSON: `CliLatestResult`. With `--history`: `{ runs: RunHistoryItem[], nextCursor: string|null }`.
+    Default JSON: `CliLatestResult`. With `--history`: `{ runs: RunHistoryItem[], nextCursor: string|null }`. Backend tests also carry `apiOutput` (the run's captured stdout) and `trace` (Python traceback) — full content in JSON; text mode prints a bounded 20-line tail of each.
   </Accordion>
 
   <Accordion title="test diff — compare two runs">
@@ -507,6 +521,24 @@ testsprite
     ```
 
     Exit codes (multi-id): 0 all passed; 1 any failed/blocked/cancelled; 3 auth; 7 any timeout or per-member poll error (recorded as `error:<CODE>` in that run's row); 10 transport.
+  </Accordion>
+
+  <Accordion title="test cancel — stop queued/running runs">
+    Cancel one or more runs server-side. This is the real stop button — Ctrl-C during a `--wait` only detaches the CLI while the run keeps executing and billing.
+
+    ```bash
+    testsprite test cancel <run-id...>
+    ```
+
+    No flags beyond the global ones. Semantics: the run flips to <kbd>cancelled</kbd>, the test is immediately re-runnable, the test's last verdict is untouched, and already-charged credits are **not** refunded. Re-cancelling an already-cancelled run is a success (idempotent) with an `[advisory]` stderr line.
+
+    **One run ID**: exit codes 0 cancelled or already cancelled; 4 run not found; 6 run already finished (passed/failed/blocked).
+
+    **Several run IDs**: output is a `{ cancelled, alreadyCancelled, conflicts, notFound, errors }` summary. Exit precedence: any `notFound` → 4; else any `errors` → 1; else any `conflicts` → 6; else 0.
+
+    <Card title="Cancelling a Run" href="/cli/core/cancelling-runs" icon="circle-stop">
+      Detach vs cancel, billing semantics, and the CI cleanup pattern
+    </Card>
   </Accordion>
 
   <Accordion title="test rerun — cheap replay">

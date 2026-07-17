@@ -210,6 +210,7 @@ A **failure bundle** is one self-consistent, run-scoped package of everything ne
     - The **test source** (plan or code) at run time
     - A **root-cause hypothesis** — the backend's best guess at what broke
     - A **recommended fix target** — which part of the code to look at
+    - For **backend tests**: the run's captured stdout (`apiOutput`) and Python traceback (`trace`)
 
     Every item in a bundle shares one `snapshotId`, so the agent is always reasoning over a single consistent moment in the run. The CLI refuses to stitch data from two different runs.
   </Tab>
