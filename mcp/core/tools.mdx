@@ -7,19 +7,19 @@ icon: "wrench"
 ## Core Tools
 TestSprite MCP Server provides **8 core tools** that work together to deliver comprehensive automated testing. Your AI assistant uses these tools automatically when you request testing.
 <AccordionGroup>
-  <Accordion title="testsprite_bootstrap_tests">
+  <Accordion title="testsprite_bootstrap">
     **Purpose:** Initialize testing environment and configuration
 
     **Parameters:**
     - `localPort` (number): Port where your application is running (default: 5173)
-    - `path` (string): Specifies a path you want to test directly, which isn’t accessible through navigation from other pages.
+    - `pathname` (string): Specifies a path you want to test directly, which isn’t accessible through navigation from other pages.
     - `type` (string): Project type - "frontend" or "backend" 
     - `projectPath` (string): Absolute path to your project directory
     - `testScope` (string): Testing scope - "codebase" or "diff"
 
     **Usage:**
     ```javascript expandable
-    testsprite_bootstrap_tests({
+    testsprite_bootstrap({
       localPort: 3000,
       type: "frontend",
       projectPath: "/Users/dev/my-project",
@@ -254,7 +254,7 @@ The tools work together in a specific sequence following the complete TestSprite
 <Card>
 ```mermaid
 graph TD
-    A[testsprite_bootstrap_tests] --> B[Read User PRD]
+    A[testsprite_bootstrap] --> B[Read User PRD]
     B --> C[testsprite_generate_code_summary]
     C --> D[testsprite_generate_standardized_prd]
     D --> E{Project Type?}

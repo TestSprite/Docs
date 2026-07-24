@@ -36,7 +36,7 @@ flowchart LR
 
 ### Step 1: Bootstrap with Diff Scope
 
-The AI calls `testsprite_bootstrap_tests` with `testScope: "diff"` to initialize testing for changed code only.
+The AI calls `testsprite_bootstrap` with `testScope: "diff"` to initialize testing for changed code only.
 
  <Frame>
   <img src="../../images/bootstrap-diff.png"  alt="diff" />
@@ -61,7 +61,7 @@ The AI calls `testsprite_bootstrap_tests` with `testScope: "diff"` to initialize
 
 <CodeGroup>
 ```javascript Configuration expandable
-testsprite_bootstrap_tests({
+testsprite_bootstrap({
   localPort: 5173, // or your port
   type: "frontend", // or "backend"
   projectPath: "/absolute/path/to/your/project",
