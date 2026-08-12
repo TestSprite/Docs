@@ -30,13 +30,13 @@ Common code patterns for efficient test execution and cost optimization. Use the
 
 <CodeGroup>
 ```javascript Diff-only execution
-testsprite_bootstrap_tests({ testScope: "diff", ... })
+testsprite_bootstrap({ testScope: "diff", ... })
 ```
 ```javascript Subset during iteration
 testsprite_generate_code_and_execute({ testIds: ["TC005", "TC010"] })
 ```
 ```javascript Rerun without re-planning
-testsprite_rerun_tests({ projectPath: "/abs/path" })
+testsprite_generate_code_and_execute({ projectPath: "/abs/path" })
 ```
 </CodeGroup>
 

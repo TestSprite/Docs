@@ -46,7 +46,7 @@ flowchart LR
 
 ### Step 1: Bootstrap Testing Environment
 
-The AI calls `testsprite_bootstrap_tests` to initialize the testing environment.
+The AI calls `testsprite_bootstrap` to initialize the testing environment.
 
 <Info>Learn more about bootstrap configuration: [First Test: Configuration](/mcp/getting-started/first-test#step-3%3A-configuration-required)</Info>
 
@@ -62,7 +62,7 @@ The AI calls `testsprite_bootstrap_tests` to initialize the testing environment.
 
 <CodeGroup>
 ```javascript Configuration expandable
-testsprite_bootstrap_tests({
+testsprite_bootstrap({
   localPort: 5173, // or your port
   type: "frontend", // or "backend"
   projectPath: "/absolute/path/to/your/project",

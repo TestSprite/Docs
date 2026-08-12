@@ -21,7 +21,7 @@ This is useful after you fix a bug or change code and want to confirm nothing is
     Help me rerun all the tests with TestSprite.
     ```
 
-    TestSprite will automatically detect your existing project test suite and execute all of the tests again with the `testsprite_rerun_tests` tool. You'll see updated results directly in **your IDE** or **TestSprite dashboard**.
+    TestSprite will automatically detect your existing project test suite and execute all of the tests again with the `testsprite_generate_code_and_execute` tool (with an existing test plan, no re-planning happens). You'll see updated results directly in **your IDE** or **TestSprite dashboard**.
   </Tab>
   
   <Tab title="Rerun Subset of Tests">
@@ -31,7 +31,7 @@ This is useful after you fix a bug or change code and want to confirm nothing is
   <img src="../../images/rerun-subset.png"  alt="prd" />
 </Frame>
 
-    You can annotate the tests you want to rerun and pass their indexes directly to the `testsprite_rerun_tests` command. For example, to re-run only the 1st, 3rd, and 12th tests:
+    You can annotate the tests you want to rerun, and your AI assistant will pass their IDs to `testsprite_generate_code_and_execute` through the `testIds` parameter. For example, to re-run only the 1st, 3rd, and 12th tests:
 
     ```text Example Prompt
     Help me rerun the 1, 3 and 12th tests with TestSprite.
