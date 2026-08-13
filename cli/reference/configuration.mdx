@@ -102,7 +102,7 @@ This timeout governs single HTTP round-trips only. It does **not** affect the `-
 
 ## The dashboard link
 
-When a run completes, the JSON output includes an optional `dashboardUrl` field and text mode prints a `Dashboard:` line when the link is available. The field is present only when both `projectId` and `testId` are known client-side; it is not guaranteed on every completion. It deep-links directly into the Web Portal run view for that test.
+When a run completes — and on `test create` / `test create-batch` — the JSON output includes an optional `dashboardUrl` field and text mode prints a `Dashboard:` line when the link is available. It deep-links directly into the Web Portal view for that test. The backend builds the link when it can (it knows things the CLI cannot, like the correct portal origin and route for your account); when the backend offers no link, the CLI falls back to computing one from `projectId` + `testId` where both are known. The field is not guaranteed on every completion: when the backend reports that no correct link exists, the CLI prints no URL at all (with an `[advisory]` pointing at `test get <id>`) rather than a link that would 404.
 
 ```json
 {

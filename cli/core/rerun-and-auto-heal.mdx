@@ -1,6 +1,6 @@
 ---
 title: "Rerun & Auto-Heal"
-description: "Replay a saved test cheaply, batch-rerun a whole suite, and let AI repair UI drift automatically — all from the CLI."
+description: "Replay a saved test, batch-rerun a whole suite, and let AI repair UI drift automatically — all from the CLI."
 icon: "arrow-rotate-right"
 ---
 
@@ -10,7 +10,7 @@ icon: "arrow-rotate-right"
 
 | Test type | What rerun executes |
 | :--- | :--- |
-| <kbd>Frontend tests</kbd> | Replay the saved Playwright script verbatim against the live app. No cloud credits are charged for a clean verbatim replay. |
+| <kbd>Frontend tests</kbd> | Replay the saved Playwright script verbatim against the live app. Billed the same as a fresh run — see [Credits](#credits) below. |
 | <kbd>Backend tests</kbd> | Re-run the full dependency closure: producers first, then the named test, then teardown — in the correct wave order. |
 
 This makes rerun the primary iteration loop once a test exists: fix code, rerun, read the verdict, repeat.
@@ -80,8 +80,12 @@ testsprite test rerun test_3a9f21c7 --skip-dependencies --wait
 When your app's UI has shifted since the test was last written — a button was renamed, a form gained an extra field, navigation was restructured — the verbatim script would fail even though the underlying feature still works. Auto-heal detects that drift and repairs the script so the test passes. If the feature itself is broken, the test stays <kbd>failed</kbd>.
 
 <Info>
-**Auto-heal is on by default for all CLI reruns.** It consumes a small amount of credit only when healing actually repairs a step — a clean verbatim replay that passes is free. Opt out with `--no-auto-heal`. See [Billing & Plans](/web-portal/admin/billing-and-plans) for current rates.
+**Auto-heal is on by default for all CLI reruns.** The rerun itself is billed the same as a fresh run regardless of whether healing engages; healing that actually repairs a step consumes an additional small amount of credit on top of that. Opt out with `--no-auto-heal` (rolling out on newer accounts — see the note below). See [Billing & Plans](/web-portal/admin/billing-and-plans) for current rates.
 </Info>
+
+<Note>
+The `--no-auto-heal` opt-out is still rolling out to accounts on the newer execution platform — if you rely on strictly disabling auto-heal (for example, in `test flaky`), verify with `testsprite auth status` and a sample rerun.
+</Note>
 
 To opt out for a specific rerun:
 
@@ -104,11 +108,13 @@ Auto-heal is ignored for backend tests — backend test failures are almost alwa
 
 | Action | Cost |
 | :--- | :--- |
-| Fresh `test run` (frontend) | Charged per run |
-| Fresh `test run` (backend) | Billed per your plan — check `testsprite usage` or the pricing page |
-| `test rerun` — verbatim replay passes | Free |
-| `test rerun` — auto-heal engages | a small amount of credit |
-| `test rerun` — backend closure | Consumes credits (amount not fixed — check `testsprite usage` or the pricing page) |
+| Fresh `test run` (frontend) | 0.5 credits per test executed |
+| Fresh `test run` (backend) | 0.2 credits per test executed, including any expanded dependency-closure members |
+| `test rerun` (frontend) | 0.5 credits — billed the same as a fresh run |
+| `test rerun` (backend) | 0.2 credits per test in the closure — billed the same as a fresh run |
+| `test rerun` — auto-heal engages | An additional small amount of credit, on top of the rerun charge |
+
+Reruns are billed identically to a fresh run — there is no discounted "replay" tier. (Legacy V2 accounts: a clean verbatim frontend rerun remains free.)
 
 When your credit balance is insufficient, the command exits with code 12. Top up credits in the Portal under <kbd>Settings → Billing</kbd>.
 

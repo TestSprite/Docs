@@ -83,7 +83,7 @@ What broke comes back as **one self-consistent failure bundle** the agent can ac
     The bundle contains the failing step and its neighbors, DOM snapshots rendered as text, the test source, a root-cause hypothesis, and a recommended fix target.
   </Step>
   <Step title="Fix and rerun — coverage compounds">
-    After fixing the code, replay the test cheaply (frontend replay costs no credits):
+    After fixing the code, replay the test — billed as a rerun, same as a fresh run:
 
     ```bash
     testsprite test rerun test_3a9f21c7 --wait
