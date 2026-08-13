@@ -54,7 +54,7 @@ testsprite
 │   ├── run [test-id]                 Trigger a run (or --all for a wave-ordered batch)
 │   ├── wait <run-id...>              Wait for one or more runs to reach terminal status
 │   ├── cancel <run-id...>            Cancel queued/running runs (Ctrl-C only detaches)
-│   ├── rerun [test-ids...]           Re-execute as replay (FE no-credit; BE closure)
+│   ├── rerun [test-ids...]           Re-execute as replay (billed like a run)
 │   ├── flaky <test-id>               Replay a test N times and report a stability score
 │   ├── code get <test-id>            Print generated test code
 │   ├── code put <test-id>            Replace test code (etag/codeVersion guarded)
@@ -485,13 +485,15 @@ testsprite
     | `--project <id>` | **Yes** (with `--all`) | Project to run |
     | `--wait` | No | Poll until terminal or `--timeout` |
     | `--timeout <s>` | No | 1–3600, default 600 |
-    | `--target-url <url>` | No | Override project default URL (no localhost or private IPs). No effect with `--all`. |
+    | `--target-url <url>` | No | Override project default URL (no localhost or private IPs). No effect with `--all`. Not applied on V3-routed accounts (an `[advisory]` is printed; the run uses the configured project URL). |
     | `--idempotency-key <key>` | No | 1–256 characters |
     | `--filter <substr>` | No | With `--all`: only tests whose name contains this string (case-insensitive) |
     | `--max-concurrency <n>` | No | With `--all --wait`: max in-flight polls (1–100, default 50) |
     | `--report <format>` | No | With `--all --wait`: write a JUnit XML sidecar after polling. Only `junit` is accepted. |
     | `--report-file <path>` | No | Output path for `--report` (required when `--report` is set; written atomically) |
     | `--report-suite-name <name>` | No | Override the JUnit `<testsuite name="...">` (default `testsprite:<projectId>`) |
+    | `--gh-output` | No | With `--wait` (single test or `--all`): force GitHub-native `::error::` annotations outside GitHub Actions (auto-enabled when `GITHUB_ACTIONS=true`) — see [CI/CD](/cli/integrations/ci-cd#github-native-annotations-and-summaries) |
+    | `--summary-file <path>` | No | With `--wait` (single test or `--all`): also write the reduced machine summary JSON `{total, passed, failed, timedOut, runs[]}` |
 
     <Note>
     `--all` triggers every test in the project (each billed like any run). A project holds a single test type — frontend or backend — so don't mix both. On the legacy backend-only batch engine, frontend tests are skipped and reported in `skippedFrontend` with an advisory — run those individually with `test run <test-id>`.
@@ -541,8 +543,8 @@ testsprite
     </Card>
   </Accordion>
 
-  <Accordion title="test rerun — cheap replay">
-    Re-execute a test as a replay. Frontend replays the saved script (no credit charge). Backend re-runs the full dependency closure (producer + teardown tests).
+  <Accordion title="test rerun — replay a saved test">
+    Re-execute a test as a replay, billed the same as a fresh run (0.5 credits frontend / 0.2 credits backend). Frontend replays the saved script; backend re-runs the full dependency closure (producer + teardown tests).
 
     ```bash
     testsprite test rerun [test-ids...] [options]
@@ -557,16 +559,18 @@ testsprite
     | `--filter <substr>` | With `--all`: name substring match (case-insensitive) |
     | `--wait` | Poll until terminal |
     | `--timeout <s>` | 1–3600, default 600 |
-    | `--no-auto-heal` | Opt out of AI heal-on-drift for this FE rerun (default: auto-heal ON) |
+    | `--no-auto-heal` | Opt out of AI heal-on-drift for this FE rerun (default: auto-heal ON); still rolling out on newer accounts |
     | `--skip-dependencies` | BE only: rerun only the named test without the producer/teardown closure |
     | `--max-concurrency <n>` | 1–100, default 50 |
     | `--idempotency-key <key>` | For safe retries |
     | `--report <format>` | With a batch `--wait` (`--all` or several `test-ids...`): write a JUnit XML sidecar after polling. Only `junit` is accepted. |
     | `--report-file <path>` | Output path for `--report` (required when `--report` is set; written atomically) |
     | `--report-suite-name <name>` | Override the JUnit `<testsuite name="...">` (default `testsprite:<projectId>`) |
+    | `--gh-output` | With a batch `--wait`: force GitHub-native `::error::` annotations outside GitHub Actions (auto-enabled when `GITHUB_ACTIONS=true`) — see [CI/CD](/cli/integrations/ci-cd#github-native-annotations-and-summaries) |
+    | `--summary-file <path>` | With a batch `--wait`: also write the reduced machine summary JSON `{total, passed, failed, timedOut, runs[]}` |
 
     <Info>
-    Auto-heal is on by default and uses a small amount of credit only when it actually repairs a step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
+    The rerun itself is billed the same as a fresh run; auto-heal adds a small amount of credit only when it actually repairs a step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
     </Info>
   </Accordion>
 
@@ -592,7 +596,7 @@ testsprite
     ```
 
     <Note>
-    Frontend replays are free verbatim script replays. Backend replays re-run the full dependency closure and may cost credits — the CLI prints a one-line advisory before the first attempt.
+    Each replay is billed as a rerun, same as a fresh run (0.5 credits frontend / 0.2 credits backend) — the CLI prints a one-line advisory before the first backend attempt.
     </Note>
   </Accordion>
 

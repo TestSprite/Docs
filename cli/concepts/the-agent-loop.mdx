@@ -57,7 +57,7 @@ flowchart TD
     testsprite test rerun --all --project proj_8f0f6 --wait
     ```
 
-    Frontend reruns replay the saved script verbatim — free unless [auto-heal](/cli/core/rerun-and-auto-heal) engages.
+    Frontend reruns replay the saved script verbatim, billed as a rerun (same price as a fresh run) — [auto-heal](/cli/core/rerun-and-auto-heal) adds a small additional charge only if it engages.
   </Step>
   <Step title="Something failed → read the bundle, fix, replay">
     On exit 1, pull the failure bundle — one self-consistent package the agent can act on directly:
@@ -73,7 +73,7 @@ flowchart TD
 </Steps>
 
 <Tip>
-**Every pass is banked, not thrown away.** The rerun path is free and fast — use it aggressively. Your agent should rerun the relevant suite after every significant change, not just the test it created last.
+**Every pass is banked, not thrown away.** The rerun path is fast and billed the same as a fresh run — use it aggressively. Your agent should rerun the relevant suite after every significant change, not just the test it created last.
 </Tip>
 
 ## Why this design works

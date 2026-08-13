@@ -8,7 +8,7 @@ icon: "robot"
 
 `testsprite agent install` writes two **skill files** into your repository by default:
 
-- **`testsprite-verify`** — the verification-loop skill. Once in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own: describe a behavior as a plan file and create a test; trigger a real cloud run and wait for the verdict; on failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target; edit the code and replay cheaply.
+- **`testsprite-verify`** — the verification-loop skill. Once in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own: describe a behavior as a plan file and create a test; trigger a real cloud run and wait for the verdict; on failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target; edit the code and replay it.
 - **`testsprite-onboard`** — the onboarding skill. Guides the agent through initial project setup (running `testsprite setup`, creating the first project and test) the first time TestSprite is used in a repo.
 
 Both skills are **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
@@ -147,7 +147,7 @@ Once the skill files are in place, a coding agent like Claude Code picks them up
 1. **Create** a test from a plan you or the agent authors — describing the behavior in intent terms, not driver code.
 2. **Run** it against the live app and wait for a pass/fail verdict.
 3. On failure, **pull the failure bundle** — one consistent artifact with everything needed to diagnose and fix.
-4. **Fix** the code, then **rerun** as a cheap verbatim replay.
+4. **Fix** the code, then **rerun** as a verbatim replay.
 
 The command sequence the agent follows:
 
@@ -162,7 +162,7 @@ testsprite test create \
 testsprite test failure get test_3a9f21c7 \
   --out ./.testsprite/failure
 
-# After fixing the code: replay cheaply (no credit for verbatim FE rerun)
+# After fixing the code: replay verbatim (billed as a rerun, same as a fresh run)
 testsprite test rerun test_3a9f21c7 --wait
 ```
 

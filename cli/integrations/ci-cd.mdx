@@ -143,6 +143,30 @@ For CI systems that render JUnit natively (GitHub Actions test reporters, GitLab
 - `--report-suite-name <name>` optionally overrides the `<testsuite name="...">` attribute; it defaults to `testsprite:<projectId>`.
 - Only `junit` is accepted for `--report` today.
 
+## GitHub-native annotations and summaries
+
+On GitHub Actions (`GITHUB_ACTIONS=true` — set automatically on every runner), a `--wait` run needs no extra flags to become CI-native:
+
+- Every non-passed run emits one `::error::` workflow-command line, so failures annotate the PR checks tab with the test id, status, and dashboard link.
+- A Markdown results table is appended to the job summary (`$GITHUB_STEP_SUMMARY`).
+
+This works on `test run <test-id> --wait`, `test run --all --wait`, and a batch `test rerun --wait`. Two optional flags extend it:
+
+- `--summary-file <path>` — also write a reduced machine summary JSON, `{total, passed, failed, timedOut, runs[]}`, for downstream steps that don't want to parse the full `--output json` stream.
+- `--gh-output` — force the annotations outside GitHub Actions, so you can preview the exact CI output locally.
+
+Everything is written even when the command exits non-zero — the annotations and summary land **before** the exit-code gate, so a red build still gets its explanation. All writes are best-effort: a failed write never changes the exit code. Tests that never dispatched (rate-deferred, conflicted, not found) appear as non-passed rows, so a partial batch can't read as all-passed.
+
+```yaml
+      - name: Run tests
+        run: |
+          testsprite test run --all --project "$PROJECT_ID" \
+            --wait --output json \
+            --summary-file ./summary.json > result.json
+        # No reporter action needed: failures annotate the PR automatically,
+        # and the results table appears on the workflow run's Summary page.
+```
+
 ## Parsing JSON output
 
 Pipe `--output json` to `jq` to extract fields for downstream steps:

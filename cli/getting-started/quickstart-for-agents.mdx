@@ -138,7 +138,7 @@ Here's what a real session looks like once the skills are in place:
     testsprite test rerun test_3a9f21c7 --wait
     ```
 
-    Frontend reruns replay the saved script — free unless [auto-heal](/cli/core/rerun-and-auto-heal#auto-heal) repairs a drifted step. The confirmed pass is banked into your durable suite, so the next change **reruns** rather than recreates. Coverage compounds.
+    Frontend reruns replay the saved script, billed as a rerun (same price as a fresh run) — [auto-heal](/cli/core/rerun-and-auto-heal#auto-heal) adds a small additional charge only if it actually repairs a drifted step. The confirmed pass is banked into your durable suite, so the next change **reruns** rather than recreates. Coverage compounds.
   </Step>
 </Steps>
 
@@ -162,7 +162,7 @@ A few conventions make the agent-driven flow reliable:
 
 **Heed the nudge.** If you run test or auth commands in a repo where no verify skill is installed, the CLI prints a one-line reminder to stderr. Silence it with `TESTSPRITE_NO_SKILL_WARNING=1` if you're deliberately driving the CLI by hand.
 
-**Know the cost model.** Onboarding smoke-runs 2–3 tests, not the whole suite; full-suite runs are always your explicit call, with the credit cost stated up front. Frontend reruns of unchanged tests are free.
+**Know the cost model.** Onboarding smoke-runs 2–3 tests, not the whole suite; full-suite runs are always your explicit call, with the credit cost stated up front. Reruns of unchanged tests are billed the same as a fresh run (0.5 credits frontend / 0.2 credits backend) — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#credits).
 
 ## Where to Go Next
 
