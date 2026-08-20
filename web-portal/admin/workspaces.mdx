@@ -1,0 +1,55 @@
+---
+title: "Workspaces"
+description: "What a workspace is, how a shared workspace differs from your personal workspace, and where members and credentials fit in."
+icon: "users"
+---
+
+## What a Workspace Is
+
+Everything you do in TestSprite — projects, tests, runs, and API keys — belongs to a **workspace**. Every user has a **personal workspace** automatically, and can also belong to one or more **shared workspaces**.
+
+Whichever workspace is active determines where new work lands: projects you create, tests you generate, and keys you mint all belong to that workspace, not to you individually.
+
+<Note>
+Access inside a workspace is all-members: everyone who belongs to a workspace can see and work with its projects and tests. Roles only gate workspace management itself — things like membership and workspace settings — not day-to-day testing.
+</Note>
+
+## Personal Workspace vs. Shared Workspaces
+
+<Tabs>
+  <Tab title="Personal Workspace">
+    Your personal workspace is created for you automatically and is yours alone — there's no membership to manage. Anything created here draws on your personal balance.
+  </Tab>
+  <Tab title="Shared Workspaces">
+    A shared workspace holds work that belongs to the workspace itself rather than to any one member. Anyone who belongs to it can see and work with its projects and tests, and spend on work created there draws on the workspace's own balance rather than any individual member's.
+  </Tab>
+</Tabs>
+
+## Creating and Switching Workspaces
+
+You can create additional shared workspaces and switch between them and your personal workspace. Whichever workspace is active at the time determines where a new project, test, or API key is created — so it's worth checking which workspace you're in before you start new work.
+
+Workspace management — creating a workspace, inviting or removing members, and changing workspace-level settings — lives under <kbd>Workspace Settings</kbd> in the Settings area.
+
+## Members and Roles
+
+Every member of a shared workspace can see and work with the workspace's projects and tests — there's no per-project access restriction between members. Roles come into play only for managing the workspace itself (for example, membership and workspace settings), not for using it day to day.
+
+## Credentials
+
+Workspaces don't have their own separate concept of a login — what you use to authenticate is an **API key**, and a key can either belong to you personally or be scoped to a specific workspace. For the full breakdown of the two kinds of keys, how they're minted, and which balance each one draws on, see the API Keys page.
+
+<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
+  Personal vs. workspace keys, creation, expiry, and revocation
+</Card>
+
+## Where to Go Next
+
+<Columns cols={2}>
+  <Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
+    Create workspace keys, plus manage any key you already hold
+  </Card>
+  <Card title="Billing and Plans" href="/web-portal/admin/billing-and-plans" icon="credit-card">
+    Plan tiers and monthly credits
+  </Card>
+</Columns>
