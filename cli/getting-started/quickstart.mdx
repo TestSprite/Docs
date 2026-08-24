@@ -1,35 +1,112 @@
 ---
 title: "Quickstart"
-description: "Create a test, run it against your live app, and read exactly what broke — in about 10 minutes."
+description: "Install once, then let your coding agent take this repo to its first real test run — or drive the same loop yourself from the terminal."
 icon: "play"
 ---
 
-By the end of this guide you'll have created a test, run it against your live app, and read exactly what broke — no code on your side.
+There are two ways to use the TestSprite CLI, and both start with the same one-minute install. Most users let their **coding agent** — Claude Code, Codex, Cursor, Cline, Windsurf, Copilot — drive the CLI: you describe what you want in plain language, and the agent creates tests, triggers real cloud runs, reads what broke, fixes the code, and reruns. Prefer typing commands yourself? Switch to the **terminal** tab below.
 
-<Tip>
-Prepend `--dry-run` to any command to try the surface offline with no API key. The CLI emits a canned sample matching the real response shape — useful for learning the structure before you have credentials.
-</Tip>
-
-## Step 1: Install and sign in
-
-Install the CLI globally and run the one-shot onboarding:
+## Step 1: Install and run setup
 
 ```bash
 npm install -g @testsprite/testsprite-cli
 testsprite setup
 ```
 
-`testsprite setup` prompts for your API key, verifies it, and installs the TestSprite agent skills (verification loop + onboarding) into your agent's project configuration. Run it once per project.
+Run it once from your repo root and paste your API key when prompted (create one in the Portal under <kbd>Settings → API Keys</kbd> — see [API Keys](/web-portal/admin/api-keys)). You're set when you see:
 
-For CI or non-interactive environments:
+```text
+TestSprite initialized.
 
-```bash
-TESTSPRITE_API_KEY=$TS_KEY testsprite setup --from-env --yes
+  profile:  default
+  email:    you@example.com
 ```
 
-## Step 2: Find your project
+## Step 2: Run your first test
 
-List the projects already on your account:
+<Tabs>
+  <Tab title="With your coding agent" icon="wand-magic-sparkles">
+
+### Install the skills for your agent
+
+The CLI ships two **agent skills** — the instruction manual your coding agent follows: when to run tests, how to read failure bundles, and how to loop until green. Every prompt below is powered by them, so take five seconds to install them for the agent you use. Run the command from the root of the repo you're working on — that's where your agent looks for them:
+
+<CodeGroup>
+
+```bash Claude Code
+testsprite agent install --target claude
+```
+
+```bash Codex
+testsprite agent install --target codex
+```
+
+```bash Cursor
+testsprite agent install --target cursor
+```
+
+```bash Other agents
+testsprite agent install --target windsurf   # also: cline, antigravity, kiro, copilot
+```
+
+</CodeGroup>
+
+See [Coding Agent Integration](/cli/core/agent-integration#supported-agents) for all supported agents and where each skill file lands.
+
+### Say this to your agent
+
+Open your coding agent in the repo and say:
+
+```text icon="message"
+Help me test this project with TestSprite CLI
+```
+
+That's the whole prompt. The skills you just installed carry the mechanics — your agent will:
+
+1. **Read your codebase** to find the most important user flows (instead of blindly crawling).
+2. **Ask you for your deployed app URL** — and login credentials, if your flows need them. Have these ready; it's the only thing the agent can't figure out from your code.
+3. **Create a TestSprite project and author a test suite** (~8–15 tests with concrete assertions).
+4. **Run the highest-value flows** in the cloud, against your live app, with a real browser.
+5. **Report back** with pass/fail verdicts and dashboard links — and quote the credit cost before running anything more.
+
+<Note>
+The CLI tests **deployed** `http(s)://` URLs and rejects `localhost`. If your app only runs locally, use the [MCP Server](/mcp/getting-started/introduction) instead — it owns the tunnel that exposes your local app to the cloud runner.
+</Note>
+
+### Make it part of your workflow
+
+This is where the CLI earns its keep: the `testsprite-verify` skill triggers **every time your agent finishes a change** — it finds or creates the covering test, runs it to a verdict, and won't report "done" on an unverified change. Make it a standing instruction:
+
+```text icon="message"
+Verify every functional change with TestSprite CLI before you call it done
+```
+
+And when a run fails, hand the agent the loop:
+
+```text icon="message"
+The TestSprite run failed — pull the failure bundle, fix the code, and rerun until it passes
+```
+
+The agent reads the failure bundle (failing step, DOM snapshots, root-cause hypothesis), fixes the code, and reruns. Every confirmed pass is banked into your durable suite, so the next change **reruns** rather than recreates — coverage compounds.
+
+### Keep the agent on track
+
+- **Pin the project.** Commit `.testsprite/config.json` with `{ "projectId": "proj_8f0f6" }` at the repo root so the agent never guesses which project to run against.
+- **Costs stay your call.** The agent smoke-runs a few tests, never the full suite — full-suite runs are always your explicit choice, with the credit cost quoted up front.
+- **Honesty is by design.** If the agent can't run a test (no credentials, no reachable URL), it says *"shipped but unverified because X"* rather than pretending.
+
+<Card title="Coding Agent Integration" href="/cli/core/agent-integration" icon="robot" horizontal>
+  What the installed skills do in detail, all eight agent targets, and skill health checks
+</Card>
+
+  </Tab>
+  <Tab title="From the terminal" icon="terminal">
+
+<Tip>
+Prepend `--dry-run` to any command to try the surface offline with no API key. The CLI emits a canned sample matching the real response shape.
+</Tip>
+
+### 1. Find or create your project
 
 ```bash
 testsprite project list
@@ -41,7 +118,7 @@ proj_8f0f6...  Checkout App     frontend   portal    2026-05-01
 proj_2c4a1...  Orders API       backend    cli       2026-05-10
 ```
 
-If you need to create a new frontend project, pass the target URL:
+To create a new frontend project, pass the target URL:
 
 ```bash
 testsprite project create \
@@ -54,9 +131,9 @@ testsprite project create \
 The CLI only supports public `http://` or `https://` URLs. For `localhost` targets, use the [MCP Server](/mcp/getting-started/introduction), which owns the tunnel that exposes your local app to the cloud runner.
 </Note>
 
-## Step 3: Create and run a test
+### 2. Create and run a test
 
-Supply a plan file that describes the behavior to verify. The `--plan-from` flag accepts a JSON file with `projectId`, `type`, `name`, and a `planSteps[]` array. Then `--run --wait` triggers a real cloud run and blocks until the verdict:
+Supply a plan file that describes the behavior to verify — a JSON file with `projectId`, `type`, `name`, and a `planSteps[]` array. Then `--run --wait` triggers a real cloud run and blocks until the verdict:
 
 ```bash
 testsprite test create \
@@ -67,22 +144,18 @@ testsprite test create \
   --output json
 ```
 
-The CLI runs the test against your live app using a real browser — not mocks — and returns a structured result:
+The test runs against your live app in a real browser — not mocks:
 
 ```text
 exit 0  →  test passed
 exit 1  →  test failed or blocked
 ```
 
-Your agent or CI pipeline branches on the exit code. The `--output json` shape is a stable contract you can parse.
+Your CI pipeline or script branches on the exit code. The `--output json` shape is a stable contract you can parse, and includes a `dashboardUrl` field that deep-links into the Portal for human review.
 
-<Tip>
-Use `--output json > result.json` to capture the full result for downstream processing. The JSON includes an optional `dashboardUrl` field (present when both `projectId` and `testId` are known) that deep-links into the Portal for human review.
-</Tip>
+### 3. When it fails, get the bundle
 
-## Step 4: When it fails, get the bundle
-
-First, get a one-screen triage card to orient yourself:
+Start with a one-screen triage card:
 
 ```bash
 testsprite test failure summary test_3a9f21c7
@@ -97,21 +170,19 @@ rootCauseHypothesis The "Place Order" button selector changed after the recent r
 recommendedFixTarget checkout.tsx line 42 — button aria-label
 ```
 
-Then download the full failure bundle:
+Then download the full failure bundle — the failing step and its neighbors, DOM snapshots rendered as text, the test source, and a recommended fix target, all from the same run:
 
 ```bash
 testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
 ```
 
-The bundle is self-contained: failing step and its neighbors, DOM snapshots rendered as text your agent can read, the test source, the root-cause hypothesis, and the recommended fix target — all sharing one `snapshotId`. Your agent reads the bundle and has everything it needs to fix the code without another round trip.
-
 <Note>
-`test failure get` always fetches the **latest** failure for the test. If multiple runs are in flight at once, use `testsprite test artifact get <run-id>` to pin the bundle to a specific run by its `runId`.
+`test failure get` always fetches the **latest** failure. If multiple runs are in flight, use `testsprite test artifact get <run-id>` to pin the bundle to a specific run.
 </Note>
 
-## Step 5: Fix and rerun
+### 4. Fix and rerun
 
-After editing the code, replay the test. Frontend reruns replay the saved script, billed as a rerun (same price as a fresh run):
+After editing the code, replay the test:
 
 ```bash
 testsprite test rerun test_3a9f21c7 --wait
@@ -120,52 +191,29 @@ testsprite test rerun test_3a9f21c7 --wait
 ```text
 runId      run_5c1d...
 status     passed
-startedAt  2026-06-15T10:22:14Z
-finishedAt 2026-06-15T10:23:01Z
 Dashboard: https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7
 ```
 
-Exit 0. The test is banked into the durable suite. The next time your agent ships a change, it reruns rather than recreates — coverage compounds into a lasting record of every requirement it has ever gotten right.
+Exit 0. The test is banked into the durable suite — the next change reruns rather than recreates, and coverage compounds.
 
 <Info>
 **Auto-heal** is on by default and uses a small amount of credit only when it actually repairs a drifted step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
 </Info>
 
-## Step 6: Let your agent drive it
-
-Install the TestSprite agent skills into your agent's project. `testsprite setup` already did this, but you can re-run the agent install step standalone for any target:
-
-```bash
-testsprite agent install --target claude
-```
-
-```text
-.claude/skills/testsprite-verify/SKILL.md   →  written
-.claude/skills/testsprite-onboard/SKILL.md  →  written
-```
-
-The skill tells your agent when to run tests (after shipping a feature or fix), how to read the failure bundle, and how to loop until the test passes. From this point forward, your agent drives the create → run → failure get → fix → rerun loop without any human in the middle.
-
-<Columns cols={2}>
-  <Card title="Quickstart for Coding Agents" href="/cli/getting-started/quickstart-for-agents" icon="wand-magic-sparkles">
-    The agent-first walkthrough: what the skills do, what to say to your agent, and how the loop runs without you
-  </Card>
-  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
-    All eight supported agent targets (claude, codex, cursor, cline, antigravity, kiro, windsurf, copilot) and how the skills work
-  </Card>
-</Columns>
+  </Tab>
+</Tabs>
 
 ## Where to Go Next
 
 <Columns cols={2}>
+  <Card title="Coding Agent Integration" href="/cli/core/agent-integration" icon="robot">
+    All eight agent targets, install flags, skill health checks, and what the skills teach your agent
+  </Card>
+  <Card title="The Agent Loop" href="/cli/concepts/the-agent-loop" icon="arrows-rotate">
+    Why the loop is designed this way — self-consistent bundles and compounding coverage
+  </Card>
   <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
     Plan files, code files, batch create, and dependency authoring
-  </Card>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
-    Run, wait, run --all wave batches, and the credits model
-  </Card>
-  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
-    All eight agent targets and how the skill loop works
   </Card>
   <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
     Every command, flag, and exit code in one place

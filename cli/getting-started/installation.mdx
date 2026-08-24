@@ -76,10 +76,11 @@ New and grandfathered keys both default to the scopes the CLI needs: `read:me`, 
 
 <Tabs>
   <Tab title="With the agent skill (recommended)">
-    Run `testsprite setup`. It prompts for your API key, verifies it against the platform, and installs the verification skill into your project's agent configuration — all in one step:
+    Run `testsprite setup`. It prompts for your API key, verifies it against the platform, and installs the agent skills into your project's agent configuration — all in one step. The skills install for **Claude Code by default**; if you use a different coding agent, say so with `--agent`:
 
     ```bash
-    testsprite setup
+    testsprite setup                  # Claude Code (default)
+    testsprite setup --agent codex    # or: cursor, cline, antigravity, kiro, windsurf, copilot
     ```
 
     ```text

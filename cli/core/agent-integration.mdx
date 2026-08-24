@@ -9,7 +9,7 @@ icon: "robot"
 `testsprite agent install` writes two **skill files** into your repository by default:
 
 - **`testsprite-verify`** — the verification-loop skill. Once in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own: describe a behavior as a plan file and create a test; trigger a real cloud run and wait for the verdict; on failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target; edit the code and replay it.
-- **`testsprite-onboard`** — the onboarding skill. Guides the agent through initial project setup (running `testsprite setup`, creating the first project and test) the first time TestSprite is used in a repo.
+- **`testsprite-onboard`** — the onboarding skill. The first time TestSprite is used in a repo, it guides the agent through creating the project and seeding a runnable test suite from what it finds in the codebase, then smoke-running the highest-value flows.
 
 Both skills are **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
 
@@ -128,10 +128,12 @@ testsprite agent status --dir ./apps/web && echo "skills are in sync"
 
 ## One-shot onboarding
 
-`testsprite setup` configures your API key **and** installs the skills in a single step — the recommended path when you're setting up a project for the first time.
+`testsprite setup` configures your API key **and** installs the skills in a single step — the recommended path when you're setting up a project for the first time. Setup installs for a single target (default `claude`); pass `--agent` to pick your agent, comma-separated for several:
 
 ```bash
-testsprite setup
+testsprite setup                        # installs for Claude Code
+testsprite setup --agent codex          # installs for Codex (AGENTS.md managed section)
+testsprite setup --agent codex,cursor   # installs for both
 ```
 
 `setup` chains credential configuration → identity verification → agent skill install, and prints a unified summary.
