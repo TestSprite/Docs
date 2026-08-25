@@ -4,7 +4,17 @@ description: "Install once, then let your coding agent take this repo to its fir
 icon: "play"
 ---
 
-There are two ways to use the TestSprite CLI, and both start with the same one-minute install. Most users let their **coding agent** — Claude Code, Codex, Cursor, Cline, Windsurf, Copilot — drive the CLI: you describe what you want in plain language, and the agent creates tests, triggers real cloud runs, reads what broke, fixes the code, and reruns. Prefer typing commands yourself? Switch to the **terminal** tab below.
+## Two ways to use the CLI
+
+Both start with the same one-minute install.
+
+<Frame>
+  <img src="../../images/cli-two-ways.png" alt="A coding agent driving the TestSprite CLI on the left, the same commands run by hand in a terminal on the right" />
+</Frame>
+
+**With your coding agent.** Most users let their coding agent — Claude Code, Codex, Cursor, Cline, Windsurf, Copilot — drive the CLI: you describe what you want in plain language, and the agent creates tests, triggers real cloud runs, reads what broke, fixes the code, and reruns.
+
+**From the terminal.** Prefer typing commands yourself? Every command the agent runs is one you can run directly — switch to the **terminal** tab in Step 2.
 
 ## Step 1: Install and run setup
 
@@ -13,7 +23,7 @@ npm install -g @testsprite/testsprite-cli
 testsprite setup
 ```
 
-Run it once from your repo root and paste your API key when prompted (create one in the Portal under <kbd>Settings → API Keys</kbd> — see [API Keys](/web-portal/admin/api-keys)). You're set when you see:
+Run it once from your repo root and paste your API key when prompted. You're set when you see:
 
 ```text
 TestSprite initialized.
@@ -22,14 +32,22 @@ TestSprite initialized.
   email:    you@example.com
 ```
 
+<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key" horizontal>
+  Create one in the Portal under <kbd>Settings → API Keys</kbd>
+</Card>
+
 ## Step 2: Run your first test
 
 <Tabs>
   <Tab title="With your coding agent" icon="wand-magic-sparkles">
 
-### Install the skills for your agent
+### 1. Install the skills for your agent
 
-The CLI ships two **agent skills** — the instruction manual your coding agent follows: when to run tests, how to read failure bundles, and how to loop until green. Every prompt below is powered by them, so take five seconds to install them for the agent you use. Run the command from the root of the repo you're working on — that's where your agent looks for them:
+<Note>
+Every prompt below is powered by these skills, so take five seconds to install them for the agent you use.
+</Note>
+
+The CLI ships two **agent skills** — the instruction manual your coding agent follows: when to run tests, how to read failure bundles, and how to loop until green. Run the command from the root of the repo you're working on — that's where your agent looks for them:
 
 <CodeGroup>
 
@@ -51,9 +69,11 @@ testsprite agent install --target windsurf   # also: cline, antigravity, kiro, c
 
 </CodeGroup>
 
-See [Coding Agent Integration](/cli/core/agent-integration#supported-agents) for all supported agents and where each skill file lands.
+<Card title="Coding Agent Integration" href="/cli/core/agent-integration#supported-agents" icon="robot" horizontal>
+  All supported agents and where each skill file lands
+</Card>
 
-### Say this to your agent
+### 2. Say this to your agent
 
 Open your coding agent in the repo and say:
 
@@ -64,16 +84,18 @@ Help me test this project with TestSprite CLI
 That's the whole prompt. The skills you just installed carry the mechanics — your agent will:
 
 1. **Read your codebase** to find the most important user flows (instead of blindly crawling).
-2. **Ask you for your deployed app URL** — and login credentials, if your flows need them. Have these ready; it's the only thing the agent can't figure out from your code.
+2. **Ask you for your deployed app URL** — and login credentials, if your flows need them.
 3. **Create a TestSprite project and author a test suite** (~8–15 tests with concrete assertions).
 4. **Run the highest-value flows** in the cloud, against your live app, with a real browser.
 5. **Report back** with pass/fail verdicts and dashboard links — and quote the credit cost before running anything more.
 
 <Note>
+Have the URL and credentials ready; it's the only thing the agent can't figure out from your code.
+
 The CLI tests **deployed** `http(s)://` URLs and rejects `localhost`. If your app only runs locally, use the [MCP Server](/mcp/getting-started/introduction) instead — it owns the tunnel that exposes your local app to the cloud runner.
 </Note>
 
-### Make it part of your workflow
+### 3. Make it part of your workflow
 
 This is where the CLI earns its keep: the `testsprite-verify` skill triggers **every time your agent finishes a change** — it finds or creates the covering test, runs it to a verdict, and won't report "done" on an unverified change. Make it a standing instruction:
 
@@ -89,7 +111,7 @@ The TestSprite run failed — pull the failure bundle, fix the code, and rerun u
 
 The agent reads the failure bundle (failing step, DOM snapshots, root-cause hypothesis), fixes the code, and reruns. Every confirmed pass is banked into your durable suite, so the next change **reruns** rather than recreates — coverage compounds.
 
-### Keep the agent on track
+### 4. Keep the agent on track
 
 - **Pin the project.** Commit `.testsprite/config.json` with `{ "projectId": "proj_8f0f6" }` at the repo root so the agent never guesses which project to run against.
 - **Costs stay your call.** The agent smoke-runs a few tests, never the full suite — full-suite runs are always your explicit choice, with the credit cost quoted up front.
