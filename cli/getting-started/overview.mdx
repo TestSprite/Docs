@@ -54,7 +54,7 @@ What broke comes back as **one self-consistent failure bundle** the agent can ac
 
 <Steps>
   <Step title="Install and onboard">
-    Install once globally, then run `testsprite setup`. It prompts for your API key, verifies it against the platform, and installs the verification skill into your agent's project — so your agent already knows when and how to run tests.
+    Install once globally, then run `testsprite setup`. It prompts for your API key, verifies it against the platform, and installs the agent skills into your agent's project — so your agent already knows when and how to run tests. Skills install for Claude Code by default; pass `--agent codex`, `--agent cursor`, etc. for a different agent.
 
     ```bash
     npm install -g @testsprite/testsprite-cli

@@ -166,7 +166,6 @@
               "cli/getting-started/overview",
               "cli/getting-started/installation",
               "cli/getting-started/quickstart",
-              "cli/getting-started/quickstart-for-agents",
               {
                 "group": "Concepts",
                 "icon": "book",
@@ -329,5 +328,11 @@
       "linkedin": "https://linkedin.com/company/testsprite",
       "discord": "https://discord.gg/QQB9tJ973e"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/cli/getting-started/quickstart-for-agents",
+      "destination": "/cli/getting-started/quickstart"
+    }
+  ]
 }
