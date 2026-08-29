@@ -152,6 +152,12 @@ API keys carry a list of **scopes** that gate which operations the CLI can perfo
 
 If a command fails with a scope error, the CLI prints the required and granted scopes in both text and JSON modes. You can generate a new key with the needed scopes in the dashboard at <kbd>Settings → API Keys</kbd> → <kbd>Create new key</kbd>.
 
+## Personal vs. workspace keys
+
+The key you configure above can be either kind: a **personal key** (`sk-user-...`) — the original kind, if you already hold one — bound to you and drawing on your personal balance no matter which workspace page you copied it from, or a **workspace key** (`sk-member-...`) — the only kind mintable today — scoped to a specific shared workspace and drawing on that workspace's balance. Either kind works the same way with the CLI — `testsprite setup` doesn't care which one you paste in.
+
+Both kinds are capped: 2 active workspace keys per member per workspace, and 3 active personal keys. So replacing a lost or leaked key isn't always as simple as minting a fresh one — if you're already at the cap, revoke one first.
+
 <Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
   The Web Portal key management walkthrough
 </Card>
