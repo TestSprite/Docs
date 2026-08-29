@@ -1,10 +1,27 @@
 ---
 title: "Key Terms"
-description: "Core concepts you'll encounter throughout the TestSprite Web Portal — projects, tests, lists, schedules, and the data they collect."
+description: "Core concepts you'll encounter throughout the TestSprite Web Portal — workspaces, API keys, projects, tests, lists, schedules, and the data they collect."
 icon: "square-code"
 ---
 
 This page defines the building blocks the Web Portal uses. If you've already used TestSprite once, most of these will feel familiar — this is the canonical reference for when a teammate asks "wait, what's a Test List vs a Test?"
+
+## Workspace
+
+The container everything else on this page lives inside. Every user has a **personal workspace**, and can also belong to one or more **shared workspaces**. Whichever workspace is active determines where a new project, test, or API key belongs.
+
+<Tabs>
+  <Tab title="What a workspace is">
+    A personal workspace is created for you automatically and has no membership to manage. A shared workspace holds work that belongs to the workspace itself — visible to every member — rather than to any one person; roles gate workspace management (membership, workspace settings) but not day-to-day use of what's inside.
+  </Tab>
+  <Tab title="Where workspaces appear">
+    Workspace management lives under <kbd>Workspace Settings</kbd> in Settings.
+  </Tab>
+</Tabs>
+
+<Card title="Workspaces" href="/web-portal/admin/workspaces" icon="users">
+  Personal vs. shared workspaces, members, and roles
+</Card>
 
 ## Project
 
@@ -165,6 +182,25 @@ The keys, tokens, or login details TestSprite uses to call your APIs or sign int
     During wizard configuration (you provide them upfront), and on the **Authentication** tab of the project detail page (where you update them later).
   </Tab>
 </Tabs>
+
+## API Key
+
+Not to be confused with **Credentials** above: an API key authenticates *you* to TestSprite (it's what the CLI and MCP Server use to act on your behalf), while Credentials are what TestSprite uses against *your* app or API under test.
+
+Two kinds exist: a **personal key** (`sk-user-...`) — the original kind, bound to you and your personal balance — and a **workspace key** (`sk-member-...`) — scoped to a specific shared workspace and its balance, capped at 2 active per member per workspace. Personal keys predate the workspace-key kind and are no longer mintable; any workspace's API Keys page, including your personal workspace's, always mints a workspace key.
+
+<Tabs>
+  <Tab title="What an API key is">
+    Minted from a workspace's API Keys page, bound to that workspace, shown once at creation, and revocable at any time. An optional expiration can be set at creation — leave it blank and the key does not expire, unless the workspace enforces a maximum lifetime, in which case a longer expiry is rejected and a key created without one gets that maximum instead.
+  </Tab>
+  <Tab title="Where API keys appear">
+    Under <kbd>Settings → API Keys</kbd> — your personal workspace's page lists any personal key you already hold plus any workspace keys minted from that page, and each shared workspace's page lists that workspace's keys.
+  </Tab>
+</Tabs>
+
+<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
+  The full comparison, plus creation, expiry, and revocation
+</Card>
 
 ## Cleanup
 

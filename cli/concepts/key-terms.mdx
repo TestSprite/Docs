@@ -1,10 +1,30 @@
 ---
 title: "Key Terms"
-description: "Core CLI concepts — projects, tests, runs, statuses, credits, scopes, and failure bundles — all in one place."
+description: "Core CLI concepts — workspaces, API keys, projects, tests, runs, statuses, credits, scopes, and failure bundles — all in one place."
 icon: "square-code"
 ---
 
 This page defines the building blocks you'll see across every `testsprite` command. If a term in the docs feels unfamiliar, this is the place to land.
+
+## Workspace
+
+Every user has a **personal workspace**, and can belong to one or more **shared workspaces**. Every project, test, and API key belongs to exactly one workspace — whichever one is active when it's created.
+
+<Tabs>
+  <Tab title="What a workspace is">
+    - A **personal workspace** is created automatically for you; work here draws on your personal balance.
+    - A **shared workspace** holds work that belongs to the workspace itself, visible to every member; work here draws on the workspace's balance instead.
+
+    The CLI doesn't have a "switch workspace" command — which workspace you're acting in is determined entirely by the API key you've configured.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    Every `projectId`, `testId`, and `runId` the CLI returns belongs to the workspace tied to your active API key. To act in a different workspace, configure a key minted from that workspace instead — see [Authentication](/cli/core/authentication) for personal vs. workspace keys.
+  </Tab>
+</Tabs>
+
+<Card title="Workspaces" href="/web-portal/admin/workspaces" icon="users">
+  Personal vs. shared workspaces, members, and roles
+</Card>
 
 ## Project
 
@@ -168,6 +188,10 @@ Every run is tagged with the surface that triggered it. The **run source** lets 
 
 **Credits** are the consumption unit for test execution. The CLI reports your balance via `testsprite usage` and exits non-zero when balance is insufficient.
 
+<Note>
+Which balance `testsprite usage` reports depends on your active API key: a personal key reports your personal balance, a workspace key reports that workspace's balance. See [API Key](#api-key) below.
+</Note>
+
 <Tabs>
   <Tab title="What credits are">
     Key rules:
@@ -191,6 +215,27 @@ Every run is tagged with the surface that triggered it. The **run source** lets 
     ```
   </Tab>
 </Tabs>
+
+## API Key
+
+The credential the CLI stores in `~/.testsprite/credentials` and sends with every request. Two kinds exist — a **personal key** (`sk-user-...`), the original kind, bound to you; and a **workspace key** (`sk-member-...`), scoped to a specific shared workspace and the only kind mintable today — see [Workspace](#workspace) above for how the two relate.
+
+<Tabs>
+  <Tab title="What an API key is">
+    Every key carries a list of **scopes** (see [Scopes](#scopes) below) regardless of kind. `testsprite setup` verifies whichever key you provide against `GET /me` before storing it.
+  </Tab>
+  <Tab title="How the CLI uses it">
+    ```bash
+    testsprite auth status
+    ```
+
+    Shows the identity and scopes bound to your active key, whichever kind it is.
+  </Tab>
+</Tabs>
+
+<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
+  Personal vs. workspace keys — creation, expiry, and revocation
+</Card>
 
 ## Scopes
 

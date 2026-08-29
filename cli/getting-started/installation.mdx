@@ -23,9 +23,9 @@ Before installing, make sure you have:
     The CLI requires **20.19+**, **22.13+**, or **24+** — the odd-numbered releases (21.x, 23.x) aren't supported. If your version doesn't fall in one of those ranges, download a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/). The CLI also checks the Node version at startup and exits with a clear message if it's too old.
   </Accordion>
   <Accordion title="Where do I get an API key?">
-    Sign in to your TestSprite dashboard, navigate to <kbd>Settings → API Keys</kbd>, and click <kbd>Create new key</kbd>. The key is shown exactly once — copy it before closing the dialog. If you lose it, just create a new one.
+    Sign in to your TestSprite dashboard, navigate to <kbd>Settings → API Keys</kbd>, and click <kbd>Create new key</kbd>. The key is shown exactly once — copy it before closing the dialog. The key you get is a **workspace key** (`sk-member-...`), bound to whichever workspace's page you were on, and capped at 2 active per member per workspace. (TestSprite also has an older **personal key** kind, `sk-user-...` — if you already hold one it keeps working, but new keys are always workspace keys.) If you lose it, revoke it and create a new one — revoke one of the existing keys first if you're already at the cap.
 
-    See [API Keys](/web-portal/admin/api-keys) for the full walkthrough.
+    See [API Keys](/web-portal/admin/api-keys) for the full walkthrough, including personal vs. workspace keys.
   </Accordion>
 </AccordionGroup>
 
@@ -64,7 +64,7 @@ The CLI's source code, releases, and issue tracker live on [GitHub](https://gith
   <img src="../../images/api-key.png" alt="API Keys page with the Create new key button" />
 </Frame>
 
-3. Copy the key — it is shown **once only**. If you lose it, delete the key and create a new one.
+3. Copy the key — it is shown **once only**. If you lose it, revoke it and create a new one. (A workspace key is capped at 2 active per member per workspace — revoke one first if you're already at the limit.)
 
 <Frame>
   <img src="../../images/created-api-key.png" alt="API Key Created dialog with the copy button" />

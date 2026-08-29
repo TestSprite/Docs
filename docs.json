@@ -150,6 +150,7 @@
           {
             "group": "Admin",
             "pages": [
+              "web-portal/admin/workspaces",
               "web-portal/admin/api-keys",
               "web-portal/admin/billing-and-plans"
             ]
