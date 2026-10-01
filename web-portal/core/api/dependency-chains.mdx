@@ -1,7 +1,6 @@
 ---
 title: "Dependency Chains"
 description: "How TestSprite figures out the run order for your tests — and the rules that determine when a test is Blocked vs ready to run."
-icon: "diagram-project"
 ---
 
 <Frame>
@@ -35,9 +34,9 @@ Each test row reflects one of these statuses:
 
 | Status | Meaning |
 | :--- | :--- |
-| <kbd>Pending</kbd> | Waiting for an earlier step to finish; not yet executed |
+| <kbd>Queued</kbd> | Waiting for an earlier step to finish; not yet executed |
 | <kbd>Running</kbd> | Currently making the HTTP call |
-| <kbd>Pass</kbd> | Finished, assertions held |
+| <kbd>Passed</kbd> | Finished, assertions held |
 | <kbd>Failed</kbd> | Finished, assertions didn't hold |
 | <kbd>Blocked</kbd> | An earlier test failed; this test was never run because the value it needs isn't available |
 
@@ -47,17 +46,13 @@ Each test row reflects one of these statuses:
 
 ## Where to See the Dependency Graph
 
-The producer-consumer relationships are rendered in two places — visually in Data Flow, and in tabular form in Dynamic Variables (every variable's row has "Captured From" (producer) and "Used By" (consumers)).
-
-<Frame>
-  <img src="../../../images/dependency-find.png" alt="Dependency graph view of producer/consumer relationships" />
-</Frame>
+The producer-consumer relationships are rendered in two places: in each test's Data Flow section, and in tabular form in Dynamic Variables (every variable's row has "Source" (producer) and "Used by" (consumers)).
 
 For an integration chain specifically, click into the chain's detail page — the step list there shows that one chain in run order.
 
 <CardGroup cols={2}>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visual graph of every HTTP call, with producer/consumer wiring shown
+  <Card title="Data Flow" href="/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test" icon="diagram-project">
+    Each test's captured and consumed values
   </Card>
   <Card title="Dynamic Variables" href="/web-portal/core/api/dynamic-variables" icon="brackets-curly">
     Tabular view — every captured variable with its producer and consumers
@@ -99,31 +94,9 @@ The Cleanup tab also reflects this — you can't clean up a record that was neve
 
 To recover: fix the failing test (or fix your API), then **rerun the chain**. TestSprite re-runs the failing test and any Blocked downstream tests automatically.
 
-<Card title="Rerun (with/without Dependencies)" href="/web-portal/core/api/api-rerun" icon="arrow-rotate-right">
+<Card title="Rerun" href="/web-portal/core/api/api-rerun" icon="arrow-rotate-right">
   Per-test vs per-chain rerun options
 </Card>
-
-## Skip-Dependencies Rerun
-
-Sometimes you've already verified an earlier test is fine and you just want to rerun a later one in isolation — without re-creating the upstream resources. The Rerun dialog has a **Skip dependencies** option for this:
-
-<Frame>
-  <img src="../../../images/dependency-skip.png" alt="Skip dependencies option in the rerun dialog" />
-</Frame>
-
-When **Skip dependencies** is checked, the test runs against the variable values **from the previous run** — no new upstream call is made. This is fast but only valid if those values are still meaningful (e.g., the user/order/session still exists in your test environment).
-
-When NOT to skip dependencies:
-
-- After cleanup ran (the records are gone)
-- After a long delay where the resources may have expired
-- When testing a flow that genuinely depends on freshly-created upstream state
-
-When fine to skip:
-
-- You're refining the test itself (rewriting an assertion)
-- You're confident upstream state is intact
-- You want a fast iteration loop on a single failing test
 
 ## Edge Cases & Troubleshooting
 
@@ -154,8 +127,8 @@ When fine to skip:
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     Records created during a run get removed afterward
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visualize what actually happened during the run
+  <Card title="Data Flow" href="/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test" icon="diagram-project">
+    See what each test captured and consumed
   </Card>
   <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step chains where one test's output feeds the next

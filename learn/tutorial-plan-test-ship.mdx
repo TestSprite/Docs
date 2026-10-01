@@ -1,0 +1,42 @@
+---
+title: "Plan, Test, Ship with Cursor"
+description: "An agentic coding workflow end to end: plan with Cursor, build a small Next.js app, test it with TestSprite, then feed the failures back to Cursor and re-run."
+icon: "list-check"
+---
+
+*Video by **Hause Collective** · 23:52 · English*
+
+<Frame>
+<iframe
+  className="w-full aspect-video rounded-xl"
+  height="400"
+  src="https://www.youtube.com/embed/Jjxi3w2DwaE"
+  frameBorder="0"
+  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+</Frame>
+
+## What You'll See
+
+- **The approach** (0:38): plan → test → ship, using Cursor's Planning feature to approve a plan before any code is written (1:37)
+- **Building the app** (3:30): a small Next.js + SQLite + Tailwind app, and a real bug on the first run (7:56)
+- **Setting up TestSprite** (9:27): sign-up, install, and API key, then asking Cursor to run TestSprite against the project (10:33)
+- **Watching the tests** (11:26): what's being tested and how, and the tests running against the local app (16:18)
+- **What it found** (17:52): long-text validation and accessibility-messaging failures, plus the report and generated test code (19:11)
+- **Closing the loop** (20:45): fix prompts back into Cursor, then re-running the tests
+
+## Try It Yourself
+
+<CardGroup cols={2}>
+  <Card title="MCP Server" icon="square-terminal" href="/mcp/getting-started/overview">
+    Run TestSprite from your IDE, as in the video
+  </Card>
+  <Card title="CLI" icon="terminal" href="/cli/getting-started/overview">
+    The same test-and-fix loop from the terminal
+  </Card>
+</CardGroup>
+
+<Note>
+Recorded in October 2025, before TestSprite 3.0. The screens look different today, but the plan → test → fix workflow still applies. When the video and the docs disagree, the docs are the reference.
+</Note>

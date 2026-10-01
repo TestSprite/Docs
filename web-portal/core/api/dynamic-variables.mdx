@@ -1,11 +1,10 @@
 ---
 title: "Dynamic Variables"
 description: "How TestSprite carries values from one API response into the next request — the mechanism that makes integration tests, auto cleanup, and data-flow analysis possible."
-icon: "brackets-curly"
 ---
 
 <Frame>
-  <img src="../../../images/variable-overview.png" alt="Dynamic Variables tab — captured variables across the run" />
+  <img src="../../../images/api-testing-dynamic-variables-overview.png" alt="Dynamic Variables tab — captured variables across the run" />
 </Frame>
 
 ## What Dynamic Variables Are
@@ -28,8 +27,8 @@ Dynamic variables are the connective tissue of Integration Tests and the source 
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     Records created during a run get removed afterward
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visual graph of every HTTP call with producer/consumer wiring
+  <Card title="Data Flow" href="#the-data-flow-section-on-a-test" icon="diagram-project">
+    What each test captures and consumes
   </Card>
 </CardGroup>
 
@@ -46,7 +45,7 @@ A test can produce variables, use them, both, or neither. A pure GET typically o
 
 ## The Dynamic Variables Tab
 
-Sidebar → **Data → Dynamic Variables**. This view answers: *"Across the most recent run, what values flowed through the system?"*
+**Test Runs → a run → Dynamic Variables** tab. This view answers: *"Across that run, what values flowed through the system?"*
 
 | Column | What it shows |
 | :--- | :--- |
@@ -63,6 +62,17 @@ The page supports search + filter:
 - **Filter: Cleanup** — `Has cleanup` (variables the auto-cleanup chain references) or `Orphaned` (no matching cleanup)
 - **Filter: Consumer** — `Used downstream` (have at least one consumer) or `Unused`
 - **Sort** — by Name (default), by Consumers, or by Sources
+
+## The Data Flow Section on a Test
+
+Each endpoint test also shows its own slice of this wiring, in the collapsible **Data Flow** section of its detail page:
+
+| Part | What it shows |
+| :--- | :--- |
+| <kbd>Captures (N)</kbd> | The variables this test produces |
+| <kbd>Consumes (N)</kbd> | The variables this test needs, each with the test it comes from |
+
+The same section appears on each API test's result inside a run.
 
 ## What Counts as "Cleanup-Relevant"
 
@@ -82,7 +92,7 @@ These flagged variables appear in the Dynamic Variables tab with a populated **D
 
 ## Refining Producer/Consumer Wiring
 
-If a chain is wrong (missing producer, mismatched name, or a path that doesn't resolve in the response), the recovery path is the per-test **Chat** on the test detail page — describe what should change and TestSprite regenerates the test.
+If a chain is wrong (missing producer, mismatched name, or a path that doesn't resolve in the response), the recovery path is the test's description on its detail page: describe what should change, click **Regenerate**, and TestSprite regenerates the test.
 
 ## When a Value Isn't Available
 
@@ -153,7 +163,7 @@ Chain B doesn't have to call POST /users again — it reuses the value from chai
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     What happens to cleanup-flagged variables after the run
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visual graph showing how values wired calls together
+  <Card title="Data Flow" href="#the-data-flow-section-on-a-test" icon="diagram-project">
+    Where each test shows the values it captures and consumes
   </Card>
 </Columns>

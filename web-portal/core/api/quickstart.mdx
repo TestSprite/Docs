@@ -1,7 +1,6 @@
 ---
 title: "Quickstart"
 description: "Walk through your first API project end-to-end — from project creation to a passing HTTP suite — in about 10 minutes."
-icon: "play"
 ---
 
 By the end of this guide you'll have an API project that's been discovered, planned, generated as Python tests, and executed against your live API, with full request/response capture for every call. No code on your side.
@@ -10,83 +9,72 @@ By the end of this guide you'll have an API project that's been discovered, plan
 **Doing UI testing instead?** See the [UI Quickstart](/web-portal/core/ui/quickstart) for the frontend-flavored walkthrough.
 </Info>
 
-## Step 1: Project Setup & PRD Upload
+## Step 1: Project Setup
 
-From the dashboard, click <kbd>Create Tests</kbd>. The first screen asks for two things only: a **project name** and your **PRD** (or any product-spec document — markdown, PDF, plain text all work).
+From **All Projects**, click <kbd>New Project</kbd>. The form has three steps: **Basics**, **Access details**, and **Extra Context**. On **Basics**, pick the **Test Type** (<kbd>Backend API</kbd> for this API walkthrough), then provide your **Base Endpoint** and a **project name**.
 
 <Frame>
-  <img src="../../../images/web-test-set-up.png" alt="Project setup screen — name + PRD upload" />
+  <img src="../../../images/api-testing-quick-start-configure.png" alt="The Basics step of the New Project form, with Backend API selected, Base Endpoint, and Project Name" />
+</Frame>
+
+## Step 2: Review Discovered Endpoints
+
+On **Access details**, click <kbd>Upload API docs</kbd> (OpenAPI / Swagger / Postman collections, or any free-form docs). Discovery starts as soon as the file is uploaded: TestSprite reads your docs and confirms endpoint shapes against the live URL.
+
+Once discovery completes, you'll see your endpoints grouped by resource family in the **Set Up Your Tests** dialog.
+
+<Frame>
+  <img src="../../../images/api-testing-quick-start-discover-endpoint.png" alt="Discovered endpoint list" />
+</Frame>
+
+For each row you can:
+
+- **Remove an endpoint**: Click the trash icon on the row. Useful for internal-only endpoints, deprecated paths, or anything outside your test scope.
+- **Adjust the path**: Click the row to edit if the inferred path template is wrong.
+- **Set the auth type per endpoint**: Use the **Authentication Type** dropdown. Choices: **Basic**, **Bearer**, **API-key**, **None**.
+
+If discovery missed an endpoint, click <kbd>Add API</kbd> in the dialog to add it by hand (with no docs at all, use <kbd>Add Endpoints Manually</kbd> on **Access details** instead).
+
+When you're satisfied, click <kbd>Save N endpoints</kbd> and continue to **Extra Context**.
+
+<Tip>
+The richer the input, the better the plan. Even a half-finished OpenAPI plus a paragraph of context outperforms a perfect spec with no hints.
+</Tip>
+
+## Step 3: PRD Upload & Extra Instructions
+
+On **Extra Context**, choose <kbd>I have a PRD</kbd> and upload your **PRD** (or any product-spec document; markdown, PDF, and plain text all work). Add any <kbd>Extra Instructions</kbd> (e.g. *"skip /admin"*, *"focus on the checkout flow"*), then click <kbd>Create project</kbd>.
+
+<Frame>
+  <img src="../../../images/api-testing-extra-context.png" alt="The Extra Context step: Test Sources with the PRD upload, and Advanced Context with Test Files" />
 </Frame>
 
 <Tip>
 **PRDs aren't only for UI.** They let plan generation scope tests to the *intent* of each endpoint, not just the shape from your OpenAPI spec — the difference between "covers `POST /orders`" and "covers the actual order-placement scenarios your product supports". Skip the PRD upload for a quick demo; for real coverage, upload one.
 </Tip>
 
-## Step 2: Feature & Use-Case Extraction
+## Step 4: Feature & Use-Case Extraction
 
-If you uploaded a PRD, TestSprite analyzes it and shows the **Use Cases & Features** screen with a flow graph of every feature it identified and the use cases under each.
-
-<Frame>
-  <img src="../../../images/web-test-use-case.png" alt="Use Cases & Features flow graph extracted from PRD" />
-</Frame>
-
-This feature map is what grounds plan generation downstream — test cases get scoped to the use cases here. Click <kbd>Re-extract</kbd> to redo the analysis on the same PRD (e.g. after editing the file). Otherwise continue.
-
-<Note>
-If you skipped the PRD upload, this step is bypassed and the wizard goes straight to configuration.
-</Note>
-
-## Step 3: Choose Test Type and Configure
-
-Pick the test type tab — <kbd>Backend (APIs)</kbd> for this API walkthrough — then provide your base URL, API documentation, auth type, and any extra testing instructions.
+The new project opens on **Test Coverage**. If you uploaded a PRD (or API docs), TestSprite analyzes it and shows a flow graph of every feature it identified and the use cases under each.
 
 <Frame>
-  <img src="../../../images/api-config.png" alt="API configuration form with Backend (APIs) tab selected" />
+  <img src="../../../images/api-testing-quick-start-use-case.png" alt="Use-case flow graph on Test Coverage, extracted from the PRD" />
 </Frame>
 
-| Field | What to provide |
-| :--- | :--- |
-| <kbd>Base URL</kbd> | The base URL TestSprite will hit |
-| <kbd>API Documentation</kbd> | OpenAPI / Swagger / Postman collections, or any free-form docs |
-| <kbd>Authentication Type</kbd> | **Basic**, **Bearer**, **API-key**, or **None** — applied per API family |
-| <kbd>Extra testing instructions</kbd> | Free-form hints — e.g. *"skip /admin"*, *"focus on the checkout flow"* |
-
-<Tip>
-The richer the input, the better the plan. Even a half-finished OpenAPI plus a paragraph of context outperforms a perfect spec with no hints.
-</Tip>
-
-Click <kbd>Parse with AI</kbd> at the bottom to start discovery. TestSprite reads your docs and confirms endpoint shapes against the live URL.
-
-## Step 4: Review Discovered Endpoints
-
-Once discovery completes, you'll see your endpoints grouped by resource family in an expandable table.
-
-<Frame>
-  <img src="../../../images/api-review-endpoint.png" alt="Discovered endpoint list" />
-</Frame>
-
-For each row you can:
-
-- **Remove an endpoint** — Click the **×** at the end of the row. Useful for internal-only endpoints, deprecated paths, or anything outside your test scope.
-- **Adjust the method or path** — Click the row to edit if the inferred path template is wrong.
-- **Set the auth type per family** — Use the **Authentication Type** dropdown. Choices: **Basic**, **Bearer**, **API-key**, **None**.
-
-If discovery missed an endpoint, click <kbd>Add Manually</kbd> at the bottom of the page (or use the inline link under the upload card) to add it by hand.
-
-When you're satisfied, continue to plan generation.
+This feature map is what grounds plan generation downstream: test cases get scoped to the use cases here. Click <kbd>Regenerate from sources</kbd> to redo the analysis (e.g. after editing the file). Otherwise continue.
 
 ## Step 5: Review and Adjust the Plan
 
-TestSprite drafts a comprehensive plan organized by category — typically functional / happy path, authorization & auth, error handling & edge cases, and (where relevant) boundary / load and security probes. Categories are picked based on what each endpoint does.
+Click <kbd>Plan Tests</kbd>. TestSprite drafts a comprehensive plan organized by use case, covering categories: typically functional / happy path, authorization & auth, error handling & edge cases, and (where relevant) boundary / load and security probes. Categories are picked based on what each endpoint does.
 
 <Frame>
-  <img src="../../../images/api-test-plan.png" alt="API plan review" />
+  <img src="../../../images/api-testing-quick-start-review-plan.png" alt="API plan review" />
 </Frame>
 
-Untick any tests that don't apply, tweak titles or descriptions in natural language, and click <kbd>Generate Tests</kbd>.
+Untick any tests that don't apply, tweak titles or descriptions in natural language, and click <kbd>Run all</kbd>.
 
 <Tip>
-**Don't be precious about pruning.** Selecting all is usually right on a first run — you get full coverage. If a category produces too many tests for your liking, untick the ones you find low-value rather than disabling the whole category. The high-leverage tests in any category tend to be 60% of what's there.
+**Don't be precious about pruning.** Selecting all is usually right on a first run, since you get full coverage. If a use case produces too many tests for your liking, untick the ones you find low-value rather than disabling the whole use case. The high-leverage tests in any use case tend to be 60% of what's there.
 </Tip>
 
 ## Step 6: Watch Tests Generate and Run
@@ -94,27 +82,27 @@ Untick any tests that don't apply, tweak titles or descriptions in natural langu
 TestSprite generates a Python test per plan row, verifies each one before it lands in your suite, and executes them against your API. Tests stream into the project view as they finish.
 
 <Frame>
-  <img src="../../../images/web-executing.png" alt="API tests executing" />
+  <img src="../../../images/api-testing-quick-start-review-run.png" alt="API tests executing" />
 </Frame>
 
-Each row surfaces one of: <kbd>Pending</kbd>, <kbd>Running</kbd>, <kbd>Pass</kbd>, <kbd>Failed</kbd>, <kbd>Blocked</kbd>.
+Each row surfaces one of: <kbd>Planned</kbd>, <kbd>Running</kbd>, <kbd>Passed</kbd>, <kbd>Failed</kbd>, <kbd>Blocked</kbd>.
 
 For multi-step workflows, TestSprite identifies which tests depend on each other and runs the chain in the right order — see [Dependency Chains](/web-portal/core/api/dependency-chains).
 
 ## Step 7: Review and Refine
 
-Click any test row to open its detail page. You get the **request panel** (exact HTTP call we made), **response panel** (what your API returned), **error trace** (where the assertion failed), and an **AI cause-and-fix** suggestion for failures.
+Click any test row to open its detail page. You get the generated **Code**, its **Stdout** (the HTTP calls we made and what your API returned), **error trace** (where the assertion failed), and an **AI cause-and-fix** suggestion for failures.
 
 <Frame>
-  <img src="../../../images/endpoint-detail.png" alt="API test detail page" />
+  <img src="../../../images/api-testing-quick-start-review-result.png" alt="API test detail page" />
 </Frame>
 
-To iterate, use the <kbd>Chat</kbd> tab — describe what to fix in natural language. TestSprite either tweaks the assertions or regenerates the test.
+To iterate, edit the test description and click <kbd>Regenerate</kbd>. TestSprite regenerates the test from your wording.
 
 The run-level **Test Report** rolls up pass / fail / blocked counts with cause-and-fix highlights — share that link with the team.
 
 <Frame>
-  <img src="../../../images/web-report.png" alt="Test Report summary view" />
+  <img src="../../../images/api-testing-quick-start-report.png" alt="Test Report summary view" />
 </Frame>
 
 ## Step 8: Cleanup Runs Automatically
@@ -127,13 +115,13 @@ After the run finishes, TestSprite removes the records your tests created (users
 
 ## Step 9: Rerun and Schedule
 
-To re-execute, use <kbd>Rerun</kbd> on a single test or <kbd>Rerun all</kbd> on the project toolbar. The **Skip dependencies** toggle in the rerun dialog lets you re-execute one test in isolation against cached upstream values — fast iteration when you've just refined an assertion.
+To re-execute, use <kbd>Run test</kbd> on a single test or <kbd>Run all</kbd> on the **Test Cases** toolbar.
 
 <CardGroup cols={2}>
   <Card title="Rerun" href="/web-portal/core/api/api-rerun" icon="arrow-rotate-right">
-    Single test, batch, scheduled — and when to skip dependencies
+    Single test, batch, scheduled
   </Card>
-  <Card title="Auto-Auth (Pro)" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
+  <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Auto-refresh login tokens before every run
   </Card>
 </CardGroup>
@@ -150,7 +138,7 @@ To re-execute, use <kbd>Rerun</kbd> on a single test or <kbd>Rerun all</kbd> on 
   <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step workflows that chain endpoints
   </Card>
-  <Card title="Schedule Monitoring" href="/web-portal/maintenance/monitoring" icon="clock">
+  <Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="clock">
     Run on a cadence to catch regressions
   </Card>
 </Columns>

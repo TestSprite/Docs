@@ -1,11 +1,10 @@
 ---
 title: "Overview"
 description: "AI-powered backend testing for RESTful APIs. Discover endpoints, generate plans, ship endpoint and integration tests, watch them run, and auto-clean up the data they touched."
-icon: "magnifying-glass-chart"
 ---
 
 <Frame>
-  <img src="../../../images/api-overview.png" alt="API testing overview" />
+  <img src="../../../images/api-testing-overview-overview.png" alt="API testing overview" />
 </Frame>
 
 API Testing in TestSprite is a journey from "here's my API" to "here's a regression suite I trust". Each phase has its own dedicated docs page; this page is the map.
@@ -18,8 +17,7 @@ API Testing in TestSprite is a journey from "here's my API" to "here's a regress
 | <kbd>Endpoint + Integration Tests</kbd> | Per-endpoint coverage *and* multi-step chains where one test's response feeds the next |
 | <kbd>Dynamic Variables</kbd> | Capture values from one response, inject into the next request — TestSprite wires the dependencies for you |
 | <kbd>Auto Cleanup</kbd> | After every run, TestSprite deletes the records your tests created so your test workspace stays clean |
-| <kbd>Data Flow Visualization</kbd> | A grouped, navigable view of every HTTP call TestSprite made — request, response, timing, dependencies |
-| <kbd>Auto-Auth (Pro)</kbd> | Configure your login flow once; we fetch a fresh token before every run |
+| <kbd>Auto-Auth</kbd> | Configure your login flow once; we fetch a fresh token before every run |
 | <kbd>Smart Reports</kbd> | Detailed outputs with error types, root causes, and recommended fixes |
 | <kbd>Natural Language Refinement</kbd> | Adjust any test in natural language — no code required |
 
@@ -28,12 +26,12 @@ API Testing in TestSprite is a journey from "here's my API" to "here's a regress
 <Card>
 ```mermaid
 flowchart LR
-    A["1. API Discovery<br/>extract endpoints from<br/>PRD, docs, and live calls"]
-    B["2. Plan Generation<br/>per-endpoint plan items<br/>with priorities"]
-    C["3. Endpoint Tests<br/>one test per endpoint<br/>covering CRUD and edges"]
-    D["4. Integration Tests<br/>multi-step chains across<br/>related endpoints"]
-    E["5. Run"]
-    F["6. Cleanup<br/>records your tests created<br/>get removed afterward"]
+    A["1\. API Discovery<br/>extract endpoints from<br/>PRD, docs, and live calls"]
+    B["2\. Plan Generation<br/>per-endpoint plan items<br/>with priorities"]
+    C["3\. Endpoint Tests<br/>one test per endpoint<br/>covering CRUD and edges"]
+    D["4\. Integration Tests<br/>multi-step chains across<br/>related endpoints"]
+    E["5\. Run"]
+    F["6\. Cleanup<br/>records your tests created<br/>get removed afterward"]
 
     A --> B --> C --> D --> E --> F
 ```
@@ -60,19 +58,22 @@ Each step gets its own page. Click through in order if you're new — or skip ah
 
 The Web Portal sidebar for an API project organizes pages by what you're trying to do, not by chronology. Once a project is set up, you'll mostly bounce between these:
 
+<Frame>
+  <img src="../../../images/api-testing-side-nav.png" alt="API project sidebar: Setup, Workspace, Analytics, Activity, and Project Settings groups" />
+</Frame>
+
 | Sidebar location | What you see | Detail page |
 | :--- | :--- | :--- |
-| **Overview → Use Case Flow** | A diagram of your features and the endpoints touched by each | (covered as a section in [API Discovery](/web-portal/core/api/api-discovery)) |
-| **Overview → Data Flow** | Every HTTP call from the most recent run, grouped by endpoint, with producer/consumer wiring | [Data Flow](/web-portal/core/api/data-flow) |
-| **Overview → Endpoint Tests** | The flat list of per-endpoint tests, status chips, last-run results | [Endpoint Tests](/web-portal/core/api/endpoint-tests) |
-| **Workflows → Integration Tests** | The list of multi-step chains that exercise sequences of endpoints | [Integration Tests](/web-portal/core/api/integration-tests) |
-| **Workflows → Cleanup** | Auto-generated DELETE chains that wipe records the tests created | [Auto Cleanup](/web-portal/core/api/auto-cleanup) |
-| **Data → Dynamic Variables** | The producer-consumer graph — what each test produces and what depends on it | [Dynamic Variables](/web-portal/core/api/dynamic-variables) |
-| **Data → Authentication** | Auto-Auth config + Static Credentials per API family | [Auto-Auth (Pro)](/web-portal/core/api/auto-auth) |
-| **Results → individual test detail pages** | Per-test request/response, error trace, refine + rerun controls | [Test Detail](/web-portal/core/working-with-test/test-detail) |
+| **Workspace → Test Coverage** | A diagram of your features and the endpoints touched by each | [Coverage Map](/web-portal/core/working-with-test/coverage-map) |
+| **Workspace → Test Cases → Endpoint Tests** | The flat list of per-endpoint tests, status chips, last-run results | [Endpoint Tests](/web-portal/core/api/endpoint-tests) |
+| **Workspace → Test Cases → Integration Tests** | The list of multi-step chains that exercise sequences of endpoints | [Integration Tests](/web-portal/core/api/integration-tests) |
+| **Workspace → Test Runs → a run → Cleanup** tab | Auto-generated DELETE chains that wipe records the tests created | [Auto Cleanup](/web-portal/core/api/auto-cleanup) |
+| **Workspace → Test Runs → a run → Dynamic Variables** tab | The producer-consumer graph: what each test produces and what depends on it | [Dynamic Variables](/web-portal/core/api/dynamic-variables) |
+| **Project Settings → Test Execution → Environment** | Auto-Auth config + Static Credentials per endpoint | [Auto-Auth](/web-portal/core/api/auto-auth) |
+| **Workspace → Test Cases → a test's detail page** | Per-test request/response, error trace, refine + rerun controls | [Test Detail](/web-portal/core/working-with-test/test-detail) |
 
 <Tip>
-**The sidebar's order is the recommended order for first-time setup.** Walk top-to-bottom on a new project: see the use-case overview, look at the endpoint tests TestSprite generated, peek at the integration chains it identified, check what values flow between tests under Dynamic Variables, configure auth, then run.
+**The sidebar's order is the recommended order for first-time setup.** Walk top-to-bottom on a new project: see the use-case overview, look at the endpoint tests TestSprite generated, peek at the integration chains it identified, configure auth, then run.
 </Tip>
 
 ## Quick Start
@@ -92,6 +93,10 @@ Generated plans group test cases by category — TestSprite picks categories tha
 - **Boundary / load** — what happens at high request rates or with oversized payloads
 - **Security probes** — privilege escalation, signature tampering, common API attack patterns
 
+<Frame>
+  <img src="../../../images/plangen-type.png" alt="The plan's Category column, with each category as a collapsible group" />
+</Frame>
+
 Not every category applies to every API. Categories shown on your plan reflect what TestSprite considered relevant given your endpoints, docs, and PRD.
 
 <Tip>
@@ -100,7 +105,7 @@ Not every category applies to every API. Categories shown on your plan reflect w
 
 ## Refining Tests in Natural Language
 
-Every test row has a chat affordance. You can say things like:
+Edit a test's description and click **Regenerate**, or ask in **Chats**. You can say things like:
     <Frame>
     <img src="../../../images/api-refining.png" alt="API testing overview" />
     </Frame>
@@ -131,13 +136,10 @@ If you're testing a website (UI / browser flows) rather than an HTTP API, the fr
   <Card title="API Discovery" href="/web-portal/core/api/api-discovery" icon="magnifying-glass">
     Walk through the wizard's first phase — endpoint extraction
   </Card>
-  <Card title="Auto-Auth (Pro)" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
+  <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Stop pasting expiring tokens before every run
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visualize every HTTP call from the most recent run
-  </Card>
-  <Card title="Subscription Plans" href="/web-portal/admin/billing-and-plans" icon="credit-card">
-    Free includes API testing — paid unlocks Auto-Auth and more
+  <Card title="Data Flow" href="/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test" icon="diagram-project">
+    See the values each test captures and consumes
   </Card>
 </Columns>

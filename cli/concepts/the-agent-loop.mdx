@@ -1,7 +1,6 @@
 ---
 title: "The Agent Loop"
 description: "Why the CLI is a loop, not a one-shot -- how your coding agent creates, runs, reads, fixes, and reruns, and how coverage compounds with every pass."
-icon: "arrows-rotate"
 ---
 
 The CLI is built around one idea: **verification should be a loop your coding agent runs continuously, not a gate you hit at the end.** Every time the agent changes code, it verifies the behavior it just touched and banks the result. This page explains the mechanics behind that loop.
@@ -57,7 +56,7 @@ flowchart TD
     testsprite test rerun --all --project proj_8f0f6 --wait
     ```
 
-    Frontend reruns replay the saved script verbatim, billed as a rerun (same price as a fresh run) — [auto-heal](/cli/core/rerun-and-auto-heal) adds a small additional charge only if it engages.
+    Frontend reruns replay the saved script verbatim, billed as a rerun (same price as a fresh run).
   </Step>
   <Step title="Something failed → read the bundle, fix, replay">
     On exit 1, pull the failure bundle — one self-consistent package the agent can act on directly:

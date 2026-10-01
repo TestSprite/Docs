@@ -1,11 +1,10 @@
 ---
 title: "Auto Cleanup"
 description: "After every test run, TestSprite auto-builds DELETE chains that wipe the records your tests created — so your test environment stays empty between runs."
-icon: "broom"
 ---
 
 <Frame>
-  <img src="../../../images/cleanup-overview.png" alt="Cleanup tab — DELETE chains and per-resource status" />
+  <img src="../../../images/api-testing-auto-clean-overview.png" alt="Cleanup tab — DELETE chains and per-resource status" />
 </Frame>
 
 ## What Auto Cleanup Does
@@ -42,11 +41,7 @@ These flagged records appear in [Dynamic Variables](/web-portal/core/api/dynamic
 
 ## The Cleanup Tab
 
-<kbd>Sidebar → Workflows → Cleanup</kbd>. This view shows what got deleted (or attempted) after the most recent run.
-
-<Frame>
-  <img src="../../../images/cleanup-close-up.png" alt="Cleanup tab — DELETE chains and per-resource status" />
-</Frame>
+<kbd>Test Runs → a run → Cleanup</kbd> tab. This view shows what got deleted (or attempted) after that run.
 
 The page renders captured resources as cards split into two sections:
 
@@ -80,14 +75,14 @@ A cleanup DELETE can fail for several reasons. TestSprite handles each different
 | <kbd>4xx other than 404</kbd> (e.g., 403, 409) | Marks the cleanup test Failed | Click into the cleanup test to see the response body and figure out why DELETE was rejected |
 | <kbd>Auth expired mid-cleanup</kbd> | Refreshes via [Auto-Auth](/web-portal/core/api/auto-auth) if configured, otherwise marks the cleanup test Failed | If you're using Static Credentials and your token expired mid-run, switch to Auto-Auth |
 
-To retry failed cleanups, rerun the failing cleanup test from its detail page, or trigger a fresh **Rerun all** — every Rerun runs Auto Cleanup again at the end.
+To retry failed cleanups, rerun the failing cleanup test from its detail page, or trigger a fresh **Re-run all**. Every Rerun runs Auto Cleanup again at the end.
 
 ## Manual Cleanup
 
 If TestSprite couldn't auto-clean a resource (no matching DELETE endpoint discovered), the resource appears under **Might be orphaned** in the Cleanup tab, with the ID and source endpoint surfaced for manual verification. Two paths:
 
 1. **Add a DELETE endpoint to discovery** — re-run [API Discovery](/web-portal/core/api/api-discovery) once your DELETE endpoints are reachable
-2. **Manually delete and dismiss** — clean up via your own backend tooling, then dismiss the cleanup row
+2. **Manually delete**: clean up via your own backend tooling
 
 You can also explicitly opt records out of auto-cleanup in chat: "Don't auto-clean up the records created by POST /audit-logs — they need to stay for audit retention".
 
@@ -130,7 +125,7 @@ Cleanup is what makes test runs **idempotent** — every run starts from the sam
   </Accordion>
   <Accordion title="Cleanup didn't run at all">
     Two checks:
-    - The run finished with all tests Passed or Failed (not Pending). Cleanup runs after run completion; if the run is still in progress, cleanup hasn't started.
+    - The run finished with all tests Passed or Failed (not Running). Cleanup runs after run completion; if the run is still in progress, cleanup hasn't started.
     - At least one cleanup-relevant record exists. If your tests don't produce record IDs, there's nothing to clean up.
   </Accordion>
   <Accordion title="My cleanup DELETEs are getting rate-limited">
@@ -147,10 +142,10 @@ Cleanup is what makes test runs **idempotent** — every run starts from the sam
   <Card title="Dependency Chains" href="/web-portal/core/api/dependency-chains" icon="diagram-project">
     How run order is determined
   </Card>
-  <Card title="Auto-Auth (Pro)" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
+  <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Keeps auth alive across long-running cleanups
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    See cleanup DELETEs in the same view as the run's other calls
+  <Card title="Dynamic Variables" href="/web-portal/core/api/dynamic-variables" icon="diagram-project">
+    See which test deleted each captured value, next to where it came from
   </Card>
 </Columns>

@@ -4,7 +4,11 @@ description: "What happens during a TestSprite onboarding — the lifecycle of g
 icon: "play"
 ---
 
-This page is the **conceptual** map of what a first run feels like. It's the same shape for UI and API projects: configure → understand your product → explore or discover → plan → generate → run → review.
+This page is the **conceptual** map of what a first run feels like. It's the same shape for UI and API projects: configure → explore or discover → understand your product → plan → generate → run → review.
+
+<Frame>
+  <img src="../../images/first-test-Overview.png" alt="Test Cases for a finished project, grouped by use case" />
+</Frame>
 
 For the click-by-click version, jump straight into the type-specific walkthrough that matches the project you're starting with.
 
@@ -21,45 +25,42 @@ For the click-by-click version, jump straight into the type-specific walkthrough
 
 <Steps>
   <Step title="Project Setup & PRD Upload">
-    Name the project and upload your PRD (or any product-spec document). PRD upload is **strongly recommended** — it's the single biggest lever on plan quality. Skip it only for a quick demo.
-  </Step>
-  <Step title="Feature & Use-Case Extraction">
-    TestSprite reads your PRD and produces a **feature map** — a structured list of features and the use cases under each, rendered as a flow graph. This is what grounds the rest of the run. Skipped if no PRD was uploaded.
+    Click <kbd>New Project</kbd>, name the project, and provide your live URL and credentials: UI projects ask for a starting URL + test account; API projects ask for the base URL + auth type + your API documentation. Then upload your PRD (or any product-spec document). PRD upload is **strongly recommended**. It's the single biggest lever on plan quality. Skip it only for a quick demo.
     <Frame>
-      <img src="../../images/web-test-use-case.png" alt="Use Cases & Features flow graph" />
-    </Frame>
-  </Step>
-  <Step title="Configuration">
-    Provide your live URL and credentials. UI projects ask for a starting URL + test account; API projects ask for the base URL + auth type + your API documentation.
-    <Frame>
-      <img src="../../images/web-input.png" alt="Configuration form" />
+      <img src="../../images/overview-configure.png" alt="New Project form across its three steps: Basics, Access details, and Test Sources" />
     </Frame>
   </Step>
   <Step title="Exploration or Discovery">
-    For UI projects, TestSprite walks your live app feature by feature, targeting the use cases from the feature map. For API projects, TestSprite reads your docs and confirms endpoint shapes against the live URL.
+    For UI projects, TestSprite walks your live app feature by feature. For API projects, TestSprite reads your docs and confirms endpoint shapes against the live URL.
     <Frame>
-      <img src="../../images/web-feature-explore.png" alt="Feature exploration in progress" />
+      <img src="../../images/overview-Explore.png" alt="Feature exploration in progress" />
+    </Frame>
+  </Step>
+  <Step title="Feature & Use-Case Extraction">
+    TestSprite reads your PRD and produces a **feature map**: a structured list of features and the use cases under each, rendered as a flow graph. This is what grounds the rest of the run. Without a PRD, the map is built from what TestSprite explored or discovered alone.
+    <Frame>
+      <img src="../../images/overview-use-case.png" alt="Use Cases & Features flow graph" />
     </Frame>
   </Step>
   <Step title="Plan Review">
-    A test plan is drafted from what was observed. You review, edit descriptions in natural language, deselect cases you don't want, then click <kbd>Generate Tests</kbd>.
+    A test plan is drafted from what was observed. You review, edit descriptions in natural language, deselect cases you don't want, then click <kbd>Run all</kbd>.
     <Frame>
-      <img src="../../images/web-user-review.png" alt="Plan review" />
+      <img src="../../images/overview-plan.png" alt="Plan review" />
     </Frame>
   </Step>
   <Step title="Test Generation">
     TestSprite converts the approved plan into Python tests (with Playwright for UI), verifies each one in our cloud sandbox, and surfaces failed verifications clearly.
   </Step>
   <Step title="Execution">
-    Tests run in the cloud and stream results back. Each row surfaces one of: <kbd>Pending</kbd>, <kbd>Running</kbd>, <kbd>Pass</kbd>, <kbd>Failed</kbd>, <kbd>Blocked</kbd>.
+    Tests run in the cloud and stream results back. Each row surfaces one of: <kbd>Planned</kbd>, <kbd>Running</kbd>, <kbd>Passed</kbd>, <kbd>Failed</kbd>, <kbd>Blocked</kbd>.
     <Frame>
-      <img src="../../images/web-executing.png" alt="Tests executing" />
+      <img src="../../images/first-test-execution.png" alt="Execution run with live agent actions" />
     </Frame>
   </Step>
   <Step title="Review and Refine">
-    The **Test Report** tab summarizes pass/fail counts, highlights failures with cause-and-fix suggestions, and links into per-test detail. To iterate on a specific test, open it and use the <kbd>Chat</kbd> tab — describe what to fix in natural language.
+    The **Test Report** tab summarizes pass/fail counts, highlights failures with cause-and-fix suggestions, and links into per-test detail. To iterate on a specific test, use <kbd>Chats</kbd>: describe what to fix in natural language.
     <Frame>
-      <img src="../../images/web-modify.png" alt="Test report" />
+      <img src="../../images/first-test-refine.png" alt="Test detail with editable prompt and run preview" />
     </Frame>
   </Step>
 </Steps>

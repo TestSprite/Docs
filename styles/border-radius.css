@@ -569,3 +569,112 @@ kbd {
   color: #f9fafb !important;
   border: 1px solid #3a3a3a !important;
 }
+
+/* ============================================
+   SIDEBAR — NESTED GROUP GUIDE LINE
+   ============================================ */
+
+/* A vertical rule down the left of each nested (sub-accordion) group's page
+   list, so its pages read as belonging to the group above them.
+   Targets only nested lists: ul.sidebar-group > li > ul. Top-level group
+   pages sit directly in ul.sidebar-group and are left alone. */
+/* The group's icon sits 1rem from the list's left edge and is 1rem wide, so
+   its centre is 1.5rem in; back off half the 1px rule to land the line on it. */
+#sidebar ul.sidebar-group > li > ul {
+  border-left: 1px solid rgb(0 0 0 / 0.1);
+  margin-left: calc(1.5rem - 0.5px);
+  padding-left: 0.375rem;
+}
+
+/* Mintlify sets an inline padding-left of 1.75rem on nested page links, which
+   leaves a wide gap between the highlight pill's edge and the label. It is an
+   inline style, so !important is the only way to override it. */
+#sidebar ul.sidebar-group > li > ul a {
+  padding-left: 0.5rem !important;
+}
+
+.dark #sidebar ul.sidebar-group > li > ul,
+html.dark #sidebar ul.sidebar-group > li > ul,
+[data-theme="dark"] #sidebar ul.sidebar-group > li > ul {
+  border-left-color: rgb(255 255 255 / 0.14);
+}
+
+/* ============================================
+   SIDEBAR & "ON THIS PAGE" — TYPE SCALE
+   ============================================ */
+
+/* Both default to 14px/24px. Drop to 13px with a tighter leading so more of
+   the tree and the page outline fit without scrolling. ID selectors outrank
+   Tailwind's utility classes, so no !important is needed. */
+#sidebar,
+#sidebar a,
+#sidebar button,
+#sidebar .sidebar-group-header {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+#table-of-contents,
+#table-of-contents a,
+#table-of-contents span,
+#table-of-contents div {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* Top-level section titles (Getting Started, Core, Integrations, …) at medium
+   rather than regular, so they read as headings above their page lists. */
+#sidebar .sidebar-group-header {
+  font-weight: 500;
+}
+
+/* ============================================
+   HIDE SCROLLBARS
+   ============================================ */
+
+/* Scrollbars are hidden everywhere; scrolling itself is untouched (wheel,
+   trackpad, keyboard, and drag all still work). */
+html,
+*,
+*::before,
+*::after {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* legacy Edge / IE */
+}
+
+::-webkit-scrollbar {           /* Chrome, Safari, Edge */
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* ============================================
+   SIDEBAR ITEM SHAPE
+   ============================================ */
+
+/* Rounder hit areas for nav rows than the 2px the generic sidebar rule gives. */
+#sidebar a,
+#sidebar ul.sidebar-group > li > button {
+  border-radius: var(--border-radius-xl) !important;
+}
+
+/* ============================================
+   CARD DESCRIPTIONS
+   ============================================ */
+
+/* Card body text defaults to 16px, matching the title. Drop it so the title
+   carries the weight and the description reads as supporting copy. */
+.card .prose {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ============================================
+   STEP TITLES
+   ============================================ */
+
+/* The title line of a <Steps> item carries a font-semibold class but resolves
+   to 400, so it reads the same as its body copy. Lift it to medium. */
+.steps .step > div > p.font-semibold {
+  font-weight: 500;
+}

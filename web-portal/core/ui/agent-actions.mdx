@@ -1,16 +1,15 @@
 ---
 title: "Agent Actions"
-description: "The video gallery of every UI test run. One tile per recording, bucketed by status, with click-to-play and search/filter."
-icon: "film"
+description: "The video-tile view of a UI test run — one tile per test, bucketed by status, with click-to-play, search/filter, and a live-updating stats header."
 ---
 
 <Frame>
-  <img src="../../../images/agentaction-overview.png" alt="Agent Actions video gallery" />
+  <img src="../../../images/ui-testing-agent-overview.png" alt="Agent Actions View tab showing live and finished test tiles for a run" />
 </Frame>
 
 ## What Agent Actions Is
 
-A project-level archive of **every UI test recording** — each tile is the video TestSprite captured while walking through one user journey. The recording itself *is* the action log: click X, type Y, navigate to Z, all captured as video.
+One of two ways to look at a **single test run's** results — as video tiles instead of a list. Each tile is the recording TestSprite captured while walking through one test case in that run. The recording itself *is* the action log: click X, type Y, navigate to Z, all captured as video.
 
 <Info>
 This is UI-only. API projects don't have it (HTTP requests don't need to be filmed; their request/response bodies are the equivalent artifact).
@@ -18,30 +17,54 @@ This is UI-only. API projects don't have it (HTTP requests don't need to be film
 
 <Tabs>
   <Tab title="Where it lives">
-    The **Agent Actions** tab in the project sidebar, under the **Result** group. It sits alongside the **Test Report** tab — Test Report is the aggregated outcome view, Agent Actions is the per-recording browse view.
-      <Frame>
-      <img src="../../../images/agentaction-where-to-find.png" alt="Agent Actions video gallery" />
+    Open <kbd>Test Runs</kbd> in the project sidebar and click into a specific run.
+    <Frame>
+      <img src="../../../images/ui-testing-agent-test-run.png" alt="Test Runs list — click into a run to open it" />
     </Frame>
+
+    Inside that run, two tabs show the same results two ways. The header above both shows that run's live stats (Pass Rate, and Running / Passed / Failed / Blocked / Total counts), which keep updating while the run is still going.
+
+    <Tabs>
+      <Tab title="List View">
+        <Frame>
+          <img src="../../../images/ui-testing-agent-list-view.png" alt="List View — the same run's results grouped by feature, as a table" />
+        </Frame>
+      </Tab>
+      <Tab title="Agent Actions View">
+        <Frame>
+          <img src="../../../images/ui-testing-agent-agent-view.png" alt="Agent Actions View — the same run's results as video tiles" />
+        </Frame>
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab title="When you'll use it">
     - **Replay a failing test** to see exactly what happened on screen
     - **Hand a recording to a teammate** instead of describing the bug in chat
-    - **Audit recent runs** at a glance, filtered to just Failed
+    - **Audit this run** at a glance, filtered to just Failed
     - **Spot-check passing tests** when something looks off in the report numbers
   </Tab>
 </Tabs>
 
+<Note>
+The tiles show **this run's** results, not each test's latest. If a test was re-run individually after this run finished, its newer result lives on that test's own page — this view stays frozen to what happened in this specific execution.
+</Note>
+
 ## How the Gallery Is Organized
 
-Tiles are bucketed by status into three sections, in this order:
+Tiles are bucketed by status into collapsible sections, each showing its count in the header:
 
 | Bucket | What's in it |
 | :--- | :--- |
+| <kbd>Running</kbd> | Tests still in progress — only shown while the run is still going |
 | <kbd>Passed</kbd> | Tests whose run finished and assertions held |
 | <kbd>Failed</kbd> | Tests whose run finished and assertions didn't hold |
-| <kbd>Blocked</kbd> | Tests that couldn't complete — running, idle, or anything that didn't resolve to Pass / Fail |
+| <kbd>Blocked</kbd> | Tests that couldn't complete — idle, or anything that didn't resolve to Pass / Fail |
 
-Each tile shows the recording thumbnail, the test title, a priority chip, and a status badge. Clicking the tile opens an inline player.
+<Frame>
+  <img src="../../../images/ui-testing-agent-organize.png" alt="Bucket sections collapsed, with Blocked expanded showing its tiles" />
+</Frame>
+
+A tile still inside **Running** shows a **LIVE** badge over a live thumbnail once its recording actually starts, or a **Starting…** placeholder before that. A finished tile shows the recording thumbnail, the test title, a priority chip, and a status badge — Blocked and Failed tiles also carry a short diagnosis line under the description (e.g. *"The hosting side is likely serving a…"*). Clicking a finished tile opens an inline player.
 
 <Note>
 **Tiles need a recording to appear.** Tests that ran but didn't produce a video (rare — typically a vendor-side recording timeout) are excluded from the gallery. They're still visible in the **Integration Tests** list.
@@ -57,16 +80,14 @@ The toolbar above the gallery has:
 
 Filters are independent and clearable individually. The bucket sections re-render to show only matching tiles.
 
-## What You'll See When the Project Is Mid-Run
-
-Two transitional states:
+## What You'll See While a Run Is Still Going
 
 <Tabs>
   <Tab title="No tiles yet">
-    First run hasn't produced any recordings. You'll see the in-progress placeholder with stages: **Running agents → Recording sessions → Processing videos**. Tiles trickle in as agents finish.
+    The run just started, no test has produced a recording yet. Tiles trickle in as each test starts and finishes.
   </Tab>
   <Tab title="Some tiles, more coming">
-    Recordings appear shortly after each test finishes. Tiles may trickle in over the first few seconds; the buckets reflect the final state once every test has resolved.
+    Tests still going sit in the **Running** bucket — **Starting…** before the recording begins, then a **LIVE** thumbnail once it does. As each finishes, its tile moves into Passed / Failed / Blocked, and the stats header updates live.
   </Tab>
 </Tabs>
 
@@ -76,10 +97,10 @@ Both are visual replay tools, but at different scopes:
 
 | | Agent Actions | Step-by-Step Walkthrough |
 | :--- | :--- | :--- |
-| **Scope** | Project — every UI recording in one gallery | Per-test — the run of a single test |
+| **Scope** | This run — every test's recording in that execution, as tiles | Per-test — a single test's run, one step at a time |
 | **Primary artifact** | Video tile | Per-step screenshots + recorded video |
-| **Surface area** | Browse / filter / triage at scale | Drill into one test's flow + assertions |
-| **When to use** | "Show me everything that failed" | "What exactly happened on step 4 of this test?" |
+| **Surface area** | Browse / filter / triage this run at a glance | Drill into one test's flow + assertions |
+| **When to use** | "Show me everything that failed in this run" | "What exactly happened on step 4 of this test?" |
 
 Both pull from the same recordings — Agent Actions is the index, Step-by-Step is the inspector.
 
@@ -91,13 +112,10 @@ Both pull from the same recordings — Agent Actions is the index, Step-by-Step 
 
 <AccordionGroup>
   <Accordion title="A failed test has no recording in the gallery">
-    The recording wasn't captured for this run — rare, typically a transient hiccup. Rerun the test; subsequent recordings land in the gallery normally. The original failure is still in the Test Report; the gallery just hides tiles with no playable video.
+    The recording wasn't captured for this run — rare, typically a transient hiccup. Rerun the test; subsequent recordings land in the gallery normally. The original failure is still visible in this run's **List View**; the gallery just hides tiles with no playable video.
   </Accordion>
   <Accordion title="Tile opens but the video won't play">
     Usually a stale playback link. Refresh the page; the link is regenerated on every load.
-  </Accordion>
-  <Accordion title="Recordings from multiple projects in the same gallery">
-    Agent Actions is project-scoped. If your dashboard URL has multiple frontend projects under one parent (rare — typically a multi-URL setup), tiles show a project-name subtitle so you can tell them apart.
   </Accordion>
   <Accordion title="Playing a recording counts against credits?">
     No. Recordings are static artifacts; playback doesn't trigger any agent activity. Only re-running the test consumes credits.
@@ -110,8 +128,8 @@ Both pull from the same recordings — Agent Actions is the index, Step-by-Step 
   <Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
     Drill into a single test's run
   </Card>
-  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="layout">
-    All project-level tabs, including this one
+  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
+    Everything else available once you open a test run
   </Card>
   <Card title="Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
     Trigger a fresh run when a recording shows the wrong behavior

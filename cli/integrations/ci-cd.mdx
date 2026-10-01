@@ -12,6 +12,12 @@ The `testsprite` CLI is designed from the ground up for unattended execution:
 - **Stable `--output json`** — every command emits a machine-readable JSON envelope that your pipeline can parse and forward.
 - **Stable exit codes** — exit 0 means the run passed; any non-zero exit lets the shell fail the job. No text scraping required.
 
+<Warning>
+**Your target must be reachable from TestSprite's cloud.** Tests run on TestSprite's cloud runners, so `--target-url` has to be a public `http(s)` address. `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, link-local, and private (RFC 1918) addresses are **rejected during pre-flight with exit code `5`, before any run is triggered** — so a dev server started inside the CI job cannot be tested directly. This is the most common first-run CI failure.
+
+In CI, point `--target-url` at a **publicly reachable preview, staging, or deploy-preview URL** (for example, the per-pull-request preview URL your hosting provider creates). To test a local app, use the [TestSprite MCP Server](/mcp/getting-started/introduction), which opens a tunnel for you — the CLI itself does not tunnel.
+</Warning>
+
 ## Authenticating in CI
 
 Set your API key as a repository or environment secret. In GitHub, go to <kbd>Settings → Secrets and variables → Actions</kbd> and click <kbd>New repository secret</kbd>:
@@ -66,6 +72,10 @@ testsprite test run test_3a9f21c7 --wait --output json > result.json || \
 ```
 
 ## A GitHub Actions workflow
+
+<Note>
+Install and invoke the `testsprite` CLI directly, as the example below does — this is the supported way to run TestSprite in CI, on any platform. If you previously set up an older TestSprite GitHub Action from the marketplace, migrating to the CLI gives you stable exit codes, JUnit output, and a consistent pass/fail verdict.
+</Note>
 
 The example below runs all backend tests in a project on every pull request and fails the job if any test does not pass:
 

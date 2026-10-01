@@ -1,21 +1,20 @@
 ---
-title: "Auto-Auth (Pro)"
+title: "Auto-Auth"
 description: "Configure a login flow once and TestSprite fetches a fresh token before every backend test run — no more pasting expiring credentials."
-icon: "arrows-rotate"
 ---
 
 <Frame>
-  <img src="../../../images/autoauth-overview.png" alt="Auto-refresh login card on the Authentication tab" />
+  <img src="../../../images/autoauth-overview.png" alt="Auto-refresh login card in the Edit Environment dialog" />
 </Frame>
 
 ## What Auto-Auth Does
 
 Backend APIs almost always sit behind some form of token-based auth — an OAuth `Bearer`, an AWS Cognito access token, a custom session cookie. Tokens expire. When they do, every test in the run fails until someone pastes a fresh value into the credentials form.
 
-**Auto-Auth removes the manual rotation.** You configure your project's login flow once. Before every test run TestSprite obtains a fresh token and uses it across every backend test in the run.
+**Auto-Auth removes the manual rotation.** You configure your environment's login flow once. Before every test run TestSprite obtains a fresh token and uses it across every backend test in the run.
 
 <Info>
-**One config per project, not per API.** A single configured login flow covers every backend test in the project. There is no per-endpoint auth configuration to manage.
+**One config per environment, not per API.** A single configured login flow covers every backend test that runs against that environment. There is no per-endpoint auth configuration to manage.
 </Info>
 
 ## When to Use This
@@ -28,39 +27,36 @@ If your API has no auth, or auth is a static long-lived API key (think Stripe `s
 
 ## Prerequisites
 
-- A **Starter** or **Standard** subscription (Auto-Auth is a Pro feature). Free-plan projects see a paywall card with an Upgrade CTA where the configuration would normally appear.
+- A plan that includes Auto-Auth. On plans without it, you see a paywall card with an Upgrade CTA where the configuration would normally appear.
 - A backend project with at least one API under test
 - Login credentials your API accepts (username/password, OAuth client credentials + refresh token, or AWS Cognito refresh token)
 
-<Card title="Subscription Plans" href="/web-portal/admin/billing-and-plans" icon="credit-card">
-  Plan tiers, what each unlocks, and how to upgrade
-</Card>
 
 ## Quick Start
 
 <Steps>
-  <Step title="Open the Authentication tab">
-    From your project's left sidebar, click **Authentication**. The Auto-refresh login card sits at the top of the page.
+  <Step title="Open your environment">
+    From your project's left sidebar, go to **Project Settings → Test Execution → Environment** and click the environment your tests run against. The Auto-refresh login card sits in the **Edit Environment** dialog.
   <Frame>
-    <img src="../../../images/autoauth-find.png" alt="Auto-refresh login card on the Authentication tab" />
+    <img src="../../../images/api-testing-auto-auth-Open-tab.png" alt="Project Settings → Test Execution → Environment in the project sidebar" />
   </Frame>
   </Step>
   <Step title="Click Configure">
     Opens the configuration modal. Pick your login method — AWS Cognito, OAuth Refresh, or Username / Password.
     <Frame>
-    <img src="../../../images/autoauth-configure.png" alt="Auto-refresh login card on the Authentication tab" />
+    <img src="../../../images/api-testing-auto-auth-configure.png" alt="The Configure button on the Auto-refresh login card" />
   </Frame>
   </Step>
   <Step title="Fill in the fields and Test Login">
     The form changes based on the method you chose. Click **Test Login** to verify your config works *before* you save — the result panel below the buttons shows the masked token (or a structured error) so you can fix the config without going through a full test run.
       <Frame>
-    <img src="../../../images/autoauth-test-login.png" alt="Auto-refresh login card on the Authentication tab" />
+    <img src="../../../images/autoauth-test-login.png" alt="Auto-refresh login card in the Edit Environment dialog" />
   </Frame>
   </Step>
   <Step title="Save">
     Saving runs one final verification. If it succeeds, the card flips its toggle on and shows a green **Verified · Xm ago** badge — your next test run will use a fresh token. If verification fails, the config persists with the toggle off plus a clear error so you can fix and retry.
     <Frame>
-    <img src="../../../images/autoauth-failed.png" alt="Auto-refresh login card on the Authentication tab" />
+    <img src="../../../images/autoauth-failed.png" alt="Auto-refresh login card in the Edit Environment dialog" />
   </Frame>
   </Step>
 </Steps>
@@ -71,7 +67,7 @@ If your API has no auth, or auth is a static long-lived API key (think Stripe `s
 
 The configuration modal offers three methods. Pick the one that matches your API.
     <Frame>
-    <img src="../../../images/autoauth-method.png" alt="Auto-refresh login card on the Authentication tab" />
+    <img src="../../../images/autoauth-method.png" alt="Auto-refresh login card in the Edit Environment dialog" />
   </Frame>
 | Method | When to use | What you provide |
 | :--- | :--- | :--- |
@@ -125,7 +121,7 @@ A refresh token is issued when a user successfully signs in. The simplest way to
 
 ### 30-day expiry warning
 
-AWS Cognito refresh tokens are capped at **30 days from issue** by default (this can be configured per app client in AWS, but 30 is the AWS default). When your stored refresh token gets close to expiry, the Authentication tab surfaces a yellow warning badge:
+AWS Cognito refresh tokens are capped at **30 days from issue** by default (this can be configured per app client in AWS, but 30 is the AWS default). When your stored refresh token gets close to expiry, the Auto-refresh login card surfaces a yellow warning badge:
 
 | When you see it | What it means |
 | :--- | :--- |
@@ -262,10 +258,10 @@ The result panel reports one of:
 
 | State | What it means | What to do |
 | :--- | :--- | :--- |
-| <kbd>Success</kbd> + masked token | Your config retrieved a valid-looking token from the provider | Click **Save** — the same call will run before every test run from now on |
-| <kbd>Failure: auth</kbd> | The provider rejected your credentials (401/403) | Wrong refresh token, wrong client secret, expired credential. Update the field and retry |
-| <kbd>Failure: parse</kbd> | Got a 200 from the provider but the token path didn't find a token in the response | Check the **Token path** field — defaults work for most providers, but if yours returns `{"data":{"jwt":"…"}}` you'd need `$.data.jwt` |
-| <kbd>Failure: network</kbd> | Couldn't reach the provider URL | Wrong endpoint URL, DNS issue, or your endpoint is behind a network not reachable from TestSprite's egress |
+| **Login succeeded** + masked token | Your config retrieved a valid-looking token from the provider | Click **Save**. The same call will run before every test run from now on |
+| **Login failed (HTTP 401/403)** | The provider rejected your credentials (401/403) | Wrong refresh token, wrong client secret, expired credential. Update the field and retry |
+| **Login failed** (no token found) | Got a 200 from the provider but the token path didn't find a token in the response | Check the **Token path** field. Defaults work for most providers, but if yours returns `{"data":{"jwt":"…"}}` you'd need `$.data.jwt` |
+| **Login failed** (no HTTP status) | Couldn't reach the provider URL | Wrong endpoint URL, DNS issue, or your endpoint is behind a network not reachable from TestSprite's egress |
 
 <Info>
 **Test Login uses the in-progress values from the form**, not whatever was previously saved. The card outside still shows the previously-saved state until you click **Save**.
@@ -273,9 +269,9 @@ The result panel reports one of:
 
 ---
 
-## Health States on the Authentication Tab
+## Health States on the Auto-refresh Card
 
-Once configured, the Auto-refresh card shows one of five states. Knowing what each means saves debugging time. The card always shows a green **Pro · Unlocked** badge on Pro plans; the state badge sits next to it.
+Once configured, the Auto-refresh card shows one of five states. Knowing what each means saves debugging time.
 
 <AccordionGroup>
   <Accordion title="Verified · Xm ago" icon="circle-check">
@@ -285,7 +281,7 @@ Once configured, the Auto-refresh card shows one of five states. Knowing what ea
     Auto-Auth is on but no successful refresh has happened yet (you turned it on without running Test Login). The first refresh will fire before your next test run. **Suggest running Test Login** so you find out it works without losing a real run.
   </Accordion>
   <Accordion title="Failing" icon="circle-exclamation" defaultOpen={false}>
-    Auto-Auth is on but the most recent refresh attempt errored. **Tests in this project will be blocked until you fix it** — better to fail fast than to silently run with an expired token. Click **Edit** to see the last error, fix the field that's wrong (often an expired refresh token), Test Login, then Save.
+    Auto-Auth is on but the most recent refresh attempt errored. **Tests that run against this environment will be blocked until you fix it**. It's better to fail fast than to silently run with an expired token. Click **Edit** to see the last error, fix the field that's wrong (often an expired refresh token), Test Login, then Save.
   </Accordion>
   <Accordion title="Configured but disabled">
     A working config is saved but the toggle is off. Tests will run *without* the auto-refreshed token (they'll fall back to whatever Static Credentials you have). Flip the toggle to re-enable — we run a verification check before flipping the switch on.
@@ -304,7 +300,7 @@ Once configured, the Auto-refresh card shows one of five states. Knowing what ea
 Click **Edit** on the card. The modal opens with all non-secret fields pre-populated. Secret fields (password, client secret, refresh token) show `••••••••` as a placeholder and are **preserved if you leave them blank**. Type a new value to overwrite.
 
 <Frame>
-  <img src="../../../images/autoauth-edit.png" alt="Test Login result panel" />
+  <img src="../../../images/api-testing-auto-auth-edit.png" alt="Edit on the Auto-refresh login card, reopening the saved config" />
 </Frame>
 
 <Info>
@@ -316,7 +312,7 @@ Click **Edit** on the card. The modal opens with all non-secret fields pre-popul
 Flip the toggle on the card off. The config stays saved; new test runs skip Auto-Auth and fall back to your Static Credentials (if any). Flip back on — TestSprite verifies the config still works before re-enabling.
 
 <Frame>
-  <img src="../../../images/autoauth-off.png" alt="Test Login result panel" />
+  <img src="../../../images/api-testing-auto-auth-disable.png" alt="The toggle that temporarily disables Auto-Auth while keeping the config" />
 </Frame>
 ### Delete a config
 
@@ -335,21 +331,17 @@ Use **Edit** → clear all fields → **Save**. Or contact support if you want a
 
 ## If You Can't Use Auto-Auth: Static Credentials
 
-If Auto-Auth's three methods don't fit your API — for example, you have a long-lived API key that never expires, or your auth flow requires a hardware token, or you're on the Free plan and don't want to upgrade — you can still run backend tests by **pasting credentials manually**.
+If Auto-Auth's three methods don't fit your API (for example, you have a long-lived API key that never expires, or your auth flow requires a hardware token), you can still run backend tests by **pasting credentials manually**.
 
 
 <Frame>
-  <img src="../../../images/autoauth-static.png" alt="Test Login result panel" />
+  <img src="../../../images/api-testing-auto-auth-cant-update.png" alt="Per-endpoint credentials under Edit Environment — Customize Header with Authentication Type and Extra Header" />
 </Frame>
-The **Authentication** tab on your project shows, in addition to the Auto-Auth card, a per-API-family credentials section where you can:
+**Customize Header**, in the same **Edit Environment** dialog as the Auto-Auth card, lets you:
 
-- Paste a token, API key, or session string per API family (Users, Orders, Payments, etc.)
-- Apply the same value to multiple APIs sharing an auth type via the **All `<auth-type>` · N APIs** bulk-update buttons (e.g. "All Bearer · 3 APIs")
+- Paste a token, API key, or session string per endpoint, with its **Authentication Type**
+- Apply the same value to multiple APIs at once: create a credential set, click **Apply**, and pick the APIs (or **Select all**)
 - Rotate (overwrite) without removing the test cases that use them
-
-<Frame>
-  <img src="../../../images/autoauth-static-detail.png" alt="Static credentials section under the Authentication tab" />
-</Frame>
 
 The catch: **you have to paste a fresh value when the token expires**. For test schedules that run nightly with short-lived tokens, this becomes a daily chore — which is exactly the pain Auto-Auth removes.
 
@@ -357,11 +349,10 @@ The catch: **you have to paste a fresh value when the token expires**. For test 
 
 | | Static Credentials | Auto-Auth |
 | :--- | :--- | :--- |
-| Plan | Free + paid | Paid only |
 | Setup effort | Paste & save | Configure once + Test Login |
 | Token expiry | You re-paste manually | Refreshed automatically |
 | Works for scheduled runs | Only until token expires | Yes — every run gets a fresh token |
-| Multi-API setup | Per-family credentials | One config covers the whole project |
+| Multi-API setup | Per-endpoint credentials | One config covers the whole environment |
 
 </Card>
 
@@ -370,25 +361,25 @@ The catch: **you have to paste a fresh value when the token expires**. For test 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Test Login says 'auth' failure but my credentials are correct">
+  <Accordion title="Test Login fails with HTTP 401/403 but my credentials are correct">
     Three usual culprits, in order of likelihood:
     1. **Refresh token has expired or been revoked.** AWS Cognito caps at 30 days; OAuth providers revoke on password change, app uninstall, or admin action. Capture a fresh refresh token and update the field.
     2. **Client ID / client secret mismatch.** Double-check you copied them from the right OAuth app — different environments (dev/prod) have different client IDs.
     3. **Account is disabled or locked.** Try signing in to your app with the test user's credentials in a browser; if the manual sign-in fails, fix that first.
   </Accordion>
-  <Accordion title="Test Login says 'parse' failure">
+  <Accordion title="Test Login fails and no token was found">
     The provider returned a 200 but the **Token path** didn't find a token in the response.
     - Default `$.access_token` works for AWS Cognito, Auth0, Okta, Google, most standards-compliant providers
     - If your response shape is `{"data":{"jwt":"…"}}`, set token path to `$.data.jwt`
     - If your response shape is `{"token":"…"}`, set token path to `$.token`
-    - Use the failing response body in the error toast as your reference
+    - Use the failing response body in the result panel as your reference
   </Accordion>
   <Accordion title="Test Login succeeds but real test runs return 401">
     Token retrieval works but the token isn't being delivered to your API in the way it expects.
     - Check the **Inject As** picker: try **Bearer** first; if that fails, try **Custom Header** with the header name your API documentation specifies (e.g. `X-Auth-Token`); if that fails, try **Cookie**
     - For Cookie injection, the cookie name field expects just the name (e.g. `session`), not `Cookie: session=…`
   </Accordion>
-  <Accordion title="The Pro · Unlocked badge is gone after I enabled the toggle, and the card now says 'Failing'">
+  <Accordion title="The toggle flipped back off after I enabled it, and the card now says 'Failing'">
     Save-time verification flipped your toggle back to off because the verification refresh failed. Open **Edit**, read the error surfaced below the dialog title, fix the underlying issue, Test Login to confirm, then Save again.
   </Accordion>
   <Accordion title="My API uses a custom token header AND requires a custom Content-Type">
@@ -407,13 +398,10 @@ The catch: **you have to paste a fresh value when the token expires**. For test 
   <Card title="API Discovery" href="/web-portal/core/api/api-testing" icon="magnifying-glass">
     How TestSprite finds your endpoints from PRD + code
   </Card>
-  <Card title="Integration Tests" href="/web-portal/core/api/api-testing#integration-tests" icon="link">
+  <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step chained tests with dynamic variables
   </Card>
-  <Card title="Rerun (with/without Dependencies)" href="/web-portal/core/api/api-testing#rerun" icon="arrow-rotate-right">
-    Re-run a chain or just the failed step
-  </Card>
-  <Card title="Subscription Plans" href="/web-portal/admin/billing-and-plans" icon="credit-card">
-    See what each tier unlocks
+  <Card title="Rerun" href="/web-portal/core/api/api-rerun" icon="arrow-rotate-right">
+    Re-run a chain or a single test
   </Card>
 </Columns>

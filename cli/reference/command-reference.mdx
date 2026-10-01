@@ -37,7 +37,7 @@ testsprite
 │   ├── update <project-id>           Update project metadata
 │   ├── delete <project-id>           Permanently delete a project and everything under it
 │   ├── credential <project-id>       Set the static backend credential for BE tests (free tier)
-│   └── auto-auth <project-id>        Configure recurring-token auto-refresh login for BE tests (Pro)
+│   └── auto-auth <project-id>        Configure recurring-token auto-refresh login for BE tests
 ├── test
 │   ├── list                          List tests in a project (--project required)
 │   ├── get <test-id>                 Get a test by id
@@ -226,8 +226,8 @@ testsprite
     ```
   </Accordion>
 
-  <Accordion title="project auto-auth — recurring-token login (Pro)">
-    Configure recurring-token auto-refresh login for backend tests: the CLI's backend runner fetches a fresh token on every run and injects it into each backend test, instead of relying on one static credential.
+  <Accordion title="project auto-auth — recurring-token login">
+    Configure recurring-token auto-refresh login for backend tests: the CLI's backend runner fetches a fresh token on every run and injects it into each backend test, instead of relying on one static credential. Not every plan includes Auto-Auth. Compare plans on the [pricing page](https://www.testsprite.com/pricing).
 
     ```bash
     testsprite project auto-auth <project-id> --method <method> --inject <where> [options]
@@ -544,7 +544,7 @@ testsprite
   </Accordion>
 
   <Accordion title="test rerun — replay a saved test">
-    Re-execute a test as a replay, billed the same as a fresh run (0.5 credits frontend / 0.2 credits backend). Frontend replays the saved script; backend re-runs the full dependency closure (producer + teardown tests).
+    Re-execute a test as a replay, billed the same as a fresh run. Frontend replays the saved script; backend re-runs the full dependency closure (producer + teardown tests).
 
     ```bash
     testsprite test rerun [test-ids...] [options]
@@ -570,7 +570,7 @@ testsprite
     | `--summary-file <path>` | With a batch `--wait`: also write the reduced machine summary JSON `{total, passed, failed, timedOut, runs[]}` |
 
     <Info>
-    The rerun itself is billed the same as a fresh run; auto-heal adds a small amount of credit only when it actually repairs a step — see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
+    The rerun itself is billed the same as a fresh run. See [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal#auto-heal).
     </Info>
   </Accordion>
 
@@ -596,7 +596,7 @@ testsprite
     ```
 
     <Note>
-    Each replay is billed as a rerun, same as a fresh run (0.5 credits frontend / 0.2 credits backend) — the CLI prints a one-line advisory before the first backend attempt.
+    Each replay is billed as a rerun, same as a fresh run; the CLI prints a one-line advisory before the first backend attempt.
     </Note>
   </Accordion>
 

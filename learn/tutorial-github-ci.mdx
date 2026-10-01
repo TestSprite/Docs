@@ -1,0 +1,40 @@
+---
+title: "GitHub App & GitHub Actions"
+description: "Run TestSprite on every pull request: when to use the GitHub App and when to use GitHub Actions, and how results land in the PR."
+icon: "github"
+---
+
+*Video by **Execute Automation** · 12:19 · English*
+
+<Frame>
+<iframe
+  className="w-full aspect-video rounded-xl"
+  height="400"
+  src="https://www.youtube.com/embed/8ZuOrdcBgJ4"
+  frameBorder="0"
+  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+</Frame>
+
+## What You'll See
+
+- **Choosing an integration**: the **GitHub App** (ideal for managed platforms like Vercel or Netlify) versus **GitHub Actions** (full control over the pipeline)
+- **The build phase**: building and starting the app with Docker Compose inside CI
+- **Reaching the app from TestSprite**: using a Cloudflare tunnel so TestSprite's cloud can test an app running in CI
+- **Reading the results**: execution videos and pass/fail reports, right in the pull request
+
+## Try It Yourself
+
+<CardGroup cols={2}>
+  <Card title="GitHub Integration" icon="github" href="/web-portal/integrations/github-integration">
+    Connect the GitHub App and set up triggers
+  </Card>
+  <Card title="Test Schedules" icon="clock" href="/web-portal/maintenance/monitoring">
+    Run the same suite on a cadence, too
+  </Card>
+</CardGroup>
+
+<Note>
+Recorded in April 2026, before TestSprite 3.0. The Web Portal screens look different today, but the integration approach still applies. See [GitHub Integration](/web-portal/integrations/github-integration) for the current setup.
+</Note>

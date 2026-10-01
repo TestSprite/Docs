@@ -1,15 +1,14 @@
 ---
 title: "Comparing Runs"
 description: "How to spot what changed between two scheduled runs — Previous Executions table, per-run pass count, Changes column, and the triage workflows built on them."
-icon: "code-compare"
 ---
 
 <Frame>
-  <img src="../../../images/compare-overview.png" alt="Schedule run history with Previous Executions, Status, and Changes columns" />
+  <img src="../../images/compare-overview.png" alt="Schedule run history with Previous Executions, Status, and Changes columns" />
 </Frame>
 
 <Info>
-**Comparing Runs depends on schedule run history**, which means it's a Pro feature too — Free accounts have no schedule slots, so there's no run history to diff. See [Schedules](/web-portal/maintenance/monitoring) for the gating details.
+**Comparing Runs depends on schedule run history**, so it's only available on plans that include [Test Schedules](/web-portal/maintenance/monitoring).
 </Info>
 
 ## Why Comparing Runs Matters
@@ -25,10 +24,10 @@ The Web Portal surfaces run-vs-run differences in the **schedule run-history tab
 
 ## The Schedule Run-History Table
 
-Open a schedule from <kbd>Testing → Monitoring</kbd>. Each run is a row, sorted newest-first.
+Open a schedule from <kbd>Automation → Test Schedules</kbd>. Each run is a row, sorted newest-first.
 
 <Frame>
-  <img src="../../../images/compare-tests.png" alt="Schedule run history table" />
+  <img src="../../images/compare-tests.png" alt="Schedule run history table" />
 </Frame>
 
 | Column | What it shows |
@@ -42,7 +41,7 @@ Click any non-running row to open that run's execution detail page, where the pe
 ### The Changes column
 
 <Frame>
-  <img src="../../../images/compare-changes.png" alt="Changes column with newly failed and newly recovered chips" />
+  <img src="../../images/compare-changes.png" alt="Changes column with newly failed and newly recovered chips" />
 </Frame>
 
 | Indicator | Meaning |
@@ -85,7 +84,7 @@ When the Changes column reports newly-failed tests:
   <Step title="Decide: real regression or test brittleness?">
     - If the user-visible flow itself is broken → file a bug, fix the product
     - If the test is too strict on something inconsequential (e.g. asserting on a timestamp that flaps) → [Refine the test](/web-portal/core/working-with-test/refining-tests)
-    - If the UI changed but the flow is fine → [Rerun with Auto-Heal](/web-portal/core/ui/auto-heal) (UI tests, Pro feature)
+    - If the UI changed but the flow is fine → [Rerun with Auto-Heal](/web-portal/core/ui/auto-heal) (UI tests)
   </Step>
 </Steps>
 
@@ -124,7 +123,7 @@ A streak of `—` in the Changes column means your suite is stable. Recurring re
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Schedule Monitoring" href="/web-portal/maintenance/monitoring" icon="clock">
+  <Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="clock">
     The schedules whose run history powers the Changes column
   </Card>
   <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-magnifying-glass">
@@ -133,7 +132,7 @@ A streak of `—` in the Changes column means your suite is stable. Recurring re
   <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen">
     Stabilize flaky tests via natural-language refinement
   </Card>
-  <Card title="Auto-Heal (Pro)" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
+  <Card title="Auto-Heal" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
     Absorb UI drift on rerun without changing the test
   </Card>
 </Columns>

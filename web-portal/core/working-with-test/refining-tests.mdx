@@ -1,20 +1,23 @@
 ---
 title: "Refining Tests"
 description: "Three ways to refine a test after the first run — edit the description, chat with the AI, or regenerate from scratch."
-icon: "pen-to-square"
 ---
 
 ## Overview
 
 The first run is rarely the last word. As you review results, you'll often want to tighten an assertion, point a step at a different element, expand the scope of a check, or rewrite a case entirely. TestSprite gives you three paths for that — pick the one that matches the size of the change.
     <Frame>
-    <img src="../../../images/refine-overview.png" alt="API testing overview" />
+    <img src="../../../images/refining-overview.png" alt="A test case open for refinement, with its description, code, and run evidence" />
     </Frame>
 | Path | When to use |
 | :--- | :--- |
 | <kbd>Edit the description</kbd> | You want to refocus or extend a single test (most common) |
 | <kbd>Chat with the AI</kbd> | You want to ask why a test failed and let the AI propose a fix |
 | <kbd>Regenerate the project</kbd> | The app changed materially and the existing plan no longer matches |
+
+<Note>
+This page is about **having the AI change a test** from your natural-language intent. When you'd rather change it yourself — rewrite steps directly, batch-edit the plan in form or YAML mode, add or delete cases by hand — that's [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases).
+</Note>
 
 ## Edit the Description
 
@@ -33,9 +36,9 @@ The fastest, most surgical path. You rewrite the test's description in natural l
   <Tab title="What happens">
     1. Open the test on the project detail page
     2. Click the description and edit it inline
-    3. Save the change
+    3. Click <kbd>Save & Run</kbd>
     4. TestSprite regenerates the affected step(s) automatically
-    5. Re-run the test (single test, not the whole project) to verify
+    5. The test re-runs (single test, not the whole project) so you can verify
   </Tab>
   <Tab title="Example">
     ```text Before
@@ -56,7 +59,7 @@ The fastest, most surgical path. You rewrite the test's description in natural l
 
 When you want a conversation about the test instead of writing the change yourself. Useful for "why did this fail?" and "what would you change?" workflows.
     <Frame>
-    <img src="../../../images/refine-chat-ai.png" alt="API testing overview" />
+    <img src="../../../images/refining-chat.png" alt="The Chats panel open beside a test case" />
     </Frame>
 <Tabs>
   <Tab title="When to use">
@@ -72,16 +75,6 @@ When you want a conversation about the test instead of writing the change yourse
     4. The assistant grounds its answer in the test's steps, the run's recording, and the failure trace
     5. Apply suggested edits with one click, or copy the explanation back into the description manually
   </Tab>
-  <Tab title="Suggested prompts">
-    The chat panel ships with a few starters:
-
-    - *What is this test checking?*
-    - *Why was this test designed this way?*
-    - *Why did this test fail?*
-    - *How do I fix the issue?*
-
-    You can ask anything else in natural language too.
-  </Tab>
 </Tabs>
 
 <Note>
@@ -92,7 +85,7 @@ The AI sees the test's steps and the latest run's outcome. It does **not** see y
 
 The largest hammer. Use this when your app has changed materially since the project was created and the existing plan is more outdated than fixable.
     <Frame>
-    <img src="../../../images/refine-regenerate.png" alt="API testing overview" />
+    <img src="../../../images/refining-regenerate.png" alt="Regenerate From Sources on the Test Coverage page" />
     </Frame>
 <Tabs>
   <Tab title="When to use">
@@ -101,21 +94,19 @@ The largest hammer. Use this when your app has changed materially since the proj
     - You want to **start fresh** with the same project name and settings
   </Tab>
   <Tab title="What happens">
-    1. Re-run the **Create a Test** wizard for the same starting URL or API
-    2. UI projects re-explore from scratch — TestSprite captures the new behavior
-    3. A fresh test plan is drafted against the current state of your app
-    4. You can review and run as if it were a new project
+    1. Open <kbd>Test Coverage</kbd> and click <kbd>Regenerate from sources</kbd>, then confirm
+    2. TestSprite discards the current use cases and builds a new set from the project's sources, in the same project
+    3. Plan tests from the new use cases
+    4. You can review and run as usual
   </Tab>
   <Tab title="Watch out">
-    Regenerating creates a new project; it doesn't overwrite the old one. If you want the new project to live alongside the old one (for comparison), keep them both. If you want to retire the old one, delete it from its detail page after the new one is solid.
-
-    For UI projects, regeneration counts against the **Free-plan exploration quota** (10 features lifetime). [See billing](/web-portal/admin/billing-and-plans) if you're close to the limit.
+    Regenerating can't be undone: all existing use cases and their generated test cases are removed. If you want the old suite to live alongside the new one (for comparison), create a new project instead.
   </Tab>
 </Tabs>
 
 ## Auto-Heal as a Refinement (UI Only)
 
-For UI tests, **Auto-Heal** is a fourth refinement path that doesn't require any explicit edit. When you rerun a UI test with Auto-Heal opted in, TestSprite recovers the test against the new page if the underlying flow is still intact — UI drift gets absorbed without your involvement.
+For UI tests, **Auto-Heal** is a fourth refinement path that doesn't require any explicit edit. When you rerun a UI test, TestSprite recovers the test against the new page if the underlying flow is still intact; UI drift gets absorbed without your involvement.
 
 This is the right tool when:
 
@@ -123,7 +114,7 @@ This is the right tool when:
 - You've redesigned the UI and the test is now hitting outdated selectors
 - You want a no-touch path for nightly schedules to absorb routine drift
 
-Auto-Heal is a Pro feature (Starter / Standard) — see [Auto-Heal](/web-portal/core/ui/auto-heal) for what it covers, the toggle locations, and how it's billed (extra credits only when recovery actually does work).
+Not every plan includes Auto-Heal; see [Auto-Heal](/web-portal/core/ui/auto-heal) for what it covers.
 
 ## Re-Running After a Refinement
 
@@ -158,10 +149,10 @@ After any refinement you have two options:
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="layout">
+  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
     Where these refinement actions live in the UI
   </Card>
-  <Card title="Comparing Runs" href="/web-portal/maintenance/comparing-runs" icon="git-compare">
+  <Card title="Comparing Runs" href="/web-portal/maintenance/comparing-runs" icon="code-compare">
     Verify your refinement actually changed the right tests
   </Card>
   <Card title="UI Testing" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
