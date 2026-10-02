@@ -1,11 +1,10 @@
 ---
 title: "Integration Tests"
 description: "Multi-step API tests that chain endpoints together — one step's response feeds the next request. TestSprite identifies these workflows in your API automatically."
-icon: "link"
 ---
 
 <Frame>
-  <img src="../../../images/integration-overview.png" alt="Integration Tests page with assembled chains" />
+  <img src="../../../images/api-testing-integration-test-overview.png" alt="Integration Tests page with assembled chains" />
 </Frame>
 
 ## What Integration Tests Are
@@ -33,20 +32,17 @@ Related capabilities — each has its own page:
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     Records created during a run get deleted afterward
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visual graph of every HTTP call across a chain
-  </Card>
 </CardGroup>
 
 ## Where Integration Tests Live in the UI
 
-Integration tests have their own sidebar tab — **Workflows → Integration Tests** — distinct from the per-endpoint **Endpoint Tests** list. From this tab you can:
+Integration tests have their own sidebar tab, **Test Cases → Integration Tests**, distinct from the per-endpoint **Endpoint Tests** list. From this tab you can:
 
 - Browse the list of auto-assembled chains
-- Click into any chain to see its step sequence + per-step status
-- **Rerun all** chains from the toolbar, or open a chain and rerun it on its own
+- Click into any chain to see its step sequence
+- **Run all** chains from the toolbar, or open a chain and rerun it on its own
 - Refine a chain in chat (add a step, drop a step, change the sequence)
-- See per-chain statistics — how many steps, which captures flow through it
+- See per-chain statistics: how many steps
 
 ## What a Chain Looks Like
 
@@ -88,14 +84,13 @@ These are the common "individual endpoints work but the system doesn't" bugs. En
 Click into an integration test from the list. The detail page shows:
 
 <Frame>
-  <img src="../../../images/integration-detail.png" alt="Integration test detail page with step list" />
+  <img src="../../../images/api-testing-integration-test-Per-Chain-View.png" alt="An integration test detail page — its five chained steps beside the assembled code" />
 </Frame>
 
 | Section | What you see |
 | :--- | :--- |
-| <kbd>Step list</kbd> | Each step with its method, path, status chip, and what values it produces or uses |
-| <kbd>Variable wiring</kbd> | Between consecutive steps, badges show which variable was produced and consumed |
-| <kbd>Per-step request/response</kbd> | Click a step to expand the full HTTP detail (same shape as an endpoint test detail) |
+| <kbd>Step list</kbd> | Each step with its method and path |
+| <kbd>Stdout</kbd> | The full HTTP detail of each step's call, once the chain has run |
 | <kbd>Chain-level error</kbd> | If the chain failed, surface where it broke and why |
 
 ## When a Chain Fails
@@ -108,7 +103,7 @@ Integration tests can fail in three distinguishable ways:
 
 | Failure shape | Meaning | Where to look |
 | :--- | :--- | :--- |
-| <kbd>Step N failed assertion</kbd> | Step N's HTTP call returned, but the assertion failed | Click step N → review request/response → refine or fix the API |
+| <kbd>Step N failed assertion</kbd> | Step N's HTTP call returned, but the assertion failed | Check step N's request/response in **Stdout** → refine or fix the API |
 | <kbd>Step N TEST BLOCKED</kbd> | An upstream step (M before N) failed, so step N couldn't run | Fix step M first; step N runs automatically on rerun |
 | <kbd>Variable not found</kbd> | Step N needs a value that wasn't produced by any earlier step | Refine in chat with a hint: "Make sure POST /users captures user_id" |
 
@@ -148,7 +143,7 @@ UI testing has its own multi-step concept — a "use case" with multiple actions
   <Accordion title="A chain runs N steps then says 'Variable not found'">
     A later step needs a value that no earlier step provided. Common causes:
     - **Naming mismatch**: an earlier step produces `user_id` but the later step references `userId`. Refine in chat to align the names.
-    - **Earlier step didn't return the expected field**: the producer step Passed but its response didn't include the field. Click that step and review the response — the field may not exist. Refine to capture from a different field.
+    - **Earlier step didn't return the expected field**: the producer step Passed but its response didn't include the field. Check that step's response in **Stdout**; the field may not exist. Refine to capture from a different field.
   </Accordion>
   <Accordion title="My chain runs faster than my API can handle (eventual consistency)">
     Add a wait in chat: "After the POST step, wait 250ms before the GET". Useful for systems with eventual consistency.
@@ -171,8 +166,5 @@ UI testing has its own multi-step concept — a "use case" with multiple actions
   </Card>
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     Records created during a run get deleted afterward
-  </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/data-flow" icon="diagram-project">
-    Visualize what actually happened during the run
   </Card>
 </Columns>

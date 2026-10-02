@@ -6,28 +6,25 @@ icon: "clipboard-list"
 
 ## What is the TestSprite Web Portal?
 
-The TestSprite Web Portal is a browser dashboard that takes a project from "I have an app" to "I have a passing test suite running on a schedule" — without writing a single line of test code. It complements the [MCP Server](/mcp/getting-started/overview) (which lives in your IDE) by giving non-IDE users, QA, and engineering teams a shared place to configure projects, manage credentials, run tests, and review reports.
+The TestSprite Web Portal is a browser dashboard that takes a project from "I have an app" to "I have a passing test suite running on a schedule", without writing a single line of test code. It complements the [TestSprite CLI](/cli/getting-started/overview) and the [MCP Server](/mcp/getting-started/overview), which bring TestSprite into your terminal, IDE, and coding agent, by giving QA, engineering teams, and anyone who'd rather not work from a terminal or IDE a shared place to configure projects, manage credentials, run tests, and review reports.
 
 <Frame>
-  <img src="../../images/web-overview.png" alt="Web Portal dashboard" />
+  <img src="../../images/Overview-Overview.png" alt="Web Portal dashboard" />
 </Frame>
 
 ### Spec-Driven Testing
 
-TestSprite is **spec-driven**. Plans are derived from what your product is *supposed to do* (your PRD), what the live app *actually does* (exploration / discovery), and the gap between the two.
+TestSprite is **spec-driven**. Plans are derived from what your product is *supposed to do* (your PRD), what the live app *actually does* (exploration / discovery), and the gap between the two. Uploading a PRD isn't required, but it is **strongly recommended**. It's how TestSprite builds an accurate feature map of your product before any test is written, and it directly improves the quality and coverage of the generated plan.
 
-<Tip>
-Uploading a PRD isn't required, but it is **strongly recommended** — it's how TestSprite builds an accurate feature map of your product before any test is written, and it directly improves the quality and coverage of the generated plan.
-</Tip>
 <Frame>
-  <img src="../../images/web-spec-driven.png" alt="Web Portal dashboard" />
+  <img src="../../images/overview-spec-driven.png" alt="Test Sources in the New Project form: the PRD upload card, marked Strongly Recommended" />
 </Frame>
 ### What It Tests
 
 TestSprite covers two test types from the same dashboard:
 
 <Frame>
-  <img src="../../images/web-test-type.png" alt="Web Portal dashboard" />
+  <img src="../../images/overview-type.png" alt="Web Portal dashboard" />
 </Frame>
 
 <table style={{ lineHeight: "1.9" }}>
@@ -54,44 +51,44 @@ TestSprite covers two test types from the same dashboard:
 
 ## How It Works
 
-You provide a URL, credentials, and a PRD (**strongly recommended**). TestSprite builds a feature map from the PRD, explores or discovers your app, drafts a plan you can review, generates the tests, runs them in the cloud, and gives you a report you can refine in natural language.
+You provide a URL, credentials, and a PRD (**strongly recommended**). TestSprite builds a feature map from the PRD, explores or discovers your app, drafts a plan you can review, generates the tests, runs them in the cloud, and gives you a report. You can also refine the tests in natural language.
 
 <Steps>
   <Step title="Project Setup & PRD Upload">
-    Name the project and upload your PRD (or any product-spec document — markdown / PDF / plain text all work). PRD upload is **strongly recommended**; it's the only thing this step asks for besides the name.
+    Click <kbd>New Project</kbd>, name the project, and provide your live URL and test-account credentials. For API projects, also provide your API documentation (OpenAPI / Swagger / Postman or any free-form docs). Then upload your PRD (or any product-spec document; markdown, PDF, and plain text all work) and add natural-language hints for what to focus on or skip. PRD upload is **strongly recommended**.
       <Frame>
-      <img src="../../images/web-test-upload-prd.png" alt="Web Portal dashboard" />
-    </Frame>
-  </Step>
-  <Step title="Feature & Use-Case Extraction">
-    TestSprite reads your PRD and produces a **feature map** — a structured list of features and the use cases under each, rendered as a flow graph. This is what grounds the rest of the lifecycle; if you skipped the PRD, this step is bypassed and the wizard falls back to your URL inputs alone.
-        <Frame>
-      <img src="../../images/web-test-use-case.png" alt="Web Portal dashboard" />
-    </Frame>
-  </Step>
-  <Step title="Configure">
-    Provide your live URL, test-account credentials, and — for API projects — your API documentation (OpenAPI / Swagger / Postman or any free-form docs). Add natural-language hints for what to focus on or skip.
-      <Frame>
-      <img src="../../images/web-configure.png" alt="Web Portal dashboard" />
+      <img src="../../images/overview-configure.png" alt="New Project form across its three steps: Basics, Access details, and Test Sources" />
     </Frame>
   </Step>
   <Step title="Explore or Discover">
-    For UI, TestSprite walks your live app feature by feature, targeting the use cases from the feature map. For API, TestSprite reads endpoints from your docs and probes the base URL to confirm shapes.
+    For UI, TestSprite walks your live app feature by feature. For API, TestSprite reads endpoints from your docs and probes the base URL to confirm shapes.
         <Frame>
-      <img src="../../images/web-explore.png" alt="Web Portal dashboard" />
+      <img src="../../images/overview-Explore.png" alt="Web Portal dashboard" />
+    </Frame>
+  </Step>
+  <Step title="Feature & Use-Case Extraction">
+    TestSprite reads your PRD and produces a **feature map**: a structured list of features and the use cases under each, rendered as a flow graph. This is what grounds the rest of the lifecycle; if you skipped the PRD, the map is built from what TestSprite explored or discovered alone.
+        <Frame>
+      <img src="../../images/overview-use-case.png" alt="Web Portal dashboard" />
     </Frame>
   </Step>
   <Step title="Plan and Review">
     A test plan is drafted from the feature map + what was observed. You select / deselect / edit cases before generation runs.
       <Frame>
-      <img src="../../images/web-plan.png" alt="Web Portal dashboard" />
+      <img src="../../images/overview-plan.png" alt="Web Portal dashboard" />
     </Frame>
   </Step>
   <Step title="Generate, Run, Report">
     Tests are generated and executed in our cloud. A run-level report highlights failures and suggests causes.
+    <Frame>
+      <img src="../../images/overview-run-report.png" alt="A run in progress over the Test Cases list, with the Test Report and its pass / failed / blocked donut in front" />
+    </Frame>
   </Step>
   <Step title="Refine and Schedule">
-    Iterate on individual tests via the Chat tab. Group tests into Test Lists. Schedule continuous runs to catch regressions.
+    Iterate on individual tests via <kbd>Chats</kbd>. Group tests into Test Lists. Schedule continuous runs to catch regressions.
+    <Frame>
+      <img src="../../images/overview-Edit-schedule.png" alt="Refining a test case in Chats alongside the New Schedule panel with its daily time trigger" />
+    </Frame>
   </Step>
 </Steps>
 
@@ -104,7 +101,7 @@ You provide a URL, credentials, and a PRD (**strongly recommended**). TestSprite
 Different roles get different value out of the same dashboard:
 
 - **For developers:** Skip the test-writing boilerplate. Watch your changes get exercised against real flows in minutes, not hours. Iterate in natural language when something needs to be tightened.
-- **For QA teams:** Replace handwritten regression suites with a plan TestSprite re-derives from your live app. Use Test Lists and Monitoring to keep coverage running on a cadence.
+- **For QA teams:** Replace handwritten regression suites with a plan TestSprite re-derives from your live app. Use Test Lists and Test Schedules to keep coverage running on a cadence.
 - **For engineering leads:** Get reproducible reports, severity-ranked failures, and a defensible coverage story without standing up a test-writing organization.
 
 ## What Makes It Different
@@ -116,13 +113,16 @@ Different roles get different value out of the same dashboard:
 | <kbd>Maintenance</kbd> | UI tests break on every minor tweak | **Auto-Heal** recovers UI tests when the page changes; **Auto-Auth** refreshes API tokens |
 | <kbd>Debugging</kbd> | Reading stack traces, hunting causes | **AI cause-and-fix** on every failure; refine in natural language |
 | <kbd>Coverage</kbd> | Limited to what someone wrote down | **Plan derived from observed behavior** — not just intent |
+| <kbd>Driving the tool</kbd> | Click through a UI for every change | **AI Chat** — describe what you want in plain language and approve what it proposes |
+| <kbd>Team collaboration</kbd> | Tests live on one engineer's machine | **Shared workspaces** with roles, so a whole team sees the same projects and results |
+| <kbd>Acting on failures</kbd> | Someone has to remember to check | **Slack notifications and auto-filed tickets** when a run finishes |
 
 ## Testing Capabilities
 
 <Tabs>
   <Tab title="UI Testing (Frontend)">
     - **PRD-driven Feature Map** — features and use cases derived from your spec, rendered as a flow graph
-    - **Feature Exploration (Beta)** — TestSprite walks your live app before any plan is written, targeting the use cases from the feature map
+    - **Feature Exploration** — TestSprite walks your live app before any plan is written, targeting the use cases from the feature map
     - **Plan derived from spec + observed flows** — grounded in both intent and reality
     - **Auto-Heal** — recover automatically when the page changes instead of marking tests Failed
     - **Step-by-step replay** — per-step screenshots + recorded video for every run
@@ -134,9 +134,9 @@ Different roles get different value out of the same dashboard:
     - **Discovery** — endpoints sourced from OpenAPI / Swagger / Postman collections (or free-form docs you upload) plus live probes
     - **Dependency Chains** — independent tests run in parallel; dependent tests wait for what they need, with values passed forward
     - **Auto-Cleanup** — created resources are removed after the suite finishes
-    - **Auto-Auth (Pro)** — auto-refresh login tokens before every run
+    - **Auto-Auth**: auto-refresh login tokens before every run
     - **Dynamic Variables** — captured-at-runtime values surface in their own table
-    - **Data Flow** — Flow + Calls views for inspecting traffic across a chain
+    - **Data Flow**: each API test case shows the values it captures and the values it consumes
   </Tab>
 </Tabs>
 
@@ -144,13 +144,15 @@ Different roles get different value out of the same dashboard:
 
 | Surface | What it does |
 | :--- | :--- |
-| <kbd>Create Tests</kbd> | The wizard that drives Configuration → Exploration/Discovery → Plan → Generation |
-| <kbd>All Tests</kbd> | Every project you've created, grouped by type, with run status and quick-rerun |
+| <kbd>Chats</kbd> | Describe what you want in plain language (create a project, add cases, start a run, ask about results) and approve each action before it happens. See [AI Chat](/web-portal/ai-chat/overview) |
+| <kbd>All Projects</kbd> | Every project you've created, grouped by type, with run status and quick-rerun |
 | <kbd>Test Lists</kbd> | Group tests across projects into a single executable list — see [Test Lists](/web-portal/maintenance/test-lists) |
-| <kbd>Monitoring</kbd> | Schedule Test Lists to run on a cadence with execution history — see [Monitoring](/web-portal/maintenance/monitoring) |
-| <kbd>Settings → API Keys</kbd> | Generate keys for MCP / external tooling |
-| <kbd>Settings → GitHub App</kbd> | Connect repos for PR-based test runs and code export |
-| <kbd>Settings → Plan & Billing</kbd> | Plan tier, monthly credits, and feature gating |
+| <kbd>Test Schedules</kbd> | Schedule Test Lists to run on a cadence with execution history. See [Test Schedules](/web-portal/maintenance/monitoring) |
+| <kbd>Workspace switcher</kbd> | Top of the left sidebar — shows the active workspace and switches between your personal and team workspaces. What you see and what you may do both change with it |
+| <kbd>Workspace Settings</kbd> | Rename the workspace, manage members and roles. See [Workspaces](/web-portal/admin/workspaces) and [Members & Roles](/web-portal/admin/members-and-roles) |
+| <kbd>Workspace Settings → Connections</kbd> | <kbd>Integrations</kbd> (GitHub, Slack, Linear, Jira, Figma) and <kbd>API Keys</kbd> for the CLI and MCP server |
+| <kbd>Notifications & Ticketing</kbd> | Per-project: post run summaries to Slack and turn failures into tickets — see [Slack Notifications](/web-portal/integrations/slack-notifications) and [Ticketing](/web-portal/integrations/ticketing) |
+| <kbd>Workspace Settings → Billing</kbd> | The workspace's plan and usage |
 
 ## Where to Go Next
 

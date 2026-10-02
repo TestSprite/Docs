@@ -16,6 +16,16 @@
   "css": [
     "/styles/border-radius.css"
   ],
+  "redirects": [
+    {
+      "source": "/web-portal/core/api/data-flow",
+      "destination": "/web-portal/core/api/dynamic-variables"
+    },
+    {
+      "source": "/web-portal/admin/billing-and-plans",
+      "destination": "/web-portal/admin/workspaces"
+    }
+  ],
   "colors": {
     "primary": "#54B365",
     "dark": "#54B365",
@@ -78,6 +88,21 @@
             ]
           },
           {
+            "group": "AI Chat",
+            "pages": [
+              "web-portal/ai-chat/overview",
+              "web-portal/ai-chat/approving-actions"
+            ]
+          },
+          {
+            "group": "Project Setup",
+            "pages": [
+              "web-portal/setup/environments",
+              "web-portal/setup/project-sources",
+              "web-portal/setup/execution-settings"
+            ]
+          },
+          {
             "group": "Core",
             "pages": [
               {
@@ -87,6 +112,7 @@
                 "pages": [
                   "web-portal/core/ui/ui-testing",
                   "web-portal/core/ui/quickstart",
+                  "web-portal/core/ui/ui-authentication",
                   "web-portal/core/ui/feature-exploration",
                   "web-portal/core/ui/ui-plan-gen",
                   "web-portal/core/ui/ui-test-gen",
@@ -110,7 +136,6 @@
                   "web-portal/core/api/dynamic-variables",
                   "web-portal/core/api/dependency-chains",
                   "web-portal/core/api/auto-cleanup",
-                  "web-portal/core/api/data-flow",
                   "web-portal/core/api/auto-auth",
                   "web-portal/core/api/api-rerun"
                 ]
@@ -120,10 +145,20 @@
                 "icon": "wrench",
                 "expanded": true,
                 "pages": [
+                  "web-portal/core/working-with-test/coverage-map",
+                  "web-portal/core/working-with-test/managing-test-cases",
                   "web-portal/core/working-with-test/test-detail",
                   "web-portal/core/working-with-test/refining-tests"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Results & Insights",
+            "pages": [
+              "web-portal/results/test-report",
+              "web-portal/results/project-overview",
+              "web-portal/results/live-run"
             ]
           },
           {
@@ -144,14 +179,18 @@
           {
             "group": "Integrations",
             "pages": [
-              "web-portal/integrations/github-integration"
+              "web-portal/integrations/github-integration",
+              "web-portal/integrations/slack-notifications",
+              "web-portal/integrations/ticketing"
             ]
           },
           {
-            "group": "Admin",
+            "group": "Workspace & Admin",
             "pages": [
-              "web-portal/admin/api-keys",
-              "web-portal/admin/billing-and-plans"
+              "web-portal/admin/workspaces",
+              "web-portal/admin/members-and-roles",
+              "web-portal/admin/sharing",
+              "web-portal/admin/api-keys"
             ]
           }
         ]
@@ -166,6 +205,7 @@
               "cli/getting-started/overview",
               "cli/getting-started/installation",
               "cli/getting-started/quickstart",
+              "cli/getting-started/quickstart-for-agents",
               {
                 "group": "Concepts",
                 "icon": "book",
@@ -290,9 +330,14 @@
         "icon": "graduation-cap",
         "groups": [
           {
-            "group": "Examples",
+            "group": "Tutorials",
             "pages": [
-              "learn/mcp-demo"
+              "learn/mcp-demo",
+              "learn/tutorial-local-to-production",
+              "learn/tutorial-plan-test-ship",
+              "learn/tutorial-github-ci",
+              "learn/tutorial-cli-claude-code",
+              "learn/tutorial-cli-local-llm"
             ]
           },
           {
@@ -328,11 +373,5 @@
       "linkedin": "https://linkedin.com/company/testsprite",
       "discord": "https://discord.gg/QQB9tJ973e"
     }
-  },
-  "redirects": [
-    {
-      "source": "/cli/getting-started/quickstart-for-agents",
-      "destination": "/cli/getting-started/quickstart"
-    }
-  ]
+  }
 }

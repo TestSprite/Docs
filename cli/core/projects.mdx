@@ -116,7 +116,7 @@ Backend projects can inject auth into every backend test run, either as a static
 # Static credential (free tier) — Bearer token, API key, or Basic auth
 testsprite project credential <project-id> --type "Bearer token" --credential-file ./token.txt
 
-# Recurring-token auto-refresh login (Pro) — fetches a fresh token on every run
+# Recurring-token auto-refresh login — fetches a fresh token on every run
 testsprite project auto-auth <project-id> --method refresh_token --inject bearer \
   --token-endpoint https://auth.example.com/oauth/token \
   --client-id my-client-id --client-secret-file ./client-secret.txt \

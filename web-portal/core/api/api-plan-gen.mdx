@@ -1,24 +1,23 @@
 ---
 title: "Plan Generation & Editing"
 description: "How TestSprite turns discovered endpoints into a structured test plan, and how to review, prune, refine, and add to it before generation runs."
-icon: "list-check"
 ---
 
 <Frame>
-  <img src="../../../images/plangen-overview.png" alt="API plan review with category groupings" />
+  <img src="../../../images/api-testing-plan-edit-overview.png" alt="API plan review with tests grouped by category" />
 </Frame>
 
 ## What Plan Generation Does
 
-Plan Generation is the bridge between "TestSprite knows your endpoints" and "TestSprite has runnable tests". For every endpoint that survived [API Discovery](/web-portal/core/api/api-discovery), this phase produces a **structured plan**: a list of test cases grouped by category, each with a title, description, expected behavior, and priority.
+Plan Generation is the bridge between "TestSprite knows your endpoints" and "TestSprite has runnable tests". For every endpoint that survived [API Discovery](/web-portal/core/api/api-discovery), this phase produces a **structured plan**: a list of test cases grouped by use case, each with a title, description, expected behavior, and priority.
 
 <Card>
 ```mermaid
 flowchart LR
     A[Endpoints known<br/>from API Discovery] --> B[Plan Generation]
-    B --> C[Structured plan<br/>category · title · description<br/>expected behavior · priority]
+    B --> C[Structured plan<br/>use case · title · description<br/>expected behavior · priority]
     C --> D{Your review<br/>edit · prune · add}
-    D -->|Generate| E[Runnable tests]
+    D -->|Run all| E[Runnable tests]
 ```
 </Card>
 
@@ -33,13 +32,13 @@ The plan is a *contract* between you and TestSprite. You can read it, edit it, p
 | Input | Where it comes from | What plan generation does with it |
 | :--- | :--- | :--- |
 | <kbd>Discovered endpoints</kbd> | [API Discovery](/web-portal/core/api/api-discovery) | One sub-plan per endpoint, with shape-appropriate tests |
-| <kbd>PRD / docs upload</kbd> | Configuration step | Anchors the description and asserted behavior in what the endpoint is *for* |
+| <kbd>PRD / docs upload</kbd> | New Project form | Anchors the description and asserted behavior in what the endpoint is *for* |
 | <kbd>Response shapes from discovery</kbd> | Discovery phase | Used as ground truth for response shape, so tests reference real field names |
-| <kbd>Extra testing instructions</kbd> | Configuration step | "Skip the admin endpoints", "Always assert response time < 200ms" — these get woven in |
+| <kbd>Extra Instructions</kbd> | New Project form | "Skip the admin endpoints", "Always assert response time < 200ms"; these get woven in |
 
 ## The Plan Structure
 
-Each endpoint gets a **sub-plan** organized by category. Categories are picked based on what the endpoint does — common ones include:
+Each endpoint gets a **sub-plan** covering several categories of tests, picked based on what the endpoint does. Common ones include:
 
 <Frame>
   <img src="../../../images/plangen-type.png" alt="API plan with category groupings" />
@@ -55,17 +54,17 @@ Not every category applies to every endpoint. A small CRUD endpoint might produc
 
 ## Reviewing the Plan
 
-The plan view is grouped by category; each row is collapsible.
+Click <kbd>Plan Tests</kbd> on **Test Coverage** to generate the plan. It opens in **Review proposed tests**, grouped by use case. Pick a use case on the left to see its tests.
 
 <Steps>
-  <Step title="Expand a category to see the tests in it">
+  <Step title="Pick a use case to see the tests in it">
     Each row inside shows the test title (a one-liner) and a short description. Click the row body to expand the description into full detail.
     <Frame>
       <img src="../../../images/plangen-category.png" alt="API plan review with category groupings" />
     </Frame>
   </Step>
   <Step title="Untick anything you don't want">
-    The checkbox at the start of each row controls whether the test will be generated. Untick irrelevant or duplicative cases. Whole categories can be untick-all'd via the category header checkbox.
+    The checkbox at the start of each row controls whether the test will be generated. Untick irrelevant or duplicative cases. A whole use case can be untick-all'd via its **Select All** checkbox.
         <Frame>
       <img src="../../../images/plangen-deselect.png" alt="API plan review with category groupings" />
     </Frame>
@@ -85,105 +84,63 @@ The plan view is grouped by category; each row is collapsible.
 </Steps>
 
 <Tip>
-**Don't be precious about pruning.** Selecting all is usually right on a first run — you get full coverage. If a category produces too many tests for your liking, untick the ones you find low-value rather than disabling the whole category. The high-leverage tests in any category tend to be 60% of what's there.
+**Don't be precious about pruning.** Selecting all is usually right on a first run, since you get full coverage. If a use case produces too many tests for your liking, untick the ones you find low-value rather than disabling the whole use case. The high-leverage tests in any use case tend to be 60% of what's there.
 </Tip>
 
 ## Adding Tests in Natural Language
 
-The bottom of the plan list has a chat input — "Add a test in natural language". TestSprite parses the request, figures out which endpoint(s) it applies to, and writes a new plan row for it.
+Below the list, click <kbd>+ More Test Case for &lt;use case&gt;</kbd> to add a blank row to that use case, then write its name and description in natural language. TestSprite generates the test from what you write.
       <Frame>
-      <img src="../../../images/plangen-add-test.png" alt="API plan review with category groupings" />
+      <img src="../../../images/api-testing-plan-edit-add-manually.png" alt="A Custom test row with empty name and description, added via + More Test Case" />
     </Frame>
 <CodeGroup>
 ```text Targeted addition
-Add a test for POST /orders that posts an order with quantity=0 and expects a 400.
-```
-
-```text Cross-cutting concern
-For every GET endpoint, add a test that it responds in under 500ms.
+POST /orders with quantity=0 is rejected with a 400.
 ```
 
 ```text Domain-specific edge
-Test that POST /users with an email already used by another user returns 409 Conflict, not 200.
+POST /users with an email already used by another user returns 409 Conflict, not 200.
 ```
 </CodeGroup>
 
 <Info>
-**The added test is the same shape as auto-generated rows.** It gets a category, title, description, and priority; you can edit, prune, or reorder it just like the rest.
+**The added test is the same shape as auto-generated rows.** It gets a use case, title, description, and priority; you can edit, prune, or reorder it just like the rest.
 </Info>
 
-## Refining the Plan via Natural Language
+## What "Run all" Actually Triggers
 
-Beyond Add-a-test, the chat panel on the right side supports broader refinements:
+Clicking **Run all** (or **Run N tests**) adds the selected tests and starts generating and running them. The plan is locked in at click-time; subsequent edits would require regenerating.
 
-      <Frame>
-      <img src="../../../images/plangen-edit.png" alt="API plan review with category groupings" />
-    </Frame>
-
-<CodeGroup>
-```text Drop
-Drop all tests that use an admin token — we're testing the customer-facing surface only.
-```
-
-```text Scope
-For the GET /users tests, only test the happy path and the unauthorized case. Skip the perf and edge categories.
-```
-
-```text Tighten
-The /payments endpoints are PCI-scoped — make sure every Security test verifies that no card numbers leak in error responses.
-```
-</CodeGroup>
-
-TestSprite parses the request, applies it to the affected rows (which can be a few or hundreds depending on scope), and the plan re-renders. You can review and undo the change before clicking **Generate Tests**.
-
-## What "Generate Tests" Actually Triggers
-
-Clicking **Generate Tests** advances the wizard to test generation. The plan is locked in at click-time — subsequent edits would require regenerating.
-
-<Card title="Endpoint Tests Generation" href="/web-portal/core/api/endpoint-tests" icon="cube">
+<Card title="Endpoint Tests" href="/web-portal/core/api/endpoint-tests" icon="cube">
   The next phase — each plan row becomes a runnable test
 </Card>
-
-## Plan Generation and Free-Plan Limits
-
-Plan Generation itself is **free for all plans**. You can generate plans on any number of endpoints, on any plan tier. The limit applies downstream — at test generation time, where each generated test consumes one credit.
-
-<Card title="Subscription Plans" href="/web-portal/admin/billing-and-plans" icon="credit-card">
-  See plan tiers, credit allocations, and upgrade options
-</Card>
-
-<Info>
-**This is intentional**. Plan generation is where you decide what's worth testing; you should have unlimited room to explore options before spending credits on the actual tests.
-</Info>
 
 ## When Plan Generation Looks Wrong
 
 <AccordionGroup>
   <Accordion title="A test asserts on a field that doesn't exist">
-    Discovery didn't fully observe this endpoint's response, so plan generation inferred the shape from your docs. Either:
-    - Re-run [API Discovery](/web-portal/core/api/api-discovery) once the endpoint is reachable, then regenerate the plan
-    - Or correct the test description in place to match the real shape — generation will follow your edit
+    Discovery didn't fully observe this endpoint's response, so plan generation inferred the shape from your docs. Correct the test description in place to match the real shape, and generation will follow your edit.
   </Accordion>
   <Accordion title="An obvious test wasn't generated">
     Two common causes:
     - The endpoint wasn't in the discovered set ([revisit Discovery](/web-portal/core/api/api-discovery))
-    - The test was judged redundant or out-of-scope. Add a "Make sure to cover X" instruction in the chat.
+    - The test was judged redundant or out-of-scope. Add it yourself with <kbd>+ More Test Case</kbd>.
   </Accordion>
   <Accordion title="Tests are too generic — they don't reflect our domain">
-    You probably haven't given enough domain context. Use the "Extra testing instructions" textarea on the configuration step or upload a richer PRD — describe your domain rules ("orders have a status enum: pending, confirmed, shipped, delivered, cancelled") so the plan reflects them in titles and assertions.
+    You probably haven't given enough domain context. Use **Extra Instructions** (in **Project Settings → General**) or upload a richer PRD. Describe your domain rules ("orders have a status enum: pending, confirmed, shipped, delivered, cancelled") so the plan reflects them in titles and assertions.
   </Accordion>
   <Accordion title="The Security category is overkill for an internal-only API">
-    Untick the Security category at its header. The default sizing assumes external exposure; for internal services 1–2 auth checks are usually enough.
+    Untick the security tests in the review. The default sizing assumes external exposure; for internal services 1–2 auth checks are usually enough.
   </Accordion>
   <Accordion title="Plan generation returned 0 tests for an endpoint">
-    Discovery captured the endpoint, but the plan judged it unsafe to test (missing auth pattern, unclear response shape). Look at the Discovery row for that endpoint — if it shows "Unconfirmed" status, fix the discovery issue and re-run.
+    Discovery captured the endpoint, but the plan judged it unsafe to test (missing auth pattern, unclear response shape). Add the test yourself with <kbd>+ More Test Case</kbd>.
   </Accordion>
 </AccordionGroup>
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Endpoint Tests Generation" href="/web-portal/core/api/endpoint-tests" icon="cube">
+  <Card title="Endpoint Tests" href="/web-portal/core/api/endpoint-tests" icon="cube">
     The next phase — turn the plan into runnable tests
   </Card>
   <Card title="Integration Tests Generation" href="/web-portal/core/api/integration-tests" icon="link">

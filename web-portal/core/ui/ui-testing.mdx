@@ -1,11 +1,16 @@
 ---
 title: "Overview"
 description: "AI-powered front-end testing for web apps. Explore your app, generate plans grounded in real behavior, ship browser tests, watch them run, replay any step."
-icon: "magnifying-glass-chart"
 ---
 
+{/* #TODO_UPDATE — V3.1 修改（条目 4.2）：
+  1. Key Features 表加一行「多种登录方式」(multiple login methods)
+  2. Journey 流程图前面补一步「配置登录」(configure login)，链接到新的 Authentication (UI) 页
+  3. 「What Lives Where」侧栏表同步新增 tab
+*/}
+
 <Frame>
-  <img src="../../../images/ui-overview.png" alt="UI testing overview" />
+  <img src="../../../images/first-test-Overview.png" alt="UI testing overview" />
 </Frame>
 
 UI Testing in TestSprite is a journey from "here's my web app" to "here's a regression suite that catches UI bugs without breaking on every minor refactor". This page is the map.
@@ -15,33 +20,38 @@ UI Testing in TestSprite is a journey from "here's my web app" to "here's a regr
 | Feature | Description |
 | :--- | :--- |
 | <kbd>Fast Setup</kbd> | Get started in minutes — share your URL and (optionally) a test account |
-| <kbd>Feature Exploration (Beta)</kbd> | TestSprite explores your live app feature by feature so the test plan reflects real behavior, not docs |
+| <kbd>Feature Exploration</kbd> | TestSprite explores your live app feature by feature so the test plan reflects real behavior, not docs |
 | <kbd>AI-Generated Test Cases</kbd> | Test plans tailored to your real screens and flows; full control to add, remove, or refine |
 | <kbd>Step-by-Step Replay</kbd> | Every run records a video + per-step screenshots — replay to see what happened visually |
 | <kbd>Live Test Preview</kbd> | Watch tests run in real time and catch issues as they happen |
-| <kbd>Auto-Heal (Pro)</kbd> | When the UI drifts, TestSprite re-decides selectors against the live DOM instead of marking the test Failed |
+| <kbd>Auto-Heal</kbd> | When the UI drifts, TestSprite re-decides selectors against the live DOM instead of marking the test Failed |
 | <kbd>Natural Language Refinement</kbd> | Adjust any test in natural language — no code required |
 | <kbd>Reusable Test Code</kbd> | Generated Python + Playwright tests, ready to drop into CI/CD or regression suites |
+| <kbd>Multiple Sign-In Methods</kbd> | Log in with your own test account, let TestSprite register and manage accounts (email & SMS OTP supported), or record a browser session for Google and other third-party logins {/* V3.1 (Sherry): TODO finalize wording */} |
 
 ## The UI Testing Journey
 
 <Card>
 ```mermaid
 flowchart LR
-    A[1. Feature Exploration<br/>walk the live app<br/>feature by feature]
-    B[2. Plan Generation<br/>test cases grounded<br/>in observed flows]
-    C[3. Test Generation<br/>Python + Playwright<br/>per test case]
-    D[4. Run + Step-by-Step<br/>watch live, replay later]
-    E[5. Rerun<br/>re-execute on demand<br/>or on a schedule]
-    F[6. Auto-Heal Pro<br/>absorb UI drift on<br/>subsequent runs]
+    Z[1\. Configure Login<br/>pick a sign-in method<br/>for your app]
+    A[2\. Feature Exploration<br/>walk the live app<br/>feature by feature]
+    B[3\. Plan Generation<br/>test cases grounded<br/>in observed flows]
+    C[4\. Test Generation<br/>Python + Playwright<br/>per test case]
+    D[5\. Run + Step-by-Step<br/>watch live, replay later]
+    E[6\. Rerun<br/>re-execute on demand<br/>or on a schedule]
+    F[7\. Auto-Heal<br/>absorb UI drift on<br/>subsequent runs]
 
-    A --> B --> C --> D --> E --> F
+    Z --> A --> B --> C --> D --> E --> F
 ```
 </Card>
 
 Each step gets its own page. Click through in order if you're new — or jump to the one giving you trouble.
 
 <CardGroup cols={2}>
+  <Card title="Authentication (UI)" href="/web-portal/core/ui/ui-authentication" icon="key">
+    Configure how TestSprite signs in — test account, managed account, or recorded session {/* V3.1 (Sherry): TODO confirm link once ui-authentication (Chunlin) lands */}
+  </Card>
   <Card title="Feature Exploration" href="/web-portal/core/ui/feature-exploration" icon="compass">
     How TestSprite walks your live app to discover what to test
   </Card>
@@ -60,30 +70,36 @@ Each step gets its own page. Click through in order if you're new — or jump to
   <Card title="Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
     Re-execute a single test, the whole project, or a scheduled run
   </Card>
-  <Card title="Auto-Heal (Pro)" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
+  <Card title="Auto-Heal" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
     Recover UI tests when the page changed but the flow is fine
   </Card>
 </CardGroup>
 
 ## What Lives Where
 
-The Web Portal sidebar for a UI project is grouped into Overview / Data / Result. UI projects don't have integration chains, shared-value wiring, or cleanup phases, so the sidebar is shorter than a backend project's
+The V3.1 sidebar for a UI project is grouped into Setup / Workspace / Analytics / Activity / Project Settings.
+
 <Frame>
-  <img src="../../../images/ui-sidenav.png" alt="UI project sidebar — Overview / Data / Result groups" />
+  <img src="../../../images/ui-testing-side-nav.png" alt="UI project sidebar: Setup, Workspace, Analytics, Activity, and Project Settings groups" />
 </Frame>
+
 | Group | Item | What you see |
 | :--- | :--- | :--- |
-| Overview | <kbd>Use Case Flow</kbd> | Site map of explored features; click a node to drill in |
-| Overview | <kbd>Integration Tests</kbd><span style={{ display: "block", marginTop: "10px", fontSize: "0.95em", opacity: 0.7, fontStyle: "italic", letterSpacing: "0.02em" }}>default</span> | Flat list of UI test cases with status chips and last-run results — clicking a row opens its detail page (recorded video, step-by-step screenshots, error trace, refine + rerun) |
-| Data | <kbd>Site Exploration</kbd> | Per-feature exploration walks: what TestSprite reached, where it got stuck |
-| Data | <kbd>Authentication</kbd> | Test account credentials used during exploration and runs |
-| Result | <kbd>Agent Actions</kbd> | Project-level video gallery of every test recording, bucketed by status — see [Agent Actions](/web-portal/core/ui/agent-actions) |
-| Result | <kbd>Test Report</kbd> | Aggregated outcomes; badges show Failed (red) and Blocked (amber) counts |
+| Setup | <kbd>Sources</kbd> | The documents and pages TestSprite learned your product from; exploration progress lives here too |
+| Setup | <kbd>GitHub Action</kbd> | Trigger test runs from pushes and pull requests — see [GitHub Integration](/web-portal/integrations/github-integration) |
+| Workspace | <kbd>Test Coverage</kbd> | The use-case map: what's covered, what's planned, where the gaps are |
+| Workspace | <kbd>Test Cases</kbd> | All test cases grouped by use case, with statuses — clicking a row opens its detail (steps, recording, error trace, edit + rerun) |
+| Workspace | <kbd>Test Runs</kbd> | Execution history: per-run pass rate and per-test results, with List and Agent Actions views |
+| Analytics | <kbd>Insights</kbd> | Quality trends, issues to fix, coverage. See [Insights](/web-portal/results/project-overview) |
+| Activity | <kbd>Activity Log</kbd> | All project activity, newest first — who changed what, and when tests ran |
+| Project Settings | <kbd>General</kbd> | Project configuration |
+| Project Settings | <kbd>Environment</kbd> | Environments and environment variables for test runs |
+| Project Settings | <kbd>Notifications & Ticketing</kbd> | Slack channel and ticketing setup for this project (see [Slack Notifications](/web-portal/integrations/slack-notifications)) |
 
-Settings actions at the bottom of the sidebar: **Export to Github**, **Delete Creation**.
+The header also carries a <kbd>Share</kbd> button and a copy-link action on every project page.
 
 <Note>
-Test list scheduling (paid; auto-heal toggle) lives under the global **Monitoring → Schedules** section, not the per-project sidebar.
+Test list scheduling (paid) lives under the global **Automation → Test Schedules** section, not the per-project sidebar.
 </Note>
 
 <Tip>
@@ -101,7 +117,7 @@ Test list scheduling (paid; auto-heal toggle) lives under the global **Monitorin
 Every test row supports natural-language refinement. You can say:
 
     <Frame>
-      <img src="../../../images/ui-refining.png"  alt="test type" />
+      <img src="../../../images/overview-plan.png" alt="Review proposed tests — edit and refine test cases before confirming" />
     </Frame>
 
 <CodeGroup>
@@ -144,10 +160,7 @@ If you're testing an HTTP API rather than a website (UI / browser flows), the ba
   <Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
     See exactly what happened on each step of a run
   </Card>
-  <Card title="Auto-Heal (Pro)" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
+  <Card title="Auto-Heal" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
     Absorb UI drift between runs without re-writing tests
-  </Card>
-  <Card title="Subscription Plans" href="/web-portal/admin/billing-and-plans" icon="credit-card">
-    Free includes 10-feature exploration; Pro unlocks unlimited + Auto-Heal
   </Card>
 </Columns>
