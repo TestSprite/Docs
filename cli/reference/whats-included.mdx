@@ -32,7 +32,7 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 | :--- | :--- |
 | List, get, create, update, and delete projects (frontend and backend types; `delete` cascades to everything under the project and requires `--confirm`) | — |
 | Set the static backend credential injected into every backend test (free tier) | `project credential` |
-| Configure recurring-token auto-refresh login for backend tests (Pro) | `project auto-auth` |
+| Configure recurring-token auto-refresh login for backend tests | `project auto-auth` |
 
 ### Tests
 
@@ -68,7 +68,7 @@ The TestSprite CLI is production-ready for the workflows listed below, with a st
 | :--- | :--- |
 | Replay a frontend test verbatim or re-run a backend dependency closure — billed the same as a fresh run | `test rerun` |
 | Rerun all tests matching a filter | `test rerun --all` |
-| Auto-heal on by default for frontend reruns — the rerun is billed same as a fresh run; healing adds a small amount of credit only when it actually engages; opt out (rolling out on newer accounts) | `--no-auto-heal` |
+| Auto-heal on by default for frontend reruns; the rerun is billed same as a fresh run; opt out (rolling out on newer accounts) | `--no-auto-heal` |
 | Replay a test repeatedly with auto-heal off and report a stability score | `test flaky` |
 
 ### Reading results

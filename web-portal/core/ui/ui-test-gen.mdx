@@ -1,11 +1,10 @@
 ---
 title: "Test Generation (UI)"
 description: "How TestSprite turns each UI plan case into runnable Python + Playwright code, and what you see while tests stream into the project view."
-icon: "cube"
 ---
 
 <Frame>
-  <img src="../../../images/ui-test-gen-overview.png" alt="UI tests streaming into the project view as generation runs" />
+  <img src="../../../images/ui-testing-test-gen-overview.png" alt="Generated UI tests in the project test list" />
 </Frame>
 
 ## What Test Generation Does
@@ -43,24 +42,24 @@ def test_signin_with_valid_credentials_lands_on_dashboard():
 What this gets you:
 
 - **Coverage from observed behavior, not speculation.** Tests are grounded in flows TestSprite actually walked through during exploration — including the edge cases (form validation, error states, redirects) that handwritten suites typically skip until a customer hits them.
-- **Survives your refactors.** Paired with [Auto-Heal (Pro)](/web-portal/core/ui/auto-heal), tests recover automatically when your UI changes but the underlying flow is intact. A button rename or component swap doesn't turn into a green-the-suite ticket.
+- **Survives your refactors.** Paired with [Auto-Heal](/web-portal/core/ui/auto-heal), tests recover automatically when your UI changes but the underlying flow is intact. A button rename or component swap doesn't turn into a green-the-suite ticket.
 - **Auditable, not magical.** Generated code is plain Python + Playwright — actions and assertions are line-by-line readable. Your QA team can review what's being checked; there's no proprietary DSL or opaque runtime to trust.
 - **Maintained for you.** Refine a test in your own words and TestSprite regenerates the steps. Keeping the suite green is a paragraph of feedback, not a sprint of selector hunting.
 
 ## How Generation Runs
 
-TestSprite generates each test from its plan row, verifies the output, and surfaces failures clearly. If a test can't be generated cleanly, it's marked Failed, the credit is refunded, and a **Regenerate** button appears on the row so you can try again.
+TestSprite generates each test from its plan row, verifies the output, and surfaces failures clearly. If a test can't be generated cleanly, it's marked Failed so you can try again.
 
 ## Watching Generation Live
 
 Generation runs across plan rows in parallel. As each test finishes, it streams into the project test list with status:
 <Frame>
-  <img src="../../../images/ui-test-gen-status.png" alt="UI tests streaming into the project view as generation runs" />
+  <img src="../../../images/ui-testing-test-gen-status.png" alt="UI tests streaming into the project view as generation runs" />
 </Frame>
 | Status | Meaning |
 | :--- | :--- |
-| <kbd>Generating_Code</kbd> | TestSprite is writing and verifying the test (typically 10–30 seconds per test for UI) |
-| <kbd>Idle</kbd> | Code generated, ready to run |
+| <kbd>Planned</kbd> | In the plan, not generated and run yet |
+| <kbd>Queued</kbd> | Part of a run, waiting for a free slot |
 | <kbd>Running</kbd> | Test is executing in the cloud sandbox |
 | <kbd>Passed</kbd> / <kbd>Failed</kbd> / <kbd>Blocked</kbd> | Final outcome after run |
 
@@ -78,7 +77,7 @@ Once the run finishes, open the test detail page to play back the recorded video
 | :--- | :--- | :--- |
 | Execution model | Playwright browser | requests HTTP client |
 | Selector resolution | At runtime, against live DOM | Not applicable (URLs are stable) |
-| Drift handling | [Auto-Heal (Pro)](/web-portal/core/ui/auto-heal) | Not needed — APIs don't drift like UIs |
+| Drift handling | [Auto-Heal](/web-portal/core/ui/auto-heal) | Not needed: APIs don't drift like UIs |
 | Multi-step concept | Each test is end-to-end self-contained | [Integration chains](/web-portal/core/api/integration-tests) link related tests through shared values |
 | Recorded artifacts | Video + per-step screenshots | Request/response bodies |
 | Typical test runtime | 5–30 seconds | 1–5 seconds |
@@ -87,22 +86,21 @@ Once the run finishes, open the test detail page to play back the recorded video
 
 Click any Failed row to land on its detail page (see [Step-by-Step Walkthrough](/web-portal/core/ui/ui-step-by-step) for the rich view). You get:
 <Frame>
-  <img src="../../../images/ui-test-gen-failed.png" alt="UI tests streaming into the project view as generation runs" />
+  <img src="../../../images/ui-testing-test-gen-failed-test.png" alt="A failed test detail page with the recorded run and Error / Cause / Fix tabs" />
 </Frame>
 | Element | What you get |
 | :--- | :--- |
 | <kbd>Recorded video</kbd> | The full run, in the right pane's **Preview** tab |
 | <kbd>Per-step screenshots</kbd> | Click any step in the **Steps** list to load its HTML snapshot — see exactly when the test went off the rails |
-| <kbd>Error</kbd> / <kbd>Trace</kbd> / <kbd>Fix</kbd> tabs | The Playwright error, raw stack trace, and an AI-authored cause-and-fix suggestion |
-| <kbd>Chat</kbd> tab | Natural-language refinement of the test |
-| <kbd>Rerun</kbd> | Plain replay — see [Rerun](/web-portal/core/ui/ui-rerun); recovers from UI changes with [Auto-Heal](/web-portal/core/ui/auto-heal) (Pro) |
+| <kbd>Error</kbd> / <kbd>Cause</kbd> / <kbd>Fix</kbd> tabs | The Playwright error, the likely cause, and an AI-authored fix suggestion |
+| <kbd>Run test</kbd> | Plain replay (see [Rerun](/web-portal/core/ui/ui-rerun)); recovers from UI changes with [Auto-Heal](/web-portal/core/ui/auto-heal) |
 
 ## Iterating on a Test
 
-To iterate on a generated test, open its detail page and **edit the test description** — saving re-triggers generation against the new wording.
+To iterate on a generated test, open its detail page and **edit the test description**; <kbd>Save & Run</kbd> re-triggers generation against the new wording.
 
 <Frame>
-  <img src="../../../images/ui-test-gen-iterate.png" alt="UI tests streaming into the project view as generation runs" />
+  <img src="../../../images/ui-testing-test-gen-failed-iterating.png" alt="The Test Description (Prompt) field on a test detail page — editing it re-triggers generation" />
 </Frame>
 
 For coverage on an entirely new feature or scenario, create a new project for it.
@@ -111,15 +109,13 @@ For coverage on an entirely new feature or scenario, create a new project for it
 
 <AccordionGroup>
   <Accordion title="A generated test uses a selector that doesn't match my actual DOM">
-    Two paths:
     - **Refine in chat**: "The Sign In button uses `data-testid='login-btn'`, not the role-based selector"
-    - **Regenerate**: click Regenerate on the test row — generates a fresh test from scratch. Often picks up better selectors on a re-roll.
   </Accordion>
   <Accordion title="The test got generated against a feature I didn't explore">
     Plan generation produced a spec-based case for that feature. The test code is best-effort; first run may fail. Refine with actual UI details after the failure.
   </Accordion>
-  <Accordion title="The Generate Tests button hangs / never finishes">
-    Likely a single test stuck mid-generation. Check the project test list — if all rows are Idle except one in Generating, that's the culprit. Give it a couple of minutes; it will eventually surface as Failed and the rest of the suite continues.
+  <Accordion title="The first run hangs / never finishes">
+    Likely a single test stuck mid-generation. Check the project test list: if every other row has a result and one is still Running, that's the culprit. Give it a couple of minutes; it will eventually surface as Failed and the rest of the suite continues.
   </Accordion>
   <Accordion title="My test imports a Playwright API I haven't seen before">
     Standard generation uses `playwright.sync_api` + standard library + pytest. If your description accidentally implied something exotic ("use playwright async"), generation may follow. Refine to standard or accept the variant.
@@ -135,7 +131,7 @@ For coverage on an entirely new feature or scenario, create a new project for it
   <Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
     Per-step screenshots, video, and run trace
   </Card>
-  <Card title="Auto-Heal (Pro)" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
+  <Card title="Auto-Heal" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
     Subsequent runs handle UI drift automatically
   </Card>
   <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen">

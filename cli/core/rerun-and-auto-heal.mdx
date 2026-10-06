@@ -80,7 +80,7 @@ testsprite test rerun test_3a9f21c7 --skip-dependencies --wait
 When your app's UI has shifted since the test was last written — a button was renamed, a form gained an extra field, navigation was restructured — the verbatim script would fail even though the underlying feature still works. Auto-heal detects that drift and repairs the script so the test passes. If the feature itself is broken, the test stays <kbd>failed</kbd>.
 
 <Info>
-**Auto-heal is on by default for all CLI reruns.** The rerun itself is billed the same as a fresh run regardless of whether healing engages; healing that actually repairs a step consumes an additional small amount of credit on top of that. Opt out with `--no-auto-heal` (rolling out on newer accounts — see the note below). See [Billing & Plans](/web-portal/admin/billing-and-plans) for current rates.
+**Auto-heal is on by default for all CLI reruns.** The rerun itself is billed the same as a fresh run regardless of whether healing engages. Opt out with `--no-auto-heal` (rolling out on newer accounts; see the note below).
 </Info>
 
 <Note>
@@ -106,17 +106,9 @@ Auto-heal is ignored for backend tests — backend test failures are almost alwa
 
 ## Credits
 
-| Action | Cost |
-| :--- | :--- |
-| Fresh `test run` (frontend) | 0.5 credits per test executed |
-| Fresh `test run` (backend) | 0.2 credits per test executed, including any expanded dependency-closure members |
-| `test rerun` (frontend) | 0.5 credits — billed the same as a fresh run |
-| `test rerun` (backend) | 0.2 credits per test in the closure — billed the same as a fresh run |
-| `test rerun` — auto-heal engages | An additional small amount of credit, on top of the rerun charge |
+Reruns are billed identically to a fresh run; there is no discounted "replay" tier.
 
-Reruns are billed identically to a fresh run — there is no discounted "replay" tier. (Legacy V2 accounts: a clean verbatim frontend rerun remains free.)
-
-When your credit balance is insufficient, the command exits with code 12. Top up credits in the Portal under <kbd>Settings → Billing</kbd>.
+When your credit balance is insufficient, the command exits with code 12. Top up credits in the Portal under <kbd>Workspace Settings → Billing → Usage</kbd>.
 
 <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="list-ol" horizontal>
   See the full list of exit codes and what each one means.
