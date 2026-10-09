@@ -1,13 +1,9 @@
 ---
 title: "Testing Lifecycle"
-description: "How a test moves from configuration to verified outcome — for both UI and API projects, with the differences called out."
+description: "The phases every UI and API project goes through, and where the two differ."
 ---
 
-## Overview
-
-Every test in the Web Portal moves through a predictable lifecycle. The shape is similar for UI and API projects, but UI projects include an extra **Exploration** phase up front that grounds the rest of the run in real product behavior.
-
-This page walks both flows side by side so you know what's happening at every step and where to intervene if you want to refine, retry, or stop.
+Every project moves through the same phases, and either way the plan is grounded in how your product actually behaves: UI projects **explore** your live app, and API projects **discover** endpoints from your docs and probe them against your live API.
 
 <Card>
 ```mermaid
@@ -28,186 +24,37 @@ flowchart LR
 ```
 </Card>
 
-<Note>
-**TestSprite is spec-driven.** Uploading a PRD (or any spec-shaped document) is **strongly recommended**. It's how TestSprite builds a feature map of what your product is supposed to do, which materially improves plan quality. The PRD step happens at project creation. If you skip it, the lifecycle still runs end-to-end but planning falls back to your URL inputs and (for UI) live exploration alone.
-</Note>
+## The Phases
 
-## UI Testing Lifecycle
-
-<Steps>
-  <Step title="Project Setup + PRD">
-    Click <kbd>New Project</kbd> on <kbd>All Projects</kbd>. Name the project and **upload a PRD** (strongly recommended).
-  </Step>
-
-  <Step title="Configure sign-in">
-    Provide a starting URL, tell TestSprite how to sign in, and add any extra context that helps it focus on the right parts of your app. Signing in can mean handing over a test account, letting TestSprite register and manage one for you, or signing in yourself once so the session is reused.
-
-    <Tip>Sign-in is optional but **strongly recommended** — without it, TestSprite can only explore what's visible to a signed-out visitor.</Tip>
-
-    <Card title="Authentication (UI)" href="/web-portal/core/ui/ui-authentication" icon="key">
-      The sign-in methods, what each needs from you, and how to troubleshoot
-    </Card>
-  </Step>
-
-  <Step title="Add Sources">
-    Beyond the PRD, give TestSprite whatever else describes your product: pages it should crawl, API documentation, or test files the agent can upload when a test hits a file field. More grounding here means a more accurate plan later.
-
-    <Card title="Project Sources" href="/web-portal/setup/project-sources" icon="book-open">
-      What you can feed a project, and which source fits which situation
-    </Card>
-  </Step>
-
-  <Step title="Explore">
-    TestSprite breaks your product into a list of features and visits each one in your live app (clicking, navigating, signing in) while you watch a live preview. Each agent shows <kbd>Starting</kbd>, <kbd>Logging in</kbd>, or <kbd>Exploring</kbd> while running, then ends in <kbd>Done</kbd> or <kbd>Failed</kbd>.
-
-    You can run it again with <kbd>Re-explore</kbd> on the project's <kbd>Sources</kbd> page.
-
-    <Card title="Feature Exploration" href="/web-portal/core/ui/feature-exploration" icon="compass">
-      Deep dive on the exploration phase
-    </Card>
-  </Step>
-
-  <Step title="Feature Map">
-    TestSprite produces a structured **feature map** (features and the use cases under each), rendered as a flow graph. This is what grounds the rest of the lifecycle. Edit it on <kbd>Test Coverage</kbd> if something is missing.
-  </Step>
-
-  <Step title="Plan">
-    TestSprite drafts a test plan from what was explored. Plans for fully-explored features reference real flows observed during exploration; plans for couldn't-be-explored features fall back to your PRD or description.
-
-    Review the draft, rewrite descriptions in natural language to refine focus, deselect any cases you don't want, and continue.
-  </Step>
-
-  <Step title="Run">
-    TestSprite generates the tests, executes each one against your live app, and records video plus step-by-step screenshots. The run page streams what's happening in real time.
-
-    Pass / fail is determined automatically based on the assertions in each test.
-  </Step>
-
-  <Step title="Review">
-    Each test gets its own report page with the recorded video, step-by-step screenshots, a verdict, and (for failures) an AI-authored explanation of the suspected cause and a suggested fix.
-
-    On the project's <kbd>Test Coverage</kbd> page, the flow graph shows how features connect with status icons on each step, and **Live Site Exploration** on the <kbd>Sources</kbd> page archives every exploration recording for later browsing.
-  </Step>
-
-  <Step title="Notify + file tickets">
-    When the run finishes, TestSprite can post a summary to Slack and turn failures into tickets — so results reach the team without anyone opening the dashboard, and a failure becomes tracked work.
-
-    <Columns cols={2}>
-      <Card title="Slack Notifications" href="/web-portal/integrations/slack-notifications" icon="slack">
-        Run summaries in your channels
-      </Card>
-      <Card title="Ticketing" href="/web-portal/integrations/ticketing" icon="ticket">
-        Failures as tracked bugs
-      </Card>
-    </Columns>
-  </Step>
-
-  <Step title="Iterate">
-    Refine the plan and re-run. Three ways to do that:
-    - **Edit a test description** in natural language — TestSprite regenerates the steps to match
-    - **Ask in <kbd>Chats</kbd>** in natural language why a test failed or how to fix it
-    - **Re-run a single failing test** to confirm a fix without re-executing the whole suite
-
-    <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen-to-square">
-      Walkthrough of every refinement path
-    </Card>
-  </Step>
-</Steps>
-
-## API Testing Lifecycle
-
-<Steps>
-  <Step title="Project Setup + PRD">
-    Click <kbd>New Project</kbd>, name your project, and **upload a PRD** (strongly recommended). PRDs aren't only for UI. They let TestSprite plan to the *intent* of each endpoint, not just its shape.
-  </Step>
-
-  <Step title="Add Sources">
-    Upload your API documentation — OpenAPI, Swagger, or a Postman collection — plus anything else that describes intended behavior. This is what discovery and planning are grounded in.
-
-    <Card title="Project Sources" href="/web-portal/setup/project-sources" icon="book-open">
-      What you can feed a project, and which source fits which situation
-    </Card>
-  </Step>
-
-  <Step title="Configure">
-    Provide the base URL and your API documentation (OpenAPI / Swagger / Postman or any free-form reference). Add auth credentials per API (Bearer Token, API Key, Basic Token, or None) and any natural-language instructions about what to focus on.
-  </Step>
-
-  <Step title="Discover">
-    TestSprite reads your endpoint list from the uploaded docs and probes the base URL to confirm shapes. You can review the discovered list, edit method/path/auth-type per endpoint, and add endpoints manually before continuing.
-  </Step>
-
-  <Step title="Feature Map">
-    TestSprite produces a feature map of features + use cases. The plan step uses this to scope tests by intent.
-  </Step>
-
-  <Step title="Plan">
-    API projects skip exploration and go straight to plan generation. TestSprite drafts comprehensive test cases grouped by use case, typically covering functional / happy path, authorization & auth, error handling & edge cases, and (where relevant) boundary / load and security probes.
-
-    Review, deselect, edit, or add cases via natural language before running.
-  </Step>
-
-  <Step title="Run">
-    TestSprite generates the tests, executes each one against your APIs, captures every HTTP request and response, and shows live progress as endpoints are hit.
-
-    Tests that need values from upstream tests (e.g. an `orderId` from a prior `POST /orders`) automatically capture and pass those **dynamic variables** through.
-  </Step>
-
-  <Step title="Review">
-    On the **Test Report** tab, each API test shows pass/fail status, the request and response bodies, and assertion details. Failed tests carry an AI-authored cause-and-fix analysis.
-
-    Each API test's **Data Flow** section shows what it captured and consumed, a run's **Dynamic Variables** tab shows what got captured and reused, and **Integration Tests** (under <kbd>Test Cases</kbd>) shows multi-step chains assembled from related endpoints.
-  </Step>
-
-  <Step title="Cleanup">
-    After tests finish, TestSprite reviews any resources the suite created (records, files, sessions) and tries to clean them up. The **Cleanup** tab shows which resources were captured and the status of each teardown.
-
-    <Info>Cleanup runs automatically — you'll see a brief "Running cleanup sweep" indicator before the run is marked complete.</Info>
-  </Step>
-
-  <Step title="Notify + file tickets">
-    When the run finishes, TestSprite can post a summary to Slack and turn failures into tickets — so results reach the team without anyone opening the dashboard, and a failure becomes tracked work.
-
-    <Columns cols={2}>
-      <Card title="Slack Notifications" href="/web-portal/integrations/slack-notifications" icon="slack">
-        Run summaries in your channels
-      </Card>
-      <Card title="Ticketing" href="/web-portal/integrations/ticketing" icon="ticket">
-        Failures as tracked bugs
-      </Card>
-    </Columns>
-  </Step>
-
-  <Step title="Iterate">
-    Refine and re-run the same way as UI tests: edit descriptions, chat with the AI about a failure, or use natural-language requests like *"Test POST /orders with invalid parameters and expect 400."* TestSprite interprets and updates the relevant test case.
-  </Step>
-</Steps>
+| Phase | What happens | Learn more |
+| :--- | :--- | :--- |
+| **Setup** | Create the project with <kbd>New Project</kbd>, set how TestSprite signs in, and add sources: your PRD (**strongly recommended**), and for API projects your API docs | [Project Sources](/web-portal/setup/project-sources) |
+| **Explore / Discover** | UI: agents walk your live app. API: TestSprite reads your endpoints from the docs and probes them against your live API | [Feature Exploration](/web-portal/core/ui/feature-exploration), [API Discovery](/web-portal/core/api/api-discovery) |
+| **Feature map** | Features and use cases, shown on <kbd>Test Coverage</kbd>, where you can edit them | [Coverage Map](/web-portal/core/working-with-test/coverage-map) |
+| **Plan** | After you click <kbd>Plan Tests</kbd>, the testing agent plans test cases scoped to the feature map. You keep, edit, or remove them | [UI](/web-portal/core/ui/ui-plan-gen), [API](/web-portal/core/api/api-plan-gen) |
+| **Run** | Tests are generated and run in the cloud. API tests pass captured values to the tests that depend on them | [Dependency Chains](/web-portal/core/api/dependency-chains) |
+| **Review** | A verdict per test, with recordings (UI) or requests and responses (API), and a suggested cause and fix for failures | [Test Detail Page](/web-portal/core/working-with-test/test-detail) |
+| **Notify** | Post run summaries to Slack and turn failures into tickets | [Slack](/web-portal/integrations/slack-notifications), [Ticketing](/web-portal/integrations/ticketing) |
+| **Iterate** | Edit a test's description, ask in <kbd>Chats</kbd>, or re-run a single test to confirm a fix | [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases) |
 
 ## UI vs API: What's Different
 
 | Phase | UI Testing | API Testing |
 | :--- | :--- | :--- |
-| **Exploration** | Yes (live walk through your app) | None (planning is from documentation/instructions directly) |
-| **Plan grounding** | Real screens and copy observed during exploration | Your API docs, instructions, and any uploaded specifications |
+| **Exploration** | Agents walk your live app, page by page | TestSprite calls your endpoints and records the real responses (**Probe response** and **Raw call records** on <kbd>Test Coverage</kbd>) |
+| **Plan grounding** | Real screens and copy observed during exploration | Your API docs and instructions, plus the responses observed from your live API |
 | **Execution artifacts** | Video recordings, step-by-step screenshots, console output | HTTP requests/responses, status codes, response bodies |
-| **Authentication** | Sign-in to your app — a test account you supply, one TestSprite registers and manages, or a session you record by signing in yourself | Credentials on the requests — a token, API key, or a refresh grant TestSprite renews before each run |
+| **Authentication** | Sign-in to your app: test account credentials, OTP (one-time password) login, or SSO (single sign-on) such as Google | Credentials on the requests: a token, API key, or a refresh grant TestSprite renews before each run |
 | **Failure analysis** | AI cause-and-fix with screenshot of the failing step | AI cause-and-fix with the offending request/response diff |
-| **Cleanup** | Not applicable — no persistent resources created | Automatic post-run sweep of created records / files / sessions |
-| **Run-over-run diffs** | Compare via the schedule run history's Changes column | Same — Changes column on schedule run history |
+| **Cleanup** | Not applicable, no persistent resources created | Automatic post-run sweep of created records, files, and sessions |
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="UI Testing" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
-    Walkthrough of the UI flow
+  <Card title="UI Quickstart" href="/web-portal/core/ui/quickstart" icon="window-maximize">
+    The UI flow, click by click
   </Card>
-  <Card title="API Testing" href="/web-portal/core/api/api-testing" icon="terminal">
-    Walkthrough of the API flow
-  </Card>
-  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
-    Every tab after the run finishes
-  </Card>
-  <Card title="Comparing Runs" href="/web-portal/maintenance/comparing-runs" icon="code-compare">
-    Run-over-run change tracking
+  <Card title="API Quickstart" href="/web-portal/core/api/quickstart" icon="terminal">
+    The API flow, click by click
   </Card>
 </Columns>

@@ -9,39 +9,26 @@ description: "How TestSprite explores your live app feature by feature: what you
 
 ## Overview
 
-Before exploration can sign in anywhere, make sure login is configured for your project — see [Authentication (UI)](/web-portal/core/ui/ui-authentication).
+Before writing any UI tests, TestSprite's testing agent visits your live app and explores it feature by feature: opening real pages, trying common user flows, signing in if you [configured login](/web-portal/core/ui/ui-authentication), and recording what it could and couldn't reach. The test plan is then grounded in **how your app actually behaves**, not just how your PRD describes it.
 
-Before writing any UI tests, TestSprite visits your live application and explores it feature by feature — opening real pages, attempting common user flows, signing in if you provided a test account, and recording what it could and couldn't reach. The test plan generated in the next step is grounded in **how your app actually behaves**, not just how it's described in your PRD.
-
-This phase only runs for UI projects. Backend (API) tests skip exploration and go straight from configuration to plan generation.
+Feature exploration runs only for UI projects. API projects discover endpoints from your docs and probe them against your live API instead; see [API Discovery](/web-portal/core/api/api-discovery).
 
 <Note>
-Some features may explore only partially. Even when exploration falls short, you can still continue to the test plan: TestSprite uses what was observed for explored features and falls back to your PRD/description for the rest.
+Some features may explore only partially. You can still continue to the test plan: TestSprite uses what it observed and falls back to your PRD or description for the rest.
 </Note>
 
-## What Exploration Does for You
+## How It Works
 
-<Tabs>
-  <Tab title="What it is">
-    A short, watchable run where TestSprite acts like a first-time user of your app. It opens your starting URL, identifies a list of features (e.g. *Sign Up*, *Dashboard*, *Checkout*), and walks through each one — clicking buttons, filling forms, navigating between pages — while you watch.
+The agent opens your starting URL, identifies your features (e.g. *Sign Up*, *Dashboard*, *Checkout*), and walks through each one, clicking buttons, filling forms, and moving between pages. Features are explored in parallel, so a long flow doesn't hold up the rest.
 
-    Each feature is explored independently and in parallel, so a long flow doesn't block the rest.
-  </Tab>
-  <Tab title="Why it matters">
-    Plans written from real behavior beat plans written from descriptions:
-    - **Steps reference real selectors and copy** observed on your pages
-    - **Edge cases come from real screens**, not assumed ones
-    - **Auth flows match your actual login**, including unexpected redirects
-    - **Features behind paywalls or gated by plan tier** are flagged honestly, instead of generating tests we can't run
+Plans written from what it observed are more reliable:
 
-    The result: fewer "this test doesn't match my UI" surprises during execution.
-  </Tab>
-  <Tab title="When it runs">
-    Exploration runs automatically as soon as you click <kbd>Create project</kbd> on a UI project. It typically takes about **3 minutes** for an average app, though longer flows or large feature sets can take more.
+- **Steps reference real selectors and copy** from your pages
+- **Edge cases come from real screens**, not assumed ones
+- **Auth flows match your actual login**, including unexpected redirects
+- **Features behind paywalls or plan gates** in your app are flagged, instead of producing tests that can't run
 
-    You don't have to babysit the run; you can leave the tab and come back. If exploration is still running when you return to the project, TestSprite picks up where it left off.
-  </Tab>
-</Tabs>
+Exploration starts as soon as you click <kbd>Create project</kbd> and typically takes about **3 minutes** for an average app; longer flows or large feature sets take more. You can leave and come back: if it's still running when you return, TestSprite picks up where it left off.
 
 ## What You'll See During Exploration
 
@@ -57,7 +44,7 @@ While exploration runs, the project's <kbd>Sources</kbd> page shows a live view 
 | <kbd>Agent status</kbd> | Each agent's state: <kbd>Starting</kbd>, <kbd>Logging in</kbd>, <kbd>Exploring</kbd>, then <kbd>Done</kbd> or <kbd>Failed</kbd> |
 | <kbd>Live browser preview</kbd> | Streams TestSprite navigating your app in real time |
 
-When exploration finishes, TestSprite moves on to composing your coverage map on <kbd>Test Coverage</kbd>.
+When exploration finishes, TestSprite composes your coverage map on <kbd>Test Coverage</kbd>.
 
 ## Reviewing the Results
 
@@ -65,13 +52,13 @@ When exploration finishes, TestSprite moves on to composing your coverage map on
       <img src="../../../images/ui-testing-feature-explore-review-result.png" alt="Sources page: Live Site Exploration with its status chip, recording, and Re-explore" />
     </Frame>
 
-Exploration results live under **Live Site Exploration** on the project's <kbd>Sources</kbd> page. The **Explore your site** card carries a status chip (<kbd>Processing</kbd> while agents are working, <kbd>Ready</kbd> when they're done, <kbd>Failed</kbd> if the run didn't complete) and one card per exploration run, with its recording and the pages it captured. Click a run to open its recording and report.
+Results live under **Live Site Exploration** on the project's <kbd>Sources</kbd> page. The **Explore your site** card has a status chip (<kbd>Processing</kbd> while agents work, <kbd>Ready</kbd> when done, <kbd>Failed</kbd> if the run didn't complete) and one card per exploration run with its recording and captured pages. Click a run to open its recording and report.
 
 ## Adjusting Before Plan Generation
 
 <Steps>
   <Step title="Reconfigure URL or credentials">
-    If exploration was blocked because TestSprite couldn't sign in or reached a different URL than expected, open <kbd>Project Settings → Test Execution → Environment</kbd> and correct the environment's URL or test account.
+    If TestSprite couldn't sign in or reached a different URL than expected, open <kbd>Project Settings → Test Execution → Environment</kbd> and correct the environment's URL or test account.
   </Step>
   <Step title="Re-explore">
     Back on <kbd>Sources</kbd>, click <kbd>Re-explore</kbd> on the **Explore your site** card.
@@ -82,16 +69,13 @@ Exploration results live under **Live Site Exploration** on the project's <kbd>S
 
 <AccordionGroup>
   <Accordion title="Provide a test account when possible">
-    If your app requires sign-in, share a test account when you create the project. Both username and password are optional, but providing them dramatically expands what TestSprite can reach. Without credentials, exploration is limited to whatever's accessible without login.
+    If your app requires sign-in, share a test account when you create the project. Without credentials, exploration is limited to what's accessible without login.
   </Accordion>
   <Accordion title="Start from your real entry URL">
-    Use the URL a real user would land on (e.g. your marketing homepage or app dashboard). Avoid deep links into specific tools — TestSprite uses the starting URL to discover the rest.
+    Use the URL a real user lands on (your homepage or app dashboard), not a deep link into one tool. TestSprite uses the starting URL to discover the rest.
   </Accordion>
   <Accordion title="Use the extra-context field for hints">
-    The optional context field is a good place for things like *"Skip the help center"*, *"Focus on the checkout flow"*, or *"The dashboard route is `/app/v2/home`"*. TestSprite uses these to guide both exploration and plan generation.
-  </Accordion>
-  <Accordion title="Don't worry about partial results">
-    Plans generated from a mix of fully and partially explored features still come out solid — partial observations are real signal. The fallback path for couldn't-be-explored features is also well-trodden; you'll get a usable plan regardless.
+    Add hints like *"Skip the help center"*, *"Focus on the checkout flow"*, or *"The dashboard route is `/app/v2/home`"*. TestSprite uses them to guide both exploration and plan generation.
   </Accordion>
 </AccordionGroup>
 
@@ -101,10 +85,7 @@ Exploration results live under **Live Site Exploration** on the project's <kbd>S
   <Card title="UI Testing" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
     The full UI testing flow, with exploration as one step
   </Card>
-  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
-    What you can do after the test runs
-  </Card>
-  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen-to-square">
-    Iterate after the first run
+  <Card title="Plan Generation & Editing" href="/web-portal/core/ui/ui-plan-gen" icon="list-check">
+    What happens with the results next
   </Card>
 </Columns>

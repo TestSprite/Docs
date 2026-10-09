@@ -1,34 +1,30 @@
 ---
 title: "Plan Generation & Editing"
-description: "How TestSprite turns explored features into a UI test plan grounded in real observed flows — and how to review, prune, refine, and add to it before generation runs."
+description: "How TestSprite turns explored features into a UI test plan grounded in real observed flows, and how to review, prune, refine, and add to it before generation runs."
 ---
 
 <Frame>
-  <img src="../../../images/ui-testing-plan-gen-Overview.png" alt="Review proposed tests — cases grouped by use case, nothing added until you confirm" />
+  <img src="../../../images/ui-testing-plan-gen-Overview.png" alt="Review proposed tests: cases grouped by use case, nothing added until you confirm" />
 </Frame>
 
 ## What Plan Generation Does
 
-UI Plan Generation takes the [Feature Exploration](/web-portal/core/ui/feature-exploration) output — the live walks TestSprite did through your app — and turns each feature into a list of test cases grounded in **real observed flows**. The plan is the contract you review and edit before any test code is written.
+TestSprite's testing agent takes what [Feature Exploration](/web-portal/core/ui/feature-exploration) observed in your app and plans test cases for each feature. The plan is what you review and edit before any test code is written.
 
 <Card>
 ```mermaid
 flowchart LR
-    A[Feature Exploration<br/>live walks of your app] --> B[Plan Generation]
+    A[Feature Exploration<br/>live walks of your app] --> M[Feature map<br/>features · use cases] --> B[Plan Generation]
     B --> C[Flow-grounded test cases<br/>title · description · steps · priority]
     C --> D{Your review<br/>edit · prune · add}
-    D -->|Generate| E[UI test code<br/>Python + Playwright]
+    D -->|Run all| E[UI test code<br/>Python + Playwright]
 ```
 </Card>
 
-UI plans are **flow-grounded**: each case references an actual sequence of clicks, fills, and assertions TestSprite saw work during exploration. A plan row reads like:
-
-> *"Verify a new user can sign up with a valid email and lands on the welcome screen"*
-
-— not a description of an internal endpoint or contract. The plan reflects how a user actually moves through your app.
+UI plans are **flow-grounded**: each case follows a sequence of clicks, fills, and assertions the agent saw work during exploration, using your real button labels, URLs, and form fields. A plan row reads like *"Verify a new user can sign up with a valid email and lands on the welcome screen"*.
 
 <Info>
-**Nothing executes during plan generation.** No browser actions are issued. Plan generation is a pure read of: explored features + your description + extra-context hints + your account-level UI conventions.
+**Nothing runs during plan generation.** No browser actions are issued.
 </Info>
 
 ## What Goes Into the Plan
@@ -38,53 +34,49 @@ UI plans are **flow-grounded**: each case references an actual sequence of click
 | <kbd>Explored features</kbd> | [Feature Exploration](/web-portal/core/ui/feature-exploration) | One sub-plan per feature, with cases grounded in observed flows |
 | <kbd>PRD / extra context</kbd> | The New Project form's **Extra Context** step | Shapes what's "in scope" vs "out of scope" |
 | <kbd>Test account credentials</kbd> | The New Project form's **Access details** step | Inform how authenticated paths get tested |
-| <kbd>Site map (Use Case Flow)</kbd> | Built during exploration | Used as context — TestSprite knows which features connect |
+| <kbd>Feature map</kbd> | [Test Coverage](/web-portal/core/working-with-test/coverage-map), built from your PRD and exploration | Groups and scopes the tests by use case, and shows which features connect |
 
-Features that **couldn't be explored** (login wall, paywall, error page) get spec-based plans instead, derived from your description and extra context rather than an observed flow.
+Features exploration couldn't reach get [spec-based cases](#spec-based-cases-fallback-for-unexplored-features) instead.
 
 ## The Plan Structure
 
-Each plan row is one test case with a **title**, **description**, and **priority**. Plan generation also produces an underlying **step list** that's revealed per-row via a **Show flow** toggle: concrete Actions (clicks, fills, navigations) and Assertions (what to verify).
+Each plan row is one test case with a **title**, **description**, and **priority**, plus a step list (Actions such as clicks, fills, and navigations, and Assertions to verify) revealed with the **Show flow** toggle.
 <Frame>
   <img src="../../../images/ui-testing-plan-gen-structure.png" alt="A plan row with priority, test name, description, and its step flow expanded" />
 </Frame>
-Case count varies with feature complexity. A simple "Forgot Password" might get a couple of cases; a complex "Checkout" can produce 10+. Cases range from focused checks ("error shown when password is wrong") to whole-flow walks ("sign up, verify email, land on welcome").
-
-<Tip>
-**Plans use real observed flows when exploration covered the feature.** If feature exploration walked a checkout flow end-to-end, the plan knows the actual button labels ("Place order"), the actual confirmation URL, the actual fields in the address form. The plan will reference those literally — not generic "submit button". Features that couldn't be explored (login wall, paywall) get spec-based plans derived from your description instead.
-</Tip>
+Case count varies with the feature: a simple "Forgot Password" might get a couple of cases, a complex "Checkout" 10 or more.
 
 ## Reviewing the Plan
 
-The plan view lists cases grouped by use case. Each row shows checkbox · No. · priority · title · description, with a per-row toggle to reveal the underlying step list.
+The plan view lists cases grouped by use case. Each row shows checkbox · No. · priority · title · description.
 
 <Steps>
   <Step title="Read the description, then Show flow if you need detail">
-    The description is what drives generation. Click **Show flow** under the row to see the Action / Assertion list TestSprite will execute. You can edit a step's text right there.
+    The description is what drives generation. Click **Show flow** to see the Action / Assertion list; you can edit a step's text right there.
     <Frame>
       <img src="../../../images/ui-testing-plan-gen-view.png" alt="A plan row with Show steps expanded, revealing its Action / Assertion list" />
     </Frame>
   </Step>
   <Step title="Untick anything you don't want">
-    Per-row checkbox toggles a single case. The header checkbox toggles **Select All** for the whole list.
+    Each row's checkbox toggles one case; the header checkbox is **Select All**.
         <Frame>
       <img src="../../../images/ui-testing-plan-gen-uncheck.png" alt="Per-row checkboxes and the header Select All toggle" />
     </Frame>
   </Step>
-  <Step title="Edit titles and descriptions in natural language">
-    Both **Test Name** and **Test Description** are direct text inputs. Plain-text edits feed directly into generation.
+  <Step title="Edit titles and descriptions">
+    **Test Name** and **Test Description** are plain text inputs, and your edits feed straight into generation.
           <Frame>
       <img src="../../../images/ui-testing-plan-gen-edit.png" alt="Test Name and Test Description edited directly as text inputs" />
     </Frame>
   </Step>
   <Step title="Adjust priority if you want a case run first">
-    Each row has a Priority dropdown (default **Medium**). Higher-priority cases run earlier when execution kicks in.
+    Each row has a Priority dropdown (default **Medium**). Higher-priority cases run earlier.
     <Frame>
       <img src="../../../images/ui-testing-plan-gen-priority.png" alt="Priority dropdown on a plan row" />
     </Frame>
   </Step>
   <Step title="Add a custom case">
-    Click **+ More Test Case** at the bottom of the list (the button is suffixed with the use case's name). A new row is inserted with empty title and description for you to fill in, included in the same generation batch as the rest.
+    Click **+ More Test Case** at the bottom of the list (suffixed with the use case's name) and fill in the new row. It's generated with the rest.
     <Frame>
       <img src="../../../images/ui-testing-plan-gen-custom.png" alt="+ More Test Case button adding an empty row at the bottom of the list" />
     </Frame>
@@ -92,106 +84,70 @@ The plan view lists cases grouped by use case. Each row shows checkbox · No. ·
 </Steps>
 
 <Tip>
-**Don't be precious about pruning.** Selecting all is usually right on a first run for full coverage. The high-leverage cases tend to be 60% of what's there; pruning the rest makes runs faster but doesn't change correctness.
+**Selecting all is usually right on a first run.** Pruning makes runs faster but doesn't change correctness.
 </Tip>
 
-## Adding Test Cases in Natural Language
+## Adding and Refining in Natural Language
 
-To add cases in natural language, ask in **Chats**. TestSprite parses the request, figures out which feature it applies to, and writes a new case row.
+Ask in **Chats** to add a case or change several at once. TestSprite works out which feature the request applies to and updates the plan; you can review or undo before clicking **Run all**.
 
 <CodeGroup>
-```text Targeted addition
+```text Add
 Add a test for the Cart feature: user adds 3 items, then removes 1, then verifies the count is 2 and the total updates correctly.
 ```
 
-```text Cross-feature scenario
-Test that signing out from any page returns the user to the login screen.
-```
-
-```text Visual / accessibility
-For the Search feature, add a test that the keyboard arrow keys navigate through the results dropdown.
-```
-</CodeGroup>
-
-<Info>
-**The added test gets grounded if the feature was explored.** If exploration walked the Cart, the new "remove an item" test inherits the explored selectors and flow. If the feature wasn't explored, the new case is spec-based.
-</Info>
-
-## Refining the Plan via Natural Language
-
-Beyond Add-a-test, the chat panel supports broader refinements:
-
-<CodeGroup>
-```text Drop
-Drop all the accessibility tests — we have a separate a11y suite.
-```
-
-```text Scope
-For the Checkout feature, the test for "guest checkout" doesn't apply — we don't support guest checkout.
-```
-
-```text Tighten
+```text Refine
 Make the Login tests more strict about error messages: assert the exact error text, not just that "an error appears".
 ```
 </CodeGroup>
 
-TestSprite applies the request to the affected rows, re-renders the plan, and you can review/undo before clicking **Run all**.
+A case added for an explored feature inherits its observed selectors and flow; otherwise it's spec-based.
 
 ## What "Run all" Triggers
 
-Clicking **Run all** adds the cases and starts the first run, which generates and runs each test. The plan is frozen at click time; subsequent edits would require a re-generation.
+Clicking **Run all** adds the cases and starts the first run, which generates and runs each test. The plan is frozen at click time; later edits require a re-generation.
 
-<Card title="UI Test Generation" href="/web-portal/core/ui/ui-test-gen" icon="cube">
+<Card title="UI Test Generation & Execution" href="/web-portal/core/ui/ui-test-gen" icon="cube">
   Each plan case becomes a runnable Python + Playwright test
 </Card>
 
 ## Spec-Based Cases (Fallback for Unexplored Features)
 
-When Feature Exploration couldn't reach a feature (paywall, login failure, transient error), plan generation still produces a plan for it, but **derived from your description and any extra context**, not from a real walk.
+When exploration couldn't reach a feature (paywall, login failure, transient error), the plan for it is **derived from your description and extra context** instead of a real walk. These cases are best-effort:
 
-Spec-based cases are best-effort:
+- **Selectors or button labels may be wrong**, since there's no observed flow to ground them
+- **They may miss flows you have**, since only what you described is in the plan
+- **They still run**: selectors are resolved against the live DOM at run time
 
-- **They might be wrong about specific selectors or button labels** (no observed flow to ground them)
-- **They might miss flows you actually have** (only what you described made it into the plan)
-- **They still run.** Generation produces real Playwright code; selectors are resolved against the live DOM at run time.
-
-If a spec-based case fails on first run, refine in chat with the actual UI labels — TestSprite will rewrite the test against the real flow.
+If one fails on its first run, refine it with the actual UI labels and TestSprite rewrites the test against the real flow.
 
 ## When the Plan Looks Wrong
 
 <AccordionGroup>
   <Accordion title="A test is asserting on something that doesn't exist (e.g. a button labelled 'Submit' that's actually 'Save')">
-    The case is spec-based or pre-redesign. Refine: "The button is labelled 'Save', not 'Submit'". TestSprite rewrites.
+    The case is spec-based or pre-redesign. Refine it: "The button is labelled 'Save', not 'Submit'", and TestSprite rewrites it.
   </Accordion>
   <Accordion title="An obvious feature has zero test cases">
-    Feature Exploration probably didn't reach it (check exploration on the <kbd>Sources</kbd> page). Either:
-    - Re-run exploration with a clearer test account or extra context
-    - Add cases manually via chat
+    Exploration probably didn't reach it (check exploration on the <kbd>Sources</kbd> page). Re-run exploration with a clearer test account or extra context, or add cases via chat.
   </Accordion>
-  <Accordion title="Tests are too generic — they don't reflect our domain">
-    Add domain-specific extra context: "Our checkout has a special 'Express' lane for returning customers — make sure tests cover that path". Future runs incorporate it.
-  </Accordion>
-  <Accordion title="The plan has too many tests for a small feature">
-    Untick the ones you find low-value. Plan generation errs on the side of coverage; you can prune to taste.
+  <Accordion title="Tests are too generic and don't reflect our domain">
+    Add domain-specific extra context, e.g. "Our checkout has an 'Express' lane for returning customers; make sure tests cover it". Future runs incorporate it.
   </Accordion>
   <Accordion title="The plan ignored something I uploaded as a PRD">
-    The PRD shapes the plan but doesn't override exploration. If exploration didn't walk the feature your PRD describes, plan generation falls back to spec-based — and your PRD wording may not have specific enough selectors to make the case work. Refine after generation.
+    The PRD shapes the plan but doesn't override exploration. If exploration didn't walk the feature your PRD describes, the case is spec-based and may lack specific selectors. Refine after generation.
   </Accordion>
 </AccordionGroup>
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Test Generation (UI)" href="/web-portal/core/ui/ui-test-gen" icon="cube">
-    The next phase — turn the plan into runnable Playwright code
+  <Card title="Test Generation & Execution (UI)" href="/web-portal/core/ui/ui-test-gen" icon="cube">
+    Turn the plan into runnable Playwright code
   </Card>
-  <Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
+  <Card title="Step-by-Step Replay" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
     What you'll see during execution
   </Card>
-  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen">
+  <Card title="Managing Test Cases" href="/web-portal/core/working-with-test/managing-test-cases" icon="pen">
     Natural-language adjustments after generation
-  </Card>
-  <Card title="UI Testing — Overview" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
-    Step back to the journey map
   </Card>
 </Columns>

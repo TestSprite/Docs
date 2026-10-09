@@ -1,6 +1,6 @@
 ---
 title: "Dynamic Variables"
-description: "How TestSprite carries values from one API response into the next request — the mechanism that makes integration tests, auto cleanup, and data-flow analysis possible."
+description: "How TestSprite carries values from one API response into the next request. Integration tests, auto cleanup, and data flow all build on it."
 ---
 
 <Frame>
@@ -9,43 +9,27 @@ description: "How TestSprite carries values from one API response into the next 
 
 ## What Dynamic Variables Are
 
-A **dynamic variable** is a value that one test produces and another test uses. The simplest example:
+A **dynamic variable** is a value one test produces and another test uses:
 
 ```
 POST /users           produces user_id    →   POST /orders   uses user_id
                       from the response   →                  in the request body
 ```
 
-The `user_id` isn't known until POST /users runs. By "dynamic" we mean: it's resolved at runtime, after the earlier test executes, then carried into the next HTTP call.
-
-Dynamic variables are the connective tissue of Integration Tests and the source data for Auto Cleanup and Data Flow.
-
-<CardGroup cols={3}>
-  <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
-    Multi-step chains where one test's response feeds the next
-  </Card>
-  <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
-    Records created during a run get removed afterward
-  </Card>
-  <Card title="Data Flow" href="#the-data-flow-section-on-a-test" icon="diagram-project">
-    What each test captures and consumes
-  </Card>
-</CardGroup>
+The `user_id` isn't known until POST /users runs, so it's resolved at runtime and carried into the next call. [Integration Tests](/web-portal/core/api/integration-tests), [Auto Cleanup](/web-portal/core/api/auto-cleanup), and each test's [Data Flow](#the-data-flow-section-on-a-test) section are all built on these values.
 
 ## Producers and Consumers
-
-Every test in a chain has one of two roles for each variable:
 
 | Role | What it does |
 | :--- | :--- |
 | **Producer** | Extracts a named value from its response |
 | **Consumer** | Uses a named value (produced earlier) in its request |
 
-A test can produce variables, use them, both, or neither. A pure GET typically only uses values (e.g., the `id` to look up); a POST that creates a record typically produces the new record's ID.
+A test can produce, consume, both, or neither. A GET usually only consumes (the `id` to look up); a POST that creates a record usually produces the new record's ID.
 
 ## The Dynamic Variables Tab
 
-**Test Runs → a run → Dynamic Variables** tab. This view answers: *"Across that run, what values flowed through the system?"*
+Open **Test Runs → a run → Dynamic Variables** to see what values flowed through that run.
 
 | Column | What it shows |
 | :--- | :--- |
@@ -56,12 +40,7 @@ A test can produce variables, use them, both, or neither. A pure GET typically o
 | <kbd>Used by</kbd> | The consumer tests (multiple if shared across chains) |
 | <kbd>Deleted by</kbd> | The cleanup test that deletes the resource this variable points to, when applicable |
 
-The page supports search + filter:
-
-- **Search** — by variable name
-- **Filter: Cleanup** — `Has cleanup` (variables the auto-cleanup chain references) or `Orphaned` (no matching cleanup)
-- **Filter: Consumer** — `Used downstream` (have at least one consumer) or `Unused`
-- **Sort** — by Name (default), by Consumers, or by Sources
+You can search by variable name, filter by **Cleanup** (`Has cleanup` or `Orphaned`) and **Consumer** (`Used downstream` or `Unused`), and sort by Name (default), Consumers, or Sources.
 
 ## The Data Flow Section on a Test
 
@@ -76,48 +55,34 @@ The same section appears on each API test's result inside a run.
 
 ## What Counts as "Cleanup-Relevant"
 
-Some variables represent **records that exist in your test environment after the run**. These need to be cleaned up so subsequent runs start fresh.
-
-TestSprite identifies cleanup-relevant variables by recognizing which ones look like resource handles (record IDs from POST/PUT calls with a matching DELETE endpoint) versus plain values used only for assertions.
-
-These flagged variables appear in the Dynamic Variables tab with a populated **Deleted by** column (and can be filtered via the Cleanup → "Has cleanup" filter). They feed into the cleanup chain.
-
-<Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
-  How TestSprite removes records created during a run
-</Card>
-
-<Tip>
-**Most fields don't trigger cleanup.** A `total_amount` is just a number used for an assertion downstream — it doesn't represent a record to delete. An `order_id` is the handle to a created record — deletion is needed.
-</Tip>
+Some variables are handles to **records that still exist after the run**: IDs from POST/PUT calls that have a matching DELETE endpoint. TestSprite flags these, gives them a **Deleted by** entry (filter: Cleanup → `Has cleanup`), and feeds them into [Auto Cleanup](/web-portal/core/api/auto-cleanup). Plain values used only for assertions, like a `total_amount`, aren't cleaned up; an `order_id` is.
 
 ## Refining Producer/Consumer Wiring
 
-If a chain is wrong (missing producer, mismatched name, or a path that doesn't resolve in the response), the recovery path is the test's description on its detail page: describe what should change, click **Regenerate**, and TestSprite regenerates the test.
+If a chain is wrong (missing producer, mismatched name, or a path that doesn't resolve in the response), edit the test's description on its detail page to say what should change, then click **Regenerate**.
 
 ## When a Value Isn't Available
 
-If a test needs a value that wasn't produced upstream, TestSprite marks it **Blocked** with the missing variable name in the error trace.
-
-The most common causes:
+If a test needs a value nobody produced, TestSprite marks it **Blocked** and names the missing variable in the error trace. Common causes:
 
 <AccordionGroup>
   <Accordion title="The producer test failed (or didn't run yet)">
-    The downstream test is blocked until the producer runs cleanly. Check the producer test detail page; fix it; rerun the consumer (or rerun the chain).
+    The downstream test stays blocked until the producer runs cleanly. Fix the producer, then rerun the consumer or the chain.
   </Accordion>
   <Accordion title="The producer didn't return the expected field">
-    The producer Passed but its response shape doesn't include the field you wanted (e.g., the value is nested under `data.id` instead of `id`). Refine in chat: "Capture user_id from data.id in the response".
+    The producer passed, but the field lives somewhere else in the response (e.g., `data.id` instead of `id`). Refine in chat: "Capture user_id from data.id in the response".
   </Accordion>
-  <Accordion title="Name mismatch — producer says `userId`, consumer says `user_id`">
-    Variable names must match exactly (case-sensitive). Refine one or the other to align.
+  <Accordion title="Name mismatch: producer says `userId`, consumer says `user_id`">
+    Names must match exactly (case-sensitive). This is the usual reason a variable shows in the Dynamic Variables tab while its consumer is still Blocked. Refine one side to match.
   </Accordion>
   <Accordion title="Producer was unticked at plan-review">
-    A producer was pruned from the plan, but a downstream test depended on it. The downstream test gets Blocked. Either re-add the producer, or refine the downstream to not need that variable.
+    A test depended on a producer you removed from the plan. Re-add the producer, or refine the downstream test so it doesn't need that variable.
   </Accordion>
 </AccordionGroup>
 
 ## Reusing the Same Variable Across Chains
 
-A variable produced once is available to every test downstream in the run, not just one chain. So:
+A variable is available to every later test in the run, not just its own chain:
 
 ```
 POST /users (chain A producer)        produces user_id
@@ -125,13 +90,9 @@ POST /users (chain A producer)        produces user_id
 GET /users/{id} (chain B consumer)    uses user_id  ← same value, no re-create
 ```
 
-Chain B doesn't have to call POST /users again — it reuses the value from chain A's producer. This is why "Used By" can show multiple test names per row.
+That's why **Used by** can list several tests. Values last for one run; the next run produces fresh ones.
 
-<Info>
-**Per-run scope, not per-chain scope.** Variables are produced fresh on each run. Across runs the values reset (new POST /users → new user_id). Within a single run, values persist for the entire run's duration.
-</Info>
-
-## Edge Cases & Troubleshooting
+## <a id="edge-cases-and-troubleshooting"></a>Edge Cases & Troubleshooting
 
 <AccordionGroup>
   <Accordion title="The value I need is in a list, not a single field">
@@ -140,14 +101,11 @@ Chain B doesn't have to call POST /users again — it reuses the value from chai
   <Accordion title="The response is a JSON array at the root">
     Refine in chat: "Capture id from the first array element of the response".
   </Accordion>
-  <Accordion title="The endpoint returns the resource but with the ID inside a header (Location)">
-    Refine the test in chat to read from the header — TestSprite produces the appropriate code from the instruction.
-  </Accordion>
-  <Accordion title="I see the variable in the Dynamic Variables tab but the consumer still says BLOCKED">
-    Probably a name mismatch. Check the producer's name and the consumer's name — they must match exactly (case-sensitive).
+  <Accordion title="The endpoint returns the ID in a header (Location)">
+    Refine the test in chat to read it from the header.
   </Accordion>
   <Accordion title="Two tests produce the same variable name from different responses">
-    TestSprite tries to avoid this; if it happens, one producer "wins" consistently. Refine names to be unique (`order_id_a`, `order_id_b`) if you genuinely need both.
+    TestSprite tries to avoid this; if it happens, one producer "wins" consistently. Give them unique names (`order_id_a`, `order_id_b`) if you need both.
   </Accordion>
 </AccordionGroup>
 
@@ -162,8 +120,5 @@ Chain B doesn't have to call POST /users again — it reuses the value from chai
   </Card>
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     What happens to cleanup-flagged variables after the run
-  </Card>
-  <Card title="Data Flow" href="#the-data-flow-section-on-a-test" icon="diagram-project">
-    Where each test shows the values it captures and consumes
   </Card>
 </Columns>

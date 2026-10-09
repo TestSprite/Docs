@@ -1,48 +1,79 @@
 ---
 title: "Managing Test Cases"
-description: "Edit a single test case, batch-edit the whole plan in form or YAML mode, add tests by hand or with AI, and delete what you no longer need."
+description: "Edit, refine, add, and delete test cases: change a test yourself or have TestSprite's testing agent change it, batch-edit the plan, or regenerate it from your sources."
 ---
 
 <Frame>
   <img src="../../../images/managing-test-case-overview.png" alt="The Test Cases list, grouped by use case with per-row status" />
 </Frame>
 
-## Overview
+The <kbd>Test Cases</kbd> page lists every test in the project, grouped by use case. You can change a test yourself or have TestSprite's testing agent change it for you. Edits only count once the test re-runs, so saving a single case is **Save & Run**.
 
-The <kbd>Test Cases</kbd> page is the working list of every test in the project, grouped by use case. This page covers keeping that list right: editing what a test does, adding new ones, and pruning old ones.
-
-Everything here changes the *plan* — what the test intends to do. To make a change count, re-run the test afterward; that's why saving a single case is wired as **Save & Run**.
+| To... | Use |
+| :--- | :--- |
+| Refocus or extend one test | [Edit its description](#editing-a-single-test-case) |
+| Rewrite a test's flow step by step | [Edit its steps](#editing-steps) |
+| Understand a failure and get a fix | [Ask AI in Chats](#asking-ai-for-a-fix) |
+| Change many tests at once | [Batch editing](#batch-editing) |
+| Add coverage | [Adding test cases](#adding-test-cases) |
+| Start over after a major app change | [Regenerate from sources](#regenerating-from-sources) |
 
 ## Editing a Single Test Case
 
 <Frame>
-  <img src="../../../images/managing-test-case-edit-single.png" alt="A test case open as a drawer — Basics, Runtime steps, and the Preview pane" />
+  <img src="../../../images/managing-test-case-edit-single.png" alt="A test case open as a drawer: Basics, Runtime steps, and the Preview pane" />
 </Frame>
 
-Click any row to open the test case — as a drawer over the list, expandable to a full page. What you can change, and where:
+Click any row to open the test case as a drawer over the list, expandable to a full page. What you can change, and where:
 
 | What | Where |
 | :--- | :--- |
-| **Priority** | The Basics section — High / Medium / Low |
-| **Test Description (Prompt)** | The Basics section — the natural-language statement of what the test verifies; the judge scores the run against it |
-| **Steps** | The <kbd>Edit steps</kbd> modal — see below |
+| **Priority** | The Basics section: High / Medium / Low |
+| **Test Description (Prompt)** | The Basics section: the natural-language statement of what the test verifies, which the run is judged against |
+| **Steps** | The <kbd>Edit steps</kbd> modal (see below) |
 | **Code** | The Code tab |
 
-### Editing steps and re-running
+Editing the description is the most common refinement. Rewrite what the test should verify, click <kbd>Save & Run</kbd>, and TestSprite updates the steps to match and re-runs that test. Be specific:
 
 <Frame>
-  <img src="../../../images/ui-testing-step-edit-in-editor.png" alt="The Edit steps & re-run dialog — the pass criterion above the editable step rows" />
+  <img src="../../../images/refine-edit-description.png" alt="Editing a test's description in its detail view" />
 </Frame>
 
-The <kbd>Edit steps</kbd> modal lets you rewrite the flow from any step onward: steps **before** the one you picked stay locked (they're still executed, just not editable), and everything after is free-text — add, remove, or rewrite steps, each typed as an *action* or an *assertion*. You can adjust the pass criterion in the same modal. Saving starts a run with the new steps immediately.
+```text Before
+Verify user can log in with valid credentials.
+```
 
-<Note>
-For UI tests, edited steps run directly — there's no code-generation step in between. For API tests, editing the prompt pairs with a <kbd>Regenerate</kbd> button right under it: **Save & Run replays the existing stored code**, while **Regenerate** rewrites the code from your edited prompt first and then runs. Reach for Regenerate whenever your edit changes what the code must do.
-</Note>
+```text After
+Verify the Sign In link directs users to the login page, that
+submitting email "test@example.com" + password "test123" lands them
+on the dashboard, and that the navbar avatar shows after login.
+```
+
+For API tests, <kbd>Save & Run</kbd> replays the existing stored code. Click <kbd>Regenerate</kbd> under the prompt instead whenever your edit changes what the code must do; it rewrites the code from your edited prompt, then runs.
+
+Refine one or two tests at a time, re-run, and confirm before moving on; it's much easier to debug than editing twenty at once.
+
+### Editing steps
+
+<Frame>
+  <img src="../../../images/ui-testing-step-edit-in-editor.png" alt="The Edit steps & re-run dialog: the pass criterion above the editable step rows" />
+</Frame>
+
+The <kbd>Edit steps</kbd> modal lets you rewrite the flow from any step onward. Steps **before** the one you picked stay locked (they still run, just aren't editable); everything after is free text. Add, remove, or rewrite steps, each typed as an *action* or an *assertion*, and adjust the pass criterion in the same modal. Saving starts a run with the new steps immediately. For UI tests, edited steps run directly, with no code-generation step in between. See [Edit & Rerun](/web-portal/core/ui/ui-rerun) for the other ways to re-run.
+
+For UI tests, [Auto-Heal](/web-portal/core/ui/auto-heal) also absorbs UI drift on reruns, so a moved button doesn't need an edit.
+
+## Asking AI for a Fix
+
+<Frame>
+  <img src="../../../images/refining-chat.png" alt="The Chats panel open beside a test case" />
+</Frame>
+
+When you don't know why a test failed, open <kbd>Chats</kbd> beside the test and ask, for example *"Why did this fail?"*, *"What is this test checking?"*, or *"How do I fix this?"*. The assistant answers from the test's steps, the run's recording, and the failure trace, and any change it proposes arrives as a card you approve first (see [Approving Actions](/web-portal/ai-chat/approving-actions)). It doesn't see your application source code or PRD by default.
 
 ## Batch Editing
 
-Click <kbd>Edit Test</kbd> on the toolbar to open the batch editor — every test case in the plan on one screen, with a use-case nav on the left. It has two modes:
+Click <kbd>Edit Test</kbd> on the toolbar to open the batch editor: every test case in the plan on one screen, with a use-case nav on the left. It has two modes:
 
 <Frame>
   <img src="../../../images/managing-test-case-batch-click-edit.png" alt="The Edit Test button on the Test Cases toolbar" />
@@ -51,19 +82,19 @@ Click <kbd>Edit Test</kbd> on the toolbar to open the batch editor — every tes
 <Tabs>
   <Tab title="Form mode">
     <Frame>
-      <img src="../../../images/managing-test-case-batch-form.png" alt="Form mode — every case as an editable row with its steps expanded" />
+      <img src="../../../images/managing-test-case-batch-form.png" alt="Form mode: every case as an editable row with its steps expanded" />
     </Frame>
 
-    A table of every case with **test name, priority, description, and each flow step** editable in place, steps expanded by default. Best when you're touching a handful of cases and want to see them in context.
+    Every case as a row with **test name, priority, description, and each flow step** editable in place. Best for touching a handful of cases in context.
 
-    Save writes only the rows you actually changed, and reports per-case if any row fails to save — a partial save never silently loses the rest.
+    Save writes only the rows you changed and reports per case if any row fails, so a partial save never silently loses the rest.
   </Tab>
   <Tab title="YAML mode">
     <Frame>
-      <img src="../../../images/managing-test-case-batch-yaml.png" alt="YAML mode — the whole plan as one editable document" />
+      <img src="../../../images/managing-test-case-batch-yaml.png" alt="YAML mode: the whole plan as one editable document" />
     </Frame>
 
-    The whole plan as one YAML document — best for sweeping edits: renumbering steps across many cases, find-and-replace on a URL, or pasting cases between projects.
+    The whole plan as one YAML document. Best for sweeping edits: renumbering steps across many cases, find-and-replace on a URL, or pasting cases between projects.
 
     ```yaml
     useCases:
@@ -82,15 +113,15 @@ Click <kbd>Edit Test</kbd> on the toolbar to open the batch editor — every tes
               - assert: The dashboard page is displayed
     ```
 
-    The rules, straight from the editor's header comment:
+    The rules (also in the editor's header comment):
     - A plain step line is an **action**; `assert: ...` marks an **assertion**.
     - **Add** a case by copying an existing one and removing its `id` line.
     - **Remove** a case by deleting its block.
-    - Leave `id` and `slug` values as they are — they're how your edits map back to existing cases.
+    - Leave `id` and `slug` values as they are; they map your edits back to existing cases.
   </Tab>
 </Tabs>
 
-Switching between the two modes discards unsaved edits in the mode you're leaving — the editor warns you first.
+Switching modes discards unsaved edits in the mode you're leaving; the editor warns you first.
 
 ## Adding Test Cases
 
@@ -100,39 +131,48 @@ The <kbd>Add More Tests</kbd> dropdown on the toolbar has both paths:
   <img src="../../../images/managing-test-case-add-more.png" alt="The Add More Tests dropdown, with the AI and manual paths" />
 </Frame>
 
-- **Add Tests with AI** — describe what you want covered (optionally scoped to one use case) and review the proposed batch before anything is created. In the review grid you can edit each proposal's title, description, priority, and steps, untick the ones you don't want, and even hand-add rows.
-- **Add Test Manually** — a form with use case, title, priority, description, and a step list (action/assertion per step).
+- **Add Tests with AI**: describe what you want covered (optionally scoped to one use case), and TestSprite's testing agent proposes a batch. Before anything is created, you can edit each proposal's title, description, priority, and steps, untick the ones you don't want, or hand-add rows.
+- **Add Test Manually**: a form with use case, title, priority, description, and a step list (action or assertion per step).
 
-You can also add from the [Coverage Map](/web-portal/core/working-with-test/coverage-map) — per use case, or with the per-feature ✨ AI shortcut.
+You can also add from the [Coverage Map](/web-portal/core/working-with-test/coverage-map), per use case or with the per-feature ✨ AI shortcut.
+
+## Regenerating from Sources
+
+When your app has changed so much that the plan is more outdated than fixable (a major redesign, or a new API contract across many endpoints), rebuild it. Open <kbd>Test Coverage</kbd>, click <kbd>Regenerate from sources</kbd>, and confirm. TestSprite's testing agent discards the current use cases and extracts a new set from the project's sources, in the same project. Then plan tests from the new use cases and run them as usual.
+
+<Frame>
+  <img src="../../../images/refining-regenerate.png" alt="Regenerate From Sources on the Test Coverage page" />
+</Frame>
+
+<Warning>
+Regenerating can't be undone: all existing use cases and their generated test cases are removed. To keep the old suite alongside the new one, create a new project instead.
+</Warning>
 
 ## Deleting Test Cases
 
-- **One case** — from the trash icon in its drawer, or the row's context menu in the list. A case that has never run is labeled "Remove from plan"; one with run history warns you the history goes with it.
+- **One case**: the trash icon in its drawer, or the row's context menu. A case that has never run is labeled "Remove from plan"; one with run history warns you the history goes with it.
 
 <Frame>
   <img src="../../../images/managing-test-case-delete-one.png" alt="Deleting a single case from its row" />
 </Frame>
 
-- **Many cases** — select rows and use the trash button in the toolbar.
+- **Many cases**: select rows and use the trash button in the toolbar.
 
 <Frame>
   <img src="../../../images/managing-test-case-delete-batch.png" alt="Deleting several selected cases from the toolbar" />
 </Frame>
 
 <Warning>
-Deleting a test case permanently removes its run history too. If you might want the history later, consider deprioritizing the case instead of deleting it.
+Deleting a test case permanently removes its run history too. If you might want the history later, deprioritize the case instead.
 </Warning>
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen-to-square">
-    This page is "how to change it yourself" — that one is "how to have AI change it"
-  </Card>
   <Card title="Coverage Map" href="/web-portal/core/working-with-test/coverage-map" icon="sitemap">
     Manage the plan visually, use case by use case
   </Card>
-  <Card title="Test Detail Page" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
-    Where the drawer, tabs, and run controls live
+  <Card title="Edit & Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
+    Every way to re-run a UI test
   </Card>
 </Columns>

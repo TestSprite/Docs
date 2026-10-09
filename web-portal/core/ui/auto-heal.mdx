@@ -5,14 +5,14 @@ description: "When a UI test fails on rerun because the page changed, Auto-Heal 
 
 ## Two Ways UI Tests Fail on Rerun
 
-When you rerun a UI test that previously passed, two things can have changed since the last run:
+When you rerun a UI test that previously passed, one of two things has changed:
 
 | Failure mode | What it looks like |
 | :--- | :--- |
-| <kbd>UI moved, flow still correct</kbd> | A button got renamed, a form got an extra field, a sidebar got reordered. The test fails even though there's nothing actually broken in your product. |
-| <kbd>The flow itself is broken</kbd> | Real bug. The test catching it is the point. |
+| <kbd>UI moved, flow still correct</kbd> | A button got renamed, a form got an extra field, a sidebar got reordered. The test fails even though nothing in your product is broken. |
+| <kbd>The flow itself is broken</kbd> | A real bug. Catching it is the point. |
 
-A plain rerun can't tell these apart. **Auto-Heal** is what tells them apart — it lets the test recover from the first kind, while the second kind still fails (which is what you want).
+A plain rerun can't tell these apart. **Auto-Heal** can: the test recovers from the first kind, and the second kind still fails, as it should.
 
 <Info>
 In the web portal, Auto-Heal is built into UI reruns; there's no toggle to switch on. Not every plan includes Auto-Heal. Compare plans on the [pricing page](https://www.testsprite.com/pricing).
@@ -20,52 +20,35 @@ In the web portal, Auto-Heal is built into UI reruns; there's no toggle to switc
 
 ## What Auto-Heal Does
 
-TestSprite runs your saved test. If the page changed but the underlying flow still works, the test recovers and is marked **Passed**. If the flow itself is broken, the test stays Failed (correctly).
-
-Net effect: tests that used to break on every UI tweak now stay green through refactors, design system swaps, and copy edits — without anyone editing the test by hand. Real bugs still surface as Failed.
-
-<Card title="Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
-  Full mechanics of rerun itself — where the buttons are, the difference between Run and Save & Run, and Quick Start
-</Card>
+TestSprite runs your saved test. If the page changed but the flow still works, the test recovers and is marked **Passed**; if the flow is broken, it stays Failed. Tests stay green through refactors, design system swaps, and copy edits without anyone editing them by hand, while real bugs still surface.
 
 ## When Auto-Heal Helps and When It Doesn't
 
-<AccordionGroup>
-  <Accordion title="Helps: minor UI refactor that moves things around" icon="circle-check">
-    Renamed buttons (`Submit` → `Save`), restructured navigation (sidebar moved into a hamburger), added a wrapper element around a form field. The flow you're testing still works; only the references to the page are stale. Auto-Heal recovers most of these.
-  </Accordion>
-  <Accordion title="Helps: design system swap on a page you didn't think about" icon="circle-check">
-    A team replaced a custom dropdown with a shadcn `Select`. Component API changed, DOM changed, accessibility roles changed — pure refactor. Auto-Heal re-binds the test to the new component without anyone hand-editing it.
-  </Accordion>
-  <Accordion title="Helps: copy edit you didn't think tests would care about" icon="circle-check">
-    "Continue" became "Next" on the wizard step. Anything matching by text content breaks on plain replay. Auto-Heal sees the rename in context and continues.
-  </Accordion>
-  <Accordion title="Doesn't help: actual product bug" icon="circle-xmark">
-    The form is broken — a required field always rejects valid input, an API endpoint returns 500, the redirect goes to the wrong page. Auto-Heal will try to recover and won't be able to; the test stays Failed. **This is the correct outcome** — Auto-Heal is not "make tests pass". It's "absorb UI drift, surface real bugs."
-  </Accordion>
-  <Accordion title="Doesn't help: feature was removed" icon="circle-xmark">
-    The flow the test was checking has been intentionally deleted (rather than refactored). The test should be removed from your suite, not healed. Auto-Heal can't tell intentional removal from regression — it'll fail the test, and you can clean up.
-  </Accordion>
-  <Accordion title="Doesn't help: long auth/onboarding gate" icon="circle-xmark">
-    If the test only runs after a multi-step login + onboarding sequence and that sequence itself broke, recovery work hits the broken gate before reaching the actual flow. **Use [Auto-Auth](/web-portal/core/api/auto-auth) for backend tests; for UI tests, make sure your test account stays in a known state.**
-  </Accordion>
-</AccordionGroup>
+**It helps with UI drift:**
+
+- **Minor refactors**: renamed buttons (`Submit` → `Save`), navigation moved into a hamburger menu, a wrapper element added around a form field.
+- **Design system swaps**: a custom dropdown replaced with a shadcn `Select`, with a new DOM and accessibility roles. Auto-Heal re-binds the test to the new component.
+- **Copy edits**: "Continue" became "Next". Anything matching by text breaks on plain replay; Auto-Heal sees the rename in context.
+
+**It doesn't help with:**
+
+- **Real product bugs**: a required field rejects valid input, an API returns 500, a redirect goes to the wrong page. The test stays Failed, which is the correct outcome. Auto-Heal absorbs UI drift; it doesn't make tests pass.
+- **Removed features**: if the flow was deleted on purpose, remove the test from your suite. Auto-Heal can't tell intentional removal from a regression.
+- **A broken login or onboarding gate**: if the sequence before the flow is what broke, recovery can't get past it. Keep your test account in a known state.
 
 ## Why Frontend-Only
 
-Auto-Heal applies only to UI (frontend) tests. **Backend tests don't need it** — they run by issuing HTTP requests to your API, which doesn't drift in the same way a UI does. Routes don't subtly change without an explicit API version bump.
-
-When backend tests fail on rerun, the cause is almost always one of these — and the right tool is the corresponding feature:
+Auto-Heal applies only to UI tests. API tests issue HTTP requests, and routes don't drift the way a UI does without an explicit version bump. When an API test fails on rerun, the cause is usually one of these:
 
 <CardGroup cols={3}>
   <Card title="Endpoint behaves differently" href="/web-portal/core/working-with-test/test-detail" icon="bug">
-    A real bug. Investigate via the test detail page — the failing assertion plus the recorded request/response usually tells you what changed.
+    A real bug. The failing assertion and the recorded request/response usually show what changed.
   </Card>
   <Card title="Auth token expired" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Configure **Auto-Auth** so a fresh token is fetched before every run.
   </Card>
   <Card title="Required fixture was deleted" href="/web-portal/core/api/auto-cleanup" icon="broom">
-    Check **Auto Cleanup** and your dependency chains — a producer's record may have been removed before its consumer ran.
+    Check **Auto Cleanup** and your dependency chains: a producer's record may have been removed before its consumer ran.
   </Card>
 </CardGroup>
 
@@ -73,26 +56,26 @@ When backend tests fail on rerun, the cause is almost always one of these — an
 
 <AccordionGroup>
   <Accordion title="Auto-Heal recovered the test but I want to know what changed">
-    Open the test detail page and look at the **Steps** list in its left column. Your saved test stays the persisted source of truth; Auto-Heal doesn't overwrite it unless you explicitly save updates (currently a manual operation).
+    Open the test detail page and look at the **Steps** list in its left column. Your saved test stays the source of truth; Auto-Heal doesn't overwrite it unless you explicitly save updates.
   </Accordion>
   <Accordion title="Can I auto-heal an integration (multi-step) UI test?">
-    Yes — recovery covers the entire step sequence, not just the failing step. Steps that still work get reused; broken steps get re-decided in context.
+    Yes. Recovery covers the whole step sequence: steps that still work are reused, and broken ones are re-decided in context.
   </Accordion>
   <Accordion title="What happens if recovery itself errors out (network, transient failure)?">
-    The test is marked Failed with the last-known error in the **Error / Trace / Fix** tabs of the test detail page. Click <kbd>Run test</kbd> to try again. If recovery consistently errors out on a test, [contact support](https://discord.gg/QQB9tJ973e) with the test ID.
+    The test is marked Failed with the last-known error in the **Error / Cause / Fix** tabs of the test detail page. Click <kbd>Run test</kbd> to try again. If recovery keeps erroring on a test, [contact support](https://discord.gg/QQB9tJ973e) with the test ID.
   </Accordion>
 </AccordionGroup>
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
-    The rerun surfaces themselves — single, batch, scheduled
+  <Card title="Edit & Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
+    The rerun surfaces: single, batch, scheduled
   </Card>
   <Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="clock">
     Set up nightly schedules
   </Card>
-  <Card title="Comparing Runs" href="/web-portal/maintenance/comparing-runs" icon="code-compare">
-    Diff two runs to see what changed step-by-step
+  <Card title="Insights" href="/web-portal/results/project-overview" icon="gauge">
+    Regressions and quality trends across runs
   </Card>
 </Columns>

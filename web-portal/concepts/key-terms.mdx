@@ -1,353 +1,49 @@
 ---
 title: "Key Terms"
-description: "Core concepts you'll encounter throughout the TestSprite Web Portal — workspaces, API keys, projects, tests, lists, schedules, and the data they collect."
+description: "The core concepts of the TestSprite Web Portal: workspaces, projects, tests, runs, plans, environments, lists, and schedules."
 ---
 
-This page defines the building blocks the Web Portal uses. If you've already used TestSprite once, most of these will feel familiar — this is the canonical reference for when a teammate asks "wait, what's a Test List vs a Test?"
+The handful of terms the rest of the docs build on. Feature-specific terms, like dynamic variables or auto-cleanup, are explained on their own pages.
 
 ## Workspace
 
-The container everything else on this page lives inside. Every user has a **personal workspace**, and can also belong to one or more **team workspaces**. Whichever workspace is active determines where a new project, test, or API key belongs.
-
-<Tabs>
-  <Tab title="What a workspace is">
-    A personal workspace is created for you automatically and has no membership to manage. A team workspace holds work that belongs to the workspace itself — open to every member — rather than to any one person. Everyone in a workspace can see its projects; what each person may *do* depends on their role.
-  </Tab>
-  <Tab title="Where workspaces appear">
-    The switcher sits at the top of the left sidebar; management lives under <kbd>Workspace Settings</kbd>.
-  </Tab>
-</Tabs>
-
-<Card title="Workspaces" href="/web-portal/admin/workspaces" icon="users">
-  Personal vs. team workspaces, switching, and deletion
-</Card>
-
-## Member Roles
-
-Every member of a workspace holds exactly one role, and roles are per-workspace — the same person can be an Admin in one and a Viewer in another.
-
-<Tabs>
-  <Tab title="The four roles">
-    - **Viewer**: read-only. Opens every project, report, and recording; changes nothing.
-    - **Member** — does the testing: creates projects, edits and runs tests.
-    - **Admin** — everything a Member can, plus managing people, integrations, and credit top-ups.
-    - **Owner** — the workspace's creator. Everything an Admin can, plus plan changes and deleting the workspace.
-  </Tab>
-  <Tab title="Where roles appear">
-    <kbd>Workspace Settings → Members</kbd>, where you invite people, change a role, or remove someone. Paid roles take a seat; Viewers don't.
-  </Tab>
-</Tabs>
-
-<Card title="Members & Roles" href="/web-portal/admin/members-and-roles" icon="user-plus">
-  The full permission matrix and the invitation flow
-</Card>
-
-## AI Chat
-
-The conversational way to drive the portal: describe what you want — create a project, add test cases, start a run, ask why something failed — instead of finding the page that does it.
-
-<Tabs>
-  <Tab title="What AI Chat is">
-    An assistant that works on your projects on your behalf. Anything that changes your data arrives as a **proposal card** you approve or reject first, so nothing happens behind your back. Questions it can answer from your data are answered directly.
-  </Tab>
-  <Tab title="Where AI Chat appears">
-    The chat panel in the portal. Each conversation is focused on one project, and conversations belong to the workspace they were started in.
-  </Tab>
-</Tabs>
-
-<Card title="AI Chat" href="/web-portal/ai-chat/overview" icon="comments">
-  What it can do, project focus, and conversations
-</Card>
+The container everything else lives in. You have a **personal workspace**, and you can belong to **team workspaces**; the active one decides which projects you see. In a team workspace, each member has one role (Viewer, Member, Admin, or Owner). See [Workspaces](/web-portal/admin/workspaces) and [Members & Roles](/web-portal/admin/members-and-roles).
 
 ## Project
 
-The top-level container for everything you do in the portal. A project represents one application (or one slice of an application — e.g. one micro-frontend or one API surface) and groups all the tests, runs, credentials, and variables that belong to it.
+One application under test, or one slice of it (a single micro-frontend or API surface). A project is either **UI** (frontend) or **API** (backend) and holds its configuration, tests, and run history. Create one with <kbd>New Project</kbd> on <kbd>All Projects</kbd>. See [Test Detail Page](/web-portal/core/working-with-test/test-detail).
 
-<Tabs>
-  <Tab title="What a project is">
-    A project bundles:
-    - **Type**: UI (frontend) or API (backend)
-    - **Configuration**: starting URL or API endpoints, auth credentials, extra context
-    - **Generated tests**: every test case TestSprite drafted for this app
-    - **Run history**: every execution of those tests, with results and recordings
-  </Tab>
-  <Tab title="Where projects appear">
-    You create a project the moment you click <kbd>New Project</kbd> on <kbd>All Projects</kbd>. Each project has its own detail page with a sidebar for sources, the coverage map, test cases, runs, insights, and more.
-  </Tab>
-</Tabs>
+## Test Case
 
-<Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
-  Tour of every tab on the project detail page
-</Card>
-
-## Test
-
-A single executable check inside a project. UI tests are multi-step user-journey tests (sign in → navigate → fill a form → assert); API tests are typically per-endpoint checks (call → assert status, schema, contract).
-
-<Tabs>
-  <Tab title="What a test is">
-    A test has:
-    - A **title** (e.g. "Verify successful login with valid credentials")
-    - A **description** in natural language
-    - A list of **steps** TestSprite will execute
-    - **Expected outcomes** the test will assert against
-    - A **status** after each run: Passed, Failed, or Blocked
-  </Tab>
-  <Tab title="Where tests appear">
-    Tests appear on the project's <kbd>Test Cases</kbd> page. API projects split them into **Endpoint Tests** and **Integration Tests**. You can also see all tests across a Test List from the **Test Lists** section.
-  </Tab>
-</Tabs>
+A single executable check. UI tests are multi-step user journeys (sign in, navigate, fill a form, assert); API tests are usually per-endpoint checks (call, then assert status, schema, and contract). Each has a title, a natural-language description, steps, and after each run a status: Passed, Failed, or Blocked. They live on the project's <kbd>Test Cases</kbd> page.
 
 ## Test Run
 
-One execution of a project's tests, end to end. Each run produces results, screenshots, recordings, and (for API tests) the call logs TestSprite made to your service.
+One execution of a set of tests. A run records a verdict per test, step-by-step screenshots and video (UI) or HTTP requests and responses (API), and a suggested cause and fix for each failure. Runs are listed on the project's <kbd>Test Runs</kbd> page.
 
-<Tabs>
-  <Tab title="What a test run is">
-    A run captures, per test:
-    - **Passed / Failed / Blocked** verdict
-    - **Step-by-step screenshots** (UI) or **HTTP requests and responses** (API)
-    - **A video recording** for UI tests
-    - **An AI-authored failure analysis** when something didn't go as expected
-  </Tab>
-  <Tab title="Where runs appear">
-    Runs are surfaced on the project's <kbd>Test Runs</kbd> page, on the test-list page (rolled up to a status pip per list), and on each schedule's run history (one row per scheduled execution).
-  </Tab>
-</Tabs>
+## Feature Map
 
-## Test List
-
-A reusable collection of tests, often spanning more than one project. Test Lists are how you assemble a regression suite, smoke check, or release-gate suite.
-
-<Tabs>
-  <Tab title="What a test list is">
-    A Test List groups individual test cases — frontend, backend, or both — under one name. The list itself has its own run history (every time it's executed) and is the unit you schedule for continuous monitoring.
-  </Tab>
-  <Tab title="Where test lists appear">
-    From the dashboard sidebar under **Test Lists**. You'll also pick a Test List when you create a Schedule on the Test Schedules page.
-  </Tab>
-</Tabs>
-
-<Card title="Test Lists" href="/web-portal/maintenance/test-lists" icon="list">
-  How to create and manage Test Lists
-</Card>
-
-## Schedule
-
-A recurring rule that runs a Test List automatically — daily, weekly, monthly, or on a custom cadence. Schedules turn one-off testing into continuous monitoring.
-
-<Tabs>
-  <Tab title="What a schedule is">
-    A Schedule binds:
-    - **A Test List** (what to run)
-    - **A frequency** (when to run it)
-    - **A timezone** (so 6 AM means 6 AM where your team works)
-    - **Notification preferences** (who hears about failures)
-  </Tab>
-  <Tab title="Where schedules appear">
-    From the **Test Schedules** section. Each schedule has its own run history page where you can see how runs trended over time and which tests changed status between runs.
-  </Tab>
-</Tabs>
-
-<Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="chart-simple">
-  Schedule continuous test runs
-</Card>
-
-## Feature Map (Test Coverage)
-
-A structured list of **features** and the **use cases** under each, built from your PRD when you upload one at project setup. It's the spec-side input that grounds the rest of the lifecycle: plan generation scopes test cases to them, and the report attributes coverage back to them.
-
-<Tabs>
-  <Tab title="What the feature map is">
-    TestSprite reads your uploaded PRD (markdown / PDF / plain text, anything spec-shaped) and produces something like: *Feature: Checkout → Use Cases: Add to cart, Apply coupon, Pay with card, Pay with PayPal, Handle payment failure*. The result is rendered as a flow graph on the project's <kbd>Test Coverage</kbd> page.
-  </Tab>
-  <Tab title="Where the feature map appears">
-    On the project's <kbd>Test Coverage</kbd> page, with a flow graph and a <kbd>Regenerate from sources</kbd> button.
-  </Tab>
-  <Tab title="Without a PRD">
-    TestSprite still works. It falls back to your URL inputs, instructions, and (for UI) live exploration alone, but plans aren't grounded in your spec, which materially affects coverage. Uploading a PRD is **strongly recommended**.
-  </Tab>
-</Tabs>
-
-## Feature Exploration
-
-A pre-test phase for UI projects where TestSprite visits your live app and explores it feature by feature. The test plan in the next step is grounded in both the spec (feature map) and real behavior (what exploration could and couldn't reach).
-
-<Tabs>
-  <Tab title="What feature exploration is">
-    Exploration walks a list of features (Sign Up, Checkout, Profile, etc.) on your live app, captures what it could and couldn't reach, and surfaces a status per agent: <kbd>Starting</kbd>, <kbd>Logging in</kbd>, or <kbd>Exploring</kbd> while it's running, then <kbd>Done</kbd> or <kbd>Failed</kbd> when it finishes.
-  </Tab>
-  <Tab title="Where exploration appears">
-    It starts automatically when you create a UI project. You can also revisit recordings later under **Live Site Exploration** on the project's <kbd>Sources</kbd> page.
-  </Tab>
-</Tabs>
-
-<Card title="Feature Exploration" href="/web-portal/core/ui/feature-exploration" icon="compass">
-  Deep dive on the exploration phase
-</Card>
-
-## Test File
-
-A file you upload for the agent to use during a run — the sample CSV, PDF, or image it attaches when a test reaches a file-upload field. Also called a fixture.
-
-<Tabs>
-  <Tab title="What a test file is">
-    Real input data, kept with the project rather than with any one test. Without it, a test that has to upload something has nothing to upload.
-  </Tab>
-  <Tab title="Where test files appear">
-    Under <kbd>Project Settings → Test Execution → Test Files</kbd>.
-  </Tab>
-</Tabs>
-
-<Card title="Project Sources" href="/web-portal/setup/project-sources" icon="book-open">
-  Everything you can feed a project, and when to use each
-</Card>
-
-## Variables (Dynamic Variables)
-
-Values captured from one API test and reused as inputs in a downstream test — the way TestSprite stitches together multi-step API flows.
-
-<Tabs>
-  <Tab title="What variables are">
-    When TestSprite runs `POST /orders` and gets back `{ "orderId": "abc" }`, it can capture `orderId` as a dynamic variable. A later `GET /orders/{orderId}` test then consumes that captured value instead of a hard-coded one.
-
-    You'll see the captured variable name (e.g. `orderId`) and its value on a run's **Dynamic Variables** tab.
-  </Tab>
-  <Tab title="Where variables appear">
-    On API projects, on the **Dynamic Variables** tab of a run (open it from <kbd>Test Runs</kbd>). The variables list builds up as tests execute: empty before the first run, populated after.
-  </Tab>
-</Tabs>
-
-## Credentials (Authentication)
-
-The keys, tokens, or login details TestSprite uses to call your APIs or sign into your app during testing.
-
-<Tabs>
-  <Tab title="What credentials are">
-    For **API projects**: per-API auth type (Bearer Token, API Key, Basic Token, or None) plus the secret value, with bulk update if one token covers many endpoints.
-
-    For **UI projects**: a test account (URL + username + password) TestSprite uses to sign into your app during exploration and runs.
-
-    Credentials are stored encrypted, masked in the UI (only first/last few chars shown), and editable any time from <kbd>Project Settings → Test Execution → Environment</kbd>.
-  </Tab>
-  <Tab title="Where credentials appear">
-    When you create the project (you provide them upfront), and under <kbd>Project Settings → Test Execution → Environment</kbd> (where you update them later).
-  </Tab>
-</Tabs>
-
-## Environment
-
-A named target your tests run against — dev, staging, production — with its own URL and its own values for the variables your tests reference.
-
-<Tabs>
-  <Tab title="What an environment is">
-    One set of tests, several places to point it. Switching environment changes where a run goes without touching a single test case.
-  </Tab>
-  <Tab title="Where environments appear">
-    Under the project's <kbd>Environment</kbd> settings; the run button lets you pick which one a run uses.
-  </Tab>
-</Tabs>
-
-<Card title="Environments" href="/web-portal/setup/environments" icon="globe">
-  Defining environments and switching between them
-</Card>
-
-## Execution Setting
-
-Project-level knobs for *how* a run executes: browser viewport, how often the agent signs in, how many tests run at once, and whether cases stick to their planned steps.
-
-<Tabs>
-  <Tab title="What execution settings are">
-    Everything about the run that isn't the tests themselves. Useful when your app rate-limits logins, when you want a mobile viewport, or when you're trading speed against stability.
-  </Tab>
-  <Tab title="Where execution settings appear">
-    In the project's settings, applied to every run of that project until you change them.
-  </Tab>
-</Tabs>
-
-<Card title="Run Behavior" href="/web-portal/setup/execution-settings" icon="sliders">
-  Each setting, when to change it, and two recommended configurations
-</Card>
-
-## API Key
-
-Not to be confused with **Credentials** above: an API key authenticates *you* to TestSprite (it's what the CLI and MCP Server use to act on your behalf), while Credentials are what TestSprite uses against *your* app or API under test.
-
-Two kinds exist: a **personal key** (`sk-user-...`) — the original kind, bound to you and your personal balance — and a **workspace key** (`sk-member-...`) — scoped to a specific shared workspace and its balance, capped at 2 active per member per workspace. Personal keys predate the workspace-key kind and are no longer mintable; any workspace's API Keys page, including your personal workspace's, always mints a workspace key.
-
-<Tabs>
-  <Tab title="What an API key is">
-    Minted from a workspace's API Keys page, bound to that workspace, shown once at creation, and revocable at any time. An optional expiration can be set at creation — leave it blank and the key does not expire, unless the workspace enforces a maximum lifetime, in which case a longer expiry is rejected and a key created without one gets that maximum instead.
-  </Tab>
-  <Tab title="Where API keys appear">
-    Under <kbd>Workspace Settings → Connections → API Keys</kbd>. Your personal workspace's page lists any personal key you already hold plus any workspace keys minted from that page, and each shared workspace's page lists that workspace's keys.
-  </Tab>
-</Tabs>
-
-<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
-  The full comparison, plus creation, expiry, and revocation
-</Card>
-
-## Cleanup
-
-Post-run teardown of resources tests created — records, files, sessions — so your test environment doesn't fill with leftovers.
-
-<Tabs>
-  <Tab title="What cleanup is">
-    After API tests finish, TestSprite reviews any resources the suite created and tries to clean them up automatically. The **Cleanup** tab shows which resources were captured during the run and the status of each cleanup attempt (Has cleanup, Orphaned).
-  </Tab>
-  <Tab title="Where cleanup appears">
-    On API projects, under the **Cleanup** tab of a run (open it from <kbd>Test Runs</kbd>). You'll briefly see a *"Running cleanup sweep"* indicator at the end of a run before results land here.
-  </Tab>
-</Tabs>
-
-## Ticket
-
-A bug report filed from a failing test, so a failure becomes tracked work instead of a line in a report nobody revisits.
-
-<Tabs>
-  <Tab title="What a ticket is">
-    Created from a specific failure and carrying its context. The same failure isn't filed twice, and when the test passes again the ticket is updated — the loop closes itself.
-  </Tab>
-  <Tab title="Where tickets appear">
-    Per project, under <kbd>Notifications & Ticketing</kbd> — either filed by hand from a failure, or automatically for every failure once you turn that on.
-  </Tab>
-</Tabs>
-
-<Card title="Ticketing" href="/web-portal/integrations/ticketing" icon="ticket">
-  Turning failures into tickets, and keeping the noise down
-</Card>
+The features of your product and the use cases under each, built from your PRD and what TestSprite explored or discovered. It's what plans are scoped to. You'll find it, and can edit it, on the project's <kbd>Test Coverage</kbd> page. See [Coverage Map](/web-portal/core/working-with-test/coverage-map).
 
 ## Test Plan
 
-The structured list of test cases TestSprite drafts after analyzing your project. The plan is what you review and refine before any code is generated.
+The test cases TestSprite's testing agent plans from the feature map, before anything runs. You review, edit, add, or remove them in **Review proposed tests**, which opens after you click <kbd>Plan Tests</kbd>.
 
-<Tabs>
-  <Tab title="What a test plan is">
-    Each entry in a Test Plan has:
-    - A **title** and **description**
-    - A **category** (functional, security, error handling, etc.)
-    - **Steps** TestSprite will execute when the test runs
-    - **Expected outcomes** for each step
-  </Tab>
-  <Tab title="Where the test plan appears">
-    In **Review proposed tests**, which opens when you click <kbd>Plan Tests</kbd> on <kbd>Test Coverage</kbd>. You can edit, add, or remove cases here before running.
-  </Tab>
-</Tabs>
+## Environment
 
-## Where to Go Next
+A named target your tests run against, such as dev, staging, or production, with its own URL, sign-in details, and variable values. Switching environments changes where a run goes without touching the tests. See [Environments](/web-portal/setup/environments).
 
-<Columns cols={2}>
-  <Card title="Testing Lifecycle" href="/web-portal/concepts/testing-lifecycle" icon="arrows-spin">
-    How these terms come together end to end
-  </Card>
-  <Card title="UI Testing" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
-    First UI test, step by step
-  </Card>
-  <Card title="API Testing" href="/web-portal/core/api/api-testing" icon="terminal">
-    First API test, step by step
-  </Card>
-  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
-    Every tab on the project detail page
-  </Card>
-</Columns>
+## Test List
+
+A reusable collection of tests, which can span projects: a regression suite, a smoke check, a release gate. A list has its own run history and is what you schedule. See [Test Lists](/web-portal/maintenance/test-lists).
+
+## Test Schedule
+
+A rule that runs a Test List automatically on a cadence, in your team's timezone. See [Test Schedules](/web-portal/maintenance/monitoring).
+
+## Credentials vs. API Keys
+
+Easy to mix up:
+
+- **Credentials** are what TestSprite uses against *your* app: a test account for a UI project, or tokens and keys for an API project. They're stored encrypted and set per environment.
+- **API keys** authenticate *you* to TestSprite, for the CLI and MCP Server. See [API Keys](/web-portal/admin/api-keys).

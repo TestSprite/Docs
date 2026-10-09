@@ -1,60 +1,88 @@
 ---
-title: "Test Report & Export"
-description: "Read the report page — pass rate, failure distribution, and AI recommendations — and download a PDF you can hand to a PM, to leadership, or attach to a release."
-icon: "file-chart-column"
+title: "Test Runs & Reports"
+description: "Watch a run as it happens, then read its report and download it as a PDF for your PM, leadership, or a release record."
 ---
 
-Every run produces a **report**: the pass-rate donut, the failures grouped by root cause, an AI-written summary, and a copy-paste fix prompt for your coding agent. Read it in the portal for triage, or download the **PDF** — a cover page, executive summary, and per-failure detail — to hand to a PM, to leadership, or to attach to a release record.
-
 <Frame>
-  <img src="../../images/api-testing-quick-start-report.png" alt="The Test Report page — stat cards, the pass/fail/blocked donut, and the Detailed Test Report button" />
+  <img src="../../images/first-test-execution.png" alt="A UI run in progress with live tiles and running counts" />
 </Frame>
 
-## Where to Find It
+Every run has its own page under <kbd>Test Runs</kbd>. Watch it live while it runs, then open its **report** when it finishes: the pass rate, failures grouped by root cause, an AI-written summary, and a fix prompt for your coding agent.
 
-The report opens from a run's page: click <kbd>View Report</kbd> on a run in <kbd>Test Runs</kbd>. It reflects the run you opened it from.
+## Watching a Run
+
+You don't have to wait for a run to finish. The **Run Report** header at the top of the run page shows the pass rate and live counts (<kbd>Running</kbd>, <kbd>Queued</kbd>, <kbd>Passed</kbd>, <kbd>Failed</kbd>, <kbd>Blocked</kbd>, <kbd>Total</kbd>), refreshed every couple of seconds. The page shows results from **this run**, not each test's latest status.
+
+The run page has two tabs showing the same run two ways:
+
+<Tabs>
+  <Tab title="Agent Actions View">
+    The default for UI runs. A tile per test streams the agent driving your app (marked **LIVE**) and becomes a replayable recording when the test finishes. Queued tests join the gallery as soon as they start. See [Agent Actions](/web-portal/core/ui/agent-actions).
+    <Frame>
+      <img src="../../images/ui-testing-agent-agent-view.png" alt="Agent Actions View with a running tile streaming live" />
+    </Frame>
+  </Tab>
+  <Tab title="List View">
+    The default for API runs, also available on UI runs. A status table of every test in the run, grouped by feature, with a live status chip that moves from Queued to Running to Passed, Failed, or Blocked. Sort by **Run Status**, search by title, or filter to one status.
+    <Frame>
+      <img src="../../images/ui-testing-agent-list-view.png" alt="List View showing the run-scoped test table with live status chips" />
+    </Frame>
+  </Tab>
+</Tabs>
+
+<Tip>
+**Filter to Failed while the run is still going.** A test appears under Failed as soon as it fails, so you can start triaging while the rest keep running.
+</Tip>
+
+Open any test to watch its steps land live: the step list fills in as the agent acts, and clicking a step shows an HTML snapshot of the page at that moment. See [Step-by-Step Replay](/web-portal/core/ui/ui-step-by-step) for how to read it.
+
+<Frame>
+  <img src="../../images/ui-testing-step-step-show.png" alt="Execution Steps list filling in live with a step snapshot in the right pane" />
+</Frame>
+
+A few things to expect while a run is live:
+
+- The live preview is a frame stream refreshed about once a second. The seekable video is produced when the test finishes.
+- Counts, steps, and snapshots refresh every 2 to 3 seconds. A blank snapshot usually means the page hadn't settled yet; the next step shows the stable state.
+- <kbd>Re-run all</kbd> and <kbd>Re-run failed</kbd> stay disabled until the current run finishes.
+
+## Reading the Report
+
+Click <kbd>View Report</kbd> on a run's page to open that run's report. It comes from an AI analysis pass that runs automatically when the run finishes; until it's done, the page shows **"Analyzing your results"**.
 
 <Frame>
   <img src="../../images/report-find.png" alt="View Report on a run's page, which opens that run's report" />
 </Frame>
 
-<Info>
-The report is generated from an AI **analysis pass** that runs automatically when a run finishes. While it's still working, the page shows **"Analyzing your results"** — refresh or wait a moment and the full report renders.
-</Info>
-
-## Reading the Report Page
+<Frame>
+  <img src="../../images/api-testing-quick-start-report.png" alt="The Test Report page: stat cards, the pass/fail/blocked donut, and the Detailed Test Report button" />
+</Frame>
 
 | Section | What it tells you |
 | :--- | :--- |
-| <kbd>Stat cards</kbd> | Coverage at a glance — **Total API Tested** (backend) or **Base URL** (frontend), **Total Features**, **Total Test Cases** |
-| <kbd>Pass distribution</kbd> | A donut of **passed / failed / blocked** — your pass rate and where the failures sit |
-| <kbd>Test Summary</kbd> | A plain-English narrative of how the run went, written by the analysis |
+| <kbd>Stat cards</kbd> | Coverage at a glance: **Total API Tested** (backend) or **Base URL** (frontend), **Total Features**, **Total Test Cases** |
+| <kbd>Pass distribution</kbd> | A donut of **passed / failed / blocked**: your pass rate and where the failures sit |
+| <kbd>Test Summary</kbd> | A plain-English narrative of how the run went |
 | <kbd>Fix prompt</kbd> | A copy-paste prompt for your coding agent (see below) |
 | <kbd>Issues found</kbd> | Failed and blocked tests **grouped by root cause**, so ten failures from one bug read as one issue |
 | <kbd>What could be better</kbd> | Concrete weaknesses the analysis spotted |
 | <kbd>Recommendations</kbd> | Suggested next steps |
 
-<Note>
-The report is built around **outcomes and coverage** — pass/fail/blocked counts and how many features and cases were tested — rather than timing. For when a run happened and how recent it is, use the **Test Runs** history (each run is timestamped); the downloadable PDF also prints a "Saved By TestSprite" time estimate on its cover.
-</Note>
+The report covers outcomes and coverage, not timing; for when a run happened, use the **Test Runs** history.
 
-## The AI Fix Prompt
+### The AI Fix Prompt
 
-The **Fix prompt for your coding agent** card holds a ready-to-paste prompt that enumerates every concrete problem the run found and what to change. Click **Copy prompt** and paste it into Claude Code, Cursor, or any LLM agent pointed at your repo.
+The **Fix prompt for your coding agent** card lists every concrete problem the run found and what to change. Click **Copy prompt** and paste it into Claude Code, Cursor, or any agent pointed at your repo. When there's nothing actionable, the card is empty.
 
 <Frame>
-  <img src="../../images/report-fix-prompt.png" alt="The Fix prompt for your coding agent card — a Copy Prompt button and the generated repo-oriented prompt" />
+  <img src="../../images/report-fix-prompt.png" alt="The Fix prompt for your coding agent card: a Copy Prompt button and the generated repo-oriented prompt" />
 </Frame>
 
-The prompt is generated by the same analysis that writes the summary, so it reflects the actual failures in this run. When there are no actionable issues, the card is empty.
-
-<Tip>
-The same copy-a-fix-prompt idea appears in two other places: the [Triage Queue](/web-portal/results/project-overview) on Insights, and (for one failing test at a time) the [Step-by-Step](/web-portal/core/ui/ui-step-by-step) failure detail.
-</Tip>
+You'll find the same kind of prompt in [Issues to Fix](/web-portal/results/project-overview) on Insights and, for one failing test at a time, in the [Step-by-Step Replay](/web-portal/core/ui/ui-step-by-step) failure detail.
 
 ## Downloading the PDF
 
-The PDF is a fuller, print-ready rendering of the same execution — with a cover, a table of contents, coverage tables, and per-failure detail including source code. It's produced through your browser's print dialog rather than as a server file, so the export step matters.
+The PDF is a fuller, print-ready version of the same run, with a cover, a table of contents, coverage tables, and per-failure detail including source code. Your browser produces it through its print dialog (nothing is stored on the server), so you can regenerate it any time.
 
 <Steps>
   <Step title="Click Detailed Test Report">
@@ -64,63 +92,36 @@ The PDF is a fuller, print-ready rendering of the same execution — with a cove
     </Frame>
   </Step>
   <Step title="Let it finish generating">
-    The page shows a **Generating** spinner while it lays out every section. Wait for it to settle before printing.
+    Wait for the **Generating** spinner to settle before printing.
   </Step>
   <Step title="Print to PDF with the right settings">
-    When the print dialog opens, choose **Save as PDF** as the destination and match these settings so the report renders correctly:
+    In the print dialog, choose **Save as PDF** and use these settings so the report renders correctly:
 
     | Setting | Value |
     | :--- | :--- |
     | <kbd>Background graphics</kbd> | On |
     | <kbd>Margins</kbd> | None |
     | <kbd>Scale</kbd> | 100% |
-
-    Save. You now have a self-contained PDF to share or archive.
   </Step>
 </Steps>
 
-<Note>
-The PDF is generated client-side by your browser's print-to-PDF. There is no separately-stored PDF file on the server — regenerate it any time from the same button.
-</Note>
-
-## What's in the PDF
-
-| Section | Contents |
+| PDF section | Contents |
 | :--- | :--- |
-| <kbd>Cover</kbd> | Date, report title, a contents list, and four headline tiles — **Test Runs**, **Pass Rate**, **Issues**, **Saved By TestSprite** (an estimate of engineering time saved) |
+| <kbd>Cover</kbd> | Date, report title, a contents list, and four headline tiles: **Test Runs**, **Pass Rate**, **Issues**, **Saved By TestSprite** (an estimate of engineering time saved) |
 | <kbd>Table of Contents</kbd> | Two-level outline of the report |
-| <kbd>Executive Summary</kbd> | A **High-Level Overview** table (project, type, totals, pass/fail/blocked) plus **Key Findings** — the Test Summary, What could be better, and Recommendations |
-| <kbd>Coverage</kbd> | Per-type detail — backend endpoint/integration coverage, or frontend UI coverage |
-| <kbd>Failure detail</kbd> | For each **failed or blocked** test: status, priority, description, a preview link, the error / cause / fix, and the test's source code |
+| <kbd>Executive Summary</kbd> | A **High-Level Overview** table (project, type, totals, pass/fail/blocked) plus **Key Findings**: the Test Summary, What could be better, and Recommendations |
+| <kbd>Coverage</kbd> | Per-type detail: backend endpoint/integration coverage, or frontend UI coverage |
+| <kbd>Failure detail</kbd> | For each **failed or blocked** test (passing tests aren't itemized): status, priority, description, a preview link, the error / cause / fix, and the test's source code |
 
-<Info>
-The failure-detail section covers **failed and blocked tests only** — passing tests aren't itemized. That keeps the report focused on what needs attention and makes it a natural artifact to attach to a bug review or release sign-off.
-</Info>
-
-### Who it's for
-
-- **PMs and leadership** — the cover tiles and executive summary give the run's outcome and headline findings without reading test code.
-- **Release records** — attach the PDF to a release or sign-off so there's a durable, self-contained record of what was tested and what passed.
-- **Engineers** — the per-failure detail (error, cause, fix, source) is enough to start debugging straight from the document.
-
-## Generation & Retention
-
-- **Generated automatically** when a run completes — the analysis pass runs on completion, and the report/PDF render on demand from the stored result. No manual "generate report" step.
-- **No fixed expiry** on the report itself: it lives with the execution record and re-renders whenever you open it. The time-limited pieces are the embedded media links — screenshots are signed for roughly a week — so download the PDF if you need a permanent copy with images intact.
+Reports have no fixed expiry; they re-render from the run whenever you open them. Embedded screenshot links expire after about a week, so download the PDF if you need a permanent copy with images.
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Watching a Run Live" href="/web-portal/results/live-run" icon="eye">
-    See results build up before the run finishes
-  </Card>
   <Card title="Insights" href="/web-portal/results/project-overview" icon="gauge">
-    The triage queue and quality trends across runs
+    Issues to fix and quality trends across runs
   </Card>
-  <Card title="Step-by-Step" href="/web-portal/core/ui/ui-step-by-step" icon="shoe-prints">
-    Localize a single UI failure action by action
-  </Card>
-  <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-magnifying-glass">
-    The full page behind a single test
+  <Card title="Edit & Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
+    Re-run a test or the whole project after you've triaged
   </Card>
 </Columns>

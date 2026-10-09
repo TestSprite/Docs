@@ -3,12 +3,7 @@ title: "Quickstart"
 description: "Walk through your first UI project end-to-end — from project creation to a passing browser test — in about 10 minutes."
 ---
 
-{/* #TODO_UPDATE — V3.1 小改（条目 4.2）：
-  Step 3 的登录配置部分同步新的三种登录方式，并链接到新的 Authentication (UI) 页
-  (web-portal/core/ui/ui-authentication)
-*/}
-
-By the end of this guide you'll have a UI project that's been explored, planned, generated as Playwright code, and run against your live app, with a recorded video for every test. No code on your side.
+By the end of this guide you'll have a UI project that's been explored, planned, and run against your live app, with a recorded video for every test. No code on your side.
 
 <Info>
 **Doing API testing instead?** See the [API Quickstart](/web-portal/core/api/quickstart) for the backend-flavored walkthrough.
@@ -18,7 +13,7 @@ By the end of this guide you'll have a UI project that's been explored, planned,
 
 ## Step 1: Configure & Create Your Project
 
-From <kbd>All Projects</kbd>, click <kbd>New Project</kbd>. One form, in three steps, covers everything: name the project, set <kbd>Test Type</kbd> to <kbd>Frontend UI</kbd> for this walkthrough, give your app's URL, configure sign-in, and optionally attach sources. Everything is saved when you click <kbd>Create project</kbd>.
+From <kbd>All Projects</kbd>, click <kbd>New Project</kbd>. The form has three steps: name the project, set <kbd>Test Type</kbd> to <kbd>Frontend UI</kbd>, enter your app's URL, configure sign-in, and optionally attach sources. Click <kbd>Create project</kbd> to save.
 
 <Frame>
   <img src="../../../images/overview-configure.png" alt="New Project form across its three steps: Basics, Access details, and Test Sources" />
@@ -27,7 +22,7 @@ From <kbd>All Projects</kbd>, click <kbd>New Project</kbd>. One form, in three s
 | Field | What to provide |
 | :--- | :--- |
 | <kbd>URL</kbd> | The public URL of the app to test (staging or local with a tunnel) |
-| <kbd>Sign-in</kbd> | Choose **Sign-in required** if parts of your product are behind a login, then pick a method: **Test account credentials** (sign in with credentials you provide) or **OTP (one-time password) login** (TestSprite registers a dedicated test account and enters one-time passcodes automatically, verified via email, phone, or both). See [Authentication (UI)](/web-portal/core/ui/ui-authentication) {/* V3.1 (Sherry): TODO confirm link once ui-authentication lands */} |
+| <kbd>Sign-in</kbd> | Choose **Sign-in required** if parts of your product are behind a login, then pick a method, such as **Test account credentials** or **OTP (one-time password) login**. See [Authentication (UI)](/web-portal/core/ui/ui-authentication) |
 | <kbd>Test Sources</kbd> | Optional PRD or other documents that help TestSprite write better tests |
 
 <Note>
@@ -35,54 +30,48 @@ The OTP Login choice is locked in at project creation — it can't be changed af
 </Note>
 
 <Tip>
-**Adding a PRD as a source is the single biggest lever on plan quality.** With one, the use-case map reflects what your product is *supposed to do*; without one, it relies only on what TestSprite can see by exploring your live app.
+**Add a PRD as a source.** It's the biggest lever on plan quality: without one, the use-case map relies only on what TestSprite sees by exploring your live app.
 </Tip>
 
-## Step 2: Exploration & Use-Case Generation
+## Step 2: Exploration & Use-Case Extraction
 
-After you create the project, TestSprite reads your sources and its AI agents explore your live app. The project sidebar tracks the whole first run: stages that haven't started yet are marked **Not Started**.
+After you create the project, TestSprite reads your sources and its testing agents explore your live app. The project sidebar tracks the first run; stages that haven't started yet are marked **Not Started**.
 
 <Frame>
   <img src="../../../images/overview-Explore.png" alt="A TestSprite agent browsing the live app to learn the product" />
 </Frame>
 
-When exploration finishes, TestSprite composes your use cases from what it found.
-
-This can take a few minutes. Feel free to wait or come back later — progress is saved, and reopening the project drops you back at the current stage.
+When exploration finishes, TestSprite's testing agent extracts your use cases from your sources and what it found in your app. This takes a few minutes; progress is saved, and reopening the project drops you back at the current stage.
 
 ## Step 3: Check the Test Coverage Map
 
-The **Test Coverage** map shows how your use cases are covered and how their tests are doing. Review it against your own mental map of the product — edit use cases right here (tests are edited later, in Test Cases), or click <kbd>Regenerate From Sources</kbd> if the map misread your product. When it looks right, click <kbd>Plan Tests</kbd>.
+The **Test Coverage** map shows your use cases and how their tests are doing. Check it against how you think about the product: edit use cases here (tests are edited later, in Test Cases), or click <kbd>Regenerate From Sources</kbd> if the map misread your product.
 
 <Frame>
   <img src="../../../images/ui-testing-coverage.png" alt="Test Coverage map — review the use-case map, then click Plan Tests" />
 </Frame>
 
 <Tip>
-This map grounds everything downstream — test cases are scoped to these use cases, and results attribute coverage back to them. A minute spent fixing the map here saves an hour of pruning irrelevant tests later.
+Test cases are scoped to these use cases, so a minute fixing the map here saves pruning irrelevant tests later.
 </Tip>
 
 ## Step 4: Plan Tests
 
-Choose which features to plan tests for — <kbd>Select All</kbd> is usually right on a first run — then click <kbd>Plan Tests</kbd>. You can always plan more later from the map.
+Choose which features to plan tests for (<kbd>Select All</kbd> is usually right on a first run), then click <kbd>Plan Tests</kbd>. You can plan more later from the map.
 
 <Frame>
   <img src="../../../images/ui-testing-plan.png" alt="Plan Tests — choose which features to plan tests for" />
 </Frame>
 
-TestSprite then proposes test cases across those use cases. Review, edit, and select which to add — **nothing is added until you confirm**.
+TestSprite's testing agent then plans test cases across those use cases. Review, edit, and choose which to add; **nothing is added until you confirm**.
 
 <Frame>
   <img src="../../../images/overview-plan.png" alt="Review proposed tests — nothing is added until you confirm" />
 </Frame>
 
-<Tip>
-**Don't be precious about pruning.** Selecting all is usually right on a first run for full coverage. Pruning makes runs faster but doesn't change correctness.
-</Tip>
-
 ## Step 5: Generate & Run
 
-One step writes the test code with a browser agent and runs it — you land on real results. The **Test Runs** page tracks the execution live: pass rate, <kbd>Running</kbd> / <kbd>Passed</kbd> / <kbd>Failed</kbd> / <kbd>Blocked</kbd> counts, and a per-test list. Switch between **List View** and **Agent Actions View** to watch the live recordings.
+Confirming the plan starts the run: the testing agent writes each test's code in a browser and runs it. The **Test Runs** page tracks it live, with the pass rate, <kbd>Running</kbd> / <kbd>Passed</kbd> / <kbd>Failed</kbd> / <kbd>Blocked</kbd> counts, and a per-test list. Switch to **Agent Actions View** to watch the recordings.
 
 <Frame>
   <img src="../../../images/first-test-execution.png" alt="Test Runs page with tests running live" />
@@ -98,18 +87,16 @@ Click any test row to open its detail page. The right pane plays the **recorded 
 
 For failures, the **Error / Cause / Fix** tabs surface the Playwright error, the likely cause, and an AI-authored fix suggestion.
 
-<Card title="Step-by-Step Walkthrough" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
+<Card title="Step-by-Step Replay" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
   Deeper tour of the per-step replay view
 </Card>
 
 ## Step 7: Refine and Rerun
 
-To iterate on a test, open **Chats** and describe what to fix in natural language. TestSprite either tweaks the assertions in place or regenerates the test.
-
-To re-execute, click <kbd>Run Test</kbd> on the test's detail page. Or, when the steps themselves need fixing, use [Edit Steps & Rerun](/web-portal/core/ui/ui-rerun#edit-steps--rerun) to rewrite them and rerun in one motion. [Auto-Heal](/web-portal/core/ui/auto-heal) absorbs UI changes that don't actually break the flow.
+To change a test, describe the fix in **Chats**; TestSprite tweaks the assertions or regenerates the test. To re-execute, click <kbd>Run Test</kbd> on the test's detail page, or use [Edit Steps & Rerun](/web-portal/core/ui/ui-rerun#edit-steps--rerun) to rewrite steps and rerun in one go. [Auto-Heal](/web-portal/core/ui/auto-heal) absorbs UI changes that don't break the flow.
 
 <CardGroup cols={2}>
-  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen-to-square">
+  <Card title="Managing Test Cases" href="/web-portal/core/working-with-test/managing-test-cases" icon="pen-to-square">
     Every refinement path in detail
   </Card>
   <Card title="Auto-Heal" href="/web-portal/core/ui/auto-heal" icon="wand-magic-sparkles">
@@ -119,7 +106,7 @@ To re-execute, click <kbd>Run Test</kbd> on the test's detail page. Or, when the
 
 ## The Final Report
 
-Once the run finishes, <kbd>View Report</kbd> on the run opens the **Test Report**, which summarizes pass / fail / blocked counts, highlights failures with cause-and-fix suggestions, and links into per-test detail. This is what you'll share with the team.
+When the run finishes, click <kbd>View Report</kbd> to open the **Test Report**: pass / fail / blocked counts, failures with cause-and-fix suggestions, and links into each test. This is what you share with the team.
 
 <Frame>
   <img src="../../../images/ui-testing-report.png" alt="Test Report summary view" />

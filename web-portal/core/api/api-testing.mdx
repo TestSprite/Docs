@@ -7,19 +7,18 @@ description: "AI-powered backend testing for RESTful APIs. Discover endpoints, g
   <img src="../../../images/api-testing-overview-overview.png" alt="API testing overview" />
 </Frame>
 
-API Testing in TestSprite is a journey from "here's my API" to "here's a regression suite I trust". Each phase has its own dedicated docs page; this page is the map.
+API Testing takes you from "here's my API" to "here's a regression suite I trust". This page is the map; each phase has its own page.
 
 ## Key Features
 
 | Feature | Description |
 | :--- | :--- |
-| <kbd>Fast Setup</kbd> | Get started with minimal documentation — no extensive prompts or full codebases needed |
 | <kbd>Endpoint + Integration Tests</kbd> | Per-endpoint coverage *and* multi-step chains where one test's response feeds the next |
-| <kbd>Dynamic Variables</kbd> | Capture values from one response, inject into the next request — TestSprite wires the dependencies for you |
-| <kbd>Auto Cleanup</kbd> | After every run, TestSprite deletes the records your tests created so your test workspace stays clean |
-| <kbd>Auto-Auth</kbd> | Configure your login flow once; we fetch a fresh token before every run |
-| <kbd>Smart Reports</kbd> | Detailed outputs with error types, root causes, and recommended fixes |
-| <kbd>Natural Language Refinement</kbd> | Adjust any test in natural language — no code required |
+| <kbd>Dynamic Variables</kbd> | Values captured from one response and injected into the next request |
+| <kbd>Auto Cleanup</kbd> | After every run, TestSprite deletes the records your tests created |
+| <kbd>Auto-Auth</kbd> | Configure your login flow once; TestSprite fetches a fresh token before every run |
+| <kbd>Smart Reports</kbd> | Error types, root causes, and recommended fixes for every failure |
+| <kbd>Natural Language Refinement</kbd> | Adjust any test in natural language, no code required |
 
 ## The API Testing Journey
 
@@ -27,88 +26,49 @@ API Testing in TestSprite is a journey from "here's my API" to "here's a regress
 ```mermaid
 flowchart LR
     A["1\. API Discovery<br/>extract endpoints from<br/>PRD, docs, and live calls"]
-    B["2\. Plan Generation<br/>per-endpoint plan items<br/>with priorities"]
-    C["3\. Endpoint Tests<br/>one test per endpoint<br/>covering CRUD and edges"]
-    D["4\. Integration Tests<br/>multi-step chains across<br/>related endpoints"]
-    E["5\. Run"]
-    F["6\. Cleanup<br/>records your tests created<br/>get removed afterward"]
+    M["2\. Feature Map<br/>features and use cases<br/>on Test Coverage"]
+    B["3\. Plan Generation<br/>per-endpoint plan items<br/>with priorities"]
+    C["4\. Endpoint Tests<br/>one test per endpoint<br/>covering CRUD and edges"]
+    D["5\. Integration Tests<br/>multi-step chains across<br/>related endpoints"]
+    E["6\. Run"]
+    F["7\. Cleanup<br/>records your tests created<br/>get removed afterward"]
 
-    A --> B --> C --> D --> E --> F
+    A --> M --> B --> C --> D --> E --> F
 ```
 </Card>
 
-Each step gets its own page. Click through in order if you're new — or skip ahead to the area that's currently giving you trouble.
-
 <CardGroup cols={2}>
   <Card title="API Discovery" href="/web-portal/core/api/api-discovery" icon="magnifying-glass">
-    How TestSprite finds your endpoints from PRD, code, and live probes
+    How TestSprite finds your endpoints
   </Card>
   <Card title="Plan Generation & Editing" href="/web-portal/core/api/api-plan-gen" icon="list-check">
-    Review the plan, edit cases, add scenarios in natural language
+    Review the plan, edit cases, add your own
   </Card>
   <Card title="Endpoint Tests" href="/web-portal/core/api/endpoint-tests" icon="cube">
-    Per-endpoint test generation with verification before tests land in your suite
+    One runnable test per plan row
   </Card>
   <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step chains where one step's output feeds the next
   </Card>
 </CardGroup>
 
-## What Lives Where
-
-The Web Portal sidebar for an API project organizes pages by what you're trying to do, not by chronology. Once a project is set up, you'll mostly bounce between these:
-
-<Frame>
-  <img src="../../../images/api-testing-side-nav.png" alt="API project sidebar: Setup, Workspace, Analytics, Activity, and Project Settings groups" />
-</Frame>
-
-| Sidebar location | What you see | Detail page |
-| :--- | :--- | :--- |
-| **Workspace → Test Coverage** | A diagram of your features and the endpoints touched by each | [Coverage Map](/web-portal/core/working-with-test/coverage-map) |
-| **Workspace → Test Cases → Endpoint Tests** | The flat list of per-endpoint tests, status chips, last-run results | [Endpoint Tests](/web-portal/core/api/endpoint-tests) |
-| **Workspace → Test Cases → Integration Tests** | The list of multi-step chains that exercise sequences of endpoints | [Integration Tests](/web-portal/core/api/integration-tests) |
-| **Workspace → Test Runs → a run → Cleanup** tab | Auto-generated DELETE chains that wipe records the tests created | [Auto Cleanup](/web-portal/core/api/auto-cleanup) |
-| **Workspace → Test Runs → a run → Dynamic Variables** tab | The producer-consumer graph: what each test produces and what depends on it | [Dynamic Variables](/web-portal/core/api/dynamic-variables) |
-| **Project Settings → Test Execution → Environment** | Auto-Auth config + Static Credentials per endpoint | [Auto-Auth](/web-portal/core/api/auto-auth) |
-| **Workspace → Test Cases → a test's detail page** | Per-test request/response, error trace, refine + rerun controls | [Test Detail](/web-portal/core/working-with-test/test-detail) |
-
-<Tip>
-**The sidebar's order is the recommended order for first-time setup.** Walk top-to-bottom on a new project: see the use-case overview, look at the endpoint tests TestSprite generated, peek at the integration chains it identified, configure auth, then run.
-</Tip>
-
-## Quick Start
-
-<Card title="Quickstart" href="/web-portal/core/api/quickstart" icon="play">
-  Walk through your first API project end-to-end — from project creation to a passing HTTP suite — in about 10 minutes.
-</Card>
+New to API testing? Start with the [Quickstart](/web-portal/core/api/quickstart), about 10 minutes from project creation to a passing suite.
 
 ## What a Plan Covers
 
-Generated plans group test cases by category — TestSprite picks categories that make sense for your API based on what was discovered. Common ones you'll see:
-
-- **Functional / happy path** — does each endpoint behave correctly with valid inputs?
-- **Schema and response validation** — does the response shape match what's expected?
-- **Authorization & authentication** — are protected routes actually protected? token handling correct?
-- **Error handling & edge cases** — malformed inputs, missing fields, boundary values, type mismatches
-- **Boundary / load** — what happens at high request rates or with oversized payloads
-- **Security probes** — privilege escalation, signature tampering, common API attack patterns
-
-<Frame>
-  <img src="../../../images/plangen-type.png" alt="The plan's Category column, with each category as a collapsible group" />
-</Frame>
-
-Not every category applies to every API. Categories shown on your plan reflect what TestSprite considered relevant given your endpoints, docs, and PRD.
+Plans group test cases into categories that fit your API: functional / happy path, schema validation, authorization, error handling and edge cases, boundary / load, and security probes. Not every category applies to every API. See [Plan Generation & Editing](/web-portal/core/api/api-plan-gen#the-plan-structure) for what each covers.
 
 <Tip>
-**Best practice on first run**: keep all categories selected. Once you have a baseline, you can prune categories that don't apply (e.g., drop security probes for a strictly-internal service).
+On a first run, keep every category selected. Once you have a baseline, prune the ones that don't apply (for example, security probes for a strictly internal service).
 </Tip>
 
 ## Refining Tests in Natural Language
 
-Edit a test's description and click **Regenerate**, or ask in **Chats**. You can say things like:
-    <Frame>
-    <img src="../../../images/api-refining.png" alt="API testing overview" />
-    </Frame>
+Edit a test's description and click **Regenerate**, or ask in **Chats**. For example:
+
+<Frame>
+  <img src="../../../images/api-refining.png" alt="API testing overview" />
+</Frame>
 
 <CodeGroup>
 ```text Refine
@@ -124,17 +84,15 @@ For the GET /users/{id} test, drop the assertion on `created_at` — it's a time
 ```
 </CodeGroup>
 
-TestSprite interprets the request, regenerates the affected test code, and re-runs. See [Refining Tests](/web-portal/core/working-with-test/refining-tests) for what the chat can and can't do, and the alternatives when chat isn't the right tool.
+TestSprite regenerates the affected test code and re-runs it. See [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases) for every refinement path.
 
-## Frontend's Sibling Page
-
-If you're testing a website (UI / browser flows) rather than an HTTP API, the frontend equivalent of this page is [UI Testing — Overview](/web-portal/core/ui/ui-testing). Most of the wizard, refinement, and rerun concepts are mirrored — what changes is the underlying execution model (HTTP calls vs. browser actions).
+Testing a website instead? See [UI Testing](/web-portal/core/ui/ui-testing). The wizard, refinement, and rerun concepts mirror this page; the tests run browser actions instead of HTTP calls.
 
 ## Where to Go Next
 
 <Columns cols={2}>
   <Card title="API Discovery" href="/web-portal/core/api/api-discovery" icon="magnifying-glass">
-    Walk through the wizard's first phase — endpoint extraction
+    The first phase: endpoint extraction
   </Card>
   <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Stop pasting expiring tokens before every run

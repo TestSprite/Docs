@@ -1,157 +1,72 @@
 ---
 title: "API Discovery"
-description: "How TestSprite extracts your endpoints from your documentation and natural-language hints — and how to refine the discovered set before plan generation runs."
+description: "How TestSprite finds your endpoints from your API docs and your live API, and how to review them before planning."
 ---
 
 <Frame>
-  <img src="../../../images/api-testing-discovery-overview.png" alt="API Discovery — endpoint list view" />
+  <img src="../../../images/api-testing-discovery-overview.png" alt="API Discovery: the discovered endpoint list" />
 </Frame>
 
-## What API Discovery Does
+API Discovery builds the list of endpoints TestSprite will test. It reads your API docs and calls the endpoints against your live API, so plans are grounded in real responses.
 
-Before TestSprite can generate a single test, it needs to know **what endpoints exist**. API Discovery is the phase that builds that list from the inputs you provide:
+## How It Works
 
-| Input | What it provides |
-| :--- | :--- |
-| <kbd>API documentation</kbd> | OpenAPI / Swagger / Postman collections, or any free-form reference document (markdown, PDF, plain text) |
-| <kbd>Base Endpoint</kbd> | Used to confirm endpoint behavior against your live API |
-| <kbd>Natural-language hints</kbd> | Typed into **Extra Instructions**: "Skip the admin endpoints" / "Focus on the checkout flow" |
+1. On the **Access details** step of New Project, enter your **Base Endpoint** and click <kbd>Upload API docs</kbd>: OpenAPI, Swagger, a Postman collection, or any free-form reference (markdown, PDF, plain text).
+2. Discovery starts right away. A toast shows how many APIs and endpoints were found; a typical run takes 30 seconds to 3 minutes.
+3. Review the endpoints in the **Set Up Your Tests** dialog, then save them.
 
-The output is a structured endpoint list grouped by resource family, with the HTTP method, path template, request shape, and response shape captured for each.
-
-<Info>
-**Discovery happens on the Access details step of New Project.** You re-trigger it by uploading your docs again before you submit. Once the project is created, discovering a fundamentally new set of endpoints means starting a new project.
-</Info>
-
-## When Discovery Runs
-
-Discovery starts as soon as you upload your docs with <kbd>Upload API docs</kbd> on the Access details step (after you've provided a base endpoint). The endpoint list panel and detail panel both flip to a skeleton-placeholder state while it runs; when it completes, a toast confirms how many APIs and endpoints were found and the panels populate with the grouped result.
 <Frame>
   <img src="../../../images/api-testing-when-trigger.png" alt="The API Documentation upload on the New Project form" />
 </Frame>
-A typical discovery run takes 30 seconds to 3 minutes depending on how many endpoints exist and how responsive your API is.
 
-## What Gets Discovered
+Each endpoint comes with its method, path, request and response shapes, and auth requirement. [Plan Generation](/web-portal/core/api/api-plan-gen) uses those shapes, so tests use your real field names. To see the calls TestSprite made, open an endpoint on <kbd>Test Coverage</kbd> and expand **Probe response** or **Raw call records**.
 
-For each endpoint TestSprite finds, it captures:
+<Info>
+Discovery happens only while you create the project. After that, the endpoint list is locked; to test a fundamentally different set of endpoints, start a new project.
+</Info>
 
-| Field | Description |
-| :--- | :--- |
-| <kbd>Method</kbd> (GET / POST / PUT / PATCH / DELETE) | The HTTP method for the endpoint |
-| <kbd>Path template</kbd> (e.g. `/users/{id}/orders`) | The path with placeholders normalized |
-| <kbd>Request shape</kbd> | Body schema, query params, required headers |
-| <kbd>Response shape</kbd> | Expected status codes and body schema |
-| <kbd>Auth requirement</kbd> | Whether this endpoint requires authentication, and what type |
-| <kbd>Resource family</kbd> | Endpoints grouped together by resource (e.g. `/users/*` → Users family) |
+## Reviewing the Endpoints
 
-These all feed into [Plan Generation](/web-portal/core/api/api-plan-gen), which uses the request/response shapes to write tests that match your real API rather than guessing at field names.
+Endpoints are grouped by resource family (for example, everything under `/users/*`). For each one you can:
 
-## Reviewing the Discovered Endpoint List
-
-Once discovery completes, the **Set Up Your Tests** dialog shows your endpoints in a grouped, expandable table. Each resource family is a collapsible group; expand to see the per-endpoint rows.
+- **Remove it** with the trash icon. Removed endpoints get no tests.
+- **Fix the path** by clicking the row, if a placeholder like `{userId}` was captured as a literal value.
+- **Set the auth type** (**Basic**, **Bearer**, **API-key**, or **None**). Use <kbd>Customize Header</kbd> to set it for many endpoints at once.
 
 <Frame>
   <img src="../../../images/api-testing-discovery-review-list.png" alt="Grouped endpoint list with family expand/collapse" />
 </Frame>
 
-For each row you can:
-
-<Steps>
-  <Step title="Remove an endpoint">
-    Click the trash icon on the row. Endpoints removed at this step won't get tests generated for them. Useful for internal-only endpoints, deprecated paths, or anything outside your test scope.
-  </Step>
-  <Step title="Adjust the path">
-    Click the row to edit. TestSprite's discovery is mostly accurate, but if the path template is off (e.g. `{userId}` got captured as a literal value), you can correct it here.
-  </Step>
-  <Step title="Set the auth type per endpoint">
-    Use the **Authentication Type** dropdown on each endpoint. Choices are **Basic**, **Bearer**, **API-key**, or **None**. To set it for many endpoints at once, use <kbd>Customize Header</kbd>.
-  </Step>
-</Steps>
+To start over with a better spec, upload it and confirm **Re-extract Endpoints**. This replaces the whole list, including your edits.
 
 ## Adding Endpoints Manually
 
-Sometimes Discovery misses an endpoint. It might be private, undocumented, or otherwise unreachable from the inputs you provided. Click <kbd>Add API</kbd> in the **Set Up Your Tests** dialog (or use <kbd>Add Endpoints Manually</kbd> on the Access details step):
+If discovery missed an endpoint, click <kbd>Add API</kbd> in the **Set Up Your Tests** dialog. With no docs at all, use <kbd>Add Endpoints Manually</kbd> on the Access details step.
 
 <Frame>
   <img src="../../../images/api-testing-discovery-add-manually.png" alt="Add endpoint manually dialog" />
 </Frame>
 
-Manually-added endpoints sit alongside the discovered ones in the list.
+## Auth
 
-## Auth Configuration During Discovery
+The auth you set here is what your test runs start with. After the project is created, change it per endpoint with **Customize Header** in **Project Settings → Test Execution → Environment**, or set up [Auto-Auth](/web-portal/core/api/auto-auth) for tokens that expire. Give TestSprite a long-lived test account with access to your whole API, since discovery and test runs both call it.
 
-The auth you set here is also what your test runs start with. After the project is created, it lives on the project's environment:
+Anything your docs don't say, such as an unusual auth header or endpoints to skip, goes in **Extra Instructions** on the Extra Context step.
 
-| At project creation (this page) | After the project is created |
-| :--- | :--- |
-| Provided once at project creation | Changed per endpoint with **Customize Header** in **Project Settings → Test Execution → Environment** |
-| Single bearer token / API key / basic-auth pair | Per-endpoint Static Credentials, or [Auto-Auth](/web-portal/core/api/auto-auth) for token refresh |
-| If credentials expire, fix them in the Set Up Your Tests dialog before you submit | Static credentials need manual rotation; Auto-Auth handles rotation automatically |
+## Troubleshooting
 
-<Tip>
-**Use the same test account for both.** Discovery and test runs both call your real API with real credentials. Provide a long-lived test account that has permissions across the full API surface — Auto-Auth on the test-run side handles token rotation, but the test user identity should be one you control.
-</Tip>
-
-## Adjusting Discovery via Natural Language
-
-The Extra Context step has an **Extra Instructions** textarea. Anything you say there shapes downstream plan generation. Some patterns that work well:
-
-<CodeGroup>
-```text Skip
-Skip anything under /admin/ — we don't test admin endpoints from this account.
-```
-
-```text Auth
-The auth header is X-Custom-Auth, not Authorization.
-```
-
-```text Exclude
-GET /metrics is a Prometheus exporter — exclude it from testing.
-```
-
-```text Base URL
-The base URL responds with 200 to GET / so don't treat that as a real endpoint.
-```
-</CodeGroup>
-
-The uploaded docs are your primary signal. The textarea is for explaining the things that *aren't* in your docs but matter for testing.
-
-## Iterating on Discovery Before You Submit
-
-Discovery is iterative *while you're still creating the project*: upload a better OpenAPI spec and confirm **Re-extract Endpoints**. Each re-extraction replaces the discovered list with a fresh result, so the order of operations is: get the docs right, upload, review, optionally edit per-endpoint or [add manually](#adding-endpoints-manually), then continue to plan generation.
-
-Once the project is created, the discovered set is locked in for that project. To pick up endpoints that have shipped since the initial scan, [add them manually](#adding-endpoints-manually) on the Access details step (if you haven't yet submitted) or start a new project.
-
-## When Discovery Doesn't Find Things It Should
-
-<AccordionGroup>
-  <Accordion title="Endpoint behind auth that discovery couldn't satisfy">
-    Discovery uses the credentials you set per endpoint. If your endpoint requires more elaborate auth (HMAC signing, mutual TLS, geographic IP restriction), the endpoint may be dropped. Add it manually, or expose a non-auth health endpoint TestSprite can hit.
-  </Accordion>
-  <Accordion title="Endpoint with stateful preconditions">
-    `POST /orders/{id}/cancel` requires an existing order, and discovery can't satisfy that on its own. Add the endpoint manually; the integration-test phase will figure out the dependency chain.
-  </Accordion>
-  <Accordion title="GraphQL or RPC-style endpoints">
-    TestSprite is REST-first; GraphQL discovery is best-effort. For Apollo/Relay-style APIs we recommend uploading a `.graphql` schema file as part of the documentation upload. Pure RPC (gRPC, JSON-RPC) is not supported in v1.
-  </Accordion>
-  <Accordion title="Endpoints that aren't documented">
-    If an endpoint isn't in your uploaded docs and doesn't follow common REST conventions (e.g. `/api/v2/foo.action`), discovery might miss it. Add manually.
-  </Accordion>
-</AccordionGroup>
+- **An endpoint behind complex auth is missing** (HMAC signing, mutual TLS, IP restrictions). Add it manually.
+- **An endpoint needs existing data**, like `POST /orders/{id}/cancel`. Add it manually; [integration tests](/web-portal/core/api/integration-tests) work out the dependency chain.
+- **An undocumented endpoint with an unusual path** (for example `/api/v2/foo.action`) wasn't found. Add it manually.
+- **GraphQL or RPC APIs.** TestSprite is REST-first. GraphQL discovery is best-effort, so upload your `.graphql` schema with your docs. Pure RPC (gRPC, JSON-RPC) isn't supported.
 
 ## Where to Go Next
 
 <Columns cols={2}>
   <Card title="Plan Generation & Editing" href="/web-portal/core/api/api-plan-gen" icon="list-check">
-    The next phase: turn discovered endpoints into a test plan
+    Turn the endpoints into a test plan
   </Card>
   <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
-    Configure test-run-time auth
-  </Card>
-  <Card title="API Testing — Overview" href="/web-portal/core/api/api-testing" icon="terminal">
-    Step back to the journey map
-  </Card>
-  <Card title="Refining Tests" href="/web-portal/core/working-with-test/refining-tests" icon="pen">
-    Use natural language after generation, too
+    Keep tokens fresh on every run
   </Card>
 </Columns>

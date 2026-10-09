@@ -1,10 +1,11 @@
 ---
 title: "Ticketing"
+sidebarTitle: "Ticketing (Jira, Linear)"
 description: "Turn failed tests into Jira or Linear tickets — one at a time or automatically — with dedup so the same failure is never filed twice, and an automatic comment when the test passes again."
 icon: "ticket"
 ---
 
-When a test fails, the next step is usually a ticket. TestSprite files that ticket for you — into **Jira** or **Linear** — either on demand for a single failure or automatically for every failure in a run. However you file, the same failure is never ticketed twice, and when the test recovers the ticket gets a follow-up comment so nobody chases a bug that's already fixed.
+TestSprite files tickets for failed tests into **Jira** or **Linear**, on demand for a single failure or automatically for every failure in a run. The same failure is never ticketed twice, and when the test recovers the ticket gets a follow-up comment.
 
 <Frame>
   <img src="../../images/ticketing-overview.png" alt="A failed test case with the Create Bug Ticket button in the top-right" />
@@ -27,7 +28,7 @@ Not every plan includes Jira and Linear ticketing. Compare plans on the [pricing
 
 ## Create a Ticket for a Single Failure
 
-The fastest path — no project-wide setting to flip. Open any failed (or blocked) test and file a ticket for just that failure.
+Open any failed (or blocked) test and file a ticket for just that failure. No project-wide setting needed.
 
 <Steps>
   <Step title="Click Create Bug Ticket">
@@ -61,11 +62,7 @@ The fastest path — no project-wide setting to flip. Open any failed (or blocke
   </Step>
 </Steps>
 
-<Tip>
-To file for every failure in a run at once, turn on automatic filing (below). Failures that share a root cause are grouped onto one ticket rather than flooding your tracker (see [How Dedup Works](#how-dedup-works)).
-</Tip>
-
-Only **failed** or **blocked** tests can be ticketed — a passing test has nothing to file.
+Only **failed** or **blocked** tests can be ticketed. To file for every failure in a run at once, turn on [automatic filing](#auto-file-tickets-for-every-failure).
 
 ### What's in the Ticket
 
@@ -81,7 +78,7 @@ Secrets in the error and cause text are redacted before anything leaves TestSpri
 
 ## Auto-File Tickets for Every Failure
 
-Once a project's failures are stable enough that most are real bugs, let TestSprite file them without a click.
+Once most of a project's failures are real bugs, let TestSprite file them without a click.
 
 <Steps>
   <Step title="Open Notifications & Ticketing">
@@ -106,23 +103,21 @@ Two settings shape how much gets filed:
 | <kbd>Max new tickets per run</kbd> | 20 | Cap on how many *new* tickets a single run can open (repeat failures still comment on existing tickets) |
 
 <Warning>
-**Before you enable auto-filing the first time, triage the project's failures manually once.** A project with a backlog of genuine failures will open a ticket for each distinct one on the next run — potentially dozens at once. Clear or cluster the known failures first, then turn the toggle on so it only files what's genuinely new.
+**Before you enable auto-filing the first time, triage the project's failures manually once.** A project with a backlog of genuine failures will open a ticket for each distinct one on the next run, potentially dozens at once. Clear or cluster the known failures first so it only files what's genuinely new.
 </Warning>
-
-This suits teams running TestSprite on a schedule or on every pull request, where failures should land in the tracker without anyone watching the dashboard. If you're still stabilizing a suite — lots of flaky or expected failures — stay on manual filing until the noise settles.
 
 ## How Dedup Works
 
 TestSprite never files the same failure twice, using two layers:
 
 - **One ticket per failing test.** A repeat failure of the same test updates its existing ticket with a "failed again" comment instead of opening a new one.
-- **Same failure, one ticket across tests.** Failures that share a root cause (the same error signature) are grouped onto a single ticket — so a widespread outage doesn't spray your tracker with near-identical bugs. Grouping applies within a 7-day window, up to 25 tests per ticket.
+- **Same failure, one ticket across tests.** Failures that share a root cause (the same error signature) are grouped onto a single ticket, within a 7-day window and up to 25 tests per ticket.
 
 Manual and automatic filing dedupe **against each other**: if you manually file into the same destination the project is configured to auto-file into, a later automatic run recognizes the existing ticket and comments on it rather than duplicating.
 
 ## When a Test Passes Again
 
-When a previously-failing test passes on a later run, TestSprite posts a **recovery comment** on its ticket and stops updating it — closing the loop without you having to remember which tickets to revisit. If a ticket covered several tests, the comment notes how many are still failing; TestSprite keeps updating it until every test on it has recovered.
+When a previously failing test passes on a later run, TestSprite posts a **recovery comment** on its ticket and stops updating it. If a ticket covered several tests, the comment notes how many are still failing, and TestSprite keeps updating it until every test on it has recovered.
 
 <Note>
 TestSprite posts the recovery comment and stops tracking the ticket. It does not transition or close the issue in Jira or Linear — your team's own workflow owns the final status change. A later failure opens a fresh ticket, linked back to the recovered one.
@@ -132,16 +127,16 @@ TestSprite posts the recovery comment and stops tracking the ticket. It does not
 
 <AccordionGroup>
   <Accordion title="Start with manual filing, then automate">
-    Use <kbd>Create Bug Ticket</kbd> on individual failures while you're learning which failures are real. Once the noise settles, flip on auto-filing so you stop clicking.
+    While a suite is still flaky, use <kbd>Create Bug Ticket</kbd> on individual failures. Once the noise settles, turn on auto-filing.
   </Accordion>
   <Accordion title="File into a triage team or project">
-    Point ticketing at a dedicated Linear team or Jira project (a "TestSprite" or "QA triage" bucket) rather than your main backlog. It keeps automatically-filed tickets from crowding hand-written work, and you can move the real ones over after review.
+    Point ticketing at a dedicated Linear team or Jira project (a "QA triage" bucket) rather than your main backlog, and move the real ones over after review.
   </Accordion>
   <Accordion title="Use the Max new tickets per run cap as a safety valve">
-    Leave the cap at a sane number (the default is 20) so a bad deploy that breaks half the suite can't open a hundred tickets in one run. Repeat failures still land as comments on the tickets you already have.
+    Keep the cap at a sane number (default 20) so a bad deploy that breaks half the suite can't open a hundred tickets in one run.
   </Accordion>
   <Accordion title="Both trackers at once">
-    You can enable Linear and Jira simultaneously — each files independently into its own destination with its own dedup ledger. Useful when engineering lives in one tracker and QA in the other.
+    You can enable Linear and Jira at the same time. Each files into its own destination with its own dedup, which helps when engineering lives in one tracker and QA in the other.
   </Accordion>
 </AccordionGroup>
 

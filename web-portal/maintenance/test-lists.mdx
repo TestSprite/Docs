@@ -1,26 +1,14 @@
 ---
 title: "Test Lists"
-description: "Organize test collections, track execution history, and manage testing projects efficiently."
+description: "Group test cases from one or more projects into a list you can run, schedule, and track as one."
 icon: "list"
 ---
 
-Test Lists are organized collections of test cases that help you group related tests together. Whether you're testing different features, environments, or user flows, Test Lists provide a structured way to manage your testing efforts.
+A Test List is a reusable collection of test cases, frontend, backend, or both, from one project or several: a regression suite, a smoke check, a release gate. You run a list as one unit, track its execution history, and schedule it with [Test Schedules](/web-portal/maintenance/monitoring).
 
     <Frame>
       <img src="../../images/testlist-overview.png" alt="The Test Lists page — curated lists with their status and test counts" />
     </Frame>
-
-
-
-## Key Features
-
-| Feature | Description |
-| :--- | :--- |
-| <kbd>Centralized Test Management</kbd> | View all test lists in one dashboard, track execution status across collections, search and filter by name or status, and sort by date, count, or type |
-| <kbd>Test Organization</kbd> | Organize Frontend Tests with browser automation, Backend Tests for API functionality, and Mixed Collections combining both test types |
-| <kbd>Execution Tracking</kbd> | Track your **previous execution** status to view the test's last run with **status indicators** showing **Passed** (all tests completed successfully), **Warning** (some tests need review), or **Failed** (tests encountered errors). |
-
-
 
 ## Creating Test Lists
 
@@ -37,53 +25,24 @@ Test Lists are organized collections of test cases that help you group related t
     <img src="../../images/testlist-add-test.png" alt="Picking test cases to add to a list" />
     </Frame>
   </Step>
-  <Step title="Organize and Configure">
-    Name your test list descriptively, review and customize generated test cases, and maintain your test lists as needed
+  <Step title="Name and maintain the list">
+    Name the list descriptively and keep it up to date as your tests change
   </Step>
 </Steps>
 
+## The Test Lists Page
 
+Each list shows its name, previous execution date and time, and test counts (total, frontend, and backend), along with the status of its last run:
 
-## Managing Test Lists
-
-<Tabs>
-  <Tab title="Search & Filter">
-
-| Option | Description |
+| Status | Meaning |
 | :--- | :--- |
-| <kbd>Search</kbd> | Search by test list name to quickly find specific collections |
-| <kbd>Passed</kbd> | Show only successfully executed test lists |
-| <kbd>In Progress</kbd> | Filter test lists currently running |
-| <kbd>Warning</kbd> | Filter test lists with mixed pass/fail results that need review |
-| <kbd>Failed</kbd> | Display test lists with execution errors |
-| <kbd>Blocked</kbd> | Filter test lists that were blocked from completing |
-  </Tab>
-  <Tab title="Sorting Options">
+| <kbd>Passed</kbd> | All tests completed successfully |
+| <kbd>Warning</kbd> | Mixed pass/fail results that need review |
+| <kbd>Failed</kbd> | Tests encountered errors |
+| <kbd>Blocked</kbd> | The run was blocked from completing |
+| <kbd>In Progress</kbd> | Currently running |
 
-| Option | Description |
-| :--- | :--- |
-| <kbd>Total test cases</kbd> | Order by number of tests in the list |
-| <kbd>Total frontend test</kbd> | Order by frontend test count |
-| <kbd>Total backend test</kbd> | Sort by backend test count |
-| <kbd>Previous execution date</kbd> | Sort by most recently executed |
-  </Tab>
-</Tabs>
-
-
-
-## Test List Details
-
-
-Each test list displays:
-
-| Field | Description |
-| :--- | :--- |
-| <kbd>Test List Name</kbd> | Descriptive identifier for your test collection |
-| <kbd>Previous Execution</kbd> | Last run date and time |
-| <kbd>Total Test Cases</kbd> | Combined count of all tests in the list |
-| <kbd>Total Frontend Test</kbd> | Number of UI/browser tests |
-| <kbd>Total Backend Test</kbd> | Number of API/server tests |
-
+Search by list name, filter by any of these statuses, and sort by total, frontend, or backend test count, or by previous execution date.
 
 ## Execution Actions
 
