@@ -1,6 +1,6 @@
 ---
 title: "Integration Tests"
-description: "Multi-step API tests that chain endpoints together — one step's response feeds the next request. TestSprite identifies these workflows in your API automatically."
+description: "Multi-step API tests that chain endpoints together, where one step's response feeds the next request. TestSprite identifies these workflows in your API automatically."
 ---
 
 <Frame>
@@ -9,7 +9,7 @@ description: "Multi-step API tests that chain endpoints together — one step's 
 
 ## What Integration Tests Are
 
-An integration test exercises a **sequence of endpoints** as a single workflow. The classic shape:
+An integration test runs a **sequence of endpoints** as one workflow, with each step using data from the one before:
 
 ```
 POST /users        → create a user, capture user_id
@@ -18,57 +18,19 @@ GET  /orders/{id}  → confirm the order is retrievable
 DELETE /orders/{id}→ cancel the order, confirm 204
 ```
 
-Each step depends on data from the previous step. The user ID returned by step 1 is used in step 2's body; the order ID returned by step 2 is used in steps 3 and 4. TestSprite identifies these dependencies and runs the chain end-to-end as a single test.
-
-Related capabilities — each has its own page:
-
-<CardGroup cols={2}>
-  <Card title="Dynamic Variables" href="/web-portal/core/api/dynamic-variables" icon="brackets-curly">
-    Values captured from one step and reused in another
-  </Card>
-  <Card title="Dependency Chains" href="/web-portal/core/api/dependency-chains" icon="diagram-project">
-    How chained steps run in the right order
-  </Card>
-  <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
-    Records created during a run get deleted afterward
-  </Card>
-</CardGroup>
+TestSprite identifies these handoffs and runs the chain end to end as a single test. [Dynamic Variables](/web-portal/core/api/dynamic-variables) shows the captured values; [Dependency Chains](/web-portal/core/api/dependency-chains) explains how the run order is determined.
 
 ## Where Integration Tests Live in the UI
 
-Integration tests have their own sidebar tab, **Test Cases → Integration Tests**, distinct from the per-endpoint **Endpoint Tests** list. From this tab you can:
+Integration tests have their own sidebar row, **Test Cases → Integration Tests**, next to **Endpoint Tests**. From there you can:
 
-- Browse the list of auto-assembled chains
-- Click into any chain to see its step sequence
+- Browse the auto-assembled chains and open any one to see its steps
 - **Run all** chains from the toolbar, or open a chain and rerun it on its own
 - Refine a chain in chat (add a step, drop a step, change the sequence)
-- See per-chain statistics: how many steps
-
-## What a Chain Looks Like
-
-A chain is a sequence of steps with data flowing forward — one step produces a value, later steps consume it.
-
-<Card>
-```mermaid
-flowchart LR
-    A[POST /users<br/>produces: user_id]
-    B[POST /orders<br/>uses: user_id<br/>produces: order_id]
-    C[GET /orders/&#123;id&#125;<br/>uses: order_id]
-    D[DELETE /orders/&#123;id&#125;<br/>uses: order_id]
-
-    A --> B
-    B --> C
-    B --> D
-```
-</Card>
-
-Each arrow represents data flowing from one step's response to the next step's request. TestSprite identifies these handoffs and runs the steps in the correct order.
-
-See [Dynamic Variables](/web-portal/core/api/dynamic-variables) for how captured values surface in the UI, and [Dependency Chains](/web-portal/core/api/dependency-chains) for how the run order is determined.
 
 ## Why Integration Tests Matter
 
-A typical user journey through your API has multiple steps that have to work together. Endpoint tests verify each step in isolation; integration tests verify the **handoffs**. Things integration tests catch that endpoint tests miss:
+Endpoint tests verify each step in isolation; integration tests verify the **handoffs**. They catch the "individual endpoints work but the system doesn't" bugs:
 
 | Failure mode | Caught by |
 | :--- | :--- |
@@ -77,11 +39,9 @@ A typical user journey through your API has multiple steps that have to work tog
 | DELETE works, but the GET that follows still returns the record (eventual consistency bug) | Integration |
 | The `order_id` field in POST /orders' response is named differently than what GET /orders/{id} needs as path param | Integration |
 
-These are the common "individual endpoints work but the system doesn't" bugs. Endpoint tests pass; integration tests catch the misalignment.
-
 ## Per-Chain View
 
-Click into an integration test from the list. The detail page shows:
+Click into an integration test to see its detail page:
 
 <Frame>
   <img src="../../../images/api-testing-integration-test-Per-Chain-View.png" alt="An integration test detail page — its five chained steps beside the assembled code" />
@@ -91,11 +51,11 @@ Click into an integration test from the list. The detail page shows:
 | :--- | :--- |
 | <kbd>Step list</kbd> | Each step with its method and path |
 | <kbd>Stdout</kbd> | The full HTTP detail of each step's call, once the chain has run |
-| <kbd>Chain-level error</kbd> | If the chain failed, surface where it broke and why |
+| <kbd>Chain-level error</kbd> | If the chain failed, where it broke and why |
 
 ## When a Chain Fails
 
-Integration tests can fail in three distinguishable ways:
+Chains fail in three distinguishable ways:
 
 <Frame>
   <img src="../../../images/integration-error.png" alt="Integration test detail page with step list" />
@@ -107,51 +67,33 @@ Integration tests can fail in three distinguishable ways:
 | <kbd>Step N TEST BLOCKED</kbd> | An upstream step (M before N) failed, so step N couldn't run | Fix step M first; step N runs automatically on rerun |
 | <kbd>Variable not found</kbd> | Step N needs a value that wasn't produced by any earlier step | Refine in chat with a hint: "Make sure POST /users captures user_id" |
 
-The "TEST BLOCKED" pattern is what differentiates Blocked from Failed — see [Endpoint Tests](/web-portal/core/api/endpoint-tests#test-outcomes).
+See [Endpoint Tests](/web-portal/core/api/endpoint-tests#test-outcomes) for how Blocked differs from Failed.
 
 ## Auto Cleanup Pairing
 
-Integration tests create records in your test environment — users, orders, sessions. After a chain runs, TestSprite automatically removes those records so subsequent runs start fresh.
+After every run or rerun, even a passing one, TestSprite removes the records your chains created (users, orders, sessions), so the next run starts from a known-empty state. See [Auto Cleanup](/web-portal/core/api/auto-cleanup).
 
-<Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
-  Records created during a run get deleted afterward — no manual configuration
-</Card>
-
-<Info>
-**Cleanup chains run after every Run / Rerun, even if the test passed.** The point is to leave your test environment in a known-empty state, not to reverse only failures.
-</Info>
-
-## Frontend Equivalent
-
-UI testing has its own multi-step concept — a "use case" with multiple actions in a browser. The mental model is the same (sequence with handoffs) but the underlying execution is browser actions instead of HTTP calls.
-
-<Card title="UI Testing — Overview" href="/web-portal/core/ui/ui-testing" icon="window-maximize">
-  The frontend journey — multi-step user flows in the browser
-</Card>
+UI testing has the same idea, a use case with multiple steps, but runs browser actions instead of HTTP calls. See [UI Testing](/web-portal/core/ui/ui-testing).
 
 ## Edge Cases & Troubleshooting
 
 <AccordionGroup>
   <Accordion title="No integration tests were detected">
-    Common when your API is mostly read-only (no chained mutations) or when initial plan generation had sparse hints. To get integration coverage:
-    - Re-run plan generation with a hint: "Generate integration chains that exercise create → read → update → delete on /orders"
-    - Or refine in chat to ask for specific multi-step flows
+    Common when your API is mostly read-only or the initial plan had sparse hints. Re-run plan generation with a hint like "Generate integration chains that exercise create → read → update → delete on /orders", or ask for specific multi-step flows in chat.
   </Accordion>
   <Accordion title="A chain looks wrong — wrong order, missing steps">
-    Open the chain, use the chat, and describe the right shape: "The right order is POST /users → POST /sessions → POST /orders, not /users → /orders directly". TestSprite re-runs with the corrected sequence.
+    Open the chain and describe the right shape in chat: "The right order is POST /users → POST /sessions → POST /orders, not /users → /orders directly". TestSprite re-runs with the corrected sequence.
   </Accordion>
   <Accordion title="A chain runs N steps then says 'Variable not found'">
-    A later step needs a value that no earlier step provided. Common causes:
+    A later step needs a value no earlier step provided. Common causes:
     - **Naming mismatch**: an earlier step produces `user_id` but the later step references `userId`. Refine in chat to align the names.
-    - **Earlier step didn't return the expected field**: the producer step Passed but its response didn't include the field. Check that step's response in **Stdout**; the field may not exist. Refine to capture from a different field.
+    - **Missing field**: the producer step Passed but its response didn't include the field. Check its response in **Stdout** and refine to capture from a different field.
   </Accordion>
   <Accordion title="My chain runs faster than my API can handle (eventual consistency)">
-    Add a wait in chat: "After the POST step, wait 250ms before the GET". Useful for systems with eventual consistency.
+    Add a wait in chat: "After the POST step, wait 250ms before the GET".
   </Accordion>
   <Accordion title="A step passes on its own, but breaks the chain">
-    The step has a side effect the chain didn't account for — for example, it leaves a session active that conflicts with subsequent steps. Either:
-    - Refine the step to clean up after itself
-    - Or add a cleanup step explicitly: "After the GET step, DELETE the session created in step 2"
+    The step has a side effect the chain didn't account for, such as leaving a session active. Refine the step to clean up after itself, or add an explicit cleanup step: "After the GET step, DELETE the session created in step 2".
   </Accordion>
 </AccordionGroup>
 

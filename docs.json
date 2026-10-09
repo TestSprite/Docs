@@ -22,6 +22,22 @@
       "destination": "/web-portal/core/api/dynamic-variables"
     },
     {
+      "source": "/web-portal/getting-started/your-first-test",
+      "destination": "/web-portal/getting-started/overview#how-it-works"
+    },
+    {
+      "source": "/web-portal/core/working-with-test/refining-tests",
+      "destination": "/web-portal/core/working-with-test/managing-test-cases"
+    },
+    {
+      "source": "/web-portal/results/live-run",
+      "destination": "/web-portal/results/test-report#watching-a-run"
+    },
+    {
+      "source": "/web-portal/maintenance/comparing-runs",
+      "destination": "/web-portal/results/project-overview"
+    },
+    {
       "source": "/web-portal/admin/billing-and-plans",
       "destination": "/web-portal/admin/workspaces"
     }
@@ -83,23 +99,7 @@
                   "web-portal/concepts/key-terms",
                   "web-portal/concepts/testing-lifecycle"
                 ]
-              },
-              "web-portal/getting-started/your-first-test"
-            ]
-          },
-          {
-            "group": "AI Chat",
-            "pages": [
-              "web-portal/ai-chat/overview",
-              "web-portal/ai-chat/approving-actions"
-            ]
-          },
-          {
-            "group": "Project Setup",
-            "pages": [
-              "web-portal/setup/environments",
-              "web-portal/setup/project-sources",
-              "web-portal/setup/execution-settings"
+              }
             ]
           },
           {
@@ -145,41 +145,40 @@
                 "icon": "wrench",
                 "expanded": true,
                 "pages": [
+                  "web-portal/core/working-with-test/test-detail",
                   "web-portal/core/working-with-test/coverage-map",
                   "web-portal/core/working-with-test/managing-test-cases",
-                  "web-portal/core/working-with-test/test-detail",
-                  "web-portal/core/working-with-test/refining-tests"
+                  "web-portal/results/test-report",
+                  "web-portal/results/project-overview"
                 ]
-              }
-            ]
-          },
-          {
-            "group": "Results & Insights",
-            "pages": [
-              "web-portal/results/test-report",
-              "web-portal/results/project-overview",
-              "web-portal/results/live-run"
-            ]
-          },
-          {
-            "group": "Maintenance",
-            "pages": [
-              "web-portal/maintenance/test-lists",
+              },
               {
-                "group": "Monitoring",
-                "icon": "chart-simple",
+                "group": "Project Settings",
+                "icon": "gear",
                 "expanded": true,
                 "pages": [
-                  "web-portal/maintenance/monitoring",
-                  "web-portal/maintenance/comparing-runs"
+                  "web-portal/setup/environments",
+                  "web-portal/setup/project-sources",
+                  "web-portal/setup/execution-settings"
+                ]
+              },
+              {
+                "group": "AI Chat",
+                "icon": "comments",
+                "expanded": true,
+                "pages": [
+                  "web-portal/ai-chat/overview",
+                  "web-portal/ai-chat/approving-actions"
                 ]
               }
             ]
           },
           {
-            "group": "Integrations",
+            "group": "Automation & Integrations",
             "pages": [
               "web-portal/integrations/github-integration",
+              "web-portal/maintenance/test-lists",
+              "web-portal/maintenance/monitoring",
               "web-portal/integrations/slack-notifications",
               "web-portal/integrations/ticketing"
             ]

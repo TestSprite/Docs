@@ -23,70 +23,45 @@ An API key authenticates the CLI and the MCP Server as you. Two kinds exist:
 | **Active-key cap** | 3 active | 2 active per member, per workspace |
 | **Revoking** | Revokes it everywhere — it was never workspace-scoped | Revokes that key only; you can mint another for the same workspace |
 
-<Note>
-Both kinds are capped, with different limits: 2 active workspace keys per member per workspace (so you can rotate one while the other stays in use), and 3 active personal keys. Going over a cap fails until you revoke one. Revoking is immediate.
-</Note>
+If you already have a personal key, it keeps working as before. The two active workspace keys let you rotate one while the other stays in use; going over a cap fails until you revoke a key, and revoking is immediate.
 
-<Info>
-Personal keys predate the workspace-key kind and can no longer be minted. If you already have one, it keeps working exactly as before — every key minted today, from any workspace's API Keys page, is a workspace key.
-
-A shared workspace's API Keys page lists only that workspace's keys. Your personal keys are on your personal workspace's page, where you can also revoke them — they're left off a shared workspace's page because anything they create lands in your personal workspace, not in the shared one.
-</Info>
-
-See [Workspaces](../../web-portal/admin/workspaces) for what a workspace is and how personal vs. shared workspaces differ. API keys are available to Members and above — a [Viewer](/web-portal/admin/members-and-roles) is read-only and can't mint or hold keys in that workspace.
+API keys are available to Members and above. A [Viewer](/web-portal/admin/members-and-roles) is read-only and can't mint or hold keys in that workspace.
 
 ## Creating a Key
 
-Every key minted today is a workspace key; there's no separate flow for a personal key. Go to <kbd>Workspace Settings > Connections > API Keys</kbd> in whichever workspace should own the key and click <kbd>New API Key</kbd>; the key you get back is bound to that workspace, including your personal workspace if that's the page you were on.
+Go to <kbd>Workspace Settings > Connections > API Keys</kbd> in the workspace that should own the key and click <kbd>New API Key</kbd>. The key is bound to that workspace, including your personal workspace if that's the page you were on.
 
 <Frame>
   <img src="../../images/apikey-create.png" alt="Settings → API Keys with the New API Key button" />
 </Frame>
 
-Provide a **descriptive name** (e.g., "MCP Integration") and optionally set an expiration. Leave it blank and the key does not expire — unless the workspace enforces a maximum lifetime, in which case a longer expiry you request is rejected, and a key created without one is issued with that maximum instead. Click <kbd>Create</kbd>, then use the copy icon to copy the generated key immediately.
+Give it a **descriptive name** (e.g., "MCP Integration") and optionally an expiration. Without one the key doesn't expire, unless the workspace enforces a maximum lifetime: then a longer expiry is rejected, and a key created without one gets that maximum. Click <kbd>Create</kbd>, then copy the key right away.
 
 <Warning>
-  Store it securely. It won't be shown again.
+  Store it securely. The full key is shown only once, at creation.
 </Warning>
 
 <Frame>
 <img src="../../images/created-api-key.png"  alt="API Key" />
 </Frame>
 
-The key is stored hashed; its full value is shown exactly once, at creation, and never again.
-
 ## Managing API Keys
-
-<Tabs>
-  <Tab title="Each API Key Shows">
-    Each API key displays key information fields that help you identify, track, and manage your keys effectively.
 
 | Field | Description |
 | :--- | :--- |
 | <kbd>Name</kbd> | Descriptive identifier |
 | <kbd>API Key</kbd> | Partially hidden. A personal key shows its first and last few characters (`sk-user-abcde...vwxyz`); a workspace key shows only its leading characters (`sk-member-ab...`), because the rest is never stored in a readable form |
 | <kbd>Created At</kbd> | When generated |
-| <kbd>Expires</kbd> | Optional at creation. If not set, the key does not expire — unless the workspace enforces a maximum lifetime, in which case it's issued with that maximum |
-  </Tab>
-  <Tab title="Available Actions">
-    Manage your API keys with these actions to control access, monitor usage, and maintain security.
+| <kbd>Expires</kbd> | The expiration set at creation, if any |
 
-| Action | Description |
-| :--- | :--- |
-| <kbd>Revoke</kbd> | Immediately disable the key — API requests using it will be rejected |
-  </Tab>
-</Tabs>
+<kbd>Revoke</kbd> disables a key immediately; requests using it are rejected.
 
 ## Viewing MCP Test Results
 
-When you run tests through MCP Server in your IDE, view the results in your Web Portal dashboard.
-
-   Go to <kbd>All Projects > MCP</kbd> and view all projects created through MCP Server
+Projects created through the MCP Server in your IDE show up under <kbd>All Projects > MCP</kbd>.
       <Frame>
     <img src="../../images/apikey-mcp-result.png" alt="All Projects filtered to the MCP tab, showing projects created through the MCP server" />
     </Frame>
-
-Project Information Displayed:
 
 | Field | Description |
 | :--- | :--- |
@@ -98,32 +73,28 @@ Project Information Displayed:
 
 ### Test Reports
 
-Click on any project to view **detailed test execution logs**, **individual test case results**, **error messages and debugging information**, and **performance metrics**.
+Click a project to see its execution logs, per-test results, errors, and performance metrics.
 <Frame>
   <img src="../../images/report.png"  alt="Report" />
 </Frame>
 <br />
 <Card title="View Example Test Report" icon="file" href="../../learn/mcp-demo#test-report-example">
-  Click to see a detailed example of TestSprite test reports with execution logs and performance metrics.
+  A full example report, with execution logs and performance metrics
 </Card>
 
 ## Next Steps
-<Info>Your API key is used in the MCP Server configuration to authenticate with TestSprite's testing engine.</Info>
 
 <CardGroup cols={2}>
-  <Card title="Workspaces" icon="users" href="../../web-portal/admin/workspaces">
+  <Card title="Workspaces" icon="users" href="/web-portal/admin/workspaces">
     What a workspace is and how personal vs. shared workspaces differ
   </Card>
-  <Card title="Start Your First Test" icon="play" href="../../mcp/getting-started/first-test">
-    Get hands-on experience with TestSprite MCP
+  <Card title="CLI Quickstart" icon="terminal" href="/cli/getting-started/quickstart">
+    Use your key with the TestSprite CLI
   </Card>
-  <Card title="MCP Server Documentation" icon="square-terminal" href="../../mcp/getting-started/overview">
-    Complete TestSprite MCP Server guide
+  <Card title="MCP Server Installation" icon="download" href="/mcp/getting-started/installation">
+    Use your key with the MCP Server
   </Card>
-  <Card title="Installation Guide" icon="download" href="../../mcp/getting-started/installation">
-    Step-by-step setup instructions
-  </Card>
-  <Card title="Workflow Examples" icon="arrows-retweet" href="../../mcp/concepts/test-type-lifecycle">
-    Learn TestSprite MCP Server workflows
+  <Card title="MCP Server Overview" icon="square-terminal" href="/mcp/getting-started/overview">
+    The complete MCP Server guide
   </Card>
 </CardGroup>

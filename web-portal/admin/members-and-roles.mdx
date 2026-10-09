@@ -37,7 +37,7 @@ Every member of a workspace has exactly one role. Roles are per-workspace — th
 | Leave the workspace | ✅ | ✅ | ✅ | ❌ (delete instead) |
 
 <Note>
-**Viewer is read-only by definition.** A Viewer who tries to change anything gets a clear "Viewer is a read-only role" message — the one exception is leaving the workspace, which anyone can do for themselves. Viewer seats are free on every plan, which makes them the right way to loop in a PM, a manager, or a client who needs to see results but shouldn't touch tests.
+A Viewer who tries to change anything sees a "Viewer is a read-only role" message. Viewers are the right way to loop in a PM, a manager, or a client who needs to see results but shouldn't touch tests.
 </Note>
 
 ## Inviting Someone
@@ -59,7 +59,7 @@ Invitations live in <kbd>Workspace Settings → Members</kbd>, or use the <kbd>I
     Admin and Member invitations add a paid seat, which you confirm before the invitation is sent. **Viewer invitations skip this step entirely: viewer seats are free.**
   </Step>
   <Step title="They accept — by email or link">
-    The invitee gets an email with an accept link. You can also copy the same link from the confirmation toast and hand it over directly in Slack or a DM — useful when company email is slow or the message lands in spam.
+    The invitee gets an email with an accept link. You can also copy the same link from the confirmation toast and send it in Slack or a DM, useful when the email lands in spam.
 
     Either way, the invitation is **bound to the invited email address**: the recipient must sign in with that exact email to accept. Invitations expire after **7 days**; re-inviting the same address replaces the earlier pending invite.
   </Step>

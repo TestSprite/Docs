@@ -23,18 +23,9 @@ TestSprite does not build or deploy your app. It **listens** for a GitHub event 
 3. TestSprite resolves the target URL to test — from the deployment, or from a URL pattern you define.
 4. TestSprite runs your tests and posts results back to GitHub as a PR comment or a commit check.
 
-### The Four Stages
-
-| Stage | What you do | How often |
-| :--- | :--- | :--- |
-| Prerequisite | Confirm your repo produces a deployment | Once per repo |
-| Step 1 | Connect the GitHub integration to your workspace | Once per workspace |
-| Step 2 | Connect GitHub Action to a TestSprite project | Once per project |
-| Trigger | Choose a Pull Request or Push trigger | Per trigger |
-
 ## Prerequisite: Prepare a Deployment in Your GitHub Repo
 
-Before connecting anything, confirm that your repository actually creates a **deployment** that GitHub can report. TestSprite triggers off that deployment event, so it has to exist first. Pick the scenario that matches how you want to test:
+TestSprite triggers off a **deployment** that GitHub reports, so confirm your repository creates one before connecting anything:
 
 - **Testing on push to a branch** — the branch must have a deployment attached to it. Confirm the branch has a recent, successful deployment check (e.g. a "Deploy" workflow run) with a live URL behind it.
 
@@ -48,19 +39,19 @@ Before connecting anything, confirm that your repository actually creates a **de
     <img src="../../images/github-test-pull-request.png" alt="A PR showing a Vercel bot comment with a Ready preview deployment link" />
   </Frame>
 
-  Any deploy bot works the same way — here's the equivalent Amplify comment on a different PR:
+  Any deploy bot works the same way. Here's the equivalent Amplify comment:
 
   <Frame>
     <img src="../../images/github-test-any-deploy-work.png" alt="A PR showing an Amplify Hosting bot comment with a preview deployment link" />
   </Frame>
 
 <Warning>
-Don't skip this check. If no deployment appears on your branch or PR, fix your CI/CD pipeline first — TestSprite has nothing to listen for until a deployment event exists.
+Don't skip this check. If no deployment appears on your branch or PR, fix your CI/CD pipeline first: TestSprite has nothing to listen for until a deployment event exists.
 </Warning>
 
 ## Step 1: Connect GitHub to Your Workspace
 
-This is a one-time setup per workspace. It lets TestSprite read events from your repositories.
+A one-time setup per workspace that lets TestSprite read events from your repositories.
 
 <Steps>
   <Step title="Open the integration">
@@ -111,7 +102,7 @@ Now link a specific repository to a specific TestSprite project.
 
 ## Trigger Rules
 
-Each rule watches for a real signal from your own CI/CD — a check finishing, a workflow run completing, or even a deploy bot's PR comment (Vercel, Amplify, and similar all post one) — rather than reacting to "a PR was opened" or "a commit was pushed" the instant it happens.
+Each rule watches for a real signal from your own CI/CD (a check finishing, a workflow run completing, or a deploy bot's PR comment), not just "a PR was opened" or "a commit was pushed".
 
 <Info>
 A Push trigger tests against a TestSprite [Environment](/web-portal/setup/environments) you've already configured for that branch — set that up first if you haven't.
@@ -197,7 +188,7 @@ Below the Triggers list, the **Trigger activity** card — "What your triggers h
   <img src="../../images/github-integration/github-integration-trigger-activity.png" alt="Trigger activity list — PR, matched check, outcome badge, linked execution, commit, time" />
 </Frame>
 
-Each row shows the PR (or branch) and the workflow/check that matched, links out to <kbd>GitHub</kbd> and a short identifier (e.g. `github-pr-745`), an outcome badge (**Tests started** for a normal dispatch), a link to the <kbd>Execution</kbd> it kicked off, the short commit SHA, and a relative timestamp.
+Each row shows the PR (or branch) and the check that matched, a <kbd>GitHub</kbd> link and short identifier (e.g. `github-pr-745`), an outcome badge (**Tests started** for a normal dispatch), a link to the <kbd>Execution</kbd> it started, the short commit SHA, and when it happened.
 
 <Note>Activity is retained for **30 days**.</Note>
 
@@ -253,7 +244,7 @@ Export runs at the **project** level — it pushes every finished execution's ge
     Leave <kbd>Block PR until tests pass</kbd> off for the first few PRs while you confirm tests run cleanly. Flip it on once you're confident the suite is stable.
   </Accordion>
   <Accordion title="Use draft PRs for quick checks">
-    Leaving <kbd>Include draft PRs</kbd> on means you can open a draft against your branch to get a TestSprite run without ceremony. Useful for "I'm about to refactor — does the suite pass first?" sanity checks.
+    With <kbd>Include draft PRs</kbd> on, open a draft against your branch to get a TestSprite run before a refactor, without asking for review.
   </Accordion>
   <Accordion title="Pair with scheduled monitoring">
     PR checks catch regressions before merge; [scheduled runs](/web-portal/maintenance/monitoring) catch regressions in production. Most teams run both.
@@ -266,11 +257,11 @@ Export runs at the **project** level — it pushes every finished execution's ge
   <Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="chart-simple">
     Run tests on a schedule, not just on PRs
   </Card>
-  <Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
-    Other ways to integrate TestSprite with external tools
+  <Card title="CLI" href="/cli/getting-started/overview" icon="terminal">
+    Run tests from your terminal or coding agent
   </Card>
   <Card title="MCP Server" href="/mcp/getting-started/overview" icon="square-terminal">
-    Generate tests from your IDE first
+    Run tests from your IDE
   </Card>
   <Card title="Test Detail" href="/web-portal/core/working-with-test/test-detail" icon="file-circle-info">
     Where PR-triggered runs land

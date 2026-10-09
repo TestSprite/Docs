@@ -1,5 +1,6 @@
 ---
 title: "Slack Notifications"
+sidebarTitle: "Notifications (Slack)"
 description: "Post a summary of every completed test run to a Slack channel of your choice."
 icon: "slack"
 ---
@@ -8,7 +9,7 @@ icon: "slack"
   <img src="../../images/slack-overview.png" alt="A TestSprite run summary posted in a Slack channel" />
 </Frame>
 
-TestSprite can post a summary to your Slack workspace every time a test run completes, so your team sees results the moment they land — without anyone checking the dashboard. It works for every kind of run: manual, scheduled, GitHub-triggered, or started from the CLI.
+TestSprite can post a summary to Slack every time a test run completes, so your team sees results without checking the dashboard. It works for every kind of run: manual, scheduled, GitHub-triggered, or started from the CLI.
 
 Setup happens in two places:
 
@@ -31,7 +32,7 @@ Slack notifications are available on every plan. Connecting and disconnecting Sl
     In your workspace settings, go to <kbd>Workspace Settings</kbd> → <kbd>Connections</kbd> → <kbd>Integrations</kbd> and click the **Slack** row, then <kbd>Connect With Slack</kbd>.
   </Step>
   <Step title="Authorize TestSprite">
-    A Slack authorization window opens. Approve the requested permissions — TestSprite asks only for what it needs to list channels and post messages:
+    A Slack authorization window opens. Approve the requested permissions, which only let TestSprite list channels and post messages:
 
     | Permission | Why |
     |---|---|
@@ -65,11 +66,13 @@ Slack notifications are available on every plan. Connecting and disconnecting Sl
 
 ## Public vs. Private Channels
 
+Public channels work immediately. **Private channels need one extra step**: the TestSprite bot can't see a private channel until it's invited.
+
 <Warning>
-**Private channels require one extra step.** The TestSprite bot cannot see a private channel until it is invited. In Slack, open the private channel and run `/invite @TestSprite` **first** — the channel won't appear in TestSprite's channel list until you do. After inviting, switch back to the TestSprite tab and the list refreshes automatically.
+In Slack, open the private channel and run `/invite @TestSprite` **first**. The channel won't appear in TestSprite's channel list until you do; after inviting, switch back to the TestSprite tab and the list refreshes automatically.
 </Warning>
 
-Inviting the bot takes a few seconds. In the private channel, type `/invite` and choose **Invite someone to this channel**:
+In the private channel, type `/invite` and choose **Invite someone to this channel**:
 
 <Frame>
   <img src="../../images/slack-invite.png" alt="Typing /invite in a private Slack channel and choosing Invite someone to this channel" />
@@ -80,12 +83,6 @@ Then search for the TestSprite app and add it:
 <Frame>
   <img src="../../images/slack-search.png" alt="Selecting the TestSprite app in Slack's Add people dialog" />
 </Frame>
-
-| | Public channel | Private channel |
-|---|---|---|
-| Setup | Select from the list — works immediately, no invite needed | Run `/invite @TestSprite` in the channel first, then select it |
-| Appears in channel list | Always | Only after the bot is invited |
-| Who sees notifications | Anyone in the channel | Channel members only |
 
 ## What You'll Receive
 

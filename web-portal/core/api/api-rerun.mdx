@@ -9,8 +9,6 @@ description: "Re-execute one API test, a chain, or every test in the project to 
 
 ## Three Rerun Surfaces
 
-API testing supports three rerun paths:
-
 | Surface | What it does | When to use |
 | :--- | :--- | :--- |
 | <kbd>Single test rerun</kbd> | Re-execute one test | Confirm a fix on a specific failing test |
@@ -18,54 +16,51 @@ API testing supports three rerun paths:
 | <kbd>Scheduled rerun</kbd> | Auto-run on cadence | Continuous monitoring of API health |
 
 <Info>
-**Auto-Heal does not apply to API testing.** Auto-Heal is exclusive to UI tests because UIs drift in ways HTTP APIs don't. The corresponding feature for backend testing is [Auto-Auth](/web-portal/core/api/auto-auth), which keeps tokens fresh across long-running schedules.
+**Auto-Heal is UI-only**, because UIs drift in ways HTTP APIs don't. For API tests, [Auto-Auth](/web-portal/core/api/auto-auth) is what keeps long-running schedules healthy by keeping tokens fresh.
 </Info>
 
 ## Single Test Rerun
 
 From a test's detail page, click **Run test**.
+
 <Frame>
   <img src="../../../images/api-testing-rerun-open-rerun-single.png" alt="Rerunning one API test from its detail page" />
 </Frame>
-Most API tests in TestSprite have **upstream dependencies** — variables they consume from earlier tests in a chain. A normal rerun re-runs the producers first, getting fresh captures, then runs the consumer.
+
+Most API tests consume variables from earlier tests in a chain. A normal rerun re-runs the producers first, getting fresh captures, then runs the consumer.
 
 ## Rerun All (Batch)
 
-From the project test list, the **Run all** button at the top right re-executes every test in the project.
+On the project's test list, **Run all** (top right) re-executes every test in the project.
+
 <Frame>
   <img src="../../../images/api-testing-rerun-open-rerun-all.png" alt="Run all on the Test Cases toolbar, queueing every test in the project" />
 </Frame>
 
 ## Scheduled Reruns
 
-Schedules run on a cadence (hourly, daily, weekly, monthly). For API projects, scheduled reruns:
+Schedules run on a cadence (hourly, daily, weekly, monthly). For API projects, each scheduled run rebuilds every chain, uses [Auto-Auth](/web-portal/core/api/auto-auth) when it's configured, and ends with Auto Cleanup so it leaves a clean environment. Set one up in [Test Schedules](/web-portal/maintenance/monitoring).
+
 <Frame>
   <img src="../../../images/ui-testing-rerun-scheduled.png" alt="A schedule's page: execution trend, breakdown, and previous executions" />
 </Frame>
-- Rebuild every chain
-- Use [Auto-Auth](/web-portal/core/api/auto-auth) when configured (token-refresh during the run)
-- Trigger Auto Cleanup after the run (so each scheduled run leaves a clean environment)
-
-Schedule creation is on a separate page. See [Test Schedules](/web-portal/maintenance/monitoring) for the configuration flow.
 
 ## What Happens to Cleanup on Rerun
 
-Every Rerun (single, batch, or scheduled) triggers [Auto Cleanup](/web-portal/core/api/auto-cleanup) at the end. The DELETE chains rebuild from the captured records of *the rerun*, not the previous run.
+Every rerun (single, batch, or scheduled) ends with [Auto Cleanup](/web-portal/core/api/auto-cleanup). The DELETE chains are rebuilt from the records *the rerun* created, not the previous run's.
 
 ## Cascading: Rerun a Producer = Rerun Its Consumers
 
-If you rerun a producer test (one that captures variables consumed downstream), the rerun automatically cascades to consumers. They're re-executed with the producer's fresh captured values.
+Rerunning a producer automatically reruns the tests that consume its variables, with the fresh values:
 
-This means:
-
-- Reruning POST /users (a producer) → automatically reruns POST /orders, GET /orders/{id}, DELETE /orders/{id}
+- Rerunning POST /users (a producer) → automatically reruns POST /orders, GET /orders/{id}, DELETE /orders/{id}
 - Rerunning DELETE /orders/{id} (a leaf consumer) → only that test reruns; its upstream stays as-is
 
 See [Dependency Chains](/web-portal/core/api/dependency-chains) for how producer/consumer relationships are identified.
 
 ## Rerun Outcomes
 
-After a rerun, the test row updates with the new outcome. The previous run's data is preserved for [Comparing Runs](/web-portal/maintenance/comparing-runs) — you can diff "before rerun" against "after rerun" to see exactly what changed.
+After a rerun, the test row shows the new outcome. The previous run is kept under <kbd>Test Runs</kbd>, so you can compare the two.
 
 | Outcome on rerun | What it means | What you do |
 | :--- | :--- | :--- |
@@ -78,19 +73,16 @@ After a rerun, the test row updates with the new outcome. The previous run's dat
 
 <AccordionGroup>
   <Accordion title="Rerun cascade goes deep — too many tests rerun">
-    The producer you reran has many downstream consumers across multiple chains. If you only want to re-execute one specific consumer, click into that test directly and rerun it.
+    The producer you reran feeds many consumers across chains. To re-execute just one consumer, open that test and rerun it directly.
   </Accordion>
   <Accordion title="A test takes very long to rerun">
-    The test depends on producers that themselves depend on upstream tests. A deep chain means reruns of leaf tests can take several minutes.
+    Its producers depend on further upstream tests. A deep chain can make even a leaf test's rerun take several minutes.
   </Accordion>
   <Accordion title="Rerun shows a different result than the same code did the first time">
-    Three causes:
-    - Real flake in the API (intermittent issue at your end)
-    - Captured state changed (a record was modified between runs)
-    - Auth token expired between runs ([use Auto-Auth](/web-portal/core/api/auto-auth))
+    Usually one of: a real flake in your API, captured state that changed between runs (a record was modified), or an auth token that expired between runs ([use Auto-Auth](/web-portal/core/api/auto-auth)).
   </Accordion>
   <Accordion title="The rerun button is disabled">
-    Likely the test is still Queued or Running. Wait for the row to settle into Passed / Failed before rerunning.
+    The test is probably still Queued or Running. Wait until it shows Passed or Failed.
   </Accordion>
 </AccordionGroup>
 
@@ -103,8 +95,8 @@ After a rerun, the test row updates with the new outcome. The previous run's dat
   <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Token refresh keeps reruns alive
   </Card>
-  <Card title="Comparing Runs" href="/web-portal/maintenance/comparing-runs" icon="code-compare">
-    Diff before/after a rerun
+  <Card title="Insights" href="/web-portal/results/project-overview" icon="gauge">
+    Regressions and quality trends across runs
   </Card>
   <Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="clock">
     Set up automated reruns on a cadence

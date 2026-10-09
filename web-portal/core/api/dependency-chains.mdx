@@ -1,6 +1,6 @@
 ---
 title: "Dependency Chains"
-description: "How TestSprite figures out the run order for your tests — and the rules that determine when a test is Blocked vs ready to run."
+description: "How TestSprite figures out the run order for your tests, and when a test is Blocked instead of ready to run."
 ---
 
 <Frame>
@@ -9,7 +9,7 @@ description: "How TestSprite figures out the run order for your tests — and th
 
 ## What Dependency Chains Are
 
-When tests share dynamic variables, they form a chain of producers and consumers:
+When tests share [dynamic variables](/web-portal/core/api/dynamic-variables), they form a chain of producers and consumers:
 
 | Endpoint | Produces | Uses |
 | :--- | :--- | :--- |
@@ -18,19 +18,13 @@ When tests share dynamic variables, they form a chain of producers and consumers
 | GET /orders/`{id}` | — | `order_id` |
 | DELETE /orders/`{id}` | — | `order_id` |
 
-A producer always runs before the tests that use its values. TestSprite identifies these relationships and orders the run accordingly.
-
-<Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
-  Cleanup runs in the order that respects these dependencies — children first, then parents
-</Card>
+A producer always runs before the tests that use its values, and TestSprite orders the run accordingly. [Auto Cleanup](/web-portal/core/api/auto-cleanup) follows the same dependencies in reverse: children first, then parents.
 
 ## How TestSprite Runs Your Tests
 
-Independent tests run in parallel; tests that depend on others wait until the values they need are available. The result: a 50-test plan with several dependency layers completes in roughly the time of the slowest layer, not 50× the average.
+Independent tests run in parallel; tests that depend on others wait until the values they need are available. A 50-test plan with several dependency layers finishes in roughly the time of its slowest layer, not 50× the average.
 
 ## Test Status During a Run
-
-Each test row reflects one of these statuses:
 
 | Status | Meaning |
 | :--- | :--- |
@@ -41,33 +35,20 @@ Each test row reflects one of these statuses:
 | <kbd>Blocked</kbd> | An earlier test failed; this test was never run because the value it needs isn't available |
 
 <Info>
-**Blocked is not Failed.** Failed means "the test ran and the assertion didn't hold". Blocked means "the test never got to run because something earlier in the chain broke". Distinguishing these is critical when you're triaging a flaky run — Blocked tests are not bugs in your API; they're symptoms of the upstream Failed test.
+**Blocked is not Failed.** A Blocked test never ran, so it isn't a bug in your API. It's a symptom of a Failed test upstream; start triage there.
 </Info>
 
 ## Where to See the Dependency Graph
 
-The producer-consumer relationships are rendered in two places: in each test's Data Flow section, and in tabular form in Dynamic Variables (every variable's row has "Source" (producer) and "Used by" (consumers)).
-
-For an integration chain specifically, click into the chain's detail page — the step list there shows that one chain in run order.
-
-<CardGroup cols={2}>
-  <Card title="Data Flow" href="/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test" icon="diagram-project">
-    Each test's captured and consumed values
-  </Card>
-  <Card title="Dynamic Variables" href="/web-portal/core/api/dynamic-variables" icon="brackets-curly">
-    Tabular view — every captured variable with its producer and consumers
-  </Card>
-</CardGroup>
+Each test's [Data Flow section](/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test) shows what it captures and consumes. A run's [Dynamic Variables](/web-portal/core/api/dynamic-variables) tab lists every variable with its **Source** (producer) and **Used by** (consumers). For one integration chain, its detail page shows the steps in run order.
 
 ## Circular Dependencies
 
-If two tests need values from each other, the chain can't be assembled. TestSprite surfaces this as a "Could not assemble — circular dependency between X and Y" error and you'll need to refine in chat.
-
-In practice this is rare and usually points to an actual API design issue.
+If two tests need values from each other, the chain can't be assembled. TestSprite reports "Could not assemble — circular dependency between X and Y", and you'll need to refine in chat. This is rare and usually points to an API design issue.
 
 ## Multiple Producers for the Same Variable
 
-If two tests both produce the same variable name (e.g., both POST /users and POST /admins produce `user_id`), TestSprite picks one consistently for downstream consumers. To disambiguate:
+If two tests produce the same variable name (e.g., both POST /users and POST /admins produce `user_id`), TestSprite picks one consistently for downstream consumers. To disambiguate:
 
 <CodeGroup>
 ```text Disambiguate
@@ -81,7 +62,7 @@ Rename the value produced by POST /admins to admin_user_id to avoid the conflict
 
 ## When an Earlier Test Fails
 
-When a test fails, anything that depends on its values is Blocked:
+Anything that depends on a failed test's values is Blocked:
 
 ```
 POST /users         → assertion failed (status was 500)         [Failed]
@@ -90,31 +71,25 @@ GET /orders/{id}    → needs order_id, can't run                 [Blocked]
 DELETE /orders/{id} → needs order_id, can't run                 [Blocked]
 ```
 
-The Cleanup tab also reflects this — you can't clean up a record that was never created, so the matching cleanup is marked Skipped.
-
-To recover: fix the failing test (or fix your API), then **rerun the chain**. TestSprite re-runs the failing test and any Blocked downstream tests automatically.
-
-<Card title="Rerun" href="/web-portal/core/api/api-rerun" icon="arrow-rotate-right">
-  Per-test vs per-chain rerun options
-</Card>
+The matching cleanup is marked Skipped too, since the record was never created. Fix the failing test (or your API), then [rerun the chain](/web-portal/core/api/api-rerun): TestSprite re-runs the failing test and its Blocked downstream tests.
 
 ## Edge Cases & Troubleshooting
 
 <AccordionGroup>
   <Accordion title="A test is Blocked but I can't tell which upstream caused it">
-    Click into the Blocked test. The error trace tells you which variable was missing. Search the Dynamic Variables tab for that name and find the producer — its status will be Failed.
+    Open the Blocked test; the error trace names the missing variable. Search the Dynamic Variables tab for it to find the producer, which will be Failed.
   </Accordion>
   <Accordion title="My run has many small chains and I want them all to run in parallel">
-    They already do. Independent chains run fully in parallel. If you're seeing serial behavior, it's likely because all your tests share an upstream (typical: every test uses a `user_id` from the same POST /users producer). Refine in chat to produce a small pool of users instead.
+    They already do. If runs look serial, your tests probably all share one upstream (typically a `user_id` from a single POST /users). Refine in chat to produce a small pool of users instead.
   </Accordion>
   <Accordion title="Producer succeeded but consumer says variable was not found">
-    Variable resolution issue, not a dependency issue. See [Dynamic Variables — Troubleshooting](/web-portal/core/api/dynamic-variables#edge-cases-and-troubleshooting).
+    That's a variable resolution issue, not a dependency issue. See [Dynamic Variables: Troubleshooting](/web-portal/core/api/dynamic-variables#edge-cases-and-troubleshooting).
   </Accordion>
   <Accordion title="The dependency graph shows tests I expected to be related as disconnected">
-    They might not share a variable name. Check the Dynamic Variables tab — if there's no shared name between two tests, they're treated as independent. Refine in chat: "POST /sessions should produce user_id, GET /me should use user_id".
+    They probably don't share a variable name, so they're treated as independent. Refine in chat: "POST /sessions should produce user_id, GET /me should use user_id".
   </Accordion>
   <Accordion title="A chain ran out of order (a later step ran before its dependency)">
-    Should not happen — but if it does, the chain's understanding of producer/consumer is off. Look at the chain's order in the Integration Tests tab; if it's wrong, refine in chat: "The chain order should be POST /users → POST /sessions → POST /orders".
+    This shouldn't happen. If it does, check the chain's order in the Integration Tests tab and refine in chat: "The chain order should be POST /users → POST /sessions → POST /orders".
   </Accordion>
 </AccordionGroup>
 
@@ -127,10 +102,10 @@ To recover: fix the failing test (or fix your API), then **rerun the chain**. Te
   <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
     Records created during a run get removed afterward
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test" icon="diagram-project">
-    See what each test captured and consumed
-  </Card>
   <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step chains where one test's output feeds the next
+  </Card>
+  <Card title="Rerun" href="/web-portal/core/api/api-rerun" icon="arrow-rotate-right">
+    Per-test and per-chain reruns
   </Card>
 </Columns>
