@@ -1,7 +1,6 @@
 ---
 title: "Workspaces"
-description: "What a workspace is, when to create a team workspace, how to switch between workspaces, and what happens when you delete one."
-icon: "users"
+description: "What a workspace is, how to create and switch between workspaces, how plans and pausing work, and what happens when you delete one."
 ---
 
 ## What a Workspace Is
@@ -10,25 +9,11 @@ icon: "users"
   <img src="../../images/workspace-overview.png" alt="Settings → General for a workspace, with the Workspace Settings sections in the sidebar" />
 </Frame>
 
-Everything you do in TestSprite (projects, tests, runs, and API keys) belongs to a **workspace**. Every user has a **personal workspace** automatically, and can also belong to one or more **team workspaces**.
+Everything you do in TestSprite (projects, tests, runs, and API keys) belongs to a **workspace**. One workspace is created for you at signup, your **default workspace** (it shows as "My workspace" to you, and as "*Your Name*'s workspace" to teammates, until you rename it), and you can create more or be invited into other people's. Every workspace works the same way: it has its own members and roles, its own plan (Free or paid), and its own credit balance.
 
 The active workspace decides where new work lands: projects you create and keys you mint belong to that workspace, not to you individually. Access is workspace-wide too: everyone in a workspace can open its projects and tests, and what each person can *do* depends on their role (see [Members & Roles](/web-portal/admin/members-and-roles)).
 
-## Personal vs. Team Workspaces
-
-|  | Personal workspace | Team workspace |
-| :--- | :--- | :--- |
-| **How you get it** | Created automatically at signup | You create it (paid plans only) |
-| **Membership** | You, plus optional read-only **Viewers** | Full roster: Owner, Admins, Members, Viewers |
-| **Who pays** | Your personal balance | The workspace's own subscription and balance |
-| **Collaboration** | Read-only — you can invite Viewers, never paid roles | Full — invite Admins, Members, and Viewers |
-| **Can it be deleted?** | No | Yes, by the Owner |
-
-<Info>
-When you invite your first Viewer into a personal workspace, TestSprite renames it from "My workspace" to your email address — so invitees can tell whose workspace they're looking at. You can rename a team workspace at any time; personal workspace names are managed for you.
-</Info>
-
-## Creating a Team Workspace
+## Creating a Workspace
 
 <Steps>
   <Step title="Open the workspace switcher">
@@ -38,21 +23,21 @@ When you invite your first Viewer into a personal workspace, TestSprite renames 
     </Frame>
   </Step>
   <Step title="Name it">
-    Enter a workspace name. The name appears in the switcher and in invitation emails, and you can change it later.
+    Enter a workspace name. The name appears in the switcher and on the page people see when they accept an invitation, and you can change it later.
     <Frame>
       <img src="../../images/workspace-name.png" alt="Create workspace dialog — Name your workspace field with Cancel and Continue" />
     </Frame>
   </Step>
-  <Step title="Pick a plan and confirm payment">
-    Choose a plan and billing interval, then complete checkout on the Stripe-hosted page. The workspace is created as soon as the payment goes through, and you land back in the portal inside it.
+  <Step title="Pick a plan">
+    **Free** creates the workspace right away, as long as you don't already own a Free workspace (the tile shows <kbd>Limit reached</kbd> if you do). Paid plans are billed per seat, monthly or yearly: <kbd>Continue to payment</kbd> takes you to the Stripe-hosted checkout, the workspace is created as soon as the payment goes through, and you land back in the portal inside it. A first-time subscriber choosing Starter monthly gets the first month free.
   </Step>
 </Steps>
 
-You are the workspace's **Owner**, the role that can manage its subscription and, if it comes to that, delete it. You can transfer ownership to another member later, from their row menu in <kbd>Workspace Settings → Members</kbd>.
+You are the workspace's **Owner**, the role that can manage its subscription and, if it comes to that, delete it. You can transfer ownership to an Admin or Member later, from their row menu in <kbd>Workspace Settings → Members</kbd>.
 
 ## Switching Workspaces
 
-The workspace switcher lives at the **top of the left sidebar**. Click it and choose <kbd>Switch workspace</kbd> to see every workspace you belong to — your personal workspace first, then team workspaces, with a checkmark on the active one.
+The workspace switcher lives at the **top of the left sidebar**. Click it and choose <kbd>Switch workspace</kbd> to see every workspace you belong to — your default workspace first, then the rest alphabetically, with a checkmark on the active one. The same menu holds <kbd>Create workspace</kbd>, <kbd>Invite members</kbd> (Admins and the Owner), and <kbd>Workspace activity</kbd>.
 
 <Frame>
   <img src="../../images/workspace-switching.png" alt="The workspace switcher open, with Switch workspace expanded and a checkmark on the active workspace" />
@@ -78,22 +63,29 @@ Check the switcher before starting new work. A project created in the wrong work
 
 | Section | What's there | Who sees it |
 | :--- | :--- | :--- |
-| <kbd>General</kbd> | Workspace name (rename is autosaved) | Rename: Owner and Admins |
-| <kbd>Members</kbd> | Roster, invitations, role changes | Everyone; management actions are role-gated |
-| <kbd>Billing</kbd> / <kbd>Usage</kbd> | Plan, invoices, credit top-ups, usage breakdowns | Admins and the Owner; plan changes are Owner-only |
-| <kbd>Integrations</kbd> | GitHub, Slack, Jira, Linear, Figma connections | Connect/disconnect: Owner and Admins |
-| <kbd>API Keys</kbd> | Keys minted in this workspace | Your own keys; Admins and the Owner see all |
+| <kbd>General</kbd> | Workspace name (rename is autosaved) and the Danger Zone | Everyone; rename: Owner and Admins; delete: Owner |
+| <kbd>Members</kbd> | Roster, pending invitations, role changes, ownership transfer | Everyone; management actions are role-gated |
+| <kbd>Billing → Plan</kbd> | Current plan, plan changes, subscription and payment method | Owner only |
+| <kbd>Billing → Usage</kbd> | Credit usage breakdowns, extra credits, invoices | Admins and the Owner |
+| <kbd>Connections → Integrations</kbd> | GitHub, Slack, Jira, Linear, Figma connections | Admins and the Owner |
+| <kbd>Connections → API Keys</kbd> | Keys minted in this workspace | Members and above: your own keys; Admins and the Owner see every member's |
+
+## Plans and Pausing
+
+Every workspace has its own plan. On **Free**, the workspace is you plus read-only Viewers. Member and Admin seats need a paid plan (Starter, Standard, or Pro), billed per seat, and every paid seat adds a monthly credit allowance. The Owner picks or changes the plan from <kbd>Settings → Plan</kbd>. You can own only one Free workspace, and the default workspace counts.
+
+When a paid subscription ends, the workspace moves to Free if nothing in it needs a paid plan: no paid seats besides the Owner, and within Free limits. Otherwise it is **paused**: read-only for everyone, nothing runs, and the credit balance is frozen. The Owner resolves it from <kbd>Settings → Plan</kbd> by renewing, choosing another plan, or downgrading to Free, which turns Admins and Members into Viewers. A paused workspace can still be deleted.
 
 ## Deleting a Workspace
 
-Only the **Owner** can delete a team workspace, and only from <kbd>Workspace Settings → General</kbd>. Personal workspaces can't be deleted.
+Only the **Owner** can delete a workspace, and only from <kbd>Workspace Settings → General</kbd>. The default workspace can't be deleted — the button is there but disabled — so you always keep at least one.
 
 <Frame>
   <img src="../../images/workspace-delete.png" alt="Workspace Settings → General with Delete Workspace in the Danger Zone" />
 </Frame>
 
 <Warning>
-Deletion is permanent and cascades: **all projects, tests, results, schedules, members, and API keys in the workspace are removed and cannot be recovered.** The subscription is canceled as part of the deletion, so nothing keeps billing afterward — past invoices remain available in your billing history.
+Deletion is permanent and cascades: **all projects, tests, results, schedules, members, invitations, and API keys in the workspace are removed and cannot be recovered.** A paid subscription is canceled immediately as part of the deletion, so nothing keeps billing afterward. Download any invoices you still need from <kbd>Settings → Usage</kbd> first.
 </Warning>
 
 The portal asks you to type the workspace name to confirm before anything is deleted.
@@ -108,6 +100,6 @@ The portal asks you to type the workspace name to confirm before anything is del
     Show a project to someone outside the roster
   </Card>
   <Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
-    Personal vs. workspace keys, creation, expiry, and revocation
+    Workspace keys and legacy personal keys, creation, expiry, and revocation
   </Card>
 </Columns>

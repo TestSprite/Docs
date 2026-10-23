@@ -1,20 +1,20 @@
 ---
 title: "Coding Agent Integration"
-description: "Let your coding agent drive the TestSprite verification loop on its own — create, run, read failures, fix, and rerun without a human in the middle."
-icon: "robot"
+description: "Install skills so your coding agent drives the TestSprite loop on its own — create, run, read failures, fix, and rerun."
 ---
 
 ## What the skills do
 
-`testsprite agent install` writes two **skill files** into your repository by default:
+`testsprite agent install` writes three skill files into your repository:
 
-- **`testsprite-verify`** — the verification-loop skill. Once in place, your coding agent discovers that this project is TestSprite-tested and knows exactly how to drive the full loop on its own: describe a behavior as a plan file and create a test; trigger a real cloud run and wait for the verdict; on failure, pull one self-consistent bundle — failing step, DOM snapshots rendered as text, root-cause hypothesis, and recommended fix target; edit the code and replay it.
-- **`testsprite-onboard`** — the onboarding skill. Guides the agent through initial project setup (running `testsprite setup`, creating the first project and test) the first time TestSprite is used in a repo.
+- **`testsprite-verify`** — teaches your coding agent to run the [verification loop](/cli/concepts/the-agent-loop): create a test from a plan, run it and wait for the verdict, on failure pull the failure bundle, fix the code, and rerun.
+- **`testsprite-onboard`** — guides first-time setup in a repo (`testsprite setup`, first project and test).
+- **`testsprite-ci`** — sets up the pull-request gate: reads how the repository deploys previews, runs `testsprite ci init github`, finishes the workflow, sets the secret and verifies it on one real pull request. See [CI/CD](/cli/integrations/ci-cd).
 
-Both skills are **pure-local**: `agent install` reads and writes only to your filesystem. It makes no network requests and requires no credentials.
+`agent install` only reads and writes local files: no network, no credentials.
 
 <Tip>
-**We strongly recommend installing the skills.** It's the fastest way to get consistent results — they teach your agent exactly when to verify, how to read the failure bundle, and how to loop until the test is green, so you don't have to spell it out each time. Run `testsprite setup` (or `testsprite agent install`) once per project.
+Install the skills once per project with `testsprite setup --agent AGENT` or `testsprite agent install --target AGENT`.
 </Tip>
 
 ## Install the skills
@@ -23,35 +23,19 @@ Both skills are **pure-local**: `agent install` reads and writes only to your fi
 testsprite agent install --target claude
 ```
 
-Run this from your project root. The skill files (both `testsprite-verify` and `testsprite-onboard` by default) are written immediately.
-
-**Flags:**
+Run it from your project root.
 
 | Flag | Description |
 | :--- | :--- |
-| `--target <t>` | Agent target: `claude`, `cursor`, `cline`, `antigravity`, `kiro`, `windsurf`, `copilot`, `codex`. Comma-separated or repeated. Prompts if omitted in a terminal. |
-| `--skill <name>` | Skill to install: `testsprite-verify`, `testsprite-onboard`. Comma-separated or repeated. Default: both. |
-| `--dir <path>` | Project root to write the skill(s) into (default: current directory). |
-| `--force` | Overwrite an existing skill file. A `.bak` backup is kept. For `codex`, replaces only the managed section — your other `AGENTS.md` content is preserved. |
+| `--target <t>` | `claude`, `cursor`, `cline`, `antigravity`, `kiro`, `windsurf`, `copilot`, `codex`. Comma-separated or repeated. Detected if omitted. |
+| `--skill <name>` | `testsprite-verify`, `testsprite-onboard`, `testsprite-ci`. Default: all three. |
+| `--dir <path>` | Project root to write into (default: current directory). |
+| `--force` | Overwrite an existing skill file; a `.bak` backup is kept. For `codex`, only the managed section is replaced. |
+
+Targets can also be positional: `testsprite agent install cursor codex`. If a destination file already exists and differs, the install is blocked until you pass `--force`.
 
 <Note>
-If `--target` is omitted in an interactive terminal, the CLI prompts for one (default `claude`). Outside a terminal — CI, a script, a piped invocation — it skips the prompt and defaults straight to `claude`, printing an `[info]` line to stderr so the choice is visible in logs.
-</Note>
-
-To install for multiple agents at once:
-
-```bash
-testsprite agent install --target claude --target cursor
-```
-
-Or comma-separated:
-
-```bash
-testsprite agent install --target claude,cursor
-```
-
-<Note>
-If the destination file already exists and differs from the current skill, the install is blocked until you pass `--force`. The original is always backed up as `<filename>.bak`.
+Without `--target`, the CLI uses the calling agent (recognized only for `CLAUDECODE` and `CURSOR_AGENT`) plus every agent whose configuration the project already has. Interactive terminals confirm the detected set; elsewhere it installs for the detected set, or `claude` if none, and prints an `[info]` line to stderr. Configuration the CLI wrote itself never counts as evidence, and an explicit `--target` always wins.
 </Note>
 
 ## Supported agents
@@ -67,124 +51,60 @@ If the destination file already exists and differs from the current skill, the i
 | `copilot` | <kbd>experimental</kbd> | own-file | `.github/instructions/{skill}.instructions.md` |
 | `codex` | <kbd>experimental</kbd> | managed-section | `AGENTS.md` |
 
-`{skill}` is `testsprite-verify` or `testsprite-onboard`. Own-file targets write one file per installed skill; only the requested skill(s) land, so `--skill testsprite-verify` writes just that one file.
-
-<Note>
-For `codex`, every installed skill is merged into one managed section inside `AGENTS.md`. Your existing content in that file is not modified — only the TestSprite section is added or updated.
-</Note>
-
-## Listing targets
-
-To see all supported targets, their current status, and where each skill lands:
-
-```bash
-testsprite agent list
-```
-
-```text
-TARGET       SKILL                STATUS        MODE              PATH
-claude       testsprite-verify    GA            own-file          .claude/skills/testsprite-verify/SKILL.md
-claude       testsprite-onboard   GA            own-file          .claude/skills/testsprite-onboard/SKILL.md
-antigravity  testsprite-verify    experimental  own-file          .agents/skills/testsprite-verify/SKILL.md
-antigravity  testsprite-onboard   experimental  own-file          .agents/skills/testsprite-onboard/SKILL.md
-cursor       testsprite-verify    experimental  own-file          .cursor/rules/testsprite-verify.mdc
-cursor       testsprite-onboard   experimental  own-file          .cursor/rules/testsprite-onboard.mdc
-cline        testsprite-verify    experimental  own-file          .clinerules/testsprite-verify.md
-cline        testsprite-onboard   experimental  own-file          .clinerules/testsprite-onboard.md
-kiro         testsprite-verify    experimental  own-file          .kiro/skills/testsprite-verify/SKILL.md
-kiro         testsprite-onboard   experimental  own-file          .kiro/skills/testsprite-onboard/SKILL.md
-windsurf     testsprite-verify    experimental  own-file          .windsurf/rules/testsprite-verify.md
-windsurf     testsprite-onboard   experimental  own-file          .windsurf/rules/testsprite-onboard.md
-copilot      testsprite-verify    experimental  own-file          .github/instructions/testsprite-verify.instructions.md
-copilot      testsprite-onboard   experimental  own-file          .github/instructions/testsprite-onboard.instructions.md
-codex        testsprite-verify    experimental  managed-section   AGENTS.md
-codex        testsprite-onboard   experimental  managed-section   AGENTS.md
-```
+`{skill}` is `testsprite-verify`, `testsprite-onboard` or `testsprite-ci`. For `codex`, all installed skills go into one managed section of `AGENTS.md`; your other content is untouched. `testsprite agent list` prints this table from the CLI.
 
 ## Checking skill health
 
-Once skills are installed, confirm they're still in sync with the CLI version that installed them — useful right after upgrading the CLI, or in CI to catch a hand-edited skill file:
-
 ```bash
-testsprite agent status
+testsprite agent status [--dir <path>]
 ```
-
-Each installed skill file is classified into one state:
 
 | State | Meaning |
 | :--- | :--- |
-| `ok` | Matches exactly what this CLI version would install |
-| `stale` | Installed by an older CLI version whose canonical content has since changed |
+| `ok` | Matches what this CLI version would install |
+| `stale` | Installed by an older CLI version |
 | `modified` | Edited by hand after install |
-| `unmarked` | Present, but predates the provenance marker this check relies on |
+| `unmarked` | Predates the provenance marker |
 | `absent` | Not installed for this target/skill |
-| `corrupt` | `codex` only — the managed `AGENTS.md` section's sentinels are malformed |
+| `corrupt` | `codex` only: malformed managed-section sentinels |
 
-Pass `--dir <path>` to inspect a project other than the current directory. `agent status` exits `1` when anything needs attention (any state other than `ok` or `absent`), so it's CI-gateable:
-
-```bash
-testsprite agent status --dir ./apps/web && echo "skills are in sync"
-```
+It exits `1` when any state other than `ok` or `absent` is found, so it can gate CI.
 
 ## One-shot onboarding
 
-`testsprite setup` configures your API key **and** installs the skills in a single step — the recommended path when you're setting up a project for the first time.
-
 ```bash
-testsprite setup
+testsprite setup --agent AGENT
 ```
 
-`setup` chains credential configuration → identity verification → agent skill install, and prints a unified summary.
+`setup` configures your API key, verifies your identity, and installs the skills. It takes exactly one target; without `--agent` it installs for every detected agent, or Claude Code if none. For several agents, use `agent install`. See [Installation](/cli/getting-started/installation) for the non-interactive `--from-env --yes` form.
 
-<Card title="Installation" href="/cli/getting-started/installation" icon="download" horizontal>
-  The full onboarding walkthrough, including the non-interactive (`--from-env --yes`) form for CI bootstrap.
-</Card>
-
-## How the agent uses it
-
-Once the skill files are in place, a coding agent like Claude Code picks them up automatically when it enters your project. It knows to:
-
-1. **Create** a test from a plan you or the agent authors — describing the behavior in intent terms, not driver code.
-2. **Run** it against the live app and wait for a pass/fail verdict.
-3. On failure, **pull the failure bundle** — one consistent artifact with everything needed to diagnose and fix.
-4. **Fix** the code, then **rerun** as a verbatim replay.
-
-The command sequence the agent follows:
+## What the agent runs
 
 ```bash
-# Create a test from a plan file and immediately run it
-testsprite test create \
-  --project proj_8f0f6 --type frontend \
-  --plan-from ./checkout-flow.plan.json \
-  --run --wait --output json
+testsprite test create --project proj_8f0f6 --type frontend \
+  --plan-from ./checkout-flow.plan.json --run --wait --output json
 
-# On failure: pull the self-consistent failure bundle
-testsprite test failure get test_3a9f21c7 \
-  --out ./.testsprite/failure
+mkdir -p .testsprite
+testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
 
-# After fixing the code: replay verbatim (billed as a rerun, same as a fresh run)
-testsprite test rerun test_3a9f21c7 --wait
+testsprite test rerun test_3a9f21c7 --wait   # billed the same as a fresh run
 ```
 
-Exit 0 means the test passed and is banked into the durable suite. The agent doesn't need to know how the test was driven — only what a real user experienced.
-
-<Tip>
-Every passing rerun compounds your coverage. The agent builds a lasting record of every requirement it has verified — far bigger than any context window.
-</Tip>
+Exit 0 means the test passed and is banked. Frontend reruns have auto-heal on by default; `--no-auto-heal` replays the saved script exactly.
 
 ## Where to Go Next
 
 <Columns cols={2}>
   <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
-    Walk through the full create → run → fix loop end-to-end
+    The full create, run, fix loop
   </Card>
   <Card title="CI/CD" href="/cli/integrations/ci-cd" icon="github">
-    Gate your pipeline on TestSprite results
+    Gate your pipeline on results
   </Card>
   <Card title="Running Tests" href="/cli/core/running-tests" icon="list-check">
-    All flags and modes for triggering and waiting on runs
+    Flags and modes for runs
   </Card>
   <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
-    Full flag reference for every command
+    Every command and flag
   </Card>
 </Columns>

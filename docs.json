@@ -18,6 +18,14 @@
   ],
   "redirects": [
     {
+      "source": "/cli/core/local-testing",
+      "destination": "/cli/core/local-apps"
+    },
+    {
+      "source": "/cli/getting-started/quickstart-for-agents",
+      "destination": "/cli/getting-started/quickstart"
+    },
+    {
       "source": "/web-portal/core/api/data-flow",
       "destination": "/web-portal/core/api/dynamic-variables"
     },
@@ -40,6 +48,10 @@
     {
       "source": "/web-portal/admin/billing-and-plans",
       "destination": "/web-portal/admin/workspaces"
+    },
+    {
+      "source": "/cli/reference/whats-included",
+      "destination": "/cli/reference/command-reference"
     }
   ],
   "colors": {
@@ -170,26 +182,30 @@
                   "web-portal/ai-chat/overview",
                   "web-portal/ai-chat/approving-actions"
                 ]
+              },
+              {
+                "group": "Automation & Integrations",
+                "icon": "plug",
+                "expanded": true,
+                "pages": [
+                  "web-portal/integrations/github-integration",
+                  "web-portal/maintenance/test-lists",
+                  "web-portal/maintenance/monitoring",
+                  "web-portal/integrations/slack-notifications",
+                  "web-portal/integrations/ticketing"
+                ]
+              },
+              {
+                "group": "Workspace & Admin",
+                "icon": "users-gear",
+                "expanded": true,
+                "pages": [
+                  "web-portal/admin/workspaces",
+                  "web-portal/admin/members-and-roles",
+                  "web-portal/admin/sharing",
+                  "web-portal/admin/api-keys"
+                ]
               }
-            ]
-          },
-          {
-            "group": "Automation & Integrations",
-            "pages": [
-              "web-portal/integrations/github-integration",
-              "web-portal/maintenance/test-lists",
-              "web-portal/maintenance/monitoring",
-              "web-portal/integrations/slack-notifications",
-              "web-portal/integrations/ticketing"
-            ]
-          },
-          {
-            "group": "Workspace & Admin",
-            "pages": [
-              "web-portal/admin/workspaces",
-              "web-portal/admin/members-and-roles",
-              "web-portal/admin/sharing",
-              "web-portal/admin/api-keys"
             ]
           }
         ]
@@ -204,7 +220,6 @@
               "cli/getting-started/overview",
               "cli/getting-started/installation",
               "cli/getting-started/quickstart",
-              "cli/getting-started/quickstart-for-agents",
               {
                 "group": "Concepts",
                 "icon": "book",
@@ -219,21 +234,47 @@
           {
             "group": "Core",
             "pages": [
-              "cli/core/authentication",
-              "cli/core/projects",
-              "cli/core/creating-tests",
-              "cli/core/editing-tests",
-              "cli/core/running-tests",
-              "cli/core/cancelling-runs",
-              "cli/core/reading-results",
-              "cli/core/rerun-and-auto-heal",
-              "cli/core/agent-integration"
-            ]
-          },
-          {
-            "group": "Integrations",
-            "pages": [
-              "cli/integrations/ci-cd"
+              {
+                "group": "Project Setup",
+                "icon": "folder",
+                "expanded": true,
+                "pages": [
+                  "cli/core/projects",
+                  "cli/core/environments"
+                ]
+              },
+              {
+                "group": "Tests",
+                "icon": "flask",
+                "expanded": true,
+                "pages": [
+                  "cli/core/creating-tests",
+                  "cli/core/editing-tests",
+                  "cli/core/running-tests",
+                  "cli/core/local-apps",
+                  "cli/core/rerun-and-auto-heal",
+                  "cli/core/cancelling-runs",
+                  "cli/core/reading-results"
+                ]
+              },
+              {
+                "group": "Automation & Integrations",
+                "icon": "plug",
+                "expanded": true,
+                "pages": [
+                  "cli/integrations/ci-cd",
+                  "cli/integrations/test-lists-and-schedules",
+                  "cli/core/agent-integration"
+                ]
+              },
+              {
+                "group": "Workspace & Access",
+                "icon": "key",
+                "expanded": true,
+                "pages": [
+                  "cli/core/authentication"
+                ]
+              }
             ]
           },
           {
@@ -242,8 +283,7 @@
               "cli/reference/command-reference",
               "cli/reference/configuration",
               "cli/reference/output-and-scripting",
-              "cli/reference/exit-codes",
-              "cli/reference/whats-included"
+              "cli/reference/exit-codes"
             ]
           },
           {

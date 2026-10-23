@@ -5,80 +5,76 @@ icon: "wrench"
 ---
 
 <Tip>
-Run `testsprite doctor` first. It checks your CLI version, Node runtime, active profile, API endpoint, credentials, live connectivity, and whether the verify skill is installed — often the fastest way to find out what's wrong before digging through the sections below.
+Run `testsprite doctor` first. It checks your CLI version, Node runtime, profile, endpoint, credentials, connectivity, and verify-skill install.
 </Tip>
 
 <AccordionGroup>
 
 <Accordion title="command not found: testsprite" icon="terminal">
-The global install didn't put the binary on your `PATH`, or it isn't installed yet.
-
-- Confirm your Node version is 20.19+, 22.13+, or 24+ (21.x/23.x are not supported): `node --version`.
-- Reinstall globally: `npm install -g @testsprite/testsprite-cli`.
-- Or skip the global install entirely and run via `npx @testsprite/testsprite-cli --version`.
+The binary isn't on your `PATH`. Check `node --version` (20.19+, 22.13+, or 24+; 21.x and 23.x are unsupported), then run `npm install -g @testsprite/testsprite-cli`, or use `npx @testsprite/testsprite-cli --version`.
 </Accordion>
 
 <Accordion title="Auth error (exit 3) / AUTH_FORBIDDEN" icon="key">
-The CLI couldn't authenticate, or your key is missing a scope.
-
-- Run `testsprite auth status` to see which profile, key, and scopes are active.
-- Reconfigure: `testsprite setup --no-agent` (interactive) or `TESTSPRITE_API_KEY=sk-... testsprite setup --from-env --yes --no-agent`.
-- On `AUTH_FORBIDDEN`, the missing scope is named in `details.requiredScope`. Generate a new key with the full [scope set](/cli/core/authentication#scopes) from the [dashboard](/web-portal/admin/api-keys).
-- In CI, set `TESTSPRITE_API_KEY` in the environment — it overrides the credentials file.
+The key is missing, invalid, or lacks a scope. Run `testsprite auth status`, then reconfigure with `testsprite setup --no-agent` (or `TESTSPRITE_API_KEY=sk-... testsprite setup --from-env --yes --no-agent`). On `AUTH_FORBIDDEN`, `details.requiredScope` names the missing scope. [Scopes](/cli/core/authentication#scopes) follow your role in the key's workspace: a Viewer's key is refused everything, so ask an Admin or the Owner to make you a Member ([Members & Roles](/web-portal/admin/members-and-roles)). A key also stops working when you leave or are removed from its workspace. In CI, `TESTSPRITE_API_KEY` overrides the credentials file.
 </Accordion>
 
-<Accordion title="--target-url rejected as a local address" icon="globe">
-`test run` and `project create` pre-flight `--target-url` and reject local addresses (`localhost`, `127.x`, `::1`, `0.0.0.0`, link-local, and RFC 1918 ranges), because the cloud runner must be able to reach the URL over the public internet.
+<Accordion title="A project or environment --url is rejected (exit 5)" icon="globe">
+`project create|update --url` and `project env create|update --url` accept a public `http(s)` URL or, for a frontend project, a loopback `http` origin with an explicit port and no path (`http://localhost:3000`, `http://127.0.0.1:3000`, `http://[::1]:3000`). They refuse `https` loopback, `0.0.0.0`, link-local, RFC 1918 addresses, and any loopback URL on a backend project.
 
-To test a **localhost** app, use the [TestSprite MCP Server](/mcp/getting-started/introduction), which opens a tunnel for you. Otherwise point `--target-url` at a publicly reachable preview or staging URL.
+To test a local app, see [Test an app on your machine](/cli/core/local-apps). To move a local-only project to a deployed site, use `--target-url` on a single run, or `testsprite project update <project-id> --url https://app.example.com` to change the Default environment. `project env create` fails with exit `13` (`FEATURE_GATED`) on Free and Starter, which allow one environment per project.
+</Accordion>
+
+<Accordion title="--target-url rejected (exit 5 or 6)" icon="globe">
+**Exit 5:** the URL is not a public `http(s)` address or a loopback `http` origin with a port, it is combined with `--local`, or the reachability probe found the host clearly unreachable. If the probe is wrong for your network, pass `--skip-preflight`.
+
+**Exit 6, `frontend-auth-target-origin-mismatch`:** the environment that supplies the sign-in (the one passed with `--env`, or a Default with a recorded session) uses a recorded browser session, OTP, or login-once step, and the target is on a different origin. Nothing is charged. Use an environment whose URL has the target's origin, or save the target as an environment. See [Running Tests](/cli/core/running-tests#run-against-a-url-without-creating-an-environment).
 </Accordion>
 
 <Accordion title="test run --wait timed out (exit 7)" icon="clock">
-The run hadn't reached a terminal status before `--timeout` elapsed — this is **not** a failure.
+- **Ordinary run, or a `--local` run adopted via `--tunnel-client`:** not a failure. The run is still going; resume with `testsprite test wait <run-id> --timeout 600 --output json`.
+- **Self-started `--local` run (default):** the timeout requests cancellation and closes the tunnel. Check the reported outcome (`status: "cancelled"`); if cancellation failed, run `testsprite test cancel <run-id>`. Then start a new run with a longer `--timeout`, because `test wait` cannot reopen the tunnel. Credits may already be charged.
+- **With `--no-cancel-on-interrupt`:** nothing was cancelled. The run keeps going and billing in the cloud, and steps that need your machine fail. Check it with `test wait <run-id>`, or stop it with `testsprite test cancel <run-id>`.
 
-The JSON response carries the `runId`. Resume polling without re-triggering the run:
-
-```bash
-testsprite test wait <run-id> --timeout 600 --output json
-```
+See [Cancelling Runs](/cli/core/cancelling-runs).
 </Accordion>
 
-<Accordion title="test artifact get returns 404 (exit 4)" icon="file-magnifying-glass">
-There's no failure bundle for that run. The `details.reason` tells you why:
+<Accordion title="test artifact get / test failure get has no bundle (exit 4 or 6)" icon="file-magnifying-glass">
+`details.reason` says why:
 
-- `no_failing_run` — the run **passed**, so there's nothing to download.
-- `run_not_ready` — the run is still in flight; wait with `testsprite test wait <run-id>`.
-- `cancelled_no_artifacts` — the run was cancelled before producing artifacts.
-- `no_code` — the test was deleted.
+- `no_failing_run`: the run passed.
+- `run_not_terminal` (exit 6): the run is still going; use `testsprite test wait <run-id>`.
+- `cancelled_no_artifacts`: the run was cancelled first.
+- `no_code`: the bundle is built from saved code, and none exists. A frontend test that has never passed, or has only run with `--local`, has none.
+
+For `no_code` and `cancelled_no_artifacts`, use `testsprite test steps <test-id> --run-id <run-id>` and `testsprite test failure summary <test-id>`.
 </Accordion>
 
-<Accordion title="Conflict / precondition failed (exit 6) on test code put" icon="code-merge">
-The test's code changed since you fetched it — the `codeVersion` you passed no longer matches the latest.
-
-- Re-fetch the latest with `testsprite test code get <test-id>`, reapply your edit, and put again.
-- Pin a known version with `--expected-version <v>`.
-- Or skip the guard with `--force` (last writer wins).
+<Accordion title="Precondition failed (exit 6) on test code put" icon="code-merge">
+The code changed since you fetched it. Run `testsprite test code get <test-id>`, reapply your edit, and put again. `--expected-version <v>` pins a version; `--force` skips the guard (last writer wins).
 </Accordion>
 
-<Accordion title="Delete refused with a validation error (exit 5)" icon="trash">
-`test delete` and `test delete-batch` require `--confirm`. Without it, the CLI exits 5 with a local validation error before touching the network. Add `--confirm`.
+<Accordion title="Delete or tunnel stop refused (exit 5)" icon="trash">
+`test delete`, `test delete-batch`, and `tunnel stop --all` need `--confirm`; without it the CLI exits 5 before any request. `--max-concurrency` accepts 1–10 when a tunnel is in use; a larger value is refused before any run starts.
+</Accordion>
+
+<Accordion title="Tunnel limit reached (exit 11)" icon="route">
+Each user can have 5 live tunnel bindings across all keys. This error is not retried automatically. Run `testsprite tunnel list`, then `testsprite tunnel stop <client-id>` for an unused one. `tunnel stop --all --confirm` revokes every binding, including ones other terminals or CI jobs are using. Bindings that are provably dead are released automatically before the limit is enforced.
 </Accordion>
 
 <Accordion title="Rate limited (exit 11) / batch rerun deferred[]" icon="gauge-high">
-A per-key run-rate limit shed some work.
-
-- For a single command (exit 11), back off and retry — it's retriable, and the CLI already retries automatically a few times.
-- For a batch rerun, inspect `deferred[]` in the JSON and retry those tests with a **fresh** `--idempotency-key`.
+The per-key run-rate limit shed some work. Back off and retry; the CLI already retries a few times. For a batch rerun, retry the tests listed in `deferred[]` with a **fresh** `--idempotency-key`.
 </Accordion>
 
 <Accordion title="Insufficient credits (exit 12)" icon="credit-card">
-This is terminal, not retriable.
-
-- **12**: your account is out of credits; top up from <kbd>Workspace Settings → Billing → Usage</kbd> in the web portal.
+Not retriable. `testsprite usage` shows which workspace the key draws on and its balance. An Admin or the Owner of that workspace buys extra credits from <kbd>Workspace Settings → Billing → Usage</kbd> in the web portal.
 </Accordion>
 
-<Accordion title="I want to see what a command does without running it for real" icon="flask">
-Append `--dry-run --output json` to any command. It runs end-to-end with no network, credentials, or filesystem writes and emits canned data matching the real response shape — the safest way to learn a command's structure or debug a script.
+<Accordion title="Workspace paused (exit 13)" icon="circle-pause">
+Every write and run is refused, with `details.reason: "paused"`, while the key's workspace is paused: its paid subscription ended while the workspace still needed a paid plan. `auth status` and `usage` show the notice and a billing link. Topping up doesn't resume it; the Owner renews, picks another plan, or downgrades to Free from <kbd>Settings → Plan</kbd>. See [Plans and Pausing](/web-portal/admin/workspaces#plans-and-pausing).
+</Accordion>
+
+<Accordion title="Preview a command without running it" icon="flask">
+Append `--dry-run --output json`. It makes no network calls or file writes and returns canned data in the real response shape.
 </Accordion>
 
 </AccordionGroup>
@@ -93,6 +89,6 @@ Append `--dry-run --output json` to any command. It runs end-to-end with no netw
     File a bug or request a feature on GitHub.
   </Card>
   <Card title="In the terminal" icon="terminal">
-    Run `testsprite --help`, or `testsprite test run --help` for any command's full flag list.
+    Run `testsprite --help` or `testsprite <command> --help`.
   </Card>
 </CardGroup>

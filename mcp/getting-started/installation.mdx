@@ -28,16 +28,16 @@ Before installing TestSprite MCP Server, ensure you have:
 First, you'll need a TestSprite API key for any installation method:
 
 <Frame>
-  <img src="../../images/api-key.png"  alt="API Key" />
+  <img src="../../images/apikey-create.png" alt="API Keys page with the New API Key button" />
 </Frame>
 
 
 1. Sign in to your [TestSprite Dashboard  <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard)
-2. Navigate to **API Keys** under Settings
+2. Switch to the workspace the MCP Server should work in, then open **Workspace Settings → Connections → API Keys**
 3. Click **"New API Key"**
 4. **Copy** your API key (you'll need it for installation)
 
-The key you just created is a **workspace key** (`sk-member-...`), bound to whichever workspace's page you were on. TestSprite also has an older **personal key** kind (`sk-user-...`) — if you already hold one it works equally well with the MCP Server. See [API Keys](../../web-portal/admin/api-keys) for the full comparison, including expiry and revocation.
+The key acts in the workspace you minted it in: projects the MCP Server creates belong to that workspace and draw on its balance. Keys starting with `sk-user-` predate workspace keys; they keep working and act in your default workspace. See [API Keys](../../web-portal/admin/api-keys) for expiry and revocation.
 
 ## Installation
 

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interrupt and cancel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-paper: #F9FCF9;
+  --color-ink: #1D2420;
+  --color-muted: #4B5A51;
+  --color-accent: #2A7A3B;
+  --font-sans: 'OpenSauceTwo', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+body { font-family: var(--font-sans); background: var(--color-paper); color: var(--color-ink); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+.frame { max-width: 1200px; width: 100%; }
+.diagram-container { width: 100%; overflow-x: auto; }
+svg { width: 100%; max-width: 560px; margin: 0 auto; display: block; }
+</style>
+</head>
+<body>
+<div class="frame">
+<div class="diagram-container">
+<svg viewBox="0 0 560 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cli-interrupt-and-cancel-title cli-interrupt-and-cancel-desc">
+<title id="cli-interrupt-and-cancel-title">What interrupt, timeout and cancel do to a run</title>
+<desc id="cli-interrupt-and-cancel-desc">Flowchart: an ordinary run detaches on Ctrl-C or timeout and keeps billing, a self-opened tunnel run is cancelled by default unless --no-cancel-on-interrupt is set, and test cancel stops any run server-side.</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4B5A51"/></marker>
+<marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2A7A3B"/></marker>
+<marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2E5AA8"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#F9FCF9"/>
+<path d="M280 80 V112" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M150 164 H129 A8 8 0 0 0 121 172 V262" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M410 164 V262" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M280 314 H216" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M410 366 V410" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M121 346 V430" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M216 332 H254 A8 8 0 0 1 262 358 V538 A8 8 0 0 0 270 546 H290" fill="none" stroke="#4B5A51" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M410 474 V522" fill="none" stroke="#4B5A51" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<path d="M410 570 V618" fill="none" stroke="#2A7A3B" stroke-width="1.5" marker-end="url(#arrow-accent)"/>
+<rect x="105.0" y="222" width="32" height="16" rx="2" fill="#F9FCF9"/>
+<text x="121" y="234" fill="#5E6B63" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">NO</text>
+<rect x="390.0" y="222" width="40" height="16" rx="2" fill="#F9FCF9"/>
+<text x="410" y="234" fill="#5E6B63" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">YES</text>
+<rect x="228.0" y="288" width="40" height="16" rx="2" fill="#F9FCF9"/>
+<text x="248" y="300" fill="#5E6B63" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">YES</text>
+<rect x="376.0" y="380" width="68" height="16" rx="2" fill="#F9FCF9"/>
+<text x="410" y="392" fill="#5E6B63" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">DEFAULT</text>
+<rect x="356.0" y="490" width="108" height="16" rx="2" fill="#F9FCF9"/>
+<text x="410" y="502" fill="#5E6B63" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">IF IT FAILED</text>
+<rect x="130" y="24" width="300" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="130" y="24" width="300" height="56" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1.2"/>
+<text x="280.0" y="48.5" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Run in progress</text>
+<text x="280.0" y="66.0" fill="#5E6B63" font-size="13" font-weight="400" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">--wait · test wait · --timeout</text>
+<polygon points="280,112 410,164 280,216 150,164" fill="#F9FCF9"/>
+<polygon points="280,112 410,164 280,216 150,164" fill="rgba(84,179,101,0.12)" stroke="#2A7A3B" stroke-width="1.5"/>
+<text x="280" y="159.0" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Tunnel opened by</text>
+<text x="280" y="179.0" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">this command?</text>
+<polygon points="410,262 540,314 410,366 280,314" fill="#F9FCF9"/>
+<polygon points="410,262 540,314 410,366 280,314" fill="#FFFFFF" stroke="#1D2420" stroke-width="1.2"/>
+<text x="410" y="318.5" fill="#1D2420" font-size="13" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">--no-cancel-on-interrupt?</text>
+<rect x="16" y="262" width="200" height="84" rx="6" fill="#F9FCF9"/>
+<rect x="16" y="262" width="200" height="84" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1.2"/>
+<text x="116.0" y="300.5" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Run keeps executing</text>
+<text x="116.0" y="318.0" fill="#5E6B63" font-size="13" font-weight="400" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">still billing</text>
+<rect x="290" y="410" width="240" height="64" rx="6" fill="#F9FCF9"/>
+<rect x="290" y="410" width="240" height="64" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1.2"/>
+<text x="410.0" y="438.5" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">CLI requests cancellation</text>
+<text x="410.0" y="456.0" fill="#5E6B63" font-size="13" font-weight="400" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">and closes the tunnel</text>
+<rect x="16" y="430" width="200" height="64" rx="6" fill="#F9FCF9"/>
+<rect x="16" y="430" width="200" height="64" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1.2"/>
+<text x="116.0" y="458.5" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Resume watching</text>
+<text x="116.0" y="476.0" fill="#5E6B63" font-size="13" font-weight="400" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">test wait &lt;run-id&gt;</text>
+<rect x="290" y="522" width="240" height="48" rx="6" fill="#F9FCF9"/>
+<rect x="290" y="522" width="240" height="48" rx="6" fill="rgba(84,179,101,0.12)" stroke="#2A7A3B" stroke-width="1.5"/>
+<text x="410.0" y="550.0" fill="#2A7A3B" font-size="13" font-weight="600" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">test cancel &lt;run-id&gt;</text>
+<rect x="290" y="618" width="240" height="52" rx="6" fill="#F9FCF9"/>
+<rect x="290" y="618" width="240" height="52" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1.2"/>
+<text x="410.0" y="649.0" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Run stopped server-side</text>
+</svg>
+</div>
+</div>
+</body>
+</html>

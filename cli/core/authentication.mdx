@@ -1,30 +1,17 @@
 ---
 title: "Authentication"
-description: "Configure an API key, check your active identity, and manage named profiles for multiple accounts or environments."
-icon: "key"
+description: "Configure an API key, check your active identity and workspace, and manage named profiles for multiple workspaces or environments."
 ---
 
 ## Signing in
 
-Before you can run any command that talks to the TestSprite API, you need to store a valid API key.
-
-The fastest path is `testsprite setup` — it prompts for the key, verifies it against the server, installs the agent skill into your repo, and prints a unified summary, all in one step:
+Store a valid API key before running any command that calls the TestSprite API. The fastest path is `testsprite setup`, which prompts for the key, verifies it with the server, installs the agent skill into your repo, and prints a summary:
 
 ```bash
-testsprite setup
+testsprite setup --agent AGENT
 ```
 
-<Card title="Installation" href="/cli/getting-started/installation" icon="download">
-  The full onboarding walkthrough
-</Card>
-
-If you want credentials only — no skill install — add `--no-agent`:
-
-```bash
-testsprite setup --no-agent
-```
-
-The CLI calls `GET /me` with the key you provide before writing anything to disk. A rejected or malformed key never overwrites a working profile. You are only ever prompted for the API key.
+Replace `AGENT` with `claude`, `cursor`, `cline`, `windsurf`, `antigravity`, `kiro`, `copilot` or `codex`. For credentials only, use `--no-agent`. A rejected key never overwrites a working profile. See [Installation](/cli/getting-started/installation) for the full walkthrough.
 
 ```text
 TestSprite API key: ********
@@ -33,55 +20,52 @@ TestSprite initialized.
   profile:  default
   env:      production
   email:    you@example.com
-  scopes:   read:me, read:projects, read:tests, write:tests, run:tests
-
-  agent:    skipped (--no-agent)
+  scopes:   read:projects, read:tests, read:me, write:tests, run:tests, write:projects, read:schedules, write:schedules, run:tunnel
 ```
 
-For non-interactive environments (CI, Dockerfiles, scripted setup), pass `--from-env` instead of typing at a prompt:
+For CI and scripts, skip the prompt:
 
 ```bash
 TESTSPRITE_API_KEY=sk-... testsprite setup --from-env --yes --no-agent
 ```
 
 <Warning>
-**Important:** The CLI never accepts an API key as an inline positional argument or flag — that would expose it in shell history and process listings. Use the interactive prompt, `--from-env`, or the `TESTSPRITE_API_KEY` environment variable.
+The CLI never accepts an API key as a flag or argument, since it would leak into shell history and process listings. Use the prompt, `--from-env`, or `TESTSPRITE_API_KEY`.
 </Warning>
 
 ## Checking who you are
-
-Run `testsprite auth status` to confirm which key and profile are active:
 
 ```bash
 testsprite auth status
 ```
 
-Sample text output:
-
 ```text
-userId    usr_1478d468
-name      Your Name
-email     you@example.com
-keyId     key_a1b2c3d4
-env       production
-scopes    read:me, read:projects, read:tests, write:tests, run:tests
+userId: usr_1478d468
+name:   Your Name
+email:  you@example.com
+keyId:  key_a1b2c3d4
+endpoint: https://api.testsprite.com
+env:    production
+scopes: read:projects, read:tests, read:me, write:tests, run:tests, write:projects, read:schedules, write:schedules, run:tunnel
+org:    Checkout Team (Standard, member)
+routing: v3
+orgs: My workspace (org_5c1e…, personal, role: owner); Checkout Team (org_9a7d…, role: member)
+org binding: Checkout Team (org_9a7d…, role: member)
 ```
 
-If your key is missing `write:tests` or `run:tests`, the output appends a `note:` line listing the gap. For machine-readable output, add `--output json`.
+The `org:` line is the workspace the key acts in, with its plan and your role there; `orgs:` lists every workspace you belong to. While that workspace is paused, a `workspace:` line says so and links to billing. If the key lacks `write:tests` or `run:tests`, a `note:` line lists the gap. Add `--output json` for machine-readable output.
 
 ## Signing out
-
-To remove credentials for the active profile:
 
 ```bash
 testsprite auth remove
 ```
 
-The credentials entry for the selected profile is deleted from `~/.testsprite/credentials`. Other profiles are not touched.
+This deletes the active profile's entry from `~/.testsprite/credentials`; other profiles are untouched.
 
-## Where credentials live
+## Profiles
 
-The CLI stores credentials in `~/.testsprite/credentials`, an INI-style file. The directory is created with mode `0700` and the file with mode `0600`. All writes are atomic.
+Credentials live in `~/.testsprite/credentials` (an INI file, mode `0600`). Each section is a named **profile**. Because a key acts in one workspace, a profile per workspace is how you work across several; profiles also keep an interactive key apart from a CI key:
 
 ```ini
 [default]
@@ -91,90 +75,47 @@ api_key = sk-...
 api_key = sk-...
 ```
 
-Each section is a named **profile**. The section name matches the profile you activated when you ran `setup`.
-
-## Profiles
-
-Profiles let you manage multiple accounts or API keys (for example, an interactive key and a CI key) without re-entering credentials each time.
-
-To configure a named profile, pass `--profile` before the subcommand:
-
 ```bash
-testsprite --profile ci setup --no-agent
+testsprite --profile ci setup --no-agent   # create or update the profile
+testsprite --profile ci project list       # use it
+export TESTSPRITE_PROFILE=ci               # or for the whole session
 ```
 
-To use a profile for any subsequent command, pass `--profile` as a global flag:
-
-```bash
-testsprite --profile ci project list
-```
-
-Or set the environment variable so every command in the session picks it up automatically:
-
-```bash
-export TESTSPRITE_PROFILE=ci
-testsprite project list
-```
-
-The active profile determines which `api_key` is read from `~/.testsprite/credentials`. If the named section does not exist, the CLI exits with a validation error (exit 5).
-
-## Environment variables
-
-Environment variables override the credentials file. This is the recommended pattern for CI and container environments.
-
-| Variable | Purpose | Precedence |
-| :--- | :--- | :--- |
-| `TESTSPRITE_API_KEY` | API key to use for all requests | Wins over the credentials file |
-| `TESTSPRITE_PROFILE` | Active profile name (default: `"default"`) | Overridden by `--profile` |
-
-Full resolution order:
-
-- **Profile:** `--profile` flag > `TESTSPRITE_PROFILE` env > `"default"`
-- **API key:** `TESTSPRITE_API_KEY` env > credentials file value for the active profile
-
-For the complete precedence table including the request-timeout setting, see [Configuration](/cli/reference/configuration).
+A missing profile exits `5`. Resolution order is `--profile` > `TESTSPRITE_PROFILE` > `default` for the profile, and `TESTSPRITE_API_KEY` > the profile's file entry for the key. See [Configuration](/cli/reference/configuration).
 
 ## Scopes
 
-API keys carry a list of **scopes** that gate which operations the CLI can perform. All new keys and grandfathered keys default to the full working set.
+Keys carry **scopes** that gate commands. A key minted in the portal gets every scope below, narrowed to your role in its workspace: Owner, Admin, and Member keep them all, and a Viewer has none, so every command is refused. Check yours with `auth status`. Existing keys can already use `--local`.
 
 | Scope | Gates |
 | :--- | :--- |
 | `read:me` | `auth status`, `usage` |
-| `read:projects` | `project list`, `project get` |
-| `read:tests` | `test list`, `test get`, `test steps`, `test result`, `test code get`, `test failure get`, `test failure summary`, `test artifact get` |
-| `write:tests` | `test create`, `test create-batch`, `test update`, `test delete`, `test delete-batch`, `test code put`, `test plan put`, `project create`, `project update` |
-| `run:tests` | `test run`, `test wait`, `test rerun` |
+| `read:projects` | `project list`, `project get`, `project env list`, `project env get`, `project sign-in get` |
+| `read:tests` | `test list`, `test get`, `test steps`, `test result`, `test code get`, `test failure get`, `test failure summary`, `test artifact get`, `test wait`, `testlist list`, `testlist get`; also `test run --local`, which reads the test first |
+| `write:tests` | `test create`, `test create-batch`, `test update`, `test delete`, `test delete-batch`, `test code put`, `test plan put`, `test plan accept`, `testlist create`, `testlist update`, `testlist delete`, `testlist add`, `testlist remove` |
+| `write:projects` | `project create`, `project update`, `project delete`, `project credential`, `project auto-auth`, `project env create`, `project env update`, `project env delete`, `project env set-default`, `project sign-in set`, `project docs`, `test plan generate` |
+| `run:tests` | `test run`, `test rerun`, `test flaky`, `test cancel`, `testlist run` |
+| `read:schedules` | `schedule list`, `schedule get`, `schedule run list` |
+| `write:schedules` | `schedule create`, `schedule update`, `schedule delete` |
+| `run:tunnel` | `test run --local`, any run that opens an automatic tunnel, `tunnel start`, `tunnel list`, `tunnel status`, `tunnel stop` |
 
-<Note>
-`testsprite agent install` is a pure-local operation — it only writes files to your project directory and never calls the API, so no scope is required. `testsprite setup` *does* call the API to verify your key (`GET /me`) and fetch your identity, but it works with any valid key and needs no write or run scope.
-</Note>
+`agent install` is local-only and needs no scope; `setup` works with any valid key.
 
-If a command fails with a scope error, the CLI prints the required and granted scopes in both text and JSON modes. You can generate a new key with the needed scopes in the dashboard at <kbd>Settings → API Keys</kbd> → <kbd>Create new key</kbd>.
+A scope error prints the required and granted scopes. The portal has no scope picker, so a key holds every scope your role allows. An empty `granted` list means your role in that workspace is Viewer: ask an Admin or the Owner to make you a Member.
 
-## Personal vs. workspace keys
+## Keys and workspaces
 
-The key you configure above can be either kind: a **personal key** (`sk-user-...`) — the original kind, if you already hold one — bound to you and drawing on your personal balance no matter which workspace page you copied it from, or a **workspace key** (`sk-member-...`) — the only kind mintable today — scoped to a specific shared workspace and drawing on that workspace's balance. Either kind works the same way with the CLI — `testsprite setup` doesn't care which one you paste in.
+A key acts in the workspace it was minted in. Switch to that workspace in the portal and mint the key under <kbd>Workspace Settings → Connections → API Keys</kbd>: everything the CLI creates with it belongs to that workspace and draws on its balance, and `auth status` names it on the `org:` line. To work in another workspace, mint a key there and store it as a separate [profile](#profiles).
 
-Both kinds are capped: 2 active workspace keys per member per workspace, and 3 active personal keys. So replacing a lost or leaked key isn't always as simple as minting a fresh one — if you're already at the cap, revoke one first.
-
-<Card title="API Keys" href="/web-portal/admin/api-keys" icon="key">
-  The Web Portal key management walkthrough
-</Card>
+Keys need the Member role or above, and stop working when you leave or are removed from the workspace. None can be minted while the workspace is paused. You can hold 2 active keys per workspace, so revoke one before replacing a lost key at the cap. Keys starting with `sk-user-` predate workspace keys; they keep working and always act in your default workspace. See [API Keys](/web-portal/admin/api-keys).
 
 ## Where to Go Next
 
 <Columns cols={2}>
   <Card title="Projects" href="/cli/core/projects" icon="file-circle-info">
-    Create and manage the projects your tests live in
-  </Card>
-  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
-    Author frontend plans and backend code files
-  </Card>
-  <Card title="Configuration" href="/cli/reference/configuration" icon="gear">
-    Full flag and environment variable precedence reference
+    Create and manage projects
   </Card>
   <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
-    Non-interactive auth patterns for pipelines
+    Non-interactive auth for pipelines
   </Card>
 </Columns>

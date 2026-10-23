@@ -10,24 +10,11 @@ Before installing, make sure you have:
 
 - **Node.js 20.19+, 22.13+, or 24+** (the odd-numbered releases 21.x and 23.x are not supported)
 - A **TestSprite account** — [Sign up for free <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/auth/cognito/sign-up)
-- A **TestSprite API key** (you'll create one in the next section)
+- A **TestSprite API key** (created below)
 
-<AccordionGroup>
-  <Accordion title="How do I check my Node version?">
-    Run the following in your terminal:
-
-    ```bash
-    node --version
-    ```
-
-    The CLI requires **20.19+**, **22.13+**, or **24+** — the odd-numbered releases (21.x, 23.x) aren't supported. If your version doesn't fall in one of those ranges, download a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/). The CLI also checks the Node version at startup and exits with a clear message if it's too old.
-  </Accordion>
-  <Accordion title="Where do I get an API key?">
-    Sign in to your TestSprite dashboard, navigate to <kbd>Settings → API Keys</kbd>, and click <kbd>Create new key</kbd>. The key is shown exactly once — copy it before closing the dialog. The key you get is a **workspace key** (`sk-member-...`), bound to whichever workspace's page you were on, and capped at 2 active per member per workspace. (TestSprite also has an older **personal key** kind, `sk-user-...` — if you already hold one it keeps working, but new keys are always workspace keys.) If you lose it, revoke it and create a new one — revoke one of the existing keys first if you're already at the cap.
-
-    See [API Keys](/web-portal/admin/api-keys) for the full walkthrough, including personal vs. workspace keys.
-  </Accordion>
-</AccordionGroup>
+<Note>
+Check your version with `node --version`; the CLI exits with a clear message at startup if Node is too old. Get a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/).
+</Note>
 
 ## Install
 
@@ -37,127 +24,79 @@ Install the CLI globally with npm:
 npm install -g @testsprite/testsprite-cli
 ```
 
-Alternatively, run it without installing using npx:
-
-```bash
-npx @testsprite/testsprite-cli --version
-```
-
-Verify the installation:
+Or run it without installing: `npx @testsprite/testsprite-cli --version`. Verify the installation:
 
 ```bash
 testsprite --version
 ```
 
 ```text
-0.3.x
+0.14.0
 ```
 
-The CLI's source code, releases, and issue tracker live on [GitHub](https://github.com/TestSprite/testsprite-cli).
+Source, releases and issues: [GitHub](https://github.com/TestSprite/testsprite-cli).
 
 ## Get Your API Key
 
 1. Sign in to your [TestSprite dashboard <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard).
-2. Navigate to <kbd>Settings → API Keys</kbd> and click <kbd>Create new key</kbd>.
+2. Switch to the workspace the CLI should work in, then open <kbd>Workspace Settings → Connections → API Keys</kbd> and click <kbd>New API Key</kbd>.
 
 <Frame>
-  <img src="../../images/api-key.png" alt="API Keys page with the Create new key button" />
+  <img src="../../images/apikey-create.png" alt="API Keys page with the New API Key button" />
 </Frame>
 
-3. Copy the key — it is shown **once only**. If you lose it, revoke it and create a new one. (A workspace key is capped at 2 active per member per workspace — revoke one first if you're already at the limit.)
+3. Copy the key — it is shown **once only**. If you lose it, revoke it and create a new one. You can hold 2 active keys per workspace, so revoke one first if you are at the limit. The key acts in that workspace only. See [API Keys](/web-portal/admin/api-keys).
 
 <Frame>
   <img src="../../images/created-api-key.png" alt="API Key Created dialog with the copy button" />
 </Frame>
 
-New and grandfathered keys both default to the scopes the CLI needs: `read:me`, `read:projects`, `read:tests`, `write:tests`, and `run:tests`.
+The key gets `read:projects`, `read:tests`, `read:me`, `write:tests`, `run:tests`, `write:projects`, `read:schedules`, `write:schedules` and `run:tunnel` while you are a Member, Admin, or Owner of the workspace; a Viewer can't hold a key. Check it with `testsprite auth status`.
 
 ## Sign In
 
-<Tabs>
-  <Tab title="With the agent skill (recommended)">
-    Run `testsprite setup`. It prompts for your API key, verifies it against the platform, and installs the verification skill into your project's agent configuration — all in one step:
+```bash
+testsprite setup --agent AGENT
+```
 
-    ```bash
-    testsprite setup
-    ```
+`setup` prompts for your API key, verifies it, and installs the agent skills into your project. Replace `AGENT` with `claude`, `cursor`, `cline`, `windsurf`, `antigravity`, `kiro`, `copilot` or `codex`; it takes a single target. Without `--agent`, it installs for every agent it detects in the project, or `claude` if none. To install for several explicitly, run `testsprite agent install cursor codex`. Run it once per project.
 
-    ```text
-    TestSprite API key: ********
-    TestSprite initialized.
-
-      profile:  default
-      env:      production
-      email:    alice@example.com
-      scopes:   read:me, read:projects, read:tests, write:tests, run:tests
-
-      agent:    claude (installed)
-
-    Next steps:
-      # 1. Create your first project (frontend example) — prints a projectId
-      testsprite project create --type frontend --name "My App" --url https://your-app.com
-
-      # 2. Generate tests: ask your coding agent (the testsprite-onboard skill is
-      #    installed), or create one yourself, then run them:
-      testsprite test run --all --project <projectId>
-
-      # Manage installed agent skills
-      testsprite agent list
-      testsprite agent install --target=<t>   # re-install or install additional targets
-    ```
-
-    `setup` chains credential configuration → identity verification → agent skill install. You only need to run it once per project. Pass `--agent <target>` to pick a different coding agent (default `claude`).
-  </Tab>
-  <Tab title="Credentials only">
-    Add `--no-agent` to configure credentials without installing the agent skill:
-
-    ```bash
-    testsprite setup --no-agent
-    ```
-
-    Then confirm the identity bound to the key:
-
-    ```bash
-    testsprite auth status
-    ```
-  </Tab>
-</Tabs>
-
-<Tip>
-`testsprite setup` is the single onboarding command — it configures credentials, verifies them, and installs the agent skill in one pass. Add `--no-agent` when you only want credentials.
-</Tip>
+To configure credentials only, use `testsprite setup --no-agent`.
 
 ## Verify
-
-After signing in, confirm the active profile:
 
 ```bash
 testsprite auth status
 ```
 
 ```text
-userId    u_01abc...
-name      Alice Example
-email     alice@example.com
-keyId     key_01xyz...
-env       production
-scopes    read:me, read:projects, read:tests, write:tests, run:tests
+userId: usr_1478d468
+name:   Your Name
+email:  you@example.com
+keyId:  key_a1b2c3d4
+endpoint: https://api.testsprite.com
+env:    production
+scopes: read:projects, read:tests, read:me, write:tests, run:tests, write:projects, read:schedules, write:schedules, run:tunnel
+org:    Checkout Team (Standard, member)
+routing: v3
+orgs: My workspace (org_5c1e…, personal, role: owner); Checkout Team (org_9a7d…, role: member)
+org binding: Checkout Team (org_9a7d…, role: member)
 ```
 
-If any scopes are missing, the CLI prints a `note:` line telling you which commands will be blocked.
+The `org:` line is the workspace the key acts in. It adds a note when `write:tests` or `run:tests` is missing. Run `testsprite doctor` to diagnose missing `run:tunnel` access.
 
 ## Using It in CI
 
-In a CI environment, set `TESTSPRITE_API_KEY` as a secret and run setup non-interactively:
+Set `TESTSPRITE_API_KEY` as a secret and run setup non-interactively:
 
 ```bash
-TESTSPRITE_API_KEY=$TS_KEY testsprite setup --from-env --yes
+TESTSPRITE_API_KEY=$TS_KEY testsprite setup --from-env --yes --agent AGENT
 ```
 
-`--from-env` reads the key from the environment instead of prompting. `--yes` accepts all defaults without interactive prompts. The CLI never accepts the API key as a positional argument or writes it to logs.
+`--from-env` reads the key from the environment, and `--yes` accepts all defaults. The CLI never accepts the key as a positional argument or writes it to logs.
 
 <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
-  The full CI setup — pipeline examples and exit code handling
+  Pipeline examples and exit code handling
 </Card>
 
 ## Where to Go Next
