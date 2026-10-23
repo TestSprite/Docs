@@ -199,6 +199,17 @@ button[class*="copy"],
   border-radius: var(--border-radius-sm) !important;
 }
 
+/* Long lines: while a line runs past the right edge, fade every line out at
+   the edge instead of Mintlify's 44px patch behind the copy button. The mask
+   goes away once the block is scrolled to its end. */
+.code-block [data-fade-overlay] {
+  display: none !important;
+}
+.code-block [data-component-part="scroll-area-viewport"][data-overflow-x-end] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 120px), transparent calc(100% - 40px));
+  mask-image: linear-gradient(to right, #000 calc(100% - 120px), transparent calc(100% - 40px));
+}
+
 /* ============================================
    CALLOUTS & ALERTS
    ============================================ */

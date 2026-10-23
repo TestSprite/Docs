@@ -1,257 +1,193 @@
 ---
 title: "CI/CD"
-description: "Gate your pipeline on TestSprite results using stable exit codes and JSON output."
-icon: "github"
+description: "Run TestSprite on every pull request with ci init and ci run, and test staging after a deploy."
 ---
 
-## Why the CLI is CI-friendly
+`testsprite ci run` runs a project's tests, waits for the verdict, and exits non-zero if any test does not pass. `testsprite ci init github` writes a GitHub Actions workflow that runs it against each pull request's preview.
 
-The `testsprite` CLI is designed from the ground up for unattended execution:
-
-- **Non-interactive auth** — set `TESTSPRITE_API_KEY` as a secret; the CLI never prompts when the variable is present.
-- **Stable `--output json`** — every command emits a machine-readable JSON envelope that your pipeline can parse and forward.
-- **Stable exit codes** — exit 0 means the run passed; any non-zero exit lets the shell fail the job. No text scraping required.
-
-<Warning>
-**Your target must be reachable from TestSprite's cloud.** Tests run on TestSprite's cloud runners, so `--target-url` has to be a public `http(s)` address. `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, link-local, and private (RFC 1918) addresses are **rejected during pre-flight with exit code `5`, before any run is triggered** — so a dev server started inside the CI job cannot be tested directly. This is the most common first-run CI failure.
-
-In CI, point `--target-url` at a **publicly reachable preview, staging, or deploy-preview URL** (for example, the per-pull-request preview URL your hosting provider creates). To test a local app, use the [TestSprite MCP Server](/mcp/getting-started/introduction), which opens a tunnel for you — the CLI itself does not tunnel.
-</Warning>
-
-## Authenticating in CI
-
-Set your API key as a repository or environment secret. In GitHub, go to <kbd>Settings → Secrets and variables → Actions</kbd> and click <kbd>New repository secret</kbd>:
-
-<Frame>
-  <img src="../../images/githubaction-reposecret.png" alt="GitHub Actions secrets page with the New repository secret button" />
-</Frame>
-
-Then expose it to the job:
-
-```yaml
-env:
-  TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+<Card>
+```mermaid
+flowchart LR
+    I["testsprite ci init github<br/>writes the workflow"] --> W["Pull request<br/>preview deploys"]
+    W --> R["testsprite ci run<br/>--env X --target-url preview"]
+    R --> E["One execution in a temporary<br/>environment github-pr-N"]
+    E --> S["Job summary = execution report<br/>annotations · summary file"]
+    E --> D{Exit code}
+    D -->|0| P[Check passes]
+    D -->|non-zero| F[Check fails]
 ```
-
-The CLI resolves `TESTSPRITE_API_KEY` before the credentials file, so no `testsprite setup` step is needed in CI.
-
-<Warning>
-**Important:** Never inline an API key in a workflow file or a script committed to version control. Always source it from a secret store.
-</Warning>
-
-In most pipelines the env var alone is enough — you don't need to run any setup command. If you do need a credentials file on disk (for other tooling), write one non-interactively from the same env var with `--no-agent` to skip the skill install:
-
-```bash
-testsprite setup --from-env --yes --no-agent
-```
-
-This reads `TESTSPRITE_API_KEY` from the environment, verifies the key, writes `~/.testsprite/credentials`, and prints an identity summary.
-
-<Tip>
-Add `testsprite doctor` as a preflight step to catch a missing key, a bad endpoint, or an unreachable API before the real test step runs. It exits non-zero only on a genuine failure — warnings like a missing skill install don't fail the step:
-
-```bash
-testsprite doctor && testsprite test run --all --project "$PROJECT_ID" --wait
-```
-</Tip>
-
-## Gating on the result
-
-The CLI exits non-zero whenever a run does not pass — failed, blocked, cancelled, or timed out. Your shell or CI runner treats that as a job failure automatically.
-
-```bash
-testsprite test run test_3a9f21c7 --wait --output json > result.json
-# exit 0 = passed; any other exit fails the step
-```
-
-On failure you can pull the artifact before the job ends:
-
-```bash
-testsprite test run test_3a9f21c7 --wait --output json > result.json || \
-  testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
-```
-
-## A GitHub Actions workflow
-
-<Note>
-Install and invoke the `testsprite` CLI directly, as the example below does — this is the supported way to run TestSprite in CI, on any platform. If you previously set up an older TestSprite GitHub Action from the marketplace, migrating to the CLI gives you stable exit codes, JUnit output, and a consistent pass/fail verdict.
-</Note>
-
-The example below runs all backend tests in a project on every pull request and fails the job if any test does not pass:
-
-```yaml
-name: TestSprite
-
-on:
-  pull_request:
-
-jobs:
-  testsprite:
-    runs-on: ubuntu-latest
-    env:
-      TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
-      PROJECT_ID: proj_8f0f6
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install TestSprite CLI
-        run: npm install -g @testsprite/testsprite-cli
-
-      - name: Run tests
-        run: |
-          testsprite test run --all --project "$PROJECT_ID" \
-            --wait --output json > result.json
-
-      - name: Download failure artifacts
-        if: failure()
-        run: |
-          testsprite test failure get \
-            "$(jq -r '.run.testId' result.json)" \
-            --out ./.testsprite/failure
-
-      - name: Upload failure bundle
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: testsprite-failure
-          path: ./.testsprite/failure
-```
-
-<Tip>
-`--all` runs every test in the project in wave order — producers first, teardown last — so backend dependencies are always satisfied. Keep each project to a single test type (frontend or backend, set at `project create`); don't mix both in one project. To target one test explicitly, pass its `test-id`, or loop over `testsprite test list --project "$PROJECT_ID" --output json`.
-</Tip>
-
-## JUnit XML reports
-
-For CI systems that render JUnit natively (GitHub Actions test reporters, GitLab, Jenkins), add `--report junit --report-file <path>` to a **batch, `--wait`** run or rerun. The CLI writes the XML sidecar atomically once polling finishes — `--output json` on stdout is unchanged, so you can use both together. Extending the "Run tests" step from the workflow above:
-
-```yaml
-      - name: Run tests
-        run: |
-          testsprite test run --all --project "$PROJECT_ID" \
-            --wait --output json \
-            --report junit --report-file ./results.xml > result.json
-
-      - name: Publish test report
-        if: always()
-        uses: dorny/test-reporter@v1
-        with:
-          name: TestSprite
-          path: results.xml
-          reporter: java-junit
-```
-
-`--report` is gated to the batch `--wait` path:
-
-- Available on `test run --all --wait` and on a batch `test rerun --wait` (`--all`, or several `test-ids...`) — **not** on a single-test run or rerun.
-- Requires `--wait` (the report is written after polling completes) and `--report-file <path>`.
-- `--report-suite-name <name>` optionally overrides the `<testsuite name="...">` attribute; it defaults to `testsprite:<projectId>`.
-- Only `junit` is accepted for `--report` today.
-
-## GitHub-native annotations and summaries
-
-On GitHub Actions (`GITHUB_ACTIONS=true` — set automatically on every runner), a `--wait` run needs no extra flags to become CI-native:
-
-- Every non-passed run emits one `::error::` workflow-command line, so failures annotate the PR checks tab with the test id, status, and dashboard link.
-- A Markdown results table is appended to the job summary (`$GITHUB_STEP_SUMMARY`).
-
-This works on `test run <test-id> --wait`, `test run --all --wait`, and a batch `test rerun --wait`. Two optional flags extend it:
-
-- `--summary-file <path>` — also write a reduced machine summary JSON, `{total, passed, failed, timedOut, runs[]}`, for downstream steps that don't want to parse the full `--output json` stream.
-- `--gh-output` — force the annotations outside GitHub Actions, so you can preview the exact CI output locally.
-
-Everything is written even when the command exits non-zero — the annotations and summary land **before** the exit-code gate, so a red build still gets its explanation. All writes are best-effort: a failed write never changes the exit code. Tests that never dispatched (rate-deferred, conflicted, not found) appear as non-passed rows, so a partial batch can't read as all-passed.
-
-```yaml
-      - name: Run tests
-        run: |
-          testsprite test run --all --project "$PROJECT_ID" \
-            --wait --output json \
-            --summary-file ./summary.json > result.json
-        # No reporter action needed: failures annotate the PR automatically,
-        # and the results table appears on the workflow run's Summary page.
-```
-
-## Parsing JSON output
-
-Pipe `--output json` to `jq` to extract fields for downstream steps:
-
-```bash
-testsprite test run test_3a9f21c7 --wait --output json \
-  | jq '.run.status'
-```
-
-```text
-"passed"
-```
-
-Read the dashboard link for a PR comment or Slack notification:
-
-```bash
-testsprite test run test_3a9f21c7 --wait --output json \
-  | jq -r '.run.dashboardUrl'
-```
-
-The top-level `run` object contains `status`, `runId`, `startedAt`, `finishedAt`, `codeVersion`, and `dashboardUrl` (when the backend returns a portal link).
-
-## Rate limits and retries
-
-The server caps run-triggers at **60 per minute per key**. The CLI throttles itself to **50 per minute** and automatically retries `RATE_LIMITED` responses, honoring the `Retry-After` header (capped at 3 retries).
-
-For large batches, tune the in-flight concurrency:
-
-```bash
-testsprite test run --all --project "$PROJECT_ID" \
-  --wait --max-concurrency 20
-```
-
-For slow networks or a slow first request, increase the per-request timeout:
-
-```bash
-testsprite test run test_3a9f21c7 --wait \
-  --request-timeout 300
-```
-
-Reuse an `--idempotency-key` to make retries safe — if the server already accepted the request with that key, it returns the original response instead of triggering a duplicate run:
-
-```bash
-testsprite test run test_3a9f21c7 --wait \
-  --idempotency-key "ci-run-${{ github.run_id }}-${{ github.run_attempt }}"
-```
-
-## Handling exit codes
-
-The exit code is your primary signal. Two codes deserve special handling in a pipeline:
-
-| Code | Meaning | Recommended action |
-| :--- | :--- | :--- |
-| `11` | Rate limited | Honor `Retry-After`; the CLI retries automatically, but if you hit it outside a run command, back off and retry |
-| `12` | Insufficient credits | Non-retriable — top up your balance before re-queuing the job |
-
-All other non-zero exits (auth error, test not found, network failure, test failed) should fail the job and surface the artifact.
-
-<Card title="Exit Codes" href="/cli/reference/exit-codes" icon="square-code">
-  The complete exit-code table
 </Card>
 
-## Where to Go Next
+## Set up the pull-request gate
+
+<Steps>
+  <Step title="Add your API key as a repository secret">
+    Mint the key in the workspace the project belongs to. It is tied to the member who minted it and stops working if they leave or are removed from the workspace, so mint it from an account that will stay. Save it as the `TESTSPRITE_API_KEY` secret under <kbd>Settings → Secrets and variables → Actions</kbd>, or pass `--set-secret` in the next step to set it through `gh`.
+
+    <Frame>
+      <img src="../../images/githubaction-reposecret.png" alt="GitHub Actions secrets page with the New repository secret button" />
+    </Frame>
+  </Step>
+  <Step title="Generate the workflow">
+    ```bash
+    testsprite ci init github --project proj_xxxxxxxx --env staging
+    ```
+
+    This writes `.github/workflows/testsprite.yml`. `--env` is the environment whose sign-in every pull-request run uses; an unknown name is refused. `--project` can be left out when the workspace has only one project, and `--dry-run` prints the file without writing it. The workflow skips fork and draft pull requests and fails if a selected test never ran.
+  </Step>
+  <Step title="Tell it where the preview is">
+    The file has one placeholder step, marked `REPLACE ME`. Replace it to match how your pull requests get a public preview:
+
+    - **Your platform deploys every pull request** (Vercel or Netlify): change the trigger to `on: deployment_status` and delete the placeholder.
+    - **Your workflow deploys**: keep `on: pull_request`, put your deploy commands in the placeholder, and end it with `echo "url=<preview address>" >> "$GITHUB_OUTPUT"`.
+
+    The finished workflow for each case:
+
+    <Tabs>
+      <Tab title="A — platform deploys every PR">
+        ```yaml
+        name: TestSprite
+        on:
+          deployment_status:
+        permissions:
+          contents: read
+          pull-requests: read
+        jobs:
+          testsprite-tests:
+            concurrency:
+              group: testsprite-${{ github.event.pull_request.number || github.event.deployment.sha }}
+              cancel-in-progress: true
+            if: >-
+              github.event_name == 'deployment_status' &&
+              github.event.deployment_status.state == 'success' &&
+              !github.event.deployment.production_environment &&
+              github.event.deployment.environment != 'production'
+            runs-on: ubuntu-latest
+            timeout-minutes: 45
+            env:
+              TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+              GITHUB_TOKEN: ${{ github.token }}
+            steps:
+              - uses: actions/setup-node@v4
+                with:
+                  node-version: '22'
+              - run: npm i -g @testsprite/testsprite-cli@latest
+              - name: Run TestSprite tests on this PR's preview
+                env:
+                  PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
+                run: >-
+                  testsprite ci run
+                  --project "proj_xxxxxxxx"
+                  --env "default"
+                  --target-url "$PREVIEW_URL"
+                  --fail-on-skipped
+                  --summary-file testsprite-summary.json
+              - name: Upload TestSprite report
+                if: always()
+                uses: actions/upload-artifact@v4
+                with:
+                  name: testsprite-results
+                  path: testsprite-summary.json
+                  if-no-files-found: ignore
+        ```
+      </Tab>
+      <Tab title="B — the workflow deploys (Vercel CLI shown)">
+        ```yaml
+        name: TestSprite
+        on:
+          pull_request:
+            types: [opened, synchronize, reopened, ready_for_review]
+        permissions:
+          contents: read
+          pull-requests: read
+        jobs:
+          testsprite-tests:
+            concurrency:
+              group: testsprite-${{ github.event.pull_request.number }}
+              cancel-in-progress: true
+            if: >-
+              github.event.pull_request.head.repo.full_name == github.repository &&
+              !github.event.pull_request.draft
+            runs-on: ubuntu-latest
+            timeout-minutes: 45
+            env:
+              TESTSPRITE_API_KEY: ${{ secrets.TESTSPRITE_API_KEY }}
+              GITHUB_TOKEN: ${{ github.token }}
+            steps:
+              - uses: actions/checkout@v4
+              - uses: actions/setup-node@v4
+                with:
+                  node-version: '22'
+              - run: npm i -g @testsprite/testsprite-cli@latest
+              - name: Get this PR's preview URL
+                id: preview
+                env:
+                  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+                  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+                  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+                run: |
+                  url=$(npx vercel@59 deploy --token "$VERCEL_TOKEN" --yes)
+                  echo "url=$url" >> "$GITHUB_OUTPUT"
+              - name: Run TestSprite tests on this PR's preview
+                env:
+                  PREVIEW_URL: ${{ steps.preview.outputs.url }}
+                run: >-
+                  testsprite ci run
+                  --project "proj_xxxxxxxx"
+                  --env "default"
+                  --target-url "$PREVIEW_URL"
+                  --fail-on-skipped
+                  --summary-file testsprite-summary.json
+              - name: Upload TestSprite report
+                if: always()
+                uses: actions/upload-artifact@v4
+                with:
+                  name: testsprite-results
+                  path: testsprite-summary.json
+                  if-no-files-found: ignore
+        ```
+      </Tab>
+    </Tabs>
+
+    <Warning>
+    If your platform also deploys pull requests from forks, turn that off (on Vercel, require authorization for fork deployments). A `deployment_status` workflow runs with your repository's secrets, so a fork could run its own edit of it with your `TESTSPRITE_API_KEY`.
+    </Warning>
+  </Step>
+  <Step title="Open a pull request">
+    Commit the workflow, open a pull request that isn't a draft, and watch the `TestSprite / testsprite-tests` check. To block merges on it, require `testsprite-tests` in branch protection.
+  </Step>
+</Steps>
+
+<Tip>
+Your coding agent can do all four steps, including the test pull request: `testsprite agent install` includes a `testsprite-ci` skill. See [Coding Agent Integration](/cli/core/agent-integration).
+</Tip>
+
+<AccordionGroup>
+  <Accordion title="Nothing ran on my pull request">
+    - A draft pull request is skipped: the job prints `Skipping draft pull request` and passes.
+    - A pull request with merge conflicts never starts `pull_request` workflows, and GitHub shows no error.
+    - If none of the repository's workflows run, Actions is disabled, which is common on forks.
+    - With `deployment_status`, check that a successful deployment event arrived for the commit.
+  </Accordion>
+  <Accordion title="One repository deploys several projects">
+    The platform sends one deployment event per project for the same commit (`Preview – <project>` on Vercel). Add `&& github.event.deployment.environment == 'Preview – <project>'` to the job's `if:` to gate on one of them.
+  </Accordion>
+</AccordionGroup>
+
+## What you get
+
+- **A check on the pull request.** It fails when a test fails or is blocked (exit `1`), or when the run takes longer than `--timeout` (exit `7`, default 600 seconds). Cancelling the job doesn't stop the TestSprite run it started; that run still finishes in the Portal.
+- **The execution report as the job summary**: the same content the GitHub App posts as a pull-request comment, plus an annotation for each test that didn't pass. Anyone who can read the repository can read it.
+- **`testsprite-summary.json`**, uploaded as the `testsprite-results` artifact.
+- **One run in the Portal**, linked to the pull request. It runs in a temporary copy of the `--env` environment pointed at the preview, named `github-pr-<N>`, which is removed when the run ends. That environment must sign in with a username and password, or not at all; a recorded (SSO) session is refused before anything is charged.
+
+Every other exit code is in [Exit Codes](/cli/reference/exit-codes).
 
 <Columns cols={2}>
   <Card title="Coding Agent Integration" href="/cli/core/agent-integration" icon="robot">
-    Let your agent drive the verification loop without a human in the middle
+    Let your agent drive the verification loop
   </Card>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="list-check">
-    All flags and modes for triggering and waiting on runs
-  </Card>
-  <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="square-code">
-    Full exit-code table for branching your pipeline
-  </Card>
-  <Card title="Configuration" href="/cli/reference/configuration" icon="gear">
-    Env vars, profiles, and per-request timeouts
+  <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="list-ol">
+    Every exit code and what to do about it
   </Card>
 </Columns>

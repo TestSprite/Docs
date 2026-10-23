@@ -1,7 +1,6 @@
 ---
 title: "Sharing a Project"
 description: "Show a project to a teammate, manager, or client — what the Share button actually does, what invitees can see, and how to take access back."
-icon: "share-nodes"
 ---
 
 <Frame>
@@ -12,7 +11,7 @@ icon: "share-nodes"
 
 TestSprite grants access at the **workspace** level: there are no per-project permissions. "Sharing a project" means **adding someone to the project's workspace**, so they can open this project, and every other project in that workspace, according to their role. If a project shouldn't be visible to the person you're inviting, keep it in a different workspace.
 
-The <kbd>Share</kbd> button does this in one step: it invites the person into the workspace and hands you a link to the project so they land in the right place.
+The <kbd>Share</kbd> button does this in one step: it creates an invitation link for the person, which you send them yourself, and hands you a link to the project so they land in the right place.
 
 ## Sharing from the Portal
 
@@ -31,9 +30,9 @@ The Share action lives in two places:
   <Step title="Invite by email and pick a role">
     Enter the person's email and choose a role:
     - **Viewer** — read-only, free on every plan. Right for a PM, manager, or client who needs to see plans, reports, and recordings.
-    - **Member / Admin**: full working access; adds a paid seat. Only available in team workspaces.
+    - **Member / Admin**: full working access; takes a paid seat, so the workspace needs Starter or higher. In a Free workspace these two are greyed out with <kbd>Starter and up</kbd>.
 
-    They get an invitation email; accepting adds them to the workspace. Invitations are bound to the invited email and expire after 7 days.
+    TestSprite doesn't email invitations: <kbd>Create invitation link</kbd> gives you a link to send them yourself, and accepting it adds them to the workspace. Only the invited email can accept, and the link expires after 7 days. Inviting is for Admins and the Owner — other roles see the dialog but can't invite from it.
 
     <Frame>
       <img src="../../images/share-enter-pick-role.png" alt="Share dialog — an email typed in with the role picker set to Viewer" />
@@ -47,11 +46,11 @@ The Share action lives in two places:
   </Step>
 </Steps>
 
-### Sharing from a personal workspace
+### Sharing from a Free workspace
 
-You can share from your personal workspace too — as **Viewer invitations only**, which are free and need no subscription. The first time you do, TestSprite renames your workspace from "My workspace" to your email address so invitees can tell whose workspace they've joined.
+You can share from a Free workspace too — as **Viewer invitations only**, which are free and need no subscription. Your default workspace starts on Free, so this is what you'll see until it's upgraded.
 
-If the person needs to *work on* the tests rather than just see them, the dialog points you to creating a team workspace — paid roles don't exist on personal workspaces.
+If the person needs to *work on* the tests rather than just see them, they need a Member or Admin seat, and those need a paid plan: the Owner upgrades the workspace from <kbd>Settings → Plan</kbd>, or you create a new workspace on a paid plan and start the work there.
 
 ## What the Person Can See and Do
 
@@ -59,7 +58,7 @@ What an invitee can do is exactly their workspace role — see the full matrix i
 
 | They joined as | They can | They can't |
 | :--- | :--- | :--- |
-| **Viewer** | Open every project, test, report, run history, and recording in the workspace | Change anything — edits, runs, and deletes are refused with a "read-only role" message |
+| **Viewer** | Open every project, test, report, run history, and recording in the workspace | Change anything — create and edit pages show a "Read-only access" notice instead |
 | **Member** | Everything a Viewer can, plus create, edit, run, and delete tests and projects | Manage people, billing, or integrations |
 
 ## Revoking Access
@@ -71,7 +70,7 @@ Sharing is revoked the same way it was granted: through workspace membership, in
 </Frame>
 
 - **Remove the person** from the workspace (Admins and the Owner can). They immediately lose access to every project in it.
-- **Cancel a pending invitation** if they haven't accepted yet.
+- **Revoke a pending invitation** if they haven't accepted yet — the link stops working.
 - **Downgrade them to Viewer** if they should keep seeing results but stop changing things — this also frees their paid seat.
 
 ## Share vs. Add a Member — Which One?
@@ -91,6 +90,6 @@ They're the same mechanism; the difference is intent and starting point:
     The full permission matrix and invitation flow
   </Card>
   <Card title="Workspaces" href="/web-portal/admin/workspaces" icon="users">
-    Personal vs. team workspaces and switching
+    Free vs. paid workspaces and switching
   </Card>
 </Columns>

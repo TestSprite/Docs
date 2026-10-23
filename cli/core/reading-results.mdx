@@ -1,18 +1,13 @@
 ---
 title: "Reading Results"
 description: "Inspect individual tests, step-by-step execution logs, run history, and failure bundles from the CLI."
-icon: "list-check"
 ---
 
 ## Inspecting a test
 
-Get the current state of a single test by ID:
-
 ```bash
 testsprite test get test_3a9f21c7
 ```
-
-The response shows the test's status, type, plan step count, when it was created, and which surface last authored it:
 
 ```text
 id:            test_3a9f21c7
@@ -21,160 +16,119 @@ name:          Checkout flow — guest user
 type:          frontend
 createdFrom:   cli
 status:        passed
-planStepCount: 12
+planSteps:     3
+  1. [action] Navigate to /checkout as a guest.
+  2. [action] Enter the shipping address and click 'Continue'.
+  3. [assertion] Verify the order summary shows the correct total.
 createdAt:     2026-06-10T08:14:22Z
 updatedAt:     2026-06-15T10:04:38Z
 ```
 
-List all tests in a project with filters:
-
-```bash
-testsprite test list --project proj_8f0f6
-```
-
-Narrow by type, originating surface, or status:
+List tests in a project, optionally filtered:
 
 ```bash
 testsprite test list --project proj_8f0f6 --type frontend --status failed,blocked
-testsprite test list --project proj_8f0f6 --created-from cli
 ```
 
 | Flag | Values | Description |
 | :--- | :--- | :--- |
-| `--type` | `frontend` \| `backend` | Filter by test type |
-| `--created-from` | `portal` \| `mcp` \| `cli` | Filter by authoring surface |
-| `--status` | comma-separated list | Any of: `draft`, `ready`, `queued`, `running`, `passed`, `failed`, `blocked`, `cancelled`, `unknown` |
+| `--type` | `frontend` \| `backend` | Test type |
+| `--created-from` | `portal` \| `mcp` \| `cli` | Authoring surface |
+| `--status` | comma-separated | `draft`, `ready`, `queued`, `running`, `passed`, `failed`, `blocked`, `cancelled`, `unknown` |
+| `--env <name>` | environment name | Show statuses for that environment (adds an `ENV` column) |
 | `--page-size <n>` | 1–100, default 25 | Items per page |
 | `--starting-token <token>` | opaque cursor | Continue from a previous page |
 
+### Status is per environment
+
+`test list` and `test get` without `--env` show each frontend test's latest result in the project's **default environment**, and `--status` filters on that, not on the latest run in any environment. Use `--env <name>` to read another environment. A `--target-url` run is recorded under its temporary environment and does not change the listed status. `project list` and `project get` show the default environment and environment count.
+
 ## Step-by-step results
 
-`test steps` returns the cumulative execution log for a test — every step from every run, in order:
-
-```bash
-testsprite test steps test_3a9f21c7
-```
-
-Scope the output to a single run with `--run-id`:
+`test steps` returns the step log of the latest run, or of a specific run:
 
 ```bash
 testsprite test steps test_3a9f21c7 --run-id run_5c1d9a2b
 ```
 
-Each entry shows the step name, its status (<kbd>passed</kbd> or <kbd>failed</kbd>), and the run it belongs to. Use `--page-size` and `--max-items` for large histories.
-
-<Note>
-Steps logged before run IDs were tracked are excluded when you supply `--run-id`. If you need those older entries, query without the flag.
-</Note>
+Each entry has the step name, its status (<kbd>passed</kbd> or <kbd>failed</kbd>), and its run. Use `--page-size` and `--max-items` for long logs. Steps logged before run IDs were tracked are excluded when you pass `--run-id`.
 
 ## The latest result
-
-`test result` returns the outcome of the most recent completed run for a test:
 
 ```bash
 testsprite test result test_3a9f21c7
 ```
 
-Add `--include-analysis` to attach the AI triage block — root-cause hypothesis, recommended fix target, failure kind, and the snapshot ID that ties all artifacts together:
+Without `--env` or `--history`, this shows the newest run across **all** environments, even if still running. In text output, if that run is not on the Default environment, a line follows with the Default environment's status and the command to read that environment's history (omitted with `--output json`, `--env`, `--history`, or when the Default status cannot be read). `--env` requires `--history`.
 
-```bash
-testsprite test result test_3a9f21c7 --include-analysis
-```
-
-<Note>
-For **backend tests**, the result also surfaces the run's captured stdout (`apiOutput`) and Python traceback (`trace`) — full content under `--output json` (and inside failure bundles as `result.json` / `failure.json`); text mode prints a bounded 20-line tail of each.
-</Note>
-
-The analysis fields are especially useful when piping to an agent:
+`--include-analysis` adds the AI triage block: root-cause hypothesis, recommended fix target, failure kind, and the `snapshotId` tying all artifacts together.
 
 ```bash
 testsprite test result test_3a9f21c7 --include-analysis --output json \
   | jq '{hypothesis: .analysis.rootCauseHypothesis, fix: .analysis.recommendedFixTarget}'
 ```
 
+For **backend tests** the result also carries the captured stdout (`apiOutput`) and Python traceback (`trace`): full under `--output json` (and in failure bundles as `result.json` / `failure.json`), a 20-line tail of each in text mode.
+
 ## Run history
-
-Pass `--history` to list prior runs instead of the latest result:
-
-```bash
-testsprite test result test_3a9f21c7 --history
-```
-
-Filter by trigger source or time window:
 
 ```bash
 testsprite test result test_3a9f21c7 --history --source cli --since 7d
-testsprite test result test_3a9f21c7 --history --source portal --since 2026-06-10T00:00:00Z
 ```
 
-Paginate long histories:
-
-```bash
-testsprite test result test_3a9f21c7 --history --page-size 10 --cursor <token>
-```
+`targetUrl` is the address the run started against and stays that way after an environment URL edit; URL userinfo is removed before storage. If a new run still visits an old host, check the saved test steps ([Environments](/cli/core/environments)).
 
 | Flag | Values | Description |
 | :--- | :--- | :--- |
-| `--source` | `cli` \| `portal` \| `mcp` \| `schedule` \| `github_action` | Filter by what triggered the run |
-| `--since` | `24h`, `7d`, or ISO timestamp | Earliest `createdAt` to include |
+| `--source` | `cli` \| `portal` \| `mcp` \| `schedule` \| `github_action` | What triggered the run |
+| `--since` | `24h`, `7d`, or ISO timestamp | Earliest `createdAt` |
 | `--page-size <n>` | 1–100, default 20 | Items per page |
 | `--cursor <token>` | opaque cursor | Continue from a previous page |
+| `--env <name>` | environment name | Only runs that used this environment |
+| `--rerun` \| `--no-rerun` | flag | Only reruns, or only fresh runs |
+| `--columns <list>` | column names | Text output: select or reorder columns |
+| `--no-header` | flag | Text output: suppress the header row |
 
 ## Triaging a failure
 
-When a test is <kbd>failed</kbd>, start with the one-screen triage card:
+For a <kbd>failed</kbd> test, start with the one-screen triage card (status, failure kind, root-cause hypothesis, recommended fix target):
 
 ```bash
 testsprite test failure summary test_3a9f21c7
 ```
 
-This prints the status, failure kind, root-cause hypothesis, and recommended fix target — everything you need to decide what to do next, without downloading anything.
-
 To pull the full failure bundle to disk:
 
 ```bash
+mkdir -p .testsprite
 testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
 ```
 
-The bundle is one self-consistent, run-scoped package — failing step, DOM snapshots as text, test source, and root-cause analysis, all anchored to one `snapshotId`. See [Failure Bundle](/cli/concepts/key-terms#failure-bundle) for the full contents.
-
-Add `--failed-only` to keep only the failing step and its neighbors (±1), trimming the bundle for faster agent context loading:
-
-```bash
-testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure --failed-only
-```
+`--out` creates the bundle directory but not its parent; a missing parent exits 5. Without `--out`, the bundle prints to stdout. The bundle holds the failing step, DOM snapshots as text, test source, and root-cause analysis, all tied to one `snapshotId` (see [Failure Bundle](/cli/concepts/key-terms#failure-bundle)). `--failed-only` keeps only the failing step and its neighbors (±1) for faster agent context loading.
 
 ## Pinning to a specific run
 
-`test failure get` always returns the *latest* failing run for a test — that pointer moves if a new run comes in. When multiple runs might be in flight simultaneously, pin to an exact run with `test artifact get`:
+`test failure get` always returns the *latest* failing run, which moves when a new run arrives. To pin an exact run:
 
 ```bash
-testsprite test artifact get run_5c1d9a2b --out ./.testsprite/runs/run_5c1d9a2b
+testsprite test artifact get run_5c1d9a2b
 ```
 
-The artifact bundle for a specific run is immutable — a concurrent Portal or schedule run cannot overwrite it. This is the safe path for agents and CI pipelines where two runs of the same test might overlap.
+Without `--out`, the bundle goes to `./.testsprite/runs/<run-id>/` (directories created). With `--out <dir>`, the parent of `<dir>` must exist. The bundle is immutable, so a concurrent Portal or schedule run cannot overwrite it. Use `test failure get <test-id>` for interactive triage and `test artifact get <run-id>` in scripts and CI.
 
-<Tip>
-Use `test failure get <test-id>` for the interactive triage loop. Use `test artifact get <run-id>` in scripts and CI where you need a stable, run-scoped bundle that a concurrent run can't shift under you.
-</Tip>
+### When there is no bundle
 
-The default output directory is `./.testsprite/runs/<run-id>/`. The parent directory must exist before you run the command.
+The bundle includes the test's saved code. A frontend test gets saved code when it passes against a public URL; a tunnel (`--local`) run never saves code. If the test has never passed, or has only run through a tunnel, `test failure get` and `test artifact get` exit 4 with reason `no_code`. A cancelled run exits 4 with `cancelled_no_artifacts`. In both cases `test steps --run-id <run-id>` and `test failure summary <test-id>` still work.
+
+Backend bundles contain saved code and failure analysis (with stdout and traceback when available) but no step log. Use `test artifact get <run-id>`; on the V3 execution path `test failure get <test-id>` also returns backend bundles.
 
 ## Reading test code
 
-Print the generated test code to stdout:
-
 ```bash
-testsprite test code get test_3a9f21c7
+testsprite test code get test_3a9f21c7 --out ./checkout_flow.py
 ```
 
-Save it to a file instead:
-
-```bash
-testsprite test code get test_3a9f21c7 --out ./tests/checkout_flow.py
-```
-
-The response includes the language, framework, code content, and the `codeVersion` token — useful if you plan to update the code with `testsprite test code put` and want protection against overwriting a concurrent edit.
+Without `--out` the code prints to stdout; the file's parent directory must exist. The response includes the language, framework, code, and a `codeVersion` token that protects `testsprite test code put` from overwriting a concurrent edit.
 
 ## Where to Go Next
 
@@ -183,7 +137,7 @@ The response includes the language, framework, code content, and the `codeVersio
     Trigger runs, wait for verdicts, and understand exit codes
   </Card>
   <Card title="Rerun & Auto-Heal" href="/cli/core/rerun-and-auto-heal" icon="arrow-rotate-right">
-    Replay a test or let AI repair UI drift
+    Re-run a test or let AI repair UI drift
   </Card>
   <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
     runId, codeVersion, snapshotId, and the rest of the vocabulary

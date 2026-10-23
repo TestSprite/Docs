@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The agent loop</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #181818; color: #F2F5F3; padding: 2rem; }
+.frame { max-width: 720px; width: 100%; margin: 0 auto; }
+.diagram-container { width: 100%; overflow-x: auto; }
+svg { width: 100%; min-width: 560px; display: block; }
+@media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+</style>
+</head>
+<body>
+<div class="frame">
+<div class="diagram-container">
+<svg viewBox="0 0 560 556" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cli-agent-loop-dark-title cli-agent-loop-dark-desc">
+<title id="cli-agent-loop-dark-title">The agent loop</title>
+<desc id="cli-agent-loop-dark-desc">A coding agent changes code, creates a test for new behavior or reruns the existing suite in TestSprite, banks passes in a durable suite, and reads the failure bundle to fix and try again.</desc>
+<defs>
+<marker id="arrow-cli-agent-loop-dark" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#B7C2BB"/></marker>
+<marker id="arrow-accent-cli-agent-loop-dark" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#54B365"/></marker>
+<marker id="arrow-soft-cli-agent-loop-dark" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#9AA69F"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#181818"/>
+<path d="M280 80 V112" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M150 162 V262" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M410 162 V262" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M150 322 V350" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M410 322 V350" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M150 410 V470" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M410 410 V470" fill="none" stroke="#54B365" stroke-width="1.2" marker-end="url(#arrow-accent-cli-agent-loop-dark)"/>
+<path d="M40 500 H28 Q20 500 20 492 V60 Q20 52 28 52 H150" fill="none" stroke="#B7C2BB" stroke-width="1.2" marker-end="url(#arrow-cli-agent-loop-dark)"/>
+<path d="M520 500 H532 Q540 500 540 492 V158 Q540 150 532 150 H381" fill="none" stroke="#9AA69F" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow-soft-cli-agent-loop-dark)"/>
+<rect x="128.0" y="204" width="44" height="16" rx="2" fill="#181818"/>
+<text x="150" y="216" fill="#9AA69F" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">YES</text>
+<rect x="372.0" y="204" width="76" height="16" rx="2" fill="#181818"/>
+<text x="410" y="216" fill="#9AA69F" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">NO · NEW</text>
+<rect x="128.0" y="432" width="44" height="16" rx="2" fill="#181818"/>
+<text x="150" y="444" fill="#9AA69F" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">FAIL</text>
+<rect x="388.0" y="432" width="44" height="16" rx="2" fill="#181818"/>
+<text x="410" y="444" fill="#54B365" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">PASS</text>
+<rect x="47.0" y="44" width="76" height="16" rx="2" fill="#181818"/>
+<text x="85" y="56" fill="#9AA69F" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">READ &amp; FIX</text>
+<rect x="436.0" y="142" width="68" height="16" rx="2" fill="#181818"/>
+<text x="470" y="154" fill="#9AA69F" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.04em">COVERAGE</text>
+<rect x="150" y="24" width="260" height="56" rx="6" fill="#181818"/>
+<rect x="150" y="24" width="260" height="56" rx="6" fill="#181818" stroke="#F2F5F3" stroke-width="1.2"/>
+<text x="280.0" y="50" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Your coding agent</text>
+<text x="280.0" y="70" fill="#9AA69F" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">writes / changes code</text>
+<polygon points="280,112 410,162 280,212 150,162" fill="#181818"/>
+<polygon points="280,112 410,162 280,212 150,162" fill="#181818" stroke="#F2F5F3" stroke-width="1.2"/>
+<text x="280" y="159" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Already covered</text>
+<text x="280" y="178" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">by the suite?</text>
+<rect x="40" y="262" width="220" height="60" rx="6" fill="#181818"/>
+<rect x="40" y="262" width="220" height="60" rx="6" fill="#181818" stroke="#F2F5F3" stroke-width="1.2"/>
+<text x="150.0" y="288" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Rerun tests</text>
+<text x="150.0" y="308" fill="#9AA69F" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">test rerun</text>
+<rect x="300" y="262" width="220" height="60" rx="6" fill="#181818"/>
+<rect x="300" y="262" width="220" height="60" rx="6" fill="#181818" stroke="#F2F5F3" stroke-width="1.2"/>
+<text x="410.0" y="288" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Create a test</text>
+<text x="410.0" y="308" fill="#9AA69F" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">test create</text>
+<rect x="110" y="350" width="340" height="60" rx="6" fill="#181818"/>
+<rect x="110" y="350" width="340" height="60" rx="6" fill="#222522" stroke="#B7C2BB" stroke-width="1.2"/>
+<text x="280.0" y="376" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">TestSprite cloud</text>
+<text x="280.0" y="396" fill="#9AA69F" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">real browsers &amp; APIs</text>
+<rect x="40" y="470" width="220" height="60" rx="6" fill="#181818"/>
+<rect x="40" y="470" width="220" height="60" rx="6" fill="#181818" stroke="#F2F5F3" stroke-width="1.2"/>
+<text x="150.0" y="496" fill="#F2F5F3" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Read failure bundle</text>
+<text x="150.0" y="516" fill="#9AA69F" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">test failure get</text>
+<rect x="300" y="470" width="220" height="60" rx="6" fill="#181818"/>
+<rect x="300" y="470" width="220" height="60" rx="6" fill="rgba(84,179,101,0.14)" stroke="#54B365" stroke-width="1.2"/>
+<text x="410.0" y="496" fill="#54B365" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Durable suite</text>
+<text x="410.0" y="516" fill="#9AA69F" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">grows every pass</text>
+</svg>
+</div>
+</div>
+</body>
+</html>

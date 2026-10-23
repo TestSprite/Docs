@@ -1,0 +1,41 @@
+---
+title: "Test Lists & Schedules"
+description: "Run a group of tests together, and run a project or a test list on a cron schedule, from the CLI."
+---
+
+Test lists and schedules work the same as in the Portal; see [Test Lists](/web-portal/maintenance/test-lists) and [Test Schedules](/web-portal/maintenance/monitoring). This page covers the commands.
+
+## Run a group of tests
+
+```bash
+testsprite testlist create --name smoke --project-env <project-id>:staging
+testsprite testlist add <list-id> <test-id-1> <test-id-2>
+testsprite testlist run <list-id> --wait
+```
+
+`--project-env <project-id>:<env>` sets the environment that project's tests run in; repeat it for each project in the list. To run only part of the list, pass `--case <test-id>` to `testlist run`. A loopback environment opens a [tunnel](/cli/core/local-apps) automatically.
+
+## Run on a schedule
+
+```bash
+testsprite schedule create --name nightly --cron "0 3 * * *" \
+  --target-type testList --target-id <list-id>
+```
+
+To schedule a whole project, use `--target-type project --target-id <project-id>`. Without `--env`, a project schedule runs on the project's Default environment each time it fires; add `--env staging` to pin it. A test-list schedule uses the list's environments and rejects `--env`; change them with `testlist update --project-env`.
+
+`schedule create` prints the estimated credits per run. Schedules need a workspace plan that includes them (exit `13` otherwise).
+
+## Pause, change, or check a schedule
+
+```bash
+testsprite schedule update <schedule-id> --pause
+testsprite schedule update <schedule-id> --env staging
+testsprite schedule run list <schedule-id>
+```
+
+`--resume` turns a paused schedule back on. `schedule list` shows each schedule's environment: `staging (pinned)` or `project default (inherits)`.
+
+A schedule on a loopback environment can't reach your machine from the cloud. Its runs are recorded as <kbd>blocked</kbd> and not charged (`failureKind: network`); run the tests with `test run --local <port>` instead.
+
+For every flag, see [Command Reference](/cli/reference/command-reference).

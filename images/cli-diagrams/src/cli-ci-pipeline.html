@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --color-paper: #F9FCF9; --color-ink: #1D2420; --color-muted: #4B5A51; --color-accent: #2A7A3B; }
+body { background: var(--color-paper); color: var(--color-ink); font-family: 'OpenSauceTwo', system-ui, sans-serif; padding: 2rem; }
+.diagram-container { width: 100%; max-width: 560px; margin: 0 auto; overflow-x: auto; }
+svg { width: 100%; min-width: 560px; display: block; }
+@media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+</style>
+</head>
+<body>
+<div class="diagram-container">
+<svg viewBox="0 0 560 508" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cli-ci-pipeline-title cli-ci-pipeline-desc">
+<title id="cli-ci-pipeline-title">CI pipeline</title>
+<desc id="cli-ci-pipeline-desc">A CI job authenticates with a repo secret, optionally runs doctor, runs all tests, and the exit code decides whether the job passes or fails.</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4B5A51"/></marker>
+<marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2A7A3B"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#F9FCF9"/>
+<path d="M134 80 V120" fill="none" stroke="#4B5A51" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M134 176 V216" fill="none" stroke="#4B5A51" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M134 272 V312" fill="none" stroke="#4B5A51" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M244 244 H304" fill="none" stroke="#4B5A51" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M214 352 H304" fill="none" stroke="#4B5A51" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M420 380 V428" fill="none" stroke="#4B5A51" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M134 392 V428" fill="none" stroke="#2A7A3B" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+<text x="150" y="104" fill="#5E6B63" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.12em">OPTIONAL</text>
+<text x="259" y="342" fill="#4B5A51" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">NON-ZERO</text>
+<text x="146" y="415" fill="#2A7A3B" font-size="12" font-weight="500" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">0</text>
+<rect x="24" y="24" width="220" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="24" y="24" width="220" height="56" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1"/>
+<text x="134.0" y="48" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">API key secret</text>
+<text x="134.0" y="66" fill="#4B5A51" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">TESTSPRITE_API_KEY</text>
+<rect x="24" y="120" width="220" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="24" y="120" width="220" height="56" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="134.0" y="144" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Preflight check</text>
+<text x="134.0" y="162" fill="#4B5A51" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">testsprite doctor</text>
+<rect x="24" y="216" width="220" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="24" y="216" width="220" height="56" rx="6" fill="rgba(84,179,101,0.12)" stroke="#2A7A3B" stroke-width="1.5"/>
+<text x="134.0" y="240" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Run all tests</text>
+<text x="134.0" y="258" fill="#4B5A51" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">test run --all --wait</text>
+<rect x="304" y="216" width="232" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="304" y="216" width="232" height="56" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1"/>
+<text x="420.0" y="240" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Report, annotations</text>
+<text x="420.0" y="258" fill="#4B5A51" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">result.json</text>
+<polygon points="134,312 214,352 134,392 54,352" fill="#F9FCF9"/>
+<polygon points="134,312 214,352 134,392 54,352" fill="#FFFFFF" stroke="#1D2420" stroke-width="1"/>
+<text x="134" y="357" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Exit code</text>
+<rect x="304" y="324" width="232" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="304" y="324" width="232" height="56" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1"/>
+<text x="420.0" y="357.0" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Job fails</text>
+<rect x="304" y="428" width="232" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="304" y="428" width="232" height="56" rx="6" fill="#FFFFFF" stroke="#1D2420" stroke-width="1"/>
+<text x="420.0" y="452" fill="#1D2420" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Failure bundles</text>
+<text x="420.0" y="470" fill="#4B5A51" font-size="13" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">as artifacts</text>
+<rect x="24" y="428" width="220" height="56" rx="6" fill="#F9FCF9"/>
+<rect x="24" y="428" width="220" height="56" rx="6" fill="rgba(84,179,101,0.12)" stroke="#2A7A3B" stroke-width="1.5"/>
+<text x="134.0" y="461.0" fill="#2A7A3B" font-size="15.5" font-weight="600" font-family="'OpenSauceTwo', system-ui, sans-serif" text-anchor="middle">Job passes</text>
+</svg>
+</div>
+</body>
+</html>

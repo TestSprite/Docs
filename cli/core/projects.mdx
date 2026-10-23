@@ -1,57 +1,23 @@
 ---
 title: "Projects"
 description: "List, inspect, create, and update the typed (frontend or backend) projects that hold your tests."
-icon: "folder-open"
 ---
 
-A **project** is the top-level container in TestSprite. It carries a name, a type (<kbd>frontend</kbd> or <kbd>backend</kbd>), and — for frontend projects — a target URL that TestSprite opens when it runs your tests. Every test belongs to exactly one project, identified by its `projectId`.
+A **project** is the top-level container: a name, a type (<kbd>frontend</kbd> or <kbd>backend</kbd>), and named [environments](/cli/core/environments) with the URLs TestSprite opens. Every test belongs to one project. Projects are shared with the Web Portal.
 
-<Note>
-Projects created or updated through the CLI are immediately visible in the Web Portal, and vice versa. All surfaces share the same data.
-</Note>
-
-## Listing projects
+## Listing and getting projects
 
 ```bash
 testsprite project list
-```
-
-Text output is a table with five columns:
-
-```text
-ID              NAME               TYPE       FROM     CREATED
-proj_8f0f6      Checkout App       frontend   cli      2026-05-10
-proj_a3c12      Orders API         backend    portal   2026-04-22
-```
-
-| Flag | Description |
-| :--- | :--- |
-| `--page-size <n>` | Number of results per page (1–100, default 25) |
-| `--starting-token <token>` | Opaque cursor from a previous response to fetch the next page |
-| `--max-items <n>` | Stop after this many total items across auto-paged requests |
-
-When there are more results, the CLI appends a `nextToken` line to the text output. Pass that value as `--starting-token` on the next call to continue.
-
-```bash
-testsprite project list --page-size 10 --starting-token eyJsYXN...
-```
-
-## Getting a project
-
-```bash
 testsprite project get <project-id>
 ```
 
-Text output:
-
 ```text
-id          proj_8f0f6
-name        Checkout App
-type        frontend
-createdFrom cli
-createdAt   2026-05-10T14:32:00Z
-updatedAt   2026-05-11T09:15:00Z
+ID              NAME               TYPE       FROM     CREATED      DEFAULT ENV   ENVS
+proj_8f0f6      Checkout App       frontend   cli      2026-05-10   Default       2
 ```
+
+`project get` prints the same fields plus the default environment and environment count. `--page-size <n>` (1–100, default 25), `--starting-token <token>` (the `nextToken` printed under a full page) and `--max-items <n>` page through results.
 
 ## Creating a project
 
@@ -61,33 +27,26 @@ testsprite project create --type frontend --name "Checkout App" --url https://ap
 
 | Flag | Description |
 | :--- | :--- |
-| `--type <frontend\|backend>` | **Required.** Project type |
-| `--name <name>` | **Required.** Display name for the project |
-| `--url <url>` | **Required for frontend.** Target URL — must be a public `http://` or `https://` address. Localhost and private IP ranges are not accepted |
-| `--username <user>` | Optional basic-auth username for the target URL |
-| `--password <pw>` | Optional basic-auth password (prefer `--password-file` in scripts) |
-| `--password-file <path>` | Read the password from a file — safer than inline for non-interactive use |
-| `--instruction <text>` | Optional hint passed to the frontend plan-generation step |
-| `--idempotency-key <token>` | Defaults to a UUIDv4 per invocation; pin a stable value for safe retries |
-
-**Frontend project example:**
-
-```bash
-testsprite project create \
-  --type frontend \
-  --name "Checkout App" \
-  --url https://app.example.com \
-  --instruction "Focus on the cart and payment pages"
-```
-
-**Backend project example:**
+| `--type <frontend\|backend>` | **Required.** |
+| `--name <name>` | **Required.** |
+| `--url <url>` | Required for frontend unless `--local`. For backend, the base URL of the API under test. Public `http(s)`, or a loopback `http` origin with an explicit port and no path (frontend only). Excludes `--local` |
+| `--local <port>` | Local-only frontend project: stores `http://localhost:<port>`. Runs open a tunnel automatically |
+| `--skip-preflight` | Skip the listener check before local creation |
+| `--username <user>`, `--password <pw>` / `--password-file <path>` | Basic-auth credentials for the target URL (prefer the file in scripts) |
+| `--instruction <text>` | Hint for frontend plan generation |
+| `--test-id-attributes <list>` | DOM attributes the engine prefers as locators, highest priority first (`data-element,data-testid`) |
+| `--idempotency-key <token>` | Pin a stable value for safe retries |
 
 ```bash
-testsprite project create --type backend --name "Orders API"
+testsprite project create --type frontend --name "Local App" --local 3000
 ```
+
+For local apps, see [Test an app on your machine](/cli/core/local-apps). If `project create --local` exits `7` (`local-origin-requires-v3`), your account is not on the current project platform yet: create the project in the Portal or with `--url`.
+
+A backend project can be created without `--url`, but on the V3 execution path its first run fails with exit `5` (`no-target-resolvable`) until you run `testsprite project update <project-id> --url <url>`. Check your routing with `testsprite auth status`.
 
 <Warning>
-`--url` must be a public `http(s)` address — `localhost` and private IPs are rejected before any network call. To test a local app, use the [MCP Server](/mcp/getting-started/introduction); see [Common Issues](/cli/troubleshooting/common-issues) if a URL is rejected.
+Outside loopback, `--url` must be a public `http(s)` address; private IPs are refused, and the backend also checks DNS. Backend tests and `test rerun` cannot tunnel. See [Common Issues](/cli/troubleshooting/common-issues) if a URL is rejected.
 </Warning>
 
 ## Updating a project
@@ -96,50 +55,32 @@ testsprite project create --type backend --name "Orders API"
 testsprite project update <project-id> --name "Checkout App v2"
 ```
 
-You must pass at least one mutable flag — an update with no changes exits with a validation error (exit 5).
+Pass at least one flag, or the command exits `5`. It accepts the same flags as create (`--name`, `--url`, `--local`, `--skip-preflight`, `--username`, `--password`, `--password-file`, `--instruction`, `--test-id-attributes`, `--idempotency-key`) plus `--clear-test-id-attributes`, which removes the list so the engine falls back to `data-testid`; `--test-id-attributes` replaces it. `--local` is frontend only; some older projects cannot be switched and exit `7` (`local-origin-requires-native-project`), so create a new project with `--local`.
 
-| Flag | Description |
-| :--- | :--- |
-| `--name <name>` | New display name |
-| `--url <url>` | New target URL (frontend only; same public-URL rules as create) |
-| `--username <user>` | Updated basic-auth username |
-| `--password <pw>` | Updated password (prefer `--password-file`) |
-| `--password-file <path>` | Read updated password from a file |
-| `--instruction <text>` | Updated plan-generation hint |
-| `--idempotency-key <token>` | Pin for safe retries |
+For separate deployment targets, use named [environments](/cli/core/environments) (`project env create`, `--env`, `--target-url`), which also cover plan limits.
 
 ## Backend test credentials
 
-Backend projects can inject auth into every backend test run, either as a static credential or as a recurring, auto-refreshed token:
+Inject auth into every backend test run, either a static credential or an auto-refreshed token:
 
 ```bash
-# Static credential (free tier) — Bearer token, API key, or Basic auth
 testsprite project credential <project-id> --type "Bearer token" --credential-file ./token.txt
 
-# Recurring-token auto-refresh login — fetches a fresh token on every run
 testsprite project auto-auth <project-id> --method refresh_token --inject bearer \
   --token-endpoint https://auth.example.com/oauth/token \
   --client-id my-client-id --client-secret-file ./client-secret.txt \
   --refresh-token-file ./refresh-token.txt
 ```
 
-<Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code" horizontal>
-  Full flag reference for `project credential` and `project auto-auth`
-</Card>
+See the [Command Reference](/cli/reference/command-reference) for all flags.
 
 ## Where to Go Next
 
 <Columns cols={2}>
   <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
-    Author a frontend plan or backend code file inside a project
-  </Card>
-  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
-    Project, test, run — definitions and relationships
+    Author a frontend plan or backend code file
   </Card>
   <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
     Trigger runs and poll for verdicts
-  </Card>
-  <Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code">
-    Full flag listing for every command
   </Card>
 </Columns>

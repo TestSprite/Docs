@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment resolution</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --color-paper: #181818; --color-ink: #F2F5F3; --color-muted: #B7C2BB; --color-accent: #54B365; }
+    body { background: var(--color-paper); color: var(--color-ink); padding: 2rem; font-family: 'OpenSauceTwo', system-ui, sans-serif; }
+    .frame { max-width: 560px; width: 100%; min-width: 0; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    svg { width: 100%; min-width: 560px; display: block; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="diagram-container">
+      <svg viewBox="0 0 560 648" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cli-environment-resolution-dark-title cli-environment-resolution-dark-desc">
+        <title id="cli-environment-resolution-dark-title">Environment resolution</title>
+        <desc id="cli-environment-resolution-dark-desc">Decision flow: a --target-url or --local run uses the environment at that origin or a hidden temporary one; otherwise --env or the project Default. A loopback origin opens a tunnel and waits, unless --no-wait, which is refused with exit 6.</desc>
+        <defs>
+          <marker id="ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#B7C2BB"/></marker>
+          <marker id="ar-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#54B365"/></marker>
+        </defs>
+        <rect width="100%" height="100%" fill="#181818"/>
+        <path d="M280 56 V84" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M140 126 H108 Q100 126 100 134 V204" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M420 126 H452 Q460 126 460 134 V204" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M144 288 V302 Q144 310 152 310 H280" fill="none" stroke="#B7C2BB" stroke-width="1.4"/>
+        <path d="M416 288 V302 Q416 310 408 310 H280" fill="none" stroke="#B7C2BB" stroke-width="1.4"/>
+        <path d="M280 310 V334" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M195 372 H150" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M280 410 V450" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M195 482 H152 Q144 482 144 490 V548" fill="none" stroke="#B7C2BB" stroke-width="1.4" marker-end="url(#ar)"/>
+        <path d="M365 482 H408 Q416 482 416 490 V548" fill="none" stroke="#54B365" stroke-width="1.4" marker-end="url(#ar-acc)"/>
+        <circle cx="280" cy="310" r="4" fill="#F2F5F3"/>
+        <rect x="85.0" y="159" width="30" height="16" rx="2" fill="#181818"/>
+        <text x="100" y="172" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#B7C2BB">NO</text>
+        <rect x="441.0" y="159" width="38" height="16" rx="2" fill="#181818"/>
+        <text x="460" y="172" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#B7C2BB">YES</text>
+        <text x="172" y="364" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#B7C2BB">NO</text>
+        <rect x="261.0" y="421" width="38" height="16" rx="2" fill="#181818"/>
+        <text x="280" y="434" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#B7C2BB">YES</text>
+        <rect x="125.0" y="511" width="38" height="16" rx="2" fill="#181818"/>
+        <text x="144" y="524" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#B7C2BB">YES</text>
+        <rect x="401.0" y="511" width="30" height="16" rx="2" fill="#181818"/>
+        <text x="416" y="524" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#54B365">NO</text>
+        <rect x="135" y="16" width="290" height="40" rx="20" fill="#181818"/>
+        <rect x="135" y="16" width="290" height="40" rx="20" fill="rgba(242,245,243,0.06)" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="280.0" y="41.0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="500" fill="#F2F5F3">test run / rerun / create --run</text>
+        <polygon points="280,84 420,126 280,168 140,126" fill="#181818"/>
+        <polygon points="280,84 420,126 280,168 140,126" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="280" y="121.5" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="500" fill="#F2F5F3">--target-url or</text>
+        <text x="280" y="139.5" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="500" fill="#F2F5F3">--local given?</text>
+        <rect x="16" y="204" width="256" height="84" rx="6" fill="#181818"/>
+        <rect x="16" y="204" width="256" height="84" rx="6" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="144.0" y="241.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">Chosen environment</text>
+        <text x="144.0" y="261.0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="#B7C2BB">--env, else project Default</text>
+        <rect x="288" y="204" width="256" height="84" rx="6" fill="#181818"/>
+        <rect x="288" y="204" width="256" height="84" rx="6" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="416.0" y="231.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">Environment at that origin,</text>
+        <text x="416.0" y="251.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">else a hidden temporary one</text>
+        <text x="416.0" y="271.0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="#B7C2BB">sign-in: --env, else Default</text>
+        <polygon points="280,334 365,372 280,410 195,372" fill="#181818"/>
+        <polygon points="280,334 365,372 280,410 195,372" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="280" y="367.5" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="500" fill="#F2F5F3">Origin is</text>
+        <text x="280" y="385.5" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="500" fill="#F2F5F3">loopback?</text>
+        <rect x="16" y="344" width="134" height="56" rx="6" fill="#181818"/>
+        <rect x="16" y="344" width="134" height="56" rx="6" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="83.0" y="367.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">Run in</text>
+        <text x="83.0" y="387.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">the cloud</text>
+        <polygon points="280,450 365,482 280,514 195,482" fill="#181818"/>
+        <polygon points="280,450 365,482 280,514 195,482" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="280" y="486.5" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="500" fill="#F2F5F3">--no-wait?</text>
+        <rect x="16" y="548" width="256" height="84" rx="6" fill="#181818"/>
+        <rect x="16" y="548" width="256" height="84" rx="6" fill="#222522" stroke="#F2F5F3" stroke-width="1.2"/>
+        <text x="144.0" y="585.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">Refused before charge</text>
+        <text x="144.0" y="605.0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="#B7C2BB">exit 6 tunnel-required</text>
+        <rect x="288" y="548" width="256" height="84" rx="6" fill="#181818"/>
+        <rect x="288" y="548" width="256" height="84" rx="6" fill="rgba(84,179,101,0.14)" stroke="#54B365" stroke-width="1.2"/>
+        <text x="416.0" y="575.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">CLI opens a tunnel,</text>
+        <text x="416.0" y="595.0" text-anchor="middle" font-family="'OpenSauceTwo',system-ui,sans-serif" font-size="15.5" font-weight="600" fill="#F2F5F3">waits for the verdict</text>
+        <text x="416.0" y="615.0" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="#B7C2BB">closes it on exit</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

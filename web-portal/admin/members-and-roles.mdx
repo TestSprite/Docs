@@ -1,7 +1,6 @@
 ---
 title: "Members & Roles"
-description: "The four workspace roles and what each can do, how to invite teammates by email or link, and how to change roles or remove members."
-icon: "user-plus"
+description: "The four workspace roles and what each can do, how to invite teammates with an invitation link, and how to change roles or remove members."
 ---
 
 ## The Four Roles
@@ -12,37 +11,41 @@ icon: "user-plus"
 
 Every member of a workspace has exactly one role. Roles are per-workspace — the same person can be an Admin in one workspace and a Viewer in another.
 
-| Role | In one line | Takes a paid seat? |
-| :--- | :--- | :--- |
-| **Owner** | The workspace's creator. Everything Admins can do, plus plan changes and deleting the workspace. One per workspace; the Owner can transfer it to another member. | Yes (covered at creation) |
-| **Admin** | Manages the team and the day-to-day: invites and removes members, changes roles, connects integrations, buys credits. | Yes |
-| **Member** | Does the testing: creates projects, generates and edits tests, runs them. No people or billing management. | Yes |
-| **Viewer** | Read-only. Opens every project, report, and recording — changes nothing. Free on every plan. | No — free |
+| Role | What they do |
+| :--- | :--- |
+| **Owner** | Owns the workspace: everything an Admin can do, plus changing the plan, transferring ownership, and deleting the workspace. One per workspace — whoever created it, or the person it was transferred to. |
+| **Admin** | Manages the team and the day-to-day: invites and removes members, changes roles, connects integrations, buys credits. |
+| **Member** | Does the testing: creates projects, generates and edits tests, runs them. No people or billing management. |
+| **Viewer** | Read-only. Opens every project, report, and recording — changes nothing. |
+
+Seats follow the plan, not the role. On a paid plan, the Owner, Admins, and Members each hold a paid seat, billed to the Owner; the subscription starts with the Owner's seat, and each invitation adds one. Viewers are free on every plan. A Free workspace has no paid seats at all: it is the Owner plus Viewers, which is why Member and Admin need Starter or higher.
 
 ### Permission matrix
 
 | Can they… | Viewer | Member | Admin | Owner |
 | :--- | :-: | :-: | :-: | :-: |
 | Open projects, reports, recordings | ✅ | ✅ | ✅ | ✅ |
+| See the workspace's credit balance | ✅ | ✅ | ✅ | ✅ |
 | Create / edit / run / delete tests and projects | ❌ | ✅ | ✅ | ✅ |
-| Mint and manage API keys | ❌ | ✅ | ✅ | ✅ |
-| See workspace credit balance and own usage | ✅ (view) | ✅ | ✅ | ✅ |
-| Invite members, cancel invitations | ❌ | ❌ | ✅ | ✅ |
+| Mint API keys and manage their own | ❌ | ✅ | ✅ | ✅ |
+| See and revoke every member's API keys | ❌ | ❌ | ✅ | ✅ |
+| Invite members, copy or revoke invitation links | ❌ | ❌ | ✅ | ✅ |
 | Change a member's role, remove a member | ❌ | ❌ | ✅ | ✅ |
 | Rename the workspace | ❌ | ❌ | ✅ | ✅ |
 | Connect / disconnect integrations (GitHub, Slack, Jira…) | ❌ | ❌ | ✅ | ✅ |
-| Buy credit top-ups, view invoices and usage breakdowns | ❌ | ❌ | ✅ | ✅ |
-| Change the plan, open the Stripe billing portal | ❌ | ❌ | ❌ | ✅ |
+| Buy extra credits, view usage breakdowns and invoices | ❌ | ❌ | ✅ | ✅ |
+| Change the plan, manage the subscription and payment method | ❌ | ❌ | ❌ | ✅ |
+| Transfer ownership | ❌ | ❌ | ❌ | ✅ |
 | Delete the workspace | ❌ | ❌ | ❌ | ✅ |
-| Leave the workspace | ✅ | ✅ | ✅ | ❌ (delete instead) |
+| Leave the workspace | ✅ | ✅ | ✅ | ❌ (transfer or delete instead) |
 
 <Note>
-A Viewer who tries to change anything sees a "Viewer is a read-only role" message. Viewers are the right way to loop in a PM, a manager, or a client who needs to see results but shouldn't touch tests.
+A Viewer who opens a create or edit page sees a **Read-only access** notice instead, and the API Keys and Billing entries are hidden from them. Viewers are the right way to loop in a PM, a manager, or a client who needs to see results but shouldn't touch tests.
 </Note>
 
 ## Inviting Someone
 
-Invitations live in <kbd>Workspace Settings → Members</kbd>, or use the <kbd>Invite members</kbd> shortcut in the workspace switcher.
+Invitations live in <kbd>Workspace Settings → Members</kbd>, or use the <kbd>Invite members</kbd> shortcut in the workspace switcher. Both are for Admins and the Owner.
 
 <Frame>
   <img src="../../images/member-invite.png" alt="The Invite Members button at the top right of Settings → Members" />
@@ -50,36 +53,39 @@ Invitations live in <kbd>Workspace Settings → Members</kbd>, or use the <kbd>I
 
 <Steps>
   <Step title="Enter their email and pick a role">
-    Invitations are sent to one email address at a time. Pick the role next to the email field — **Member** is the sensible default for a teammate who'll work on tests; pick **Viewer** for someone who only needs to see results.
+    An invitation is for one email address at a time. The role picker appears once you've typed an address — **Member** is the sensible default for a teammate who'll work on tests; pick **Viewer** for someone who only needs to see results. In a Free workspace only Viewer can be picked; Member and Admin are greyed out with <kbd>Starter and up</kbd>.
     <Frame>
       <img src="../../images/member-email.png" alt="Invite members dialog — email field with the role picker open on Admin, Member, and Viewer (free)" />
     </Frame>
   </Step>
   <Step title="Confirm the seat (paid roles only)">
-    Admin and Member invitations add a paid seat, which you confirm before the invitation is sent. **Viewer invitations skip this step entirely: viewer seats are free.**
+    Admin and Member invitations take a paid seat. If the workspace already has an unused seat this cycle, the invitation is created right away. Otherwise a <kbd>Confirm changes</kbd> summary shows the prorated amount, <kbd>Continue to Payment</kbd> takes you to Stripe, and the invitation appears under pending invitations as soon as the payment goes through. **Viewer invitations skip this step entirely: viewer seats are free.**
   </Step>
-  <Step title="They accept — by email or link">
-    The invitee gets an email with an accept link. You can also copy the same link from the confirmation toast and send it in Slack or a DM, useful when the email lands in spam.
+  <Step title="Send them the link">
+    TestSprite doesn't email invitations. Clicking <kbd>Create invitation link</kbd> opens an **Invitation link ready** dialog with the link; copy it and send it yourself, in Slack, a DM, or your own email. You can also copy it later from the pending row in the roster (<kbd>Copy invitation link</kbd>).
 
-    Either way, the invitation is **bound to the invited email address**: the recipient must sign in with that exact email to accept. Invitations expire after **7 days**; re-inviting the same address replaces the earlier pending invite.
+    The link is **bound to the invited email address**: the recipient must sign in with that exact email to accept, then click <kbd>Join workspace</kbd>. Links expire after **7 days**; the roster shows the time left on each pending invitation. If a link expires or is lost, use <kbd>New invitation link</kbd> on that row — the old one stops working.
   </Step>
 </Steps>
 
 <AccordionGroup>
   <Accordion title="What if they're already in the workspace?">
-    Inviting an existing member at a *higher* role promotes them when they accept. Inviting them at the same or a lower role changes nothing. The dialog warns you before sending if the address already belongs to a member or has a pending invitation.
+    The dialog refuses the address with "already a member of this workspace" or "already has a pending invitation". To change an existing member's role, use the roster instead; for someone who hasn't accepted yet, copy the link again from their pending row, or issue a fresh one with <kbd>New invitation link</kbd>.
   </Accordion>
   <Accordion title="Can I invite someone as Owner?">
-    No. Ownership can't be assigned by invitation or role change. The current Owner can transfer it instead, from the member's row menu in the roster (<kbd>Transfer ownership</kbd>).
+    No. Ownership can't be assigned by invitation or role change. The current Owner can transfer it to an Admin or Member from that person's row menu in the roster (<kbd>Transfer ownership</kbd>); you type their email to confirm and become an Admin yourself. The default workspace, the one created at signup, can't be transferred.
   </Accordion>
-  <Accordion title="Why can't I invite anyone in my personal workspace?">
-    Personal workspaces support **Viewers only** — read-only guests are free and need no subscription. To collaborate with people who can actually edit and run tests, create a team workspace.
+  <Accordion title="Is there a limit on Viewers?">
+    Yes, per plan: 10 on Free, 25 on Starter, 50 on Standard, 100 on Pro, unlimited on Enterprise. Pending Viewer invitations count toward it. Past the cap, inviting fails with "Viewer limit reached" until you revoke an invitation, remove a Viewer, or upgrade.
+  </Accordion>
+  <Accordion title="Why are Member and Admin greyed out?">
+    The workspace is on the Free plan, which supports **Viewers only** — read-only guests are free and need no subscription. Member and Admin seats need Starter or higher: the Owner can upgrade from <kbd>Settings → Plan</kbd>, or create a new workspace on a paid plan.
   </Accordion>
 </AccordionGroup>
 
 ## Changing a Member's Role
 
-Admins and the Owner can change any member's role from the roster in <kbd>Workspace Settings → Members</kbd>, except the Owner's, which is fixed.
+Admins and the Owner can change any member's role from the <kbd>Role</kbd> dropdown in <kbd>Workspace Settings → Members</kbd>, except the Owner's, which is fixed. In a Free workspace there is nothing to change: everyone besides the Owner is a Viewer, and promoting someone needs a paid plan.
 
 <Frame>
   <img src="../../images/member-change.png" alt="The Role column in the roster — a dropdown on each row, and plain text for the Owner" />
@@ -87,8 +93,8 @@ Admins and the Owner can change any member's role from the roster in <kbd>Worksp
 
 Switching between Admin and Member is immediate and free. Crossing the Viewer boundary moves a seat too:
 
-- **Member/Admin → Viewer** frees their paid seat.
-- **Viewer → Member/Admin** needs a paid seat first. If an empty paid seat exists it's used automatically; otherwise you confirm adding one, and the role changes once that's done.
+- **Member/Admin → Viewer** frees their paid seat after you confirm. The freed seat stays usable until the end of the current billing cycle.
+- **Viewer → Member/Admin** needs a paid seat first. If an empty paid seat exists it's used automatically; otherwise you pay for one on Stripe, and the role changes once that's done.
 
 ## Removing a Member — and Leaving
 
@@ -96,8 +102,8 @@ Switching between Admin and Member is immediate and free. Crossing the Viewer bo
   <img src="../../images/member-remove.png" alt="A roster row's overflow menu open on Remove Member" />
 </Frame>
 
-- **Admins and the Owner** can remove anyone except the Owner, from the roster's row menu. Removal takes effect immediately: the person loses access, and any API keys they minted in this workspace stop working.
-- **Anyone can remove themselves** — leaving a workspace is always allowed, whatever your role. You're switched back to your personal workspace afterward.
+- **Admins and the Owner** can remove anyone except the Owner, from the roster's row menu. Removal takes effect immediately: the person loses access, and any API keys they minted in this workspace stop working. A paid seat stays paid through the current cycle and stops billing from the next one.
+- **Anyone except the Owner can leave** — use <kbd>Leave Workspace</kbd> on your own row, whatever your role. Afterwards, pick another workspace from the switcher; your default workspace is always there.
 - **The Owner can't leave or be removed.** To step away, the Owner transfers ownership first (becoming an Admin), or deletes the workspace.
 
 
@@ -105,7 +111,7 @@ Switching between Admin and Member is immediate and free. Crossing the Viewer bo
 
 <Columns cols={2}>
   <Card title="Workspaces" href="/web-portal/admin/workspaces" icon="users">
-    Personal vs. team workspaces, switching, and deletion
+    Free vs. paid workspaces, switching, and deletion
   </Card>
   <Card title="Sharing a Project" href="/web-portal/admin/sharing" icon="share-nodes">
     The fast path for showing one project to someone new

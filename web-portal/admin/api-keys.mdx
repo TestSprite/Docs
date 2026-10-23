@@ -1,41 +1,31 @@
 ---
 title: "API Keys"
-description: "The two kinds of TestSprite API keys — personal and workspace — what each is bound to, and how to create, expire, and revoke them."
-icon: "key"
+description: "What a TestSprite API key is bound to, and how to create, expire, and revoke one."
 ---
 
 <Frame>
   <img src="../../images/apikey-overview.png" alt="The API Keys table — Name, API Key, Last Used, Created At, Expires, and a revoke icon per row" />
 </Frame>
 
-## Two Kinds of API Keys
+## How API Keys Work
 
-An API key authenticates the CLI and the MCP Server as you. Two kinds exist:
+An API key signs the CLI and the MCP Server in as you, inside one workspace. You mint it from that workspace's API Keys page, and it is tied to your membership there: anything the CLI or MCP Server creates with it belongs to that workspace and draws on that workspace's balance. To work in another workspace, mint a key there.
 
-| | Personal key | Workspace key |
-| :--- | :--- | :--- |
-| **Prefix** | `sk-user-` | `sk-member-` |
-| **How you get one** | Not mintable today — this is the original key kind, from before workspace keys existed | Click **New API Key** on any workspace's API Keys page, including your personal workspace's |
-| **Bound to** | You — not to any workspace, so it behaves the same wherever it was created | The workspace whose page minted it |
-| **Where it's listed** | Your personal workspace's API Keys page | That workspace's API Keys page |
-| **Draws on** | Your personal balance | That workspace's balance |
-| **What it creates** | Lands in your personal workspace | Belongs to that workspace |
-| **Active-key cap** | 3 active | 2 active per member, per workspace |
-| **Revoking** | Revokes it everywhere — it was never workspace-scoped | Revokes that key only; you can mint another for the same workspace |
+Keys are for Members and above; a [Viewer](/web-portal/admin/members-and-roles) is read-only and can't hold one. A key stops working when you leave or are removed from the workspace, and none can be minted while the workspace is paused. You can have **2 active keys per workspace**, so you can rotate one while the other stays in use — past that, revoke one first. Revoking is immediate.
 
-If you already have a personal key, it keeps working as before. The two active workspace keys let you rotate one while the other stays in use; going over a cap fails until you revoke a key, and revoking is immediate.
-
-API keys are available to Members and above. A [Viewer](/web-portal/admin/members-and-roles) is read-only and can't mint or hold keys in that workspace.
+<Note>
+Keys that start with `sk-user-` are from before workspace keys existed. They keep working, always act in your default workspace, and are listed on its API Keys page, where you can revoke them.
+</Note>
 
 ## Creating a Key
 
-Go to <kbd>Workspace Settings > Connections > API Keys</kbd> in the workspace that should own the key and click <kbd>New API Key</kbd>. The key is bound to that workspace, including your personal workspace if that's the page you were on.
+Go to <kbd>Workspace Settings → Connections → API Keys</kbd> in the workspace the key should belong to and click <kbd>New API Key</kbd>.
 
 <Frame>
   <img src="../../images/apikey-create.png" alt="Settings → API Keys with the New API Key button" />
 </Frame>
 
-Give it a **descriptive name** (e.g., "MCP Integration") and optionally an expiration. Without one the key doesn't expire, unless the workspace enforces a maximum lifetime: then a longer expiry is rejected, and a key created without one gets that maximum. Click <kbd>Create</kbd>, then copy the key right away.
+Give it a **descriptive name** (e.g., "MCP Integration") and pick an expiration: no expiry, or 30, 90, or 365 days. Without one the key doesn't expire, unless the workspace enforces a maximum lifetime: then a longer expiry is rejected, and a key created without one gets that maximum. Click <kbd>Create</kbd>, then copy the key right away.
 
 <Warning>
   Store it securely. The full key is shown only once, at creation.
@@ -50,11 +40,12 @@ Give it a **descriptive name** (e.g., "MCP Integration") and optionally an expir
 | Field | Description |
 | :--- | :--- |
 | <kbd>Name</kbd> | Descriptive identifier |
-| <kbd>API Key</kbd> | Partially hidden. A personal key shows its first and last few characters (`sk-user-abcde...vwxyz`); a workspace key shows only its leading characters (`sk-member-ab...`), because the rest is never stored in a readable form |
+| <kbd>API Key</kbd> | Only the leading characters (`sk-member-abcdef…`); the rest is never stored in a readable form |
+| <kbd>Last Used</kbd> | When the key last authenticated a request |
 | <kbd>Created At</kbd> | When generated |
-| <kbd>Expires</kbd> | The expiration set at creation, if any |
+| <kbd>Expires</kbd> | The expiration set at creation, or "Never" |
 
-<kbd>Revoke</kbd> disables a key immediately; requests using it are rejected.
+<kbd>Revoke</kbd> disables a key immediately; requests using it are rejected. Members see and revoke their own keys; Admins and the Owner see every member's keys in the workspace and can revoke any of them.
 
 ## Viewing MCP Test Results
 
@@ -86,7 +77,7 @@ Click a project to see its execution logs, per-test results, errors, and perform
 
 <CardGroup cols={2}>
   <Card title="Workspaces" icon="users" href="/web-portal/admin/workspaces">
-    What a workspace is and how personal vs. shared workspaces differ
+    What a workspace is, plans, and pausing
   </Card>
   <Card title="CLI Quickstart" icon="terminal" href="/cli/getting-started/quickstart">
     Use your key with the TestSprite CLI

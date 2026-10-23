@@ -1,0 +1,125 @@
+---
+title: "Testing Local Apps"
+description: "Run frontend tests against an app on your machine through an automatic tunnel."
+---
+
+An app on your machine is an [environment](/cli/core/environments) whose origin is a loopback address. Runs against it open a TestSprite tunnel from the cloud browser to your loopback interface automatically; `--local <port>` is the ad-hoc shorthand for one run. Local testing is frontend only and uses the agent path, not saved-code replay.
+
+An environment is local when its URL is `http://localhost:<port>`, `http://127.0.0.1:<port>`, or `http://[::1]:<port>`: `http`, explicit port, no path. `localhost` and `127.0.0.1` are different environments. `https` loopback and other private addresses are refused.
+
+```bash
+testsprite project env create <project-id> --name local-dev --url http://localhost:3000
+testsprite test run <test-id> --env local-dev
+testsprite test run <test-id>                  # Default environment is loopback
+```
+
+A named local environment needs a plan with several environments; otherwise use `project update --url` or `--local <port>`.
+
+**Prerequisites:** Node.js `^20.19.0 || ^22.13.0 || >=24`; an API key with `run:tunnel` ([Authentication](/cli/core/authentication#scopes)); your app running.
+
+## Automatic tunnel
+
+When a run resolves to a loopback environment, the CLI opens the tunnel for you (CLI 0.14.0 or newer). This applies to `test run` (one, several, or `--all`), `test rerun`, `test create --run`, `test create-batch --run`, and `testlist run`.
+
+- The CLI probes the port first (`--skip-preflight` skips it; nothing listening exits `5`), prints the tunnel client ID on stderr, always waits for the verdict, and closes the tunnel on exit. Batches share one tunnel. On Ctrl-C or timeout the run is cancelled and the tunnel closes; see [Cancelling a Run](/cli/core/cancelling-runs).
+- `--no-wait` turns the automatic tunnel off: the run is refused before dispatch, free, exit `6` (`tunnel-required`). The same happens if the CLI cannot read the project's environments (missing `read:projects` scope or a transient error).
+- OTP environments are refused for tunnel runs, before charge (HTTP `412`, `tunnel-otp-auth-unsupported`, exit `6`). Username/password environments log in inline through the tunnel.
+- Backend tests cannot use a tunnel: a single one is refused (exit `5`), a batch skips it.
+
+## `--local <port>`
+
+`--local <port>` is shorthand for `--url http://localhost:<port>` on one invocation. It implies `--wait`, uses a matching environment or a [temporary one](/cli/core/environments#ad-hoc-targets-and-temporary-environments), and does not change Default. The host comes from the run's environment if it is loopback, else the one saved loopback environment on that port, else `localhost` (`127.0.0.1` if the environment list is unreadable). `--local-host localhost|127.0.0.1|::1` overrides it on `test run`; it requires `--local`.
+
+`--target-url http://localhost:3000` is a loopback target and behaves like `--local 3000`; `--local` with `--target-url` exits `5`.
+
+## Several tests
+
+One invocation runs several frontend tests through **one tunnel binding**:
+
+```bash
+testsprite test run <test-id-1> <test-id-2> --env local-dev
+testsprite test run --all --project <project-id> --filter "checkout" --local 3000
+```
+
+- `--all` runs the project's frontend tests and skips backend tests; a batch with none runnable exits `5` unless `--allow-empty`. Tests start in listing order.
+- Up to **5 runs** execute at once; `--max-concurrency` accepts **1-10**.
+- `--timeout` is per run and starts when that run starts. The default is **600 seconds**, or **1200** through a tunnel (range 1-3600). A timed-out run keeps its `timeout` status and is cancelled if this command owns the tunnel; the others continue. The batch then exits `7`, unless an authentication, credits, conflict, rate-limit, or transport error takes precedence.
+- JSON shape: [Output and Scripting](/cli/reference/output-and-scripting).
+
+## Long-lived tunnels
+
+To reuse one tunnel across invocations, keep it open in terminal A (no port argument; `--ttl` is 60-28800 seconds):
+
+```bash
+testsprite tunnel start --ttl 3600
+```
+
+It prints the `clientId` and stays in the foreground. In terminal B:
+
+```bash
+testsprite test run <test-id> --local 3000 --tunnel-client <client-id>
+testsprite tunnel status <client-id>
+testsprite tunnel stop <client-id>
+```
+
+`--tunnel-client` adopts the tunnel without closing it: Ctrl-C or a timeout only detaches from the run. `tunnel stop` revokes the credential and terminal A exits `10`. A credential carries one connection: if another process connects with it, the newest wins and the earlier `tunnel start` exits `10`.
+
+## Tunnel limit
+
+Each user has **5 live tunnel bindings** by default, across all API keys; a batch uses one. At the limit the CLI exits `11`, lists the client IDs, and does not retry:
+
+```bash
+testsprite tunnel list
+testsprite tunnel stop <client-id>
+testsprite tunnel stop --all --confirm     # revokes every live binding, including other terminals and CI
+```
+
+`tunnel list` shows each binding as `online`, `offline`, or `unknown`. Bindings expire after **2 hours** by default.
+
+<Warning>
+Before refusing a new tunnel, TestSprite releases bindings that never carried traffic and stayed disconnected across two checks. That can revoke a `tunnel start` of yours that was offline (for example, a sleeping laptop); it then exits `10` and cannot reconnect. Stop idle tunnels yourself.
+</Warning>
+
+## A project for a local-only app
+
+```bash
+testsprite project create --type frontend --name "Local App" --local 3000
+testsprite test create --project <project-id> --plan-from plan.json
+testsprite test run <test-id>
+```
+
+`--local` stores `http://localhost:<port>` and marks the project local (frontend only; backend exits `5`). For another loopback spelling such as `127.0.0.1`, pass `--url http://127.0.0.1:3000` instead of `--local`; the two cannot be combined. If the CLI exits `7` with `local-origin-requires-v3`, your account is not on the current project platform yet; create the project from the Portal or with `--url`.
+
+Local projects have no plan generation: `test plan generate` is refused before any charge (`local-origin-project`, exit `6`), so write the plan yourself. The Portal shows local environments read-only and cannot run them. Schedules, Portal runs, and test-list runs from the cloud cannot reach your machine and produce a free BLOCKED result.
+
+To move to a deployment, run once with `--target-url https://app.example.com`, or change the Default's URL, which clears the local marker (plan generation works again; IDs and history are kept):
+
+```bash
+testsprite project update <project-id> --url https://app.example.com
+```
+
+On plans with several environments you can instead add a deployed one and `set-default` it.
+
+## Reading a failed local run
+
+A loopback run does not save the test's code, even when it passes. Without code from an earlier public run, `test failure get` and `test artifact get` exit `4` (`no_code`); a cancelled run exits `4` (`cancelled_no_artifacts`). Read the failure with:
+
+```bash
+testsprite test steps <test-id> --run-id <run-id>
+testsprite test result <test-id> --include-analysis
+testsprite test failure summary <test-id>
+```
+
+`--include-analysis` and `failure summary` describe the latest failing run; pin one with `test steps --run-id`. `test open <test-id> --no-browser` prints the Portal link.
+
+## Troubleshooting
+
+| Symptom | What to do |
+| :--- | :--- |
+| 403 / exit `3` opening a tunnel | The key lacks `run:tunnel`. |
+| `tunnel-offline` (exit `6`) | Keep `tunnel start` running; check `tunnel status <client-id>`. |
+| Exit `10`: tunnel service not configured, disconnected, or credential revoked/expired/taken over | Contact support for a service error; otherwise restore connectivity and start a new tunnel or run. |
+| `tunnel_binding_limit` (exit `11`) | See [Tunnel limit](#tunnel-limit). |
+| Timeouts or failed sign-in only through the tunnel | Dev servers that serve many unbundled modules (for example Vite in dev mode) can take a minute or more per page, which also breaks short-lived one-time codes. Test a production build instead, such as `vite build && vite preview` or `next build && next start`. |
+
+For every flag, see [Command Reference](/cli/reference/command-reference).
