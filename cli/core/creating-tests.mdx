@@ -7,11 +7,11 @@ Start with a behavior someone can observe. For example, a declined card should l
 
 ## Ask for frontend or API tests
 
-For a deployed web app, choose a [project environment](/cli/core/environments) the hosted agent can reach. It uses that environment's URL and sign-in throughout the conversation. Omit `--env` to use the project default.
+For a deployed web app, the hosted agent works on the project's default [environment](/cli/core/environments), with its URL and sign-in. To use another environment, name it in your request. The agent says which one it used.
 
 ```bash
 testsprite plan "Check that a declined card keeps the cart intact and shows the payment error" \
-  --project "$PROJECT_ID" --env staging --steps
+  --project "$PROJECT_ID" --steps
 ```
 
 For a backend project, attach the API specification and describe the responses you expect. Replace the example path with your spec.
@@ -31,7 +31,7 @@ testsprite plan "Cover order creation and rejection of a missing product ID" \
 testsprite status --wait --steps
 ```
 
-If the agent asks a question in a chat message, answer with `testsprite reply "your answer"`. For a question card, follow **Open in the portal** to submit your answers. Review the proposed actions and expected outcomes. To request a change, explain what the agent should revise.
+If the agent asks a question in a chat message, answer with `testsprite reply "your answer"`. For a question card, answer each question by its number, for example `testsprite apply --answer 1=b --answer 2=a,c`, or your own words in quotes. You can also answer it in the portal. Review the proposed actions and expected outcomes. To request a change, explain what the agent should revise.
 
 ```bash
 testsprite reject "Also check that the cart still contains the original items" --steps

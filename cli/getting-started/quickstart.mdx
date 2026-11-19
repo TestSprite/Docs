@@ -40,11 +40,11 @@ The example assumes a publicly reachable checkout. For a test account, see [Envi
 
 ## Request and review a plan
 
-Ask the project's TestSprite agent to propose one test. `--env staging` selects the environment for this conversation. `--steps` shows what the proposed test would do and assert.
+Ask the project's TestSprite agent to propose one test. It works on the project's default environment, here `staging`. `--steps` shows what the proposed test would do and assert.
 
 ```bash
 testsprite plan "Propose one test that completes guest checkout with a test card and checks for an order confirmation" \
-  --project "$PROJECT_ID" --env staging --steps
+  --project "$PROJECT_ID" --steps
 ```
 
 <Frame>

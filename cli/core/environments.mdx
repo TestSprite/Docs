@@ -55,7 +55,7 @@ testsprite run --project "$PROJECT_ID" --env staging --wait
 testsprite result list --test "$TEST_ID" --env staging --limit 1
 ```
 
-`--env` selects the target for a named test or a project run. Saved test lists instead use their stored environment mappings. To use a particular environment throughout a planning conversation, pass `--env` to `plan` when starting it.
+`--env` selects the target for a named test or a project run. Saved test lists instead use their stored environment mappings. A planning conversation works on the project's default environment unless your request names another. When the agent proposes a run, `apply --env <name>` starts it on a different environment.
 
 ### Ad-hoc targets and temporary environments
 

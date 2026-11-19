@@ -18,11 +18,11 @@ export PROJECT_ID="your-project-id"
 testsprite project env create "$PROJECT_ID" --name local-dev --local 3000
 ```
 
-The hosted project agent cannot browse your localhost during planning. From the Git checkout, attach a diff and, if available, a requirements file with `--file`. These give it the expected behavior to plan from. To have it browse the app while planning, select a publicly reachable environment.
+The hosted project agent cannot browse your localhost during planning. From the Git checkout, attach a diff and, if available, a requirements file with `--file`. These give it the expected behavior to plan from. To have it browse the app while planning, name a publicly reachable environment in your request.
 
 ```bash
 testsprite plan "Check that guest checkout shows the confirmation screen" \
-  --project "$PROJECT_ID" --env local-dev --diff --steps
+  --project "$PROJECT_ID" --diff --steps
 ```
 
 Review the proposed tests and their assertions. Once the plan matches what you want, save it. Then use a saved ID from `applied.tests` to run one case, or run the project against the local environment.
