@@ -61,7 +61,7 @@ In your Git repository, state an observable expectation. Attach the diff with `-
 
 ```bash
 testsprite plan "An expired coupon shows an error and leaves the cart total unchanged" \
-  --project "$PROJECT_ID" --env staging --diff --steps
+  --project "$PROJECT_ID" --diff --steps
 ```
 
 Review the proposed actions and assertions against the requirement. Use `reject` with feedback if the plan needs a change. Once the plan is right, apply it and run the test IDs in `applied.tests`. [Creating tests](/cli/core/creating-tests).

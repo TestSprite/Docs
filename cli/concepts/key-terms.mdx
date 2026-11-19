@@ -17,7 +17,7 @@ testsprite project create --type frontend --name Checkout
 
 ## Environment
 
-An environment gives a deployment a name and stores its URL and sign-in settings. The first environment you add becomes the **Default environment**. Use `--env <name>` on a plan or run to select a saved environment. In a planning conversation, the agent continues to use that selection on later turns. [Environments](/cli/core/environments).
+An environment gives a deployment a name and stores its URL and sign-in settings. The first environment you add becomes the **Default environment**. Use `--env <name>` on a run to select a saved environment. The project's agent works on the default environment unless your request names another. [Environments](/cli/core/environments).
 
 Set `PROJECT_ID` to the ID returned by `project create`.
 

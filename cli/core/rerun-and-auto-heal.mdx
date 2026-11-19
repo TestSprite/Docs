@@ -1,6 +1,6 @@
 ---
 title: "Running Tests Again"
-description: "Repeat saved cases after a fix, select the cases that failed, or request strict replay of stored test code."
+description: "Repeat saved cases after a fix, select the cases that failed, and see how auto-heal keeps stored test code current."
 ---
 
 ## Repeat a saved test
@@ -30,14 +30,8 @@ testsprite run "$TEST_ID_A" "$TEST_ID_B" --env staging --wait
 
 A backend run can include dependent work such as fixture setup and cleanup. Use `--skip-dependencies` on the named backend cases only when the required state already exists.
 
-## Auto-heal and strict replay
+## Auto-heal
 
-On supported frontend runs, the server can repair stale generated test code when the UI changes and save the revised code. For a regression check that must exercise the existing stored code, request strict replay on a hosted target.
-
-```bash
-testsprite run "$TEST_ID" --env staging --no-auto-heal --wait
-```
-
-Check the CLI output for an advisory if the server could not honor strict replay. Availability depends on the workspace and whether the case has replayable code. If the server reports `no_stored_code`, run the case once without the flag to generate code. Frontend runs through a local tunnel use the agent execution path. You can inspect generated code in the Portal. [Testing Local Apps](/cli/core/local-apps)
+On supported frontend runs, the server decides for each run whether to repair stale generated test code after the UI changes, and saves the revised code. It never rewrites code a person wrote. You can inspect generated code in the Portal.
 
 If the expected behavior itself changed, request a revision through the project's agent so you can review the new assertion. [Editing and Deleting Tests](/cli/core/editing-tests)

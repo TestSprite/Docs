@@ -69,10 +69,10 @@ See [Environments](/cli/core/environments) for sign-in examples.
 
 | Command | Purpose |
 | --- | --- |
-| `plan "<request>"` | Ask the project's agent to add, change or remove tests. `--project` selects a project, `--env` selects the saved environment for the conversation, `--file` attaches a document and `--diff [base]` attaches a Git diff. |
+| `plan "<request>"` | Ask the project's agent to add, change or remove tests. `--project` selects a project, `--file` attaches a document and `--diff [base]` attaches a Git diff. The agent works on the project's default environment unless the request names another. |
 | `status` | Inspect the conversation. Use `--list` to find a conversation, `--wait` to follow it, or `--steps` to see proposed steps. |
 | `reply "<message>"` | Answer a chat message or refine the request when no card is pending. |
-| `apply` | Approve the pending action shown on the card. Use `--only` or `--exclude` with comma-separated test references for a plan, or `--secret-stdin` for a card requesting a secret. A run card starts a run. |
+| `apply` | Approve the pending action shown on the card. Use `--only` or `--exclude` with comma-separated test references for a plan, `--secret-stdin` for a card requesting a secret, or `--answer <n>=<choice>` for a question card. A run card starts a run; `--env <name>` starts it on another environment. |
 | `reject "<reason>"` | Decline the pending proposal and explain what to change. |
 | `stop`, `discard` | Stop the agent's current work, or drop its task and release pending proposals. |
 
@@ -109,7 +109,7 @@ A project selector excludes positional test IDs and list selection. With no sele
 | `--allow-empty` | Accept zero dispatched tests for a project or multi-ID batch. The default is exit 5. |
 | `--wait`, `--timeout <s>` | Wait for the execution, including later integration results. One deadline covers all executions (1–3600 seconds). Default 600 seconds, or 1200 for a project/named launch through a tunnel. Lists default to 600 in either case. |
 | `--max-concurrency <n>` | Limit server dispatch per execution. Project/multiple IDs use 1–100, default 50 (tunnel 1–15, default 5). A single named test defaults to 5. Lists use 1–50, default 10 (tunnel 1–10, default 5). |
-| `--no-auto-heal`, `--skip-dependencies` | Request strict replay of saved code, or skip prerequisites for a backend test. List selection uses its own saved settings and rejects these flags. |
+| `--skip-dependencies` | Skip prerequisites for a backend test. List selection uses its own saved settings and rejects this flag. |
 | `--idempotency-key <key>` | Retry the same launch with the same request key. An unconfirmed project launch provides a `retryIdempotencyKey` to replay the whole command. |
 | `--report junit --report-file <path>`, `--summary-file <path>`, `--gh-output` | Write JUnit, a JSON summary with `results[]`, or GitHub annotations and a job summary for a waited batch. |
 
