@@ -1,0 +1,224 @@
+/* Brand typefaces and colours that docs.json cannot express.
+
+   docs.json sets the heading face (Newsreader), the body face (Geist), the
+   primary colour and the page ground. Everything here is an override keyed to
+   Mintlify's own markup, so each block says what it is for. If Mintlify
+   changes its markup a block stops applying and the page falls back to
+   Mintlify's default; nothing here affects layout. */
+
+/* ============================================
+   FACES
+   ============================================ */
+
+/* docs.json has no slot for the code face, so Geist Mono is served from this
+   repo (SIL Open Font License 1.1, fonts/geist-mono/OFL.txt). The second file
+   holds the box-drawing characters used by the tree diagrams in code blocks. */
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/geist-mono/geist-mono-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/geist-mono/geist-mono-symbols2-400-normal.woff2") format("woff2");
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+
+/* docs.json loads Geist at 400 only. The medium weight used for small
+   headings comes from the variable file in this repo (SIL Open Font License
+   1.1, fonts/geist/OFL.txt). */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/fonts/geist/geist-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ============================================
+   CODE FACE
+   ============================================ */
+
+/* Inline code and code blocks. The generic families stay as the fallback for
+   any character Geist Mono does not carry. */
+code,
+pre {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ============================================
+   HEADING WEIGHT
+   ============================================ */
+
+/* Page title and section headings carry bold and semibold utility classes.
+   Newsreader is loaded at 400, as on the marketing site, so without this the
+   browser fakes a bold by smearing the regular cut. */
+#page-title,
+#content h1,
+#content h2,
+#content h3 {
+  font-weight: 400;
+}
+
+/* ============================================
+   SMALL HEADINGS
+   ============================================ */
+
+/* Mintlify puts the heading face on every heading element. The serif is for
+   the page title and section headings only; card titles, sidebar group titles
+   and h4 to h6 are labels, so they stay in the body face at medium. */
+#content h4,
+#content h5,
+#content h6,
+#content [data-component-part="card-title"],
+#sidebar-title {
+  font-family: var(--font-family-body-custom, "Geist", system-ui, sans-serif);
+  font-weight: 500;
+}
+
+/* The "On this page" label. On the hosted renderer it is an h2 holding a
+   button, outside #content, so the rule above does not reach it. The outline
+   items themselves are not touched. */
+#table-of-contents :is(h2, button),
+#table-of-contents :is(h2, button) * {
+  font-family: var(--font-family-body-custom, "Geist", system-ui, sans-serif);
+  font-weight: 500;
+}
+
+/* ============================================
+   SIGN IN BUTTON, DARK MODE
+   ============================================ */
+
+/* docs.json has one button colour for both modes (colors.dark). Ink is right
+   on the light ground and disappears on the dark one, so dark mode takes the
+   marketing site's inverted button: a paper fill with an ink label. */
+.dark #topbar-cta-button a > span:first-child {
+  background-color: #FAFAFA;
+}
+
+.dark #topbar-cta-button a span,
+.dark #topbar-cta-button a svg {
+  color: #131313;
+}
+
+/* ============================================
+   CALLOUTS
+   ============================================ */
+
+/* Mintlify colours callouts with stock Tailwind greens, yellows, reds and
+   blues. These are the product's status hues instead, so "tip" and "check"
+   read the same green as a passed test in the dashboard. The hue is on the
+   icon, the border and the wash; the sentences are in ink (the primary
+   colour from docs.json), so links and inline code inside a callout look
+   like they do everywhere else. The neutral "info" callout is left as Mintlify draws it. */
+div.callout:is([data-callout-type="tip"], [data-callout-type="check"]) {
+  --callout-ink: #047857;
+  --callout-wash: rgb(110 231 183 / 0.26);
+}
+
+div.callout[data-callout-type="warning"] {
+  --callout-ink: #B45309;
+  --callout-wash: rgb(252 211 77 / 0.25);
+}
+
+div.callout[data-callout-type="danger"] {
+  --callout-ink: #BE123C;
+  --callout-wash: rgb(253 164 175 / 0.3);
+}
+
+div.callout[data-callout-type="note"] {
+  --callout-ink: #0062AA;
+  --callout-wash: rgb(52 139 219 / 0.08);
+}
+
+.dark div.callout:is([data-callout-type="tip"], [data-callout-type="check"]) {
+  --callout-ink: #34D399;
+  --callout-wash: rgb(110 231 183 / 0.13);
+}
+
+.dark div.callout[data-callout-type="warning"] {
+  --callout-ink: #FBBF24;
+  --callout-wash: rgb(252 211 77 / 0.13);
+}
+
+.dark div.callout[data-callout-type="danger"] {
+  --callout-ink: #FB7185;
+  --callout-wash: rgb(253 164 175 / 0.12);
+}
+
+.dark div.callout[data-callout-type="note"] {
+  --callout-ink: #60A5FA;
+  --callout-wash: rgb(52 139 219 / 0.2);
+}
+
+div.callout:is(
+    [data-callout-type="tip"],
+    [data-callout-type="check"],
+    [data-callout-type="warning"],
+    [data-callout-type="danger"],
+    [data-callout-type="note"]
+  ) {
+  background-color: var(--callout-wash);
+  border-color: color-mix(in srgb, var(--callout-ink) 22%, transparent);
+}
+
+div.callout:is(
+    [data-callout-type="tip"],
+    [data-callout-type="check"],
+    [data-callout-type="warning"],
+    [data-callout-type="danger"],
+    [data-callout-type="note"]
+  )
+  [data-component-part="callout-icon"]
+  svg {
+  color: var(--callout-ink);
+}
+
+div.callout:is(
+    [data-callout-type="tip"],
+    [data-callout-type="check"],
+    [data-callout-type="warning"],
+    [data-callout-type="danger"],
+    [data-callout-type="note"]
+  )
+  [data-component-part="callout-content"] {
+  color: rgb(var(--primary, 21 25 22));
+}
+
+.dark
+  div.callout:is(
+    [data-callout-type="tip"],
+    [data-callout-type="check"],
+    [data-callout-type="warning"],
+    [data-callout-type="danger"],
+    [data-callout-type="note"]
+  )
+  [data-component-part="callout-content"] {
+  color: rgb(var(--primary-light, 245 245 244));
+}
+
+/* ============================================
+   PAGE EYEBROW
+   ============================================ */
+
+/* The group name above the page title ("Workspace & Admin"). Mintlify sets it
+   in the primary colour; here it takes the marketing site's label colour, the
+   teal of its chapter labels (--Fg-accent). Colour only: the face, size and
+   case stay Mintlify's. */
+#header .eyebrow {
+  color: #1F6A75;
+}
+
+.dark #header .eyebrow {
+  color: #7FC1C9;
+}

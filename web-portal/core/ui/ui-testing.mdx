@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-description: "AI-powered front-end testing for web apps. Explore your app, generate plans grounded in real behavior, ship browser tests, watch them run, replay any step."
+description: "Front-end testing for web apps. The agent explores your app, proposes tests grounded in real behavior, runs them in a browser, and lets you replay any step."
 ---
 
 <Frame>
@@ -13,14 +13,14 @@ UI Testing takes you from "here's my web app" to a regression suite that catches
 
 | Feature | Description |
 | :--- | :--- |
-| <kbd>Fast Setup</kbd> | Share your URL and, optionally, a test account |
-| <kbd>Multiple Sign-In Methods</kbd> | Test account credentials, OTP (one-time password) login with a TestSprite-managed account (email and SMS), or SSO (single sign-on) such as Google {/* V3.1 (Sherry): TODO finalize wording */} |
-| <kbd>Feature Exploration</kbd> | TestSprite's testing agent explores your live app so the plan reflects real behavior, not docs |
-| <kbd>AI-Generated Test Cases</kbd> | Plans tailored to your real screens and flows; add, remove, or refine any case |
+| <kbd>Fast Setup</kbd> | Paste your app's address and, optionally, add a test account; the agent proposes the project |
+| <kbd>Multiple Sign-In Methods</kbd> | A test account, a one-time-code login with a TestSprite-managed account, or a saved sign-in for SSO such as Google |
+| <kbd>Live Exploration</kbd> | The agent walks your live app in a browser you can watch, and keeps notes every later session starts from |
+| <kbd>Proposed Test Cases</kbd> | A plan tailored to your real screens and flows; keep, leave out, or edit each case before it is saved |
 | <kbd>Live Test Preview</kbd> | Watch tests run in real time |
 | <kbd>Step-by-Step Replay</kbd> | Every run records a video and per-step screenshots |
 | <kbd>Auto-Heal</kbd> | When the UI drifts, TestSprite re-decides selectors against the live DOM instead of failing the test |
-| <kbd>Natural Language Refinement</kbd> | Adjust any test in plain language, no code required |
+| <kbd>Natural Language Refinement</kbd> | Ask the agent to add, change or fix tests in plain language, no code required |
 | <kbd>Reusable Test Code</kbd> | Generated Python + Playwright tests, ready for CI/CD or regression suites |
 
 ## The UI Testing Journey
@@ -28,30 +28,29 @@ UI Testing takes you from "here's my web app" to a regression suite that catches
 <Card>
 ```mermaid
 flowchart LR
-    Z[1\. Configure Login<br/>pick a sign-in method<br/>for your app]
-    A[2\. Feature Exploration<br/>walk the live app<br/>feature by feature]
-    M[3\. Feature Map<br/>features and use cases<br/>on Test Coverage]
-    B[4\. Plan Generation<br/>test cases grounded<br/>in observed flows]
-    C[5\. Test Generation<br/>Python + Playwright<br/>per test case]
-    D[6\. Run + Step-by-Step<br/>watch live, replay later]
-    E[7\. Rerun<br/>re-execute on demand<br/>or on a schedule]
-    F[8\. Auto-Heal<br/>absorb UI drift on<br/>subsequent runs]
+    Z[1\. Setup<br/>the agent proposes the project<br/>and how it signs in]
+    A[2\. Exploration & Notes<br/>the agent walks the live app<br/>in a browser you can watch]
+    B[3\. Proposed Test Cases<br/>review, edit, leave out,<br/>then apply]
+    C[4\. Test Generation<br/>Python + Playwright<br/>per test case]
+    D[5\. Run + Step-by-Step<br/>watch live, replay later]
+    E[6\. Rerun<br/>re-execute on demand<br/>or on a schedule]
+    F[7\. Auto-Heal<br/>absorb UI drift on<br/>subsequent runs]
 
-    Z --> A --> M --> B --> C --> D --> E --> F
+    Z --> A --> B --> C --> D --> E --> F
 ```
 </Card>
 
 Each step has its own page. New to TestSprite? Start with the [Quickstart](/web-portal/core/ui/quickstart), which walks the whole journey in about 10 minutes.
 
 <CardGroup cols={2}>
-  <Card title="Authentication (UI)" href="/web-portal/core/ui/ui-authentication" icon="key">
-    Configure how TestSprite signs in: test account credentials, OTP, or SSO
+  <Card title="Setup" href="/web-portal/core/ui/agent-setup" icon="sliders">
+    The project the agent proposes, its environments, and how it signs in
   </Card>
-  <Card title="Feature Exploration" href="/web-portal/core/ui/feature-exploration" icon="compass">
-    How TestSprite walks your live app to discover what to test
+  <Card title="Exploration & Notes" href="/web-portal/core/ui/agent-exploration" icon="compass">
+    Watch the agent walk your live app, and read what it learned
   </Card>
-  <Card title="Plan Generation & Editing" href="/web-portal/core/ui/ui-plan-gen" icon="list-check">
-    Review the plan grounded in observed flows; edit, add, prune
+  <Card title="Proposed Test Cases" href="/web-portal/core/ui/agent-plan" icon="list-check">
+    Review the plan the agent proposes; edit, leave out, apply and run
   </Card>
   <Card title="Test Generation & Execution" href="/web-portal/core/ui/ui-test-gen" icon="cube">
     Python + Playwright code per test case
@@ -59,7 +58,7 @@ Each step has its own page. New to TestSprite? Start with the [Quickstart](/web-
   <Card title="Step-by-Step Replay" href="/web-portal/core/ui/ui-step-by-step" icon="list-check">
     Per-step screenshots, video, and behavior trace for one test
   </Card>
-  <Card title="Agent Actions" href="/web-portal/core/ui/agent-actions" icon="film">
+  <Card title="Map View" href="/web-portal/core/ui/map-view" icon="film">
     Every recording from a run, bucketed by status
   </Card>
   <Card title="Edit & Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
@@ -76,22 +75,22 @@ Each step has its own page. New to TestSprite? Start with the [Quickstart](/web-
 
 ## Where Things Live
 
-A UI project's sidebar is grouped into Setup, Workspace, Analytics, Activity, and Project Settings; see the [Test Detail Page](/web-portal/core/working-with-test/test-detail) for what each item does. Scheduling lives outside the project, under **Automation → Test Schedules**.
+Inside a project, the chat with the agent stays on the left, and the project's pages (Sources, Test Cases, Test Runs, Insights, Settings) open as tabs beside it; see the [Test Detail Page](/web-portal/core/working-with-test/test-detail) for what each does. Scheduling lives outside the project, under **Test Schedules**.
+
+<Frame>
+  <img src="../../../images/overview-agent.png" alt="A project open: the chat with the agent on the left, the Plan tab beside it" />
+</Frame>
 
 ## Refining Tests in Natural Language
 
-You can refine any test in plain language, by editing its description or asking in **Chats**. For example:
+You can refine any test in plain language, by editing its description or asking the agent. For example:
 
 ```text
 Add a test that signs up a new user with an invalid email and confirms the inline validation appears.
 ```
 
-<Frame>
-  <img src="../../../images/overview-plan.png" alt="Review proposed tests: edit and refine test cases before confirming" />
-</Frame>
-
 See [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases) for every way to do it.
 
 ## Testing an API Instead?
 
-See [API Testing](/web-portal/core/api/api-testing). The flow mirrors this one; API projects discover and probe endpoints instead of walking pages, chain tests that depend on each other, and use [Auto-Auth](/web-portal/core/api/auto-auth) for token refresh rather than Auto-Heal. [Testing Lifecycle](/web-portal/concepts/testing-lifecycle) compares the two side by side.
+See [API Testing](/web-portal/core/api/api-testing). The flow mirrors this one; for an API project the agent calls your endpoints instead of walking pages, and API tests use [Auto-Auth](/web-portal/core/api/auto-auth) for token refresh rather than Auto-Heal. [Testing Lifecycle](/web-portal/concepts/testing-lifecycle) compares the two side by side.

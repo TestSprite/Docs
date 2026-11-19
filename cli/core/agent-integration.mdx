@@ -1,110 +1,73 @@
 ---
 title: "Coding Agent Integration"
-description: "Install skills so your coding agent drives the TestSprite loop on its own — create, run, read failures, fix, and rerun."
+description: "Install and refresh the TestSprite skills your coding agent uses to verify changes."
 ---
 
-## What the skills do
-
-`testsprite agent install` writes three skill files into your repository:
-
-- **`testsprite-verify`** — teaches your coding agent to run the [verification loop](/cli/concepts/the-agent-loop): create a test from a plan, run it and wait for the verdict, on failure pull the failure bundle, fix the code, and rerun.
-- **`testsprite-onboard`** — guides first-time setup in a repo (`testsprite setup`, first project and test).
-- **`testsprite-ci`** — sets up the pull-request gate: reads how the repository deploys previews, runs `testsprite ci init github`, finishes the workflow, sets the secret and verifies it on one real pull request. See [CI/CD](/cli/integrations/ci-cd).
-
-`agent install` only reads and writes local files: no network, no credentials.
-
-<Tip>
-Install the skills once per project with `testsprite setup --agent AGENT` or `testsprite agent install --target AGENT`.
-</Tip>
+The TestSprite CLI installs instructions into your repository for your coding agent. The coding agent uses the CLI to run saved tests, inspect results and fix your product code. When coverage needs to change, it asks the project's TestSprite agent for a proposal that you can review and apply.
 
 ## Install the skills
 
+Run `testsprite setup` in the root of your repository to connect a workspace and install the skills. To choose one coding agent explicitly, run `testsprite setup --agent codex`. After setup, you can add targets locally.
+
 ```bash
-testsprite agent install --target claude
+testsprite agent install cursor codex
+testsprite agent status
 ```
 
-Run it from your project root.
+| Skill | When to use it |
+| --- | --- |
+| `testsprite-onboard` | Seed an empty project. Identify key flows, request a first suite, review the plan and smoke-test a few saved cases. |
+| `testsprite-verify` | Check a feature or fix. Run covering tests, review missing coverage with the project's agent and inspect any failing result. |
+| `testsprite-ci` | Set up a pull-request check for a preview deployment. [CI/CD integration](/cli/integrations/ci-cd). |
 
-| Flag | Description |
-| :--- | :--- |
-| `--target <t>` | `claude`, `cursor`, `cline`, `antigravity`, `kiro`, `windsurf`, `copilot`, `codex`. Comma-separated or repeated. Detected if omitted. |
-| `--skill <name>` | `testsprite-verify`, `testsprite-onboard`, `testsprite-ci`. Default: all three. |
-| `--dir <path>` | Project root to write into (default: current directory). |
-| `--force` | Overwrite an existing skill file; a `.bak` backup is kept. For `codex`, only the managed section is replaced. |
-
-Targets can also be positional: `testsprite agent install cursor codex`. If a destination file already exists and differs, the install is blocked until you pass `--force`.
-
-<Note>
-Without `--target`, the CLI uses the calling agent (recognized only for `CLAUDECODE` and `CURSOR_AGENT`) plus every agent whose configuration the project already has. Interactive terminals confirm the detected set; elsewhere it installs for the detected set, or `claude` if none, and prints an `[info]` line to stderr. Configuration the CLI wrote itself never counts as evidence, and an explicit `--target` always wins.
-</Note>
+By default, `agent install` installs all three skills. Use `--skill testsprite-verify` to install only the verification workflow or `--dir <path>` to choose the repository. The install command works offline.
 
 ## Supported agents
 
-| Target | Status | Mode | Landing path |
-| :--- | :--- | :--- | :--- |
-| `claude` | <kbd>GA</kbd> | own-file | `.claude/skills/{skill}/SKILL.md` |
-| `antigravity` | <kbd>experimental</kbd> | own-file | `.agents/skills/{skill}/SKILL.md` |
-| `cursor` | <kbd>experimental</kbd> | own-file | `.cursor/rules/{skill}.mdc` |
-| `cline` | <kbd>experimental</kbd> | own-file | `.clinerules/{skill}.md` |
-| `kiro` | <kbd>experimental</kbd> | own-file | `.kiro/skills/{skill}/SKILL.md` |
-| `windsurf` | <kbd>experimental</kbd> | own-file | `.windsurf/rules/{skill}.md` |
-| `copilot` | <kbd>experimental</kbd> | own-file | `.github/instructions/{skill}.instructions.md` |
-| `codex` | <kbd>experimental</kbd> | managed-section | `AGENTS.md` |
+| Target | Where instructions are installed |
+| --- | --- |
+| `claude` | `.claude/skills/{skill}/SKILL.md` |
+| `antigravity` | `.agents/skills/{skill}/SKILL.md` |
+| `cursor` | `.cursor/rules/{skill}.mdc` |
+| `cline` | `.clinerules/{skill}.md` |
+| `kiro` | `.kiro/skills/{skill}/SKILL.md` |
+| `windsurf` | `.windsurf/rules/{skill}.md` |
+| `copilot` | `.github/instructions/{skill}.instructions.md` |
+| `codex` | A managed section of `AGENTS.md` |
 
-`{skill}` is `testsprite-verify`, `testsprite-onboard` or `testsprite-ci`. For `codex`, all installed skills go into one managed section of `AGENTS.md`; your other content is untouched. `testsprite agent list` prints this table from the CLI.
+`testsprite agent list` lists the targets supported by your CLI version. `testsprite agent status` shows what is installed in the current repository.
 
 ## Checking skill health
 
-```bash
-testsprite agent status [--dir <path>]
-```
+After upgrading the CLI, run `testsprite agent status`. Older installations may still instruct your coding agent to use commands from a previous version.
 
 | State | Meaning |
-| :--- | :--- |
-| `ok` | Matches what this CLI version would install |
-| `stale` | Installed by an older CLI version |
-| `modified` | Edited by hand after install |
-| `unmarked` | Predates the provenance marker |
-| `absent` | Not installed for this target/skill |
-| `corrupt` | `codex` only: malformed managed-section sentinels |
+| --- | --- |
+| `ok` | Matches the installed CLI's skill content |
+| `absent` | Skill is missing for that target |
+| `stale` | Installed content was generated from an older skill body |
+| `modified` | The current skill was edited locally |
+| `unmarked` | The file has no recognized installation marker |
+| `corrupt` | The Codex managed section has malformed markers |
 
-It exits `1` when any state other than `ok` or `absent` is found, so it can gate CI.
-
-## One-shot onboarding
+For a stale standalone file, reinstall the affected target with `--force` to keep a backup. For Codex, reinstall to refresh the managed section. Review local modifications before replacing them.
 
 ```bash
-testsprite setup --agent AGENT
+testsprite agent install cursor --force
+testsprite agent install codex
+testsprite agent status
 ```
 
-`setup` configures your API key, verifies your identity, and installs the skills. It takes exactly one target; without `--agent` it installs for every detected agent, or Claude Code if none. For several agents, use `agent install`. See [Installation](/cli/getting-started/installation) for the non-interactive `--from-env --yes` form.
+Status exits `1` if any installed skill is stale, modified, unmarked or corrupt. If a Codex section is corrupt, repair its markers before reinstalling.
 
-## What the agent runs
+## Give the agent a verification task
+
+> Verify the guest checkout change against staging. Use the existing checkout test if it covers the change. If coverage is missing, show me the proposed assertions before applying them. Report the verdict and the result ID for any failure.
+
+For existing coverage, the agent can run `testsprite run <test-id> --env staging --wait --output json` and inspect a failure with `testsprite result get <result-id>`. For new coverage it can call `testsprite plan` with the diff, inspect the proposed steps and run the saved test IDs after `testsprite apply`. [The agent loop](/cli/concepts/the-agent-loop).
+
+In an automated workflow with several conversations, set `PROJECT_ID`, `CONVERSATION_ID` and `PROPOSAL_ID` to the reviewed plan's `projectId`, conversation `id` and `proposal.id`. Pass those values explicitly to apply that proposal.
 
 ```bash
-testsprite test create --project proj_8f0f6 --type frontend \
-  --plan-from ./checkout-flow.plan.json --run --wait --output json
-
-mkdir -p .testsprite
-testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
-
-testsprite test rerun test_3a9f21c7 --wait   # billed the same as a fresh run
+testsprite apply --project "$PROJECT_ID" --conversation "$CONVERSATION_ID" --card "$PROPOSAL_ID" --output json
 ```
-
-Exit 0 means the test passed and is banked. Frontend reruns have auto-heal on by default; `--no-auto-heal` replays the saved script exactly.
-
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
-    The full create, run, fix loop
-  </Card>
-  <Card title="CI/CD" href="/cli/integrations/ci-cd" icon="github">
-    Gate your pipeline on results
-  </Card>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="list-check">
-    Flags and modes for runs
-  </Card>
-  <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
-    Every command and flag
-  </Card>
-</Columns>

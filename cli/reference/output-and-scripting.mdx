@@ -1,74 +1,78 @@
 ---
 title: "Output & Scripting"
-description: "The stable JSON contract, piping into jq, and composing the verification loop in a script or CI job."
+description: "Read native run and result IDs, download evidence, and preserve the verdict in CI."
 icon: "terminal"
 ---
 
-Scripts and agents rely on two stable contracts: `--output json` and [exit codes](/cli/reference/exit-codes).
-
 ## The JSON contract
 
-`--output json` is machine-readable and changes only additively: new fields may appear, existing fields and exit codes won't change within a major version. `--output text` may change freely, so script against JSON.
+Use `--output json` for scripts. For a launch or `run wait`, `.runs[]` contains execution receipts and `.results[]` contains individual test results. A launch can return a run ID before any result rows exist. Waiting adds count fields in `.summary` and, when needed, execution-level diagnostics in `.runFailures[]`.
 
-`--dry-run` emits canned data in the live response shape, so you can test a script before wiring up auth (see [global flags](/cli/reference/configuration#global-flags)):
+| ID | Where to find it | Where to use it |
+| --- | --- | --- |
+| Test ID | `test list` or `test get` (`id`), result history (`caseKey` when present) | `run <test-id>`, `result list --test <test-id>` |
+| Run ID | `run` or `run wait` (`.runs[].runId`) | `run wait`, `run cancel`, `result list --run` |
+| Result ID | `run wait` or `result list` (`.results[].resultId`) | `result get <result-id>` |
 
-```bash
-testsprite --dry-run test run example_test --wait --output json
-```
+## Launch once and read a result
 
-## Piping into jq
-
-```bash
-RUN_ID=$(testsprite test run test_3a9f21c7 --output json | jq -r '.runId')
-testsprite test wait "$RUN_ID" --timeout 600 --output json || echo "run did not pass"
-
-testsprite test result test_3a9f21c7 --include-analysis --output json \
-  | jq '{hypothesis: .analysis.rootCauseHypothesis, fix: .analysis.recommendedFixTarget}'
-```
-
-## Branching on exit codes
-
-```bash
-testsprite test rerun test_3a9f21c7 --wait --output json
-case $? in
-  0)  echo "passed" ;;
-  1)  mkdir -p .testsprite; testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure ;;
-  7)  echo "timed out — resume with: testsprite test wait <run-id>" ;;
-  12) echo "out of credits" ;;
-  *)  echo "other error" ;;
-esac
-```
-
-## Timeouts still leave a result
-
-On a `--wait` timeout (exit `7`) the CLI prints a partial object to stdout first, so you keep the `runId`:
-
-```bash
-testsprite test run test_3a9f21c7 --wait --timeout 30 --output json > result.json
-testsprite test wait "$(jq -r .runId result.json)" --output json
-```
-
-The partial is `{ "runId": "...", "status": "running" }` for an ordinary run and for a `--local` run adopted with `--tunnel-client`. A run on a tunnel the CLI opened itself is cancelled by default and reports `status: "cancelled"`; don't resume it. See [Cancelling a Run](/cli/core/cancelling-runs) and [Exit Codes](/cli/reference/exit-codes#wait-timeout-exit-7).
-
-A local batch prints one `{ tunnel, maxConcurrency, results, skipped, summary }` object. `results` lists every requested test in input order (`not-run` if never started); `tunnel` is absent if none opened; `summary` is `{ total, passed, failed, timedOut, notRun }` and excludes backend tests, which appear in `skipped`. The `--summary-file` JSON differs: `{ total, passed, failed, skipped, timedOut, runs[] }`, with not-run tests counted as `skipped`. See [Test an app on your machine](/cli/core/local-apps).
-
-## A minimal CI gate
+This Bash example assumes `PROJECT_ID` names a project with a public default environment. It saves the launch receipt, waits for the run and downloads evidence for each failed, blocked or cancelled result. The script returns the wait's exit code after collecting diagnostics.
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-# Auth comes from TESTSPRITE_API_KEY; the credentials file is never touched.
-testsprite test rerun --all --project "$PROJECT_ID" \
-  --env staging --wait --timeout 900 --max-concurrency 4 --output json
+
+testsprite run --project "$PROJECT_ID" --output json > launch.json
+run_id=$(jq -er '.runs[0].runId' launch.json)
+
+verdict=0
+testsprite run wait "$run_id" --timeout 900 --output json > wait.json || verdict=$?
+
+if [[ -s wait.json ]]; then
+  jq '{summary, runFailures, partial}' wait.json
+  while IFS= read -r result_id; do
+    testsprite result get "$result_id" --failed-only \
+      --out ".testsprite/results/$result_id" || echo "Evidence incomplete for $result_id" >&2
+  done < <(jq -r '.results[] | select(.status == "failed" or .status == "blocked" or .status == "cancelled") | .resultId' wait.json)
+fi
+exit "$verdict"
 ```
 
-See [CI/CD](/cli/integrations/ci-cd) for a full GitHub Actions workflow. `testsprite agent install` writes skill files that encode these patterns ([Agent Integration](/cli/core/agent-integration)).
+`run wait` uses lowercase `status` values in `.results[]`. The result reader returns uppercase `testStatus` values and exits 0 when it successfully reads a result, including a failed one. The following commands print result IDs and inspect a selected result.
+
+```bash
+set -o pipefail
+testsprite result list --run "$RUN_ID" --status failed,blocked,cancelled --output json \
+  | jq -r '.results[] | [.resultId, .testStatus, .title] | @tsv'
+testsprite result get "$RESULT_ID" --output json \
+  | jq '{testStatus, error, cause, fix, failedStep, trace, apiOutput}'
+```
+
+## Timeouts and interrupts
+
+An incomplete timeout or interrupt can return `partial: true` alongside the known run receipts and result rows. Use `.runs[].runId` to resume an ordinary run with `testsprite run wait "$RUN_ID"`. Check `runFailures` even when every visible result passed. The execution may still have been cancelled or timed out while waiting for more results. A tunnel the command opened closes on timeout and requests cancellation by default. [Cancelling Runs](/cli/core/cancelling-runs)
+
+A launch can also end before the server confirms all projects. Read `unconfirmedProjects` and reuse `retryIdempotencyKey` with `--idempotency-key` on the complete original command. `notRunProjects` identifies projects the CLI never submitted.
+
+## A minimal CI gate
+
+```bash
+testsprite ci run --project "$PROJECT_ID" --env staging --timeout 900 \
+  --fail-on-skipped --summary-file testsprite-summary.json \
+  --report junit --report-file testsprite-junit.xml
+```
+
+`ci run` waits for the verdict and emits reports before exiting. In `testsprite-summary.json`, `.results[]` identifies individual results and `.executionReport.runId` identifies the execution when the report is available. With `ci run --output json` the same summary is under `.summary`. See [CI/CD](/cli/integrations/ci-cd).
 
 ## Debugging a script
 
-- `--verbose`: retry, backoff and polling messages.
-- `--debug`: HTTP method, path, request id, latency and retry decisions. The API key is never included.
+`--verbose` logs retry and polling activity to stderr. `--debug` adds HTTP method, path, request ID and latency. JSON errors also go to stderr. Keep stdout and stderr separate when passing data to `jq`.
 
-Both write to stderr, as do prompts and onboarding text, so stdout stays a single parseable payload.
+Preview a public launch without submitting it:
 
-An interactive run checks npm for a newer CLI once every 24 hours and prints a one-line stderr notice. It is skipped in CI, without a TTY, under `--output json` and under `--dry-run`; disable it with `TESTSPRITE_NO_UPDATE_NOTIFIER=1`.
+```bash
+testsprite run --project "$PROJECT_ID" --target-url https://staging.example.com \
+  --dry-run --output json
+```
+
+A dry-run launch can return empty ID arrays and the requests it would make. An authenticated launch preview without an explicit target may read saved environment metadata. For sample result data without credentials, use `testsprite result get example --dry-run --output json`.

@@ -1,22 +1,21 @@
 ---
 title: "Managing Test Cases"
-description: "Edit, refine, add, and delete test cases: change a test yourself or have TestSprite's testing agent change it, batch-edit the plan, or regenerate it from your sources."
+description: "Edit, refine, add, and delete test cases: change a test yourself, have the agent change it, or batch-edit the plan."
 ---
 
 <Frame>
   <img src="../../../images/managing-test-case-overview.png" alt="The Test Cases list, grouped by use case with per-row status" />
 </Frame>
 
-The <kbd>Test Cases</kbd> page lists every test in the project, grouped by use case. You can change a test yourself or have TestSprite's testing agent change it for you. Edits only count once the test re-runs, so saving a single case is **Save & Run**.
+The <kbd>Test Cases</kbd> page lists every test in the project, grouped by use case. You can change a test yourself or ask the agent to change it for you. Edits only count once the test re-runs, so saving a single case is **Save & Run**.
 
 | To... | Use |
 | :--- | :--- |
 | Refocus or extend one test | [Edit its description](#editing-a-single-test-case) |
 | Rewrite a test's flow step by step | [Edit its steps](#editing-steps) |
-| Understand a failure and get a fix | [Ask AI in Chats](#asking-ai-for-a-fix) |
+| Understand a failure and get a fix | [Ask the agent](#asking-the-agent-for-a-fix) |
 | Change many tests at once | [Batch editing](#batch-editing) |
 | Add coverage | [Adding test cases](#adding-test-cases) |
-| Start over after a major app change | [Regenerate from sources](#regenerating-from-sources) |
 
 ## Editing a Single Test Case
 
@@ -63,20 +62,22 @@ The <kbd>Edit steps</kbd> modal lets you rewrite the flow from any step onward. 
 
 For UI tests, [Auto-Heal](/web-portal/core/ui/auto-heal) also absorbs UI drift on reruns, so a moved button doesn't need an edit.
 
-## Asking AI for a Fix
+## Asking the Agent for a Fix
 
 <Frame>
-  <img src="../../../images/refining-chat.png" alt="The Chats panel open beside a test case" />
+  <img src="../../../images/refining-chat.png" alt="A failed test open beside the chat, with Find the Cause and Find a Fix under its result" />
 </Frame>
 
-When you don't know why a test failed, open <kbd>Chats</kbd> beside the test and ask, for example *"Why did this fail?"*, *"What is this test checking?"*, or *"How do I fix this?"*. The assistant answers from the test's steps, the run's recording, and the failure trace, and any change it proposes arrives as a card you approve first (see [Approving Actions](/web-portal/ai-chat/approving-actions)). It doesn't see your application source code or PRD by default.
+When you don't know why a test failed, ask the agent. A failed or blocked result has two buttons: <kbd>Find the Cause</kbd> and <kbd>Find a Fix</kbd>. Either sends the question to the agent in the chat beside the page; you can also just type it (*"Why did this fail?"*, *"What is this test checking?"*).
+
+The agent reads the run's results, the test's steps, and the project's notes, docs and code, then says which it is: your app is wrong, the test is wrong, or something got in the way. When the test is wrong it fixes it and says what it changed, and the change arrives as a proposal you apply first. It never changes what a test expects just to make it pass.
 
 ## Batch Editing
 
-Click <kbd>Edit Test</kbd> on the toolbar to open the batch editor: every test case in the plan on one screen, with a use-case nav on the left. It has two modes:
+Click <kbd>Edit Test Plan</kbd> on the toolbar to open the batch editor on the **Plan** tab: every test case in the plan on one screen, grouped by use case. It has two modes:
 
 <Frame>
-  <img src="../../../images/managing-test-case-batch-click-edit.png" alt="The Edit Test button on the Test Cases toolbar" />
+  <img src="../../../images/managing-test-case-batch-click-edit.png" alt="The Edit Test Plan button on the Test Cases toolbar" />
 </Frame>
 
 <Tabs>
@@ -131,22 +132,12 @@ The <kbd>Add More Tests</kbd> dropdown on the toolbar has both paths:
   <img src="../../../images/managing-test-case-add-more.png" alt="The Add More Tests dropdown, with the AI and manual paths" />
 </Frame>
 
-- **Add Tests with AI**: describe what you want covered (optionally scoped to one use case), and TestSprite's testing agent proposes a batch. Before anything is created, you can edit each proposal's title, description, priority, and steps, untick the ones you don't want, or hand-add rows.
+- **Add Tests with AI**: describe what you want covered, and the request goes to the agent. The tests come back as a proposal on the **Plan** tab, where you can edit each one, untick the ones you don't want, and apply. See [Proposed Test Cases](/web-portal/core/ui/agent-plan).
 - **Add Test Manually**: a form with use case, title, priority, description, and a step list (action or assertion per step).
 
-You can also add from the [Coverage Map](/web-portal/core/working-with-test/coverage-map), per use case or with the per-feature ✨ AI shortcut.
+You can also just ask in the chat: *"Add tests for the new export feature."*
 
-## Regenerating from Sources
-
-When your app has changed so much that the plan is more outdated than fixable (a major redesign, or a new API contract across many endpoints), rebuild it. Open <kbd>Test Coverage</kbd>, click <kbd>Regenerate from sources</kbd>, and confirm. TestSprite's testing agent discards the current use cases and extracts a new set from the project's sources, in the same project. Then plan tests from the new use cases and run them as usual.
-
-<Frame>
-  <img src="../../../images/refining-regenerate.png" alt="Regenerate From Sources on the Test Coverage page" />
-</Frame>
-
-<Warning>
-Regenerating can't be undone: all existing use cases and their generated test cases are removed. To keep the old suite alongside the new one, create a new project instead.
-</Warning>
+When your app has changed a lot (a major redesign, or a new API contract across many endpoints), tell the agent what changed. It explores the app again, updates the notes, and proposes the changes to the plan: new tests, changed ones, and ones to remove.
 
 ## Deleting Test Cases
 
@@ -169,8 +160,8 @@ Deleting a test case permanently removes its run history too. If you might want 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Coverage Map" href="/web-portal/core/working-with-test/coverage-map" icon="sitemap">
-    Manage the plan visually, use case by use case
+  <Card title="Proposed Test Cases" href="/web-portal/core/ui/agent-plan" icon="list-check">
+    Review and apply what the agent proposes
   </Card>
   <Card title="Edit & Rerun" href="/web-portal/core/ui/ui-rerun" icon="arrow-rotate-right">
     Every way to re-run a UI test

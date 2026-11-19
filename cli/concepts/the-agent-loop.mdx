@@ -1,103 +1,87 @@
 ---
 title: "The Agent Loop"
-description: "How your coding agent creates, runs, reads, fixes, and reruns tests, and how coverage compounds with every pass."
+description: "How your coding agent and the project's TestSprite agent work together to verify a change and diagnose a failing test."
 ---
 
-Verification should be a loop your coding agent runs continuously, not a gate at the end. Each time the agent changes code, it verifies the behavior it touched and banks the result.
+Your coding agent can read the diff and change your application. The project's TestSprite agent uses requirements, attachments and a test environment to propose changes to the test suite. The CLI connects the two, with a review step before a proposed test becomes part of the suite.
 
-<Card>
-```mermaid
-flowchart LR
-    A["Your coding agent<br/>writes / changes code"] --> B{"Already covered<br/>by the suite?"}
-    B -->|yes| C["Rerun tests<br/>test rerun"]
-    B -->|"no · new"| D["Create a test<br/>test create"]
-    C --> E["TestSprite cloud<br/>real browsers & APIs"]
-    D --> E
-    E -->|fail| F["Read failure bundle<br/>test failure get"]
-    E -->|pass| G["Durable suite<br/>grows every pass"]
-    F -->|"read & fix"| A
-    G -.->|coverage| B
+<div className="agent-loop not-prose" role="group" aria-labelledby="coverage-question">
+  <div id="coverage-question" className="agent-loop-question">Does a saved test cover the change?</div>
+  <div className="agent-loop-fork" aria-hidden="true" />
+  <div className="agent-loop-pair">
+    <div className="agent-loop-path">
+      <b>Already covered</b>
+      <span>Select the matching test.</span>
+    </div>
+    <div className="agent-loop-path">
+      <b>Missing coverage</b>
+      <span>Review the agent’s plan and apply it when ready.</span>
+    </div>
+  </div>
+  <div className="agent-loop-fork agent-loop-join" aria-hidden="true" />
+  <a className="agent-loop-run" href="/cli/core/running-tests">Run the saved test</a>
+  <div className="agent-loop-fork" aria-hidden="true" />
+  <div className="agent-loop-pair">
+    <div className="agent-loop-outcome">
+      <b><span className="agent-loop-mark" aria-hidden="true">✓</span> Passed</b>
+      <span>Report the verdict.</span>
+    </div>
+    <div className="agent-loop-outcome">
+      <b><span className="agent-loop-mark" aria-hidden="true">×</span> Failed</b>
+      <span>Inspect the evidence. Fix the app or revise the test, then rerun.</span>
+    </div>
+  </div>
+</div>
+
+## Check for coverage
+
+Set `PROJECT_ID` to the ID from `testsprite project list`, then list the saved cases.
+
+```bash
+testsprite test list --project "$PROJECT_ID"
 ```
-</Card>
 
-<Steps>
-  <Step title="Not covered → create">
-    Describe the behavior as a plan file (frontend) or code (backend), then create and run it:
+Set `TEST_ID` to the `id` of a likely match and read its steps.
 
-    ```bash
-    testsprite test create \
-      --project proj_8f0f6 --type frontend \
-      --plan-from ./checkout-flow.plan.json \
-      --run --wait --output json
-    ```
+```bash
+testsprite test get "$TEST_ID"
+```
 
-    `--run --wait` chains create, trigger, and poll. Exit 0 means the test passed and is banked.
-  </Step>
-  <Step title="Already covered → rerun">
-    ```bash
-    testsprite test rerun --all --project proj_8f0f6 --wait
-    ```
+If the saved case already checks the behavior you changed, run it against a build containing the change.
 
-    A frontend rerun has [auto-heal](/cli/core/rerun-and-auto-heal) on by default: if the app changed, the test is repaired and the repaired version saved. For a strict regression gate that replays the saved script exactly, add `--no-auto-heal`. A rerun is billed the same as a fresh run, so rerun the relevant suite after every significant change.
-  </Step>
-  <Step title="Failed → read the bundle, fix, rerun">
-    On exit 1, pull the [failure bundle](/cli/concepts/key-terms#failure-bundle), fix the code, and rerun:
+```bash
+testsprite run "$TEST_ID" --env staging --wait
+```
 
-    ```bash
-    mkdir -p .testsprite
-    testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
-    testsprite test rerun test_3a9f21c7 --wait
-    ```
+To verify the whole suite, use `testsprite run --project <project-id> --env staging --wait`. If the wait times out, [continue waiting with the run ID](/cli/core/running-tests#resuming-a-run).
 
-    A test that has never passed, or has only run with `--local`, has no saved code, so there is no bundle (exit 4, reason `no_code`). Use `testsprite test steps <test-id> --run-id <run-id>` and `testsprite test failure summary <test-id>` instead.
-  </Step>
-</Steps>
+## Ask for missing coverage
 
-## Why this design works
+In your Git repository, state an observable expectation. Attach the diff with `--diff` or a specification with `--file <path>`. The project's agent can explore a reachable frontend deployment. For a local-only app, give it the diff or requirements to plan from, then run the saved frontend tests through a tunnel. [Local apps](/cli/core/local-apps).
 
-<AccordionGroup>
-<Accordion title="One self-consistent bundle" icon="layer-group">
-Every artifact from `test failure get` and `test artifact get` shares one `snapshotId`, and the CLI refuses to stitch data across runs or code versions. The agent never "fixes" the wrong thing from mixed context.
-</Accordion>
+```bash
+testsprite plan "An expired coupon shows an error and leaves the cart total unchanged" \
+  --project "$PROJECT_ID" --env staging --diff --steps
+```
 
-<Accordion title="Coverage compounds" icon="chart-line">
-Every passing test joins a durable suite, so "already covered?" is answered by replayable tests rather than the agent's memory, and regressions are caught on the next run.
-</Accordion>
+Review the proposed actions and assertions against the requirement. Use `reject` with feedback if the plan needs a change. Once the plan is right, apply it and run the test IDs in `applied.tests`. [Creating tests](/cli/core/creating-tests).
 
-<Accordion title="Real browsers and APIs" icon="cloud">
-Tests run against your live product, with nothing to install on your side. A run uses the project's Default environment unless you pass `--env <name>`. To test an app on your machine, see [Environments](/cli/core/local-apps).
-</Accordion>
+## Diagnose a failure
 
-<Accordion title="Machine-readable contract" icon="code">
-`--output json` and stable exit codes let the agent branch without defensive parsing. See [Output & Scripting](/cli/reference/output-and-scripting#the-json-contract).
-</Accordion>
+Set `RESULT_ID` to the failed case's `resultId` from the run's `results[]`. Read the exact result and, if needed, keep the evidence locally.
 
-<Accordion title="Safe retries" icon="rotate">
-`project create`, `test create`, `test run`, and `test rerun` carry an idempotency key (random per invocation), so retrying never duplicates a project, test, or run. Pin your own with `--idempotency-key my-agent-step-42`. Replacing backend code is guarded by a `codeVersion` token; see [Editing & Deleting Tests](/cli/core/editing-tests#editing-a-test).
-</Accordion>
+```bash
+testsprite result get "$RESULT_ID" --output json
+testsprite result get "$RESULT_ID" --out ".testsprite/results/$RESULT_ID"
+```
 
-<Accordion title="Run-scoped vs latest" icon="code-branch">
-`test failure get` follows the *latest* failing run, which can shift if a Portal or scheduled run lands mid-loop; `test artifact get <run-id>` is pinned to one run. In agent loops and CI, capture the `runId` from `--output json` and use `test artifact get`. See [Reading Results](/cli/core/reading-results#pinning-to-a-specific-run).
-</Accordion>
-</AccordionGroup>
-
-## Where the CLI fits
-
-The CLI is one of three surfaces over the same backend; see [One Platform, Three Surfaces](/cli/getting-started/overview#one-platform-three-surfaces). It covers the test lifecycle, schedules, and test lists (subject to your plan). Billing, site discovery, and per-step regeneration stay in the Web Portal.
-
-## Where to Go Next
+Compare the expected behavior with the recorded steps or API output. Fix a product defect in the application and rerun the saved test against the updated build. Send an incorrect test expectation back to the project's agent, then review the correction before applying it. [Reading results](/cli/core/reading-results).
 
 <Columns cols={2}>
-  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="square-code">
-    Core concepts defined
-  </Card>
   <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
-    Your first test end to end
+    Follow the loop with a deployed app.
   </Card>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="list-check">
-    Triggering runs and handling exit codes
-  </Card>
-  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
-    Let your coding agent drive the loop
+  <Card title="Coding agent integration" href="/cli/core/agent-integration" icon="robot">
+    Install the workflow in your coding agent.
   </Card>
 </Columns>

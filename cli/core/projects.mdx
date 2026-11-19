@@ -1,86 +1,41 @@
 ---
 title: "Projects"
-description: "List, inspect, create, and update the typed (frontend or backend) projects that hold your tests."
+description: "Find a frontend or backend project, set up its first environment, and update its settings."
 ---
 
-A **project** is the top-level container: a name, a type (<kbd>frontend</kbd> or <kbd>backend</kbd>), and named [environments](/cli/core/environments) with the URLs TestSprite opens. Every test belongs to one project. Projects are shared with the Web Portal.
+A project holds a suite of frontend tests for a web app or backend tests for an API. The CLI and the Portal share the same projects. Each project has its own agent, test cases, and named environments.
 
-## Listing and getting projects
+## Find a project
 
 ```bash
 testsprite project list
-testsprite project get <project-id>
+testsprite project get "$PROJECT_ID"
 ```
 
-```text
-ID              NAME               TYPE       FROM     CREATED      DEFAULT ENV   ENVS
-proj_8f0f6      Checkout App       frontend   cli      2026-05-10   Default       2
-```
+Use an ID from `project list` as `PROJECT_ID`. If your workspace has several pages of projects, pass the returned `nextToken` to `--starting-token` or use `--max-items` to read across pages. To use a project across commands, export `TESTSPRITE_PROJECT_ID`.
 
-`project get` prints the same fields plus the default environment and environment count. `--page-size <n>` (1–100, default 25), `--starting-token <token>` (the `nextToken` printed under a full page) and `--max-items <n>` page through results.
+## Create a project and its first environment
 
-## Creating a project
+Create the project first. Copy its `projectId` from the JSON output, then add the URL where your app is running. The first environment becomes the default.
 
 ```bash
-testsprite project create --type frontend --name "Checkout App" --url https://app.example.com
+testsprite project create --type frontend --name "Checkout" --output json
 ```
-
-| Flag | Description |
-| :--- | :--- |
-| `--type <frontend\|backend>` | **Required.** |
-| `--name <name>` | **Required.** |
-| `--url <url>` | Required for frontend unless `--local`. For backend, the base URL of the API under test. Public `http(s)`, or a loopback `http` origin with an explicit port and no path (frontend only). Excludes `--local` |
-| `--local <port>` | Local-only frontend project: stores `http://localhost:<port>`. Runs open a tunnel automatically |
-| `--skip-preflight` | Skip the listener check before local creation |
-| `--username <user>`, `--password <pw>` / `--password-file <path>` | Basic-auth credentials for the target URL (prefer the file in scripts) |
-| `--instruction <text>` | Hint for frontend plan generation |
-| `--test-id-attributes <list>` | DOM attributes the engine prefers as locators, highest priority first (`data-element,data-testid`) |
-| `--idempotency-key <token>` | Pin a stable value for safe retries |
 
 ```bash
-testsprite project create --type frontend --name "Local App" --local 3000
+export PROJECT_ID="your-project-id"
+testsprite project env create "$PROJECT_ID" --name staging --url https://staging.example.com
+testsprite project env get "$PROJECT_ID" staging
 ```
 
-For local apps, see [Test an app on your machine](/cli/core/local-apps). If `project create --local` exits `7` (`local-origin-requires-v3`), your account is not on the current project platform yet: create the project in the Portal or with `--url`.
+For an API, choose `--type backend` and give the environment the API's base URL. For a frontend app running on your machine, start it and use `--local <port>` when creating the environment. A new project starts without tests. Once the target is ready, ask its agent for the first cases. [Creating Tests](/cli/core/creating-tests)
 
-A backend project can be created without `--url`, but on the V3 execution path its first run fails with exit `5` (`no-target-resolvable`) until you run `testsprite project update <project-id> --url <url>`. Check your routing with `testsprite auth status`.
-
-<Warning>
-Outside loopback, `--url` must be a public `http(s)` address; private IPs are refused, and the backend also checks DNS. Backend tests and `test rerun` cannot tunnel. See [Common Issues](/cli/troubleshooting/common-issues) if a URL is rejected.
-</Warning>
-
-## Updating a project
+## Update project settings
 
 ```bash
-testsprite project update <project-id> --name "Checkout App v2"
+testsprite project update "$PROJECT_ID" --name "Storefront checkout"
+testsprite project update "$PROJECT_ID" --instruction "Use the test catalog for checkout."
+testsprite project update "$PROJECT_ID" --test-id-attributes data-testid,data-qa
 ```
 
-Pass at least one flag, or the command exits `5`. It accepts the same flags as create (`--name`, `--url`, `--local`, `--skip-preflight`, `--username`, `--password`, `--password-file`, `--instruction`, `--test-id-attributes`, `--idempotency-key`) plus `--clear-test-id-attributes`, which removes the list so the engine falls back to `data-testid`; `--test-id-attributes` replaces it. `--local` is frontend only; some older projects cannot be switched and exit `7` (`local-origin-requires-native-project`), so create a new project with `--local`.
-
-For separate deployment targets, use named [environments](/cli/core/environments) (`project env create`, `--env`, `--target-url`), which also cover plan limits.
-
-## Backend test credentials
-
-Inject auth into every backend test run, either a static credential or an auto-refreshed token:
-
-```bash
-testsprite project credential <project-id> --type "Bearer token" --credential-file ./token.txt
-
-testsprite project auto-auth <project-id> --method refresh_token --inject bearer \
-  --token-endpoint https://auth.example.com/oauth/token \
-  --client-id my-client-id --client-secret-file ./client-secret.txt \
-  --refresh-token-file ./refresh-token.txt
-```
-
-See the [Command Reference](/cli/reference/command-reference) for all flags.
-
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
-    Author a frontend plan or backend code file
-  </Card>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
-    Trigger runs and poll for verdicts
-  </Card>
-</Columns>
+`--instruction` replaces the project's extra instructions. For frontend projects, list the DOM attributes your app uses for stable element selection in priority order. `--clear-test-id-attributes` restores the default. To change the app URL or its test account, update the environment. [Environments](/cli/core/environments)

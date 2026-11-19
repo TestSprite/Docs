@@ -1,153 +1,63 @@
 ---
 title: "Running Tests"
-description: "Trigger a test run from the CLI, wait for a verdict, and understand every exit code the runner emits."
+description: "Launch a project, selected cases, or a saved list, then wait for the execution and find its results."
 ---
 
-## Trigger a run
+To run a project's tests and wait for the outcome, use its project ID. A **run ID** identifies an execution. Each test that runs in that execution gets its own **result ID**.
 
 ```bash
-testsprite test run test_3a9f21c7
+testsprite run --project "$PROJECT_ID" --wait
 ```
 
-Without `--wait`, the command exits 0 as soon as the backend accepts the run and prints a `runId`:
+## Choose what to run
 
-```text
-Run queued.
-runId:  run_5c1d9a2b
-status: queued
-```
+| Selection | Command |
+| :--- | :--- |
+| Whole project | `testsprite run --project "$PROJECT_ID" --wait` |
+| Project cases whose names contain “checkout” | `testsprite run --project "$PROJECT_ID" --filter checkout --wait` |
+| One or more named cases | `testsprite run "$TEST_ID_A" "$TEST_ID_B" --wait` |
+| Saved test list | `testsprite run --testlist "$LIST_ID" --wait` |
+| Selected members of a saved list | `testsprite run "$TEST_ID_A" "$TEST_ID_B" --testlist "$LIST_ID" --wait` |
+
+Get case IDs from `testsprite test list --project "$PROJECT_ID"`. Positional IDs select tests. Named cases are grouped by project, so one command can return several run IDs. A saved list uses its own project and environment mappings. With no case or list selected, `TESTSPRITE_PROJECT_ID` supplies the default project.
+
+For backend cases, the server includes declared dependencies. Use `--skip-dependencies` on named backend tests when their prerequisites already exist. For a project or group of cases, `--max-concurrency` controls how many tests the server can dispatch per execution.
 
 ## Wait for the verdict
 
-`--wait` blocks until the run reaches a terminal status. `--timeout <seconds>` sets how long the CLI polls (1–3600, default 600; 1200 through a tunnel):
+On a public target, omit `--wait` to return after dispatch. Save the `runId` printed in the receipt. Add `--output json` for scripts.
 
 ```bash
-testsprite test run test_3a9f21c7 --wait --timeout 300
+testsprite run --project "$PROJECT_ID" --output json
 ```
 
-| Exit | Meaning |
-| :--- | :--- |
-| 0 | <kbd>passed</kbd> |
-| 1 | <kbd>failed</kbd>, <kbd>blocked</kbd>, or <kbd>cancelled</kbd> |
-| 7 | Timeout before a terminal status. Resume with `testsprite test wait <run-id>`, except for a self-minted `--local` run, which cancels by default and closes its tunnel (see [Ctrl-C and timeout](#ctrl-c-and-timeout)) |
-
-On exit 7 the CLI still prints a partial object to stdout, usually `{ "runId": "...", "status": "running" }`, so a script can recover the ID. This is a fallback, not a fresh server observation.
+`runs[].runId` identifies each execution. `results[]` can be empty at dispatch time. After waiting, `results[].resultId` identifies each available outcome and `summary` counts them. A full execution can gain integration results after its first cases pass. `--wait` follows the execution through completion.
 
 ## Resuming a run
 
 ```bash
-testsprite test wait run_5c1d9a2b
+testsprite run wait "$RUN_ID" --timeout 900 --output json
+testsprite result list --run "$RUN_ID" --status failed,blocked
 ```
 
-`test wait` takes the same `--timeout` and returns the same exit codes. At a terminal status it prints the run card:
-
-```text
-runId:      run_5c1d9a2b
-status:     passed
-targetUrl:  https://app.example.com
-codeVersion: v4
-startedAt:  2026-06-15T10:02:11Z
-finishedAt: 2026-06-15T10:04:38Z
-steps:      12 passed, 0 failed
-dashboard:  https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7
-```
-
-The `dashboard:` line (`dashboardUrl` in JSON, absent under `--dry-run`) opens the Portal run view with steps, video, and analysis.
+`run wait` resumes an existing execution without starting another. Supply several run IDs to wait for them under one deadline. To inspect a failed step or download its evidence, pass the row's `resultId` to `result get`. [Reading Results](/cli/core/reading-results)
 
 ## Ctrl-C and timeout
 
-Ctrl-C during `--wait` detaches the CLI. **The run keeps executing and billing on the server** (exit `130`); stop it with `testsprite test cancel <run-id>`. A self-minted `--local` run is the exception: it requests cancellation by default and closes its tunnel. Details, refunds, and `--no-cancel-on-interrupt` are in [Cancelling a Run](/cli/core/cancelling-runs).
+For an ordinary cloud run, Ctrl-C detaches and the run keeps executing. A timeout exits `7`. An incomplete wait can return `partial: true` with the receipts and results seen so far. For an automatic local tunnel, the CLI requests cancellation of its unfinished runs before closing the tunnel. [Cancelling a Run](/cli/core/cancelling-runs)
 
-## Running against another environment
-
-Each run targets one project environment. Omit `--env` for **Default**, or name an existing one:
-
-```bash
-testsprite test run test_3a9f21c7 --env staging --wait
-```
-
-An unknown name fails and never falls back to Default. A step that names another of the project's environments is pointed at the run's environment at dispatch; assertions and the stored plan are not changed. Creating environments, plan limits, and URLs embedded in test steps are covered in [Environments](/cli/core/environments).
+`--timeout` accepts 1–3600 seconds. The default wait is 600 seconds for public runs and 1200 for project or named runs through a tunnel. Saved-list launches and `run wait` default to 600 seconds.
 
 ## Run against a URL without creating an environment
 
-`--target-url` runs a frontend test against a URL, such as a pull-request preview:
+To run a frontend case against a deployed preview, supply its public HTTP(S) URL. `--env staging` supplies staging's sign-in settings. A login tied to a different origin can be refused before dispatch. The CLI checks the target's reachability before launch.
 
 ```bash
-testsprite test run test_3a9f21c7 --wait --target-url https://preview-123.example.com
-testsprite test run --all --project proj_8f0f6 --wait --target-url https://preview-123.example.com
+testsprite run "$TEST_ID" --env staging --target-url https://preview.example.com --wait
 ```
 
-The run uses the environment that already points at that origin, or a temporary environment that is removed when the run finishes. Temporary environments are not listed and do not count toward your plan's limit.
-
-- **Sign-in.** Without `--env`, the run signs in with the Default environment's test account. With `--env <name>`, that environment's settings are used against the URL.
-- **Where it works.** `test run` (including `--all --project <id>`), `test create --run`, and `test create-batch --run`. Not `test rerun` or `testlist run`.
-- **Reachability.** A loopback URL such as `http://localhost:3000` opens a tunnel automatically. Other private addresses are refused (exit `5`). A reachability probe runs from your machine first (exit `5` if clearly unreachable); `--skip-preflight` skips it. `--target-url` cannot be combined with `--local`.
-- **Status.** A `--target-url` run is recorded under its temporary environment and does not change the status shown by `test list` / `test get` (see [Reading Results](/cli/core/reading-results#status-is-per-environment)).
-
-<Warning>
-With `--env`, a target on a different origin is refused (exit `6`, reason `frontend-auth-target-origin-mismatch`, nothing charged) when that environment signs in with a recorded browser session (manual or SSO login), a one-time code (OTP), or a login-once step. An environment that signs in with a username and password works against any origin, including loopback. Omit `--env`, or pick an environment on the target's origin.
-
-Without `--env`, the refusal applies only when the Default environment uses a recorded session. Password and one-time-code sign-in are copied to the temporary environment (one-time codes are not available through a tunnel).
-</Warning>
-
-## Testing a locally running app
-
-When a run resolves to a loopback environment URL, the CLI opens a tunnel for you; nothing is deployed or made public. You need the app running and a key with the `run:tunnel` scope (existing keys already have it; see [Scopes](/cli/core/authentication#scopes)).
-
-```bash
-testsprite test run test_3a9f21c7                   # Default environment is http://localhost:3000
-testsprite test run test_3a9f21c7 --env local-dev
-testsprite test run test_3a9f21c7 --local 3000      # one-off port not saved as an environment
-```
-
-This applies to `test run` (one, several, or `--all`), `test rerun`, `test create --run`, `test create-batch --run`, and `testlist run`. `--local` is accepted only by `test run`; it implies `--wait`. `--no-wait` is refused before dispatch, without charge (`tunnel-required`, exit `6`).
-
-- **Frontend tests only.** Backend local runs are rejected.
-- **`--local` with `--env`.** `--env staging --local 5173` runs against your local app and signs in with `staging`'s settings. A port matching no saved environment runs in a temporary environment that copies the Default sign-in.
-- **Several tests.** Pass several IDs or `--all --project <id>` to share one tunnel.
-
-Setup, sign-in, long-lived tunnels, limits, and troubleshooting are in [Environments](/cli/core/local-apps).
-
-In a local batch each run has its own timeout; Ctrl-C behavior is in [Cancelling a Run](/cli/core/cancelling-runs).
-
-## Running a whole suite
-
-```bash
-testsprite test run --all --project proj_8f0f6 --wait
-```
-
-Pass `--project` or set `TESTSPRITE_PROJECT_ID`. Every test runs (each billed like any run) in dependency waves from `--produces` / `--needs` annotations: producers first, teardown last. See [Creating Tests](/cli/core/creating-tests).
-
-```bash
-testsprite test run --all --project proj_8f0f6 --filter "checkout" --wait --max-concurrency 10
-```
-
-| Flag | Default | Description |
-| :--- | :--- | :--- |
-| `--all` | — | Run all tests in the project (with `--local`, in listing order) |
-| `--project <id>` | — | Project to run |
-| `--filter <substr>` | — | Case-insensitive name filter |
-| `--max-concurrency <n>` | 50 | Max in-flight polls (1–100); with `--local`, max runs through one tunnel (1–10, default 5) |
-
-A project holds one type of test, frontend or backend. If a batch is served by the legacy backend-only engine, frontend tests come back in `skippedFrontend` with an advisory; run those individually.
+For a backend project, select an environment whose base URL points at the API you intend to test. An ordinary backend launch uses that environment's URL and ignores a `--target-url` override. A CI pull-request preview can instead clone an environment at its preview URL. For a frontend app on your machine, use `--local <port>`. [Environments](/cli/core/environments) · [Testing Local Apps](/cli/core/local-apps)
 
 ## Exit codes
 
-Exit `6` means a run is already in flight (wait for it) or a tunnel precondition failed (check the error reason). All codes: [Exit Codes](/cli/reference/exit-codes).
-
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="Reading Results" href="/cli/core/reading-results" icon="list-check">
-    Inspect steps, pull failure bundles, and navigate run history
-  </Card>
-  <Card title="Rerun & Auto-Heal" href="/cli/core/rerun-and-auto-heal" icon="arrow-rotate-right">
-    Re-run a saved test, or let AI repair UI drift automatically
-  </Card>
-  <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="square-code">
-    Complete exit-code reference for scripts and CI pipelines
-  </Card>
-  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
-    Wire the CLI into GitHub Actions or any pipeline
-  </Card>
-</Columns>
+A completed wait exits `0` for a passing execution and `1` for a failed, blocked, or cancelled execution. A successful dispatch without waiting confirms acceptance. Errors such as insufficient credits or an unavailable service have their own exit codes. [Exit Codes](/cli/reference/exit-codes)

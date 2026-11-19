@@ -1,6 +1,6 @@
 ---
 title: "Rerun"
-description: "Re-execute one API test, a chain, or every test in the project to confirm a fix or absorb backend changes."
+description: "Re-execute one API test or every test in the project to confirm a fix or absorb backend changes."
 ---
 
 <Frame>
@@ -27,7 +27,7 @@ From a test's detail page, click **Run test**.
   <img src="../../../images/api-testing-rerun-open-rerun-single.png" alt="Rerunning one API test from its detail page" />
 </Frame>
 
-Most API tests consume variables from earlier tests in a chain. A normal rerun re-runs the producers first, getting fresh captures, then runs the consumer.
+Each test runs on its own: it creates the data it needs and doesn't rely on another test having run.
 
 ## Rerun All (Batch)
 
@@ -39,24 +39,11 @@ On the project's test list, **Run all** (top right) re-executes every test in th
 
 ## Scheduled Reruns
 
-Schedules run on a cadence (hourly, daily, weekly, monthly). For API projects, each scheduled run rebuilds every chain, uses [Auto-Auth](/web-portal/core/api/auto-auth) when it's configured, and ends with Auto Cleanup so it leaves a clean environment. Set one up in [Test Schedules](/web-portal/maintenance/monitoring).
+Schedules run on a cadence (hourly, daily, weekly, monthly). For API projects, each scheduled run uses [Auto-Auth](/web-portal/core/api/auto-auth) when it's configured. Set one up in [Test Schedules](/web-portal/maintenance/monitoring).
 
 <Frame>
   <img src="../../../images/ui-testing-rerun-scheduled.png" alt="A schedule's page: execution trend, breakdown, and previous executions" />
 </Frame>
-
-## What Happens to Cleanup on Rerun
-
-Every rerun (single, batch, or scheduled) ends with [Auto Cleanup](/web-portal/core/api/auto-cleanup). The DELETE chains are rebuilt from the records *the rerun* created, not the previous run's.
-
-## Cascading: Rerun a Producer = Rerun Its Consumers
-
-Rerunning a producer automatically reruns the tests that consume its variables, with the fresh values:
-
-- Rerunning POST /users (a producer) → automatically reruns POST /orders, GET /orders/{id}, DELETE /orders/{id}
-- Rerunning DELETE /orders/{id} (a leaf consumer) → only that test reruns; its upstream stays as-is
-
-See [Dependency Chains](/web-portal/core/api/dependency-chains) for how producer/consumer relationships are identified.
 
 ## Rerun Outcomes
 
@@ -66,18 +53,12 @@ After a rerun, the test row shows the new outcome. The previous run is kept unde
 | :--- | :--- | :--- |
 | Was Failed → now Passed | Your fix worked, or the flake resolved | Move on |
 | Was Passed → now Failed | Regression; either your fix broke something else, or the API changed | Investigate via test detail page |
-| Still Failed (same error) | Fix didn't take | Refine more |
+| Still Failed (same error) | Fix didn't take | Refine more, or ask the agent to look |
 | Still Failed (different error) | You fixed one bug and uncovered another | Tackle the new error |
 
 ## Edge Cases & Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Rerun cascade goes deep — too many tests rerun">
-    The producer you reran feeds many consumers across chains. To re-execute just one consumer, open that test and rerun it directly.
-  </Accordion>
-  <Accordion title="A test takes very long to rerun">
-    Its producers depend on further upstream tests. A deep chain can make even a leaf test's rerun take several minutes.
-  </Accordion>
   <Accordion title="Rerun shows a different result than the same code did the first time">
     Usually one of: a real flake in your API, captured state that changed between runs (a record was modified), or an auth token that expired between runs ([use Auto-Auth](/web-portal/core/api/auto-auth)).
   </Accordion>
@@ -89,9 +70,6 @@ After a rerun, the test row shows the new outcome. The previous run is kept unde
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Dependency Chains" href="/web-portal/core/api/dependency-chains" icon="diagram-project">
-    Understand cascade order
-  </Card>
   <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Token refresh keeps reruns alive
   </Card>

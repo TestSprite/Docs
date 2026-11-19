@@ -1,148 +1,53 @@
 ---
 title: "Reading Results"
-description: "Inspect individual tests, step-by-step execution logs, run history, and failure bundles from the CLI."
+description: "Find the outcome of a specific execution, inspect a failed step or Python traceback, and download its evidence."
 ---
 
-## Inspecting a test
+## Find the result you need
 
-```bash
-testsprite test get test_3a9f21c7
-```
+| What you have | What to read |
+| :--- | :--- |
+| A run ID from `runs[].runId` | `testsprite result list --run "$RUN_ID"` lists outcomes for that execution. |
+| A saved test ID | `testsprite result list --test "$TEST_ID" --limit 1` lists its latest result. |
+| A result ID from `results[].resultId` | `testsprite result get "$RESULT_ID"` reads that particular outcome. |
 
-```text
-id:            test_3a9f21c7
-projectId:     proj_8f0f6
-name:          Checkout flow — guest user
-type:          frontend
-createdFrom:   cli
-status:        passed
-planSteps:     3
-  1. [action] Navigate to /checkout as a guest.
-  2. [action] Enter the shipping address and click 'Continue'.
-  3. [assertion] Verify the order summary shows the correct total.
-createdAt:     2026-06-10T08:14:22Z
-updatedAt:     2026-06-15T10:04:38Z
-```
+`test get` describes the saved test and its steps. `result get` shows what actually happened on one attempt. In the results list, `caseKey` identifies the saved test. Use it to run the case again.
 
-List tests in a project, optionally filtered:
-
-```bash
-testsprite test list --project proj_8f0f6 --type frontend --status failed,blocked
-```
-
-| Flag | Values | Description |
-| :--- | :--- | :--- |
-| `--type` | `frontend` \| `backend` | Test type |
-| `--created-from` | `portal` \| `mcp` \| `cli` | Authoring surface |
-| `--status` | comma-separated | `draft`, `ready`, `queued`, `running`, `passed`, `failed`, `blocked`, `cancelled`, `unknown` |
-| `--env <name>` | environment name | Show statuses for that environment (adds an `ENV` column) |
-| `--page-size <n>` | 1–100, default 25 | Items per page |
-| `--starting-token <token>` | opaque cursor | Continue from a previous page |
-
-### Status is per environment
-
-`test list` and `test get` without `--env` show each frontend test's latest result in the project's **default environment**, and `--status` filters on that, not on the latest run in any environment. Use `--env <name>` to read another environment. A `--target-url` run is recorded under its temporary environment and does not change the listed status. `project list` and `project get` show the default environment and environment count.
-
-## Step-by-step results
-
-`test steps` returns the step log of the latest run, or of a specific run:
-
-```bash
-testsprite test steps test_3a9f21c7 --run-id run_5c1d9a2b
-```
-
-Each entry has the step name, its status (<kbd>passed</kbd> or <kbd>failed</kbd>), and its run. Use `--page-size` and `--max-items` for long logs. Steps logged before run IDs were tracked are excluded when you pass `--run-id`.
-
-## The latest result
-
-```bash
-testsprite test result test_3a9f21c7
-```
-
-Without `--env` or `--history`, this shows the newest run across **all** environments, even if still running. In text output, if that run is not on the Default environment, a line follows with the Default environment's status and the command to read that environment's history (omitted with `--output json`, `--env`, `--history`, or when the Default status cannot be read). `--env` requires `--history`.
-
-`--include-analysis` adds the AI triage block: root-cause hypothesis, recommended fix target, failure kind, and the `snapshotId` tying all artifacts together.
-
-```bash
-testsprite test result test_3a9f21c7 --include-analysis --output json \
-  | jq '{hypothesis: .analysis.rootCauseHypothesis, fix: .analysis.recommendedFixTarget}'
-```
-
-For **backend tests** the result also carries the captured stdout (`apiOutput`) and Python traceback (`trace`): full under `--output json` (and in failure bundles as `result.json` / `failure.json`), a 20-line tail of each in text mode.
-
-## Run history
-
-```bash
-testsprite test result test_3a9f21c7 --history --source cli --since 7d
-```
-
-`targetUrl` is the address the run started against and stays that way after an environment URL edit; URL userinfo is removed before storage. If a new run still visits an old host, check the saved test steps ([Environments](/cli/core/environments)).
-
-| Flag | Values | Description |
-| :--- | :--- | :--- |
-| `--source` | `cli` \| `portal` \| `mcp` \| `schedule` \| `github_action` | What triggered the run |
-| `--since` | `24h`, `7d`, or ISO timestamp | Earliest `createdAt` |
-| `--page-size <n>` | 1–100, default 20 | Items per page |
-| `--cursor <token>` | opaque cursor | Continue from a previous page |
-| `--env <name>` | environment name | Only runs that used this environment |
-| `--rerun` \| `--no-rerun` | flag | Only reruns, or only fresh runs |
-| `--columns <list>` | column names | Text output: select or reorder columns |
-| `--no-header` | flag | Text output: suppress the header row |
-
-## Triaging a failure
-
-For a <kbd>failed</kbd> test, start with the one-screen triage card (status, failure kind, root-cause hypothesis, recommended fix target):
-
-```bash
-testsprite test failure summary test_3a9f21c7
-```
-
-To pull the full failure bundle to disk:
-
-```bash
-mkdir -p .testsprite
-testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
-```
-
-`--out` creates the bundle directory but not its parent; a missing parent exits 5. Without `--out`, the bundle prints to stdout. The bundle holds the failing step, DOM snapshots as text, test source, and root-cause analysis, all tied to one `snapshotId` (see [Failure Bundle](/cli/concepts/key-terms#failure-bundle)). `--failed-only` keeps only the failing step and its neighbors (±1) for faster agent context loading.
+<Frame>
+  <img src="../../images/cli-result-get.png" alt="testsprite result get for a failed test: the cause and suggested fix, then the failed step's screenshot and the video" />
+</Frame>
 
 ## Pinning to a specific run
 
-`test failure get` always returns the *latest* failing run, which moves when a new run arrives. To pin an exact run:
+In CI, use the run ID from the launch you are investigating. Filtering by execution keeps the evidence tied to that run even if another build or a schedule runs the same test afterward.
 
 ```bash
-testsprite test artifact get run_5c1d9a2b
+testsprite result list --run "$RUN_ID" --status failed,blocked --output json
 ```
 
-Without `--out`, the bundle goes to `./.testsprite/runs/<run-id>/` (directories created). With `--out <dir>`, the parent of `<dir>` must exist. The bundle is immutable, so a concurrent Portal or schedule run cannot overwrite it. Use `test failure get <test-id>` for interactive triage and `test artifact get <run-id>` in scripts and CI.
-
-### When there is no bundle
-
-The bundle includes the test's saved code. A frontend test gets saved code when it passes against a public URL; a tunnel (`--local`) run never saves code. If the test has never passed, or has only run through a tunnel, `test failure get` and `test artifact get` exit 4 with reason `no_code`. A cancelled run exits 4 with `cancelled_no_artifacts`. In both cases `test steps --run-id <run-id>` and `test failure summary <test-id>` still work.
-
-Backend bundles contain saved code and failure analysis (with stdout and traceback when available) but no step log. Use `test artifact get <run-id>`; on the V3 execution path `test failure get <test-id>` also returns backend bundles.
-
-## Reading test code
+Copy a `resultId` from `results[]` and inspect the outcome. JSON includes the verdict (`testStatus`), `error`, `blockedReason`, `cause`, `fix`, and the recorded steps when available. `failedStep` can include its screenshot. For a backend test, inspect `trace` and `apiOutput` for the Python traceback and captured output. Text mode abbreviates long traces and output. JSON returns the complete fields.
 
 ```bash
-testsprite test code get test_3a9f21c7 --out ./checkout_flow.py
+testsprite result get "$RESULT_ID" --output json
 ```
 
-Without `--out` the code prints to stdout; the file's parent directory must exist. The response includes the language, framework, code, and a `codeVersion` token that protects `testsprite test code put` from overwriting a concurrent edit.
+`result list` and `result get` normally exit `0` when the read succeeds, including for a failed test. Use `run --wait` or `run wait` to gate on the execution verdict. [Running Tests](/cli/core/running-tests)
 
-## Where to Go Next
+## History by environment
 
-<Columns cols={2}>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
-    Trigger runs, wait for verdicts, and understand exit codes
-  </Card>
-  <Card title="Rerun & Auto-Heal" href="/cli/core/rerun-and-auto-heal" icon="arrow-rotate-right">
-    Re-run a test or let AI repair UI drift
-  </Card>
-  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
-    runId, codeVersion, snapshotId, and the rest of the vocabulary
-  </Card>
-  <Card title="Command Reference" href="/cli/reference/command-reference" icon="square-code">
-    Full flag listing for every CLI command
-  </Card>
-</Columns>
+```bash
+testsprite result list --test "$TEST_ID" --env staging --limit 10
+testsprite result list --test "$TEST_ID" --status cancelled
+```
+
+Test history is newest first. `--env` and `--limit` apply to `--test`, with a default limit of 20 and a range of 1–100. `--status` accepts `passed`, `failed`, `running`, `blocked`, and `cancelled`. Include `cancelled` explicitly to see cancelled results. To read the latest cancelled or non-cancelled result, supply all five statuses with `--limit 1`.
+
+## Download the evidence
+
+```bash
+testsprite result get "$RESULT_ID" --out ".testsprite/results/$RESULT_ID" --failed-only
+```
+
+Use one directory per result. The CLI creates it and writes `result.json` plus available media, such as `video.mp4`, `steps/001.png`, and `steps/001.html`. A result blocked at sign-in can have an additional `sign-in/` directory. `--failed-only` downloads failed steps and one on either side, or all steps if none failed. Omit it for the full sequence.
+
+Downloading again replaces the managed result files in that directory. If a file fails to download, the CLI writes the rest, reports the failed file, and exits `10`. Retry the same download to get fresh links. If an earlier copy of that file from the same result was kept, the download summary marks it `kept: true`. Keep downloaded HTML and screenshots private when they include application data.

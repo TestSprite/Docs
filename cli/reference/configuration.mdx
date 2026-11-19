@@ -4,17 +4,16 @@ description: "Credentials file, profiles, environment variables, and request tim
 icon: "gear"
 ---
 
-Settings resolve in this order: flags, environment variables, the credentials file (`~/.testsprite/credentials`), then built-in defaults.
+Choose a profile for saved credentials or supply an API key through the environment. The table below shows the precedence for each setting.
 
 ## Global flags
 
-Global flags apply to one invocation and can go before or after the subcommand. Descriptions: [Command Reference](/cli/reference/command-reference#global-flags).
+Global flags apply to one invocation. See the [command reference](/cli/reference/command-reference#global-flags).
 
 | Flag | Overrides | Default |
 | :--- | :--- | :--- |
 | `--output <json\|text>` | — | `text` |
 | `--profile <name>` | `TESTSPRITE_PROFILE` | `default` |
-| `--endpoint-url <url>` | `TESTSPRITE_API_URL` | production API |
 | `--verbose` | — | false |
 | `--debug` | — | false |
 | `--dry-run` | — | false |
@@ -44,14 +43,14 @@ export TESTSPRITE_PROFILE=ci
 | Variable | Purpose | Overridden by |
 | :--- | :--- | :--- |
 | `TESTSPRITE_API_KEY` | API key | — (highest for the key) |
+| `TESTSPRITE_PROJECT_ID` | Default project for commands that accept a project selector. On `run`, this applies when no test IDs or list are supplied. | `--project` |
 | `TESTSPRITE_PROFILE` | Active profile | `--profile` |
-| `TESTSPRITE_API_URL` | API endpoint host | `--endpoint-url` |
 | `TESTSPRITE_REQUEST_TIMEOUT_MS` | Per-request timeout in **milliseconds** | `--request-timeout` (seconds) |
 | `TESTSPRITE_NO_UPDATE_NOTIFIER` | Any non-empty value disables the "new version" stderr notice | — |
 | `NO_COLOR` | Any non-empty value disables colored output | — |
 | `HTTPS_PROXY` / `HTTP_PROXY` / `NO_PROXY` | Route requests through a proxy (lower-case also works) | — |
 
-**Profile:** `--profile`, then `TESTSPRITE_PROFILE`, then `default`. **API key:** `TESTSPRITE_API_KEY`, then the active profile's `api_key`. The CLI never logs the key.
+The CLI checks `TESTSPRITE_API_KEY` before the active profile's `api_key`.
 
 ## Output
 
@@ -59,16 +58,14 @@ export TESTSPRITE_PROFILE=ci
 
 ## Request timeouts
 
-`--request-timeout <seconds>` (1–600, default 120) limits each HTTP request; as a variable it is milliseconds: `TESTSPRITE_REQUEST_TIMEOUT_MS=30000`. It does **not** affect the `--timeout` on `test run --wait`, `test wait` or `test rerun --wait`.
+The per-request limit defaults to 120 seconds. Pass `--request-timeout 30` or set `TESTSPRITE_REQUEST_TIMEOUT_MS=30000` for a 30-second limit. The CLI separately applies `--timeout` to the whole wait on `run --wait`, `run wait` and `ci run`.
 
 ## The dashboard link
 
-On run completion and on `test create` / `test create-batch`, JSON output may include `dashboardUrl` (text mode prints `Dashboard:`), a deep link to the test in the Web Portal. The backend builds it; if it offers none the CLI computes one from `projectId` + `testId`. If no correct link exists, no URL is printed (an `[advisory]` points at `test get <id>`) rather than one that would 404. The field is absent under `--dry-run`.
+The CLI prints a dashboard link when the server supplies one. In JSON, read the optional `dashboardUrl` from the run receipt. To get the run IDs even when there is no link:
 
-```json
-{
-  "runId": "run_5c1d...",
-  "status": "failed",
-  "dashboardUrl": "https://www.testsprite.com/dashboard/tests/proj_8f0f6/test/test_3a9f21c7"
-}
+```bash
+jq -r '.runs[] | [.runId, (.dashboardUrl // "")] | @tsv' launch.json
 ```
+
+Create `launch.json` using the launch example in [Output & Scripting](/cli/reference/output-and-scripting).

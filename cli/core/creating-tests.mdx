@@ -1,121 +1,57 @@
 ---
 title: "Creating Tests"
-description: "Author frontend test plans and backend test code, then create individual tests or batches from the CLI."
+description: "Ask your project's agent for tests, review the proposed steps, and run the cases you save."
 ---
 
-## Two kinds of tests
+Start with a behavior someone can observe. For example, a declined card should leave the cart intact and show the shopper why payment failed. The project's agent can use that expectation to propose test cases. The same conversation is available in the Portal.
 
-| | **Frontend** | **Backend** |
-| :--- | :--- | :--- |
-| What it is | Ordered steps a real browser performs against your live app | Code that calls your API and asserts on responses (Python, `pytest`-style) |
-| You author | A plan file (JSON) | The test code |
-| Pass it with | `--plan-from` | `--code-file` |
+## Ask for frontend or API tests
 
-All test code is stored and run as Python, so `test code put --language` accepts only `python`.
-
-## Create a frontend test from a plan
+For a deployed web app, choose a [project environment](/cli/core/environments) the hosted agent can reach. It uses that environment's URL and sign-in throughout the conversation. Omit `--env` to use the project default.
 
 ```bash
-testsprite test create --plan-from ./checkout-flow.plan.json
+testsprite plan "Check that a declined card keeps the cart intact and shows the payment error" \
+  --project "$PROJECT_ID" --env staging --steps
 ```
 
-The plan file (≤ 256 KB) holds the whole definition, so `--project`, `--type`, `--name`, `--description` and `--priority` are ignored when `--plan-from` is set.
-
-```json
-{
-  "projectId": "proj_8f0f6",
-  "type": "frontend",
-  "name": "Guest checkout — credit card",
-  "planSteps": [
-    { "type": "action", "description": "Navigate to https://app.example.com/cart" },
-    { "type": "action", "description": "Click the checkout button" },
-    { "type": "action", "description": "Fill the card number field with a test card number" },
-    { "type": "action", "description": "Click the Pay button" },
-    { "type": "assertion", "description": "The order confirmation message is visible" }
-  ]
-}
-```
-
-The CLI prints the new `testId`, `codeVersion`, `createdAt` and, when available, a `dashboardUrl`.
-
-## Create a backend test from code
+For a backend project, attach the API specification and describe the responses you expect. Replace the example path with your spec.
 
 ```bash
-testsprite test create --project proj_8f0f6 --type backend \
-  --name "Create order" --code-file ./tests/create_order.py
+testsprite plan "Cover order creation and rejection of a missing product ID" \
+  --project "$PROJECT_ID" --file ./openapi.yaml --steps
 ```
 
-| Flag | Description |
-| :--- | :--- |
-| `--project <id>` | **Required** (with `--code-file`) |
-| `--type <frontend\|backend>` | **Required** |
-| `--name <name>` | **Required**, ≤ 200 characters |
-| `--code-file <path>` | **Required**, ≤ 350 KB. Excludes `--plan-from` |
-| `--description <text>` | ≤ 2000 characters |
-| `--priority <p0\|p1\|p2\|p3>` | Priority level |
+`--file` is repeatable for requirements, tickets, or API specs. From a Git checkout, `--diff` attaches your change. For a local-only app, the hosted agent works from that material. You can run its saved frontend cases against your machine through a tunnel. [Testing Local Apps](/cli/core/local-apps)
 
-### Dependencies between backend tests
+## Review the proposal
 
-Declare the variables a test produces and consumes; producers run before consumers and teardown tests run last, on `test run --all` and on rerun. These flags are backend-only.
-
-| Flag | Description |
-| :--- | :--- |
-| `--produces <var>` | Variable this test captures (repeatable) |
-| `--needs <var>` | Variable required from an upstream producer (repeatable) |
-| `--category <str>` | `teardown` or `cleanup` marks a final-wave cleanup test |
+`plan` normally follows the conversation until the agent replies or needs a decision. To leave it working, add `--no-wait`. Return from the same folder to see the proposed additions, changes, removals, and steps.
 
 ```bash
-testsprite test create --project proj_8f0f6 --type backend --name "Create order" \
-  --code-file ./tests/create_order.py --produces orderId
-testsprite test create --project proj_8f0f6 --type backend --name "Fetch order" \
-  --code-file ./tests/fetch_order.py --needs orderId
-testsprite test create --project proj_8f0f6 --type backend --name "Delete test orders" \
-  --code-file ./tests/cleanup.py --category teardown
+testsprite status --wait --steps
 ```
 
-## Create and run in one command
-
-`--run` starts a cloud run right after creation; `--wait` blocks until a terminal status.
+If the agent asks a question in a chat message, answer with `testsprite reply "your answer"`. For a question card, follow **Open in the portal** to submit your answers. Review the proposed actions and expected outcomes. To request a change, explain what the agent should revise.
 
 ```bash
-testsprite test create --project proj_8f0f6 --type frontend \
-  --plan-from ./checkout-flow.plan.json --run --wait --output json
+testsprite reject "Also check that the cart still contains the original items" --steps
 ```
 
-Exit `0` means the run passed; any other code means it failed, was blocked or timed out (see [Exit Codes](/cli/reference/exit-codes)). Without `--env`, the run uses the Default environment. `--env <name>` picks another, and `--target-url <url>` runs a frontend test against a URL without creating an environment; both are covered in [Environments](/cli/core/environments). For `--timeout` and resuming with `test wait <run-id>`, see [Running Tests](/cli/core/running-tests).
+## Save the reviewed tests
 
-## Creating many tests at once
-
-`test create-batch` creates up to 50 frontend tests per call (frontend only):
+When the pending card proposes the test changes you want, apply it. To approve a specific card, pass its ID to `--card`. A **run** card starts an execution when applied, so check the card's action before you confirm.
 
 ```bash
-testsprite test create-batch --plans ./flows.jsonl        # one plan spec per line
-testsprite test create-batch --plan-from-dir ./plans/     # *.json files, in filename order
+testsprite apply --output json
 ```
 
-| Flag | Description |
-| :--- | :--- |
-| `--plans <path>` | JSONL file (≤ 50 specs, ≤ 5 MB). Excludes `--plan-from-dir` |
-| `--plan-from-dir <dir>` | Directory of `*.json` plan files (≤ 50 files, ≤ 5 MB total) |
-| `--run` | Run each created test |
-| `--wait` | With `--run`, wait for all runs to finish |
-| `--timeout <s>` | With `--run --wait`, max seconds (default 600) |
-| `--env <name>` | With `--run`, run in this environment; default is Default |
-| `--target-url <url>` | With `--run`, run against a URL as with `test create`; with `--env`, that environment's settings apply |
-| `--max-concurrency <n>` | With `--run`, max in-flight triggers (1–100, default 50) |
-| `--idempotency-key <token>` | Pin for safe retries |
+For a test plan, `applied.tests` contains the saved test IDs. You can also accept a subset with `--only` or `--exclude`, using the references shown in the proposal. If you have several conversations open, `status --list --project "$PROJECT_ID"` shows their IDs. Pass `--conversation` to target the right one.
 
-The server allows 60 run triggers per minute per key; the CLI throttles and retries for you.
+## Run the saved cases
 
-To change or delete tests, see [Editing & Deleting Tests](/cli/core/editing-tests).
+Use a saved test ID to try one case, or run the project. The wait command's exit status tells you whether the execution passed. [Running Tests](/cli/core/running-tests)
 
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
-    Trigger runs, poll for verdicts, handle timeouts
-  </Card>
-  <Card title="Reading Results" href="/cli/core/reading-results" icon="clipboard-check">
-    Failure bundles, steps, and run history
-  </Card>
-</Columns>
+```bash
+testsprite test list --project "$PROJECT_ID"
+testsprite run --project "$PROJECT_ID" --env staging --wait
+```

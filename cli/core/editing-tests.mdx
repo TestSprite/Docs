@@ -1,56 +1,45 @@
 ---
-title: "Editing & Deleting Tests"
-description: "Update a test's metadata, replace its plan steps or code safely, and delete tests one at a time or in bulk."
+title: "Editing and Deleting Tests"
+description: "Request changes to saved cases, review exactly which tests are affected, and approve the changes you want."
 ---
 
 ## Editing a test
 
-**Metadata** (name, description, priority) and, for backend tests, the dependency declarations (`--produces`, `--needs`, `--category`; see [Creating Tests](/cli/core/creating-tests)):
+Find the saved case and read its current steps. The test ID identifies the same case across runs.
 
 ```bash
-testsprite test update test_3a9f21c7 --name "Guest checkout v2" --priority p0
+testsprite test list --project "$PROJECT_ID"
+testsprite test get "$TEST_ID"
 ```
 
-**Frontend plan steps:**
+Describe the change to the project's agent. If the expected product behavior has changed, give the new expectation and the acceptance criteria that establish it.
 
 ```bash
-testsprite test plan put test_3a9f21c7 --steps ./updated-steps.json
+testsprite plan "Update test $TEST_ID so a declined payment leaves all items in the cart" \
+  --project "$PROJECT_ID" --steps
 ```
 
-The file is a JSON object with a `planSteps` array (≤ 200 steps, ≤ 256 KB). Optionally pass `--expected-step-count <n>`; the server returns 412 if the current count differs, so nothing is silently overwritten.
-
-**Backend test code:**
+Review the changed steps and any other cases in the proposal. `testsprite reject "Keep the existing sign-in step"` asks for a revision. When the plan matches the requirement, save it and inspect the case again.
 
 ```bash
-# Safe: supply the codeVersion from your last create/update
-testsprite test code put test_3a9f21c7 --code-file ./tests/create_order_v2.py --expected-version v3
-
-# Overwrite regardless of version (audit-logged)
-testsprite test code put test_3a9f21c7 --code-file ./tests/create_order_v2.py --force
+testsprite apply
+testsprite test get "$TEST_ID"
 ```
-
-`codeVersion` is an opaque token that changes on every code change. If the test has a newer version than `--expected-version`, the CLI exits `6`; re-fetch the code and retry. The two flags are mutually exclusive. More in [The Agent Loop](/cli/concepts/the-agent-loop).
 
 ## Deleting tests
 
-`--confirm` is required.
+Give the agent the IDs of the cases you want removed and explain which behavior was retired. Review the **removed** cases in the proposal. With a mixed proposal, `apply --only <ref>` selects the references to approve. `discard` drops the conversation's unsaved work.
 
 ```bash
-testsprite test delete test_3a9f21c7 --confirm
-testsprite test delete-batch test_3a9f21c7 test_b1e04f2a --confirm
-testsprite test delete-batch --all --project proj_8f0f6 --confirm
-testsprite test delete-batch --all --project proj_8f0f6 --status failed --confirm
+testsprite plan "Remove test $TEST_ID because we retired the legacy checkout page" \
+  --project "$PROJECT_ID" --steps
 ```
 
-The CLI prints `Deleted N, Skipped M, Failed K`. A 404 counts as skipped, so already-deleted IDs are safe to pass. Exit `0` if everything was deleted or skipped, `1` if any deletion failed, `5` for validation errors.
+After reviewing the proposed removals, apply and confirm the remaining suite.
 
-## Where to Go Next
+```bash
+testsprite apply
+testsprite test list --project "$PROJECT_ID"
+```
 
-<Columns cols={2}>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
-    Trigger runs and poll for verdicts
-  </Card>
-  <Card title="Reading Results" href="/cli/core/reading-results" icon="clipboard-check">
-    Failure bundles, steps, and run history
-  </Card>
-</Columns>
+If a test caught a product defect, use its result to fix the application and run the same test again. [Reading Results](/cli/core/reading-results) · [Running Tests Again](/cli/core/rerun-and-auto-heal)

@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-description: "AI-powered backend testing for RESTful APIs. Discover endpoints, generate plans, ship endpoint and integration tests, watch them run, and auto-clean up the data they touched."
+description: "Backend testing for RESTful APIs. The agent sets up your credentials, calls your API to learn it, and proposes endpoint and integration tests for you to review and run."
 ---
 
 <Frame>
@@ -14,38 +14,34 @@ API Testing takes you from "here's my API" to "here's a regression suite I trust
 | Feature | Description |
 | :--- | :--- |
 | <kbd>Endpoint + Integration Tests</kbd> | Per-endpoint coverage *and* multi-step chains where one test's response feeds the next |
-| <kbd>Dynamic Variables</kbd> | Values captured from one response and injected into the next request |
-| <kbd>Auto Cleanup</kbd> | After every run, TestSprite deletes the records your tests created |
 | <kbd>Auto-Auth</kbd> | Configure your login flow once; TestSprite fetches a fresh token before every run |
 | <kbd>Smart Reports</kbd> | Error types, root causes, and recommended fixes for every failure |
-| <kbd>Natural Language Refinement</kbd> | Adjust any test in natural language, no code required |
+| <kbd>Natural Language Refinement</kbd> | Ask the agent to add, change or fix tests in natural language, no code required |
 
 ## The API Testing Journey
 
 <Card>
 ```mermaid
 flowchart LR
-    A["1\. API Discovery<br/>extract endpoints from<br/>PRD, docs, and live calls"]
-    M["2\. Feature Map<br/>features and use cases<br/>on Test Coverage"]
-    B["3\. Plan Generation<br/>per-endpoint plan items<br/>with priorities"]
-    C["4\. Endpoint Tests<br/>one test per endpoint<br/>covering CRUD and edges"]
-    D["5\. Integration Tests<br/>multi-step chains across<br/>related endpoints"]
-    E["6\. Run"]
-    F["7\. Cleanup<br/>records your tests created<br/>get removed afterward"]
+    A["1\. Credentials Setup<br/>the agent sets up auth;<br/>you type the secrets"]
+    B["2\. API Calls<br/>the agent tries your<br/>endpoints for real"]
+    C["3\. Proposed Test Cases<br/>endpoint and integration<br/>tests for your review"]
+    D["4\. Apply and Run"]
+    E["5\. Review<br/>the agent judges<br/>each failure"]
 
-    A --> M --> B --> C --> D --> E --> F
+    A --> B --> C --> D --> E
 ```
 </Card>
 
 <CardGroup cols={2}>
-  <Card title="API Discovery" href="/web-portal/core/api/api-discovery" icon="magnifying-glass">
-    How TestSprite finds your endpoints
+  <Card title="Credentials Setup" href="/web-portal/core/api/agent-credentials" icon="key">
+    How the agent sets up your API's auth without seeing the secrets
   </Card>
-  <Card title="Plan Generation & Editing" href="/web-portal/core/api/api-plan-gen" icon="list-check">
-    Review the plan, edit cases, add your own
+  <Card title="API Calls" href="/web-portal/core/api/agent-api-calls" icon="terminal">
+    How the agent learns your API, and where to see every call
   </Card>
   <Card title="Endpoint Tests" href="/web-portal/core/api/endpoint-tests" icon="cube">
-    One runnable test per plan row
+    One runnable test per test case
   </Card>
   <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step chains where one step's output feeds the next
@@ -56,15 +52,19 @@ New to API testing? Start with the [Quickstart](/web-portal/core/api/quickstart)
 
 ## What a Plan Covers
 
-Plans group test cases into categories that fit your API: functional / happy path, schema validation, authorization, error handling and edge cases, boundary / load, and security probes. Not every category applies to every API. See [Plan Generation & Editing](/web-portal/core/api/api-plan-gen#the-plan-structure) for what each covers.
+Plans group test cases into categories that fit your API: functional / happy path, schema validation, authorization, error handling and edge cases, boundary / load, and security probes. Not every category applies to every API. See [Proposed Test Cases](/web-portal/core/ui/agent-plan) for how to review them.
+
+<Frame>
+  <img src="../../../images/plangen-type.png" alt="The categories a plan covers: functional / happy path, schema and response validation, authorization and authentication, error handling and edge cases, boundary / load, security probes" />
+</Frame>
 
 <Tip>
-On a first run, keep every category selected. Once you have a baseline, prune the ones that don't apply (for example, security probes for a strictly internal service).
+On a first run, keep everything the agent proposes. Once you have a baseline, leave out what doesn't apply (for example, security probes for a strictly internal service).
 </Tip>
 
 ## Refining Tests in Natural Language
 
-Edit a test's description and click **Regenerate**, or ask in **Chats**. For example:
+Edit a test's description and click **Regenerate**, or ask the agent. For example:
 
 <Frame>
   <img src="../../../images/api-refining.png" alt="API testing overview" />
@@ -86,18 +86,18 @@ For the GET /users/{id} test, drop the assertion on `created_at` — it's a time
 
 TestSprite regenerates the affected test code and re-runs it. See [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases) for every refinement path.
 
-Testing a website instead? See [UI Testing](/web-portal/core/ui/ui-testing). The wizard, refinement, and rerun concepts mirror this page; the tests run browser actions instead of HTTP calls.
+Testing a website instead? See [UI Testing](/web-portal/core/ui/ui-testing). The setup, refinement, and rerun concepts mirror this page; the tests run browser actions instead of HTTP calls.
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="API Discovery" href="/web-portal/core/api/api-discovery" icon="magnifying-glass">
-    The first phase: endpoint extraction
+  <Card title="Credentials Setup" href="/web-portal/core/api/agent-credentials" icon="key">
+    The first step: how your API authenticates
   </Card>
   <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Stop pasting expiring tokens before every run
   </Card>
-  <Card title="Data Flow" href="/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test" icon="diagram-project">
-    See the values each test captures and consumes
+  <Card title="API Calls" href="/web-portal/core/api/agent-api-calls" icon="terminal">
+    The requests the agent makes to learn your API
   </Card>
 </Columns>
