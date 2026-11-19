@@ -18,15 +18,15 @@ GET  /orders/{id}  → confirm the order is retrievable
 DELETE /orders/{id}→ cancel the order, confirm 204
 ```
 
-TestSprite identifies these handoffs and runs the chain end to end as a single test. [Dynamic Variables](/web-portal/core/api/dynamic-variables) shows the captured values; [Dependency Chains](/web-portal/core/api/dependency-chains) explains how the run order is determined.
+TestSprite identifies these handoffs and runs the chain end to end as a single test.
 
 ## Where Integration Tests Live in the UI
 
 Integration tests have their own sidebar row, **Test Cases → Integration Tests**, next to **Endpoint Tests**. From there you can:
 
-- Browse the auto-assembled chains and open any one to see its steps
+- Browse the chains and open any one to see its steps
 - **Run all** chains from the toolbar, or open a chain and rerun it on its own
-- Refine a chain in chat (add a step, drop a step, change the sequence)
+- Ask the agent to refine a chain (add a step, drop a step, change the sequence)
 
 ## Why Integration Tests Matter
 
@@ -55,7 +55,7 @@ Click into an integration test to see its detail page:
 
 ## When a Chain Fails
 
-Chains fail in three distinguishable ways:
+Chains fail in two distinguishable ways:
 
 <Frame>
   <img src="../../../images/integration-error.png" alt="Integration test detail page with step list" />
@@ -65,13 +65,8 @@ Chains fail in three distinguishable ways:
 | :--- | :--- | :--- |
 | <kbd>Step N failed assertion</kbd> | Step N's HTTP call returned, but the assertion failed | Check step N's request/response in **Stdout** → refine or fix the API |
 | <kbd>Step N TEST BLOCKED</kbd> | An upstream step (M before N) failed, so step N couldn't run | Fix step M first; step N runs automatically on rerun |
-| <kbd>Variable not found</kbd> | Step N needs a value that wasn't produced by any earlier step | Refine in chat with a hint: "Make sure POST /users captures user_id" |
 
 See [Endpoint Tests](/web-portal/core/api/endpoint-tests#test-outcomes) for how Blocked differs from Failed.
-
-## Auto Cleanup Pairing
-
-After every run or rerun, even a passing one, TestSprite removes the records your chains created (users, orders, sessions), so the next run starts from a known-empty state. See [Auto Cleanup](/web-portal/core/api/auto-cleanup).
 
 UI testing has the same idea, a use case with multiple steps, but runs browser actions instead of HTTP calls. See [UI Testing](/web-portal/core/ui/ui-testing).
 
@@ -79,18 +74,13 @@ UI testing has the same idea, a use case with multiple steps, but runs browser a
 
 <AccordionGroup>
   <Accordion title="No integration tests were detected">
-    Common when your API is mostly read-only or the initial plan had sparse hints. Re-run plan generation with a hint like "Generate integration chains that exercise create → read → update → delete on /orders", or ask for specific multi-step flows in chat.
+    Common when your API is mostly read-only or the agent had little to go on. Ask it for specific multi-step flows: "Add integration tests that exercise create → read → update → delete on /orders".
   </Accordion>
   <Accordion title="A chain looks wrong — wrong order, missing steps">
-    Open the chain and describe the right shape in chat: "The right order is POST /users → POST /sessions → POST /orders, not /users → /orders directly". TestSprite re-runs with the corrected sequence.
-  </Accordion>
-  <Accordion title="A chain runs N steps then says 'Variable not found'">
-    A later step needs a value no earlier step provided. Common causes:
-    - **Naming mismatch**: an earlier step produces `user_id` but the later step references `userId`. Refine in chat to align the names.
-    - **Missing field**: the producer step Passed but its response didn't include the field. Check its response in **Stdout** and refine to capture from a different field.
+    Tell the agent the right shape: "The right order is POST /users → POST /sessions → POST /orders, not /users → /orders directly". It fixes the chain and proposes the change.
   </Accordion>
   <Accordion title="My chain runs faster than my API can handle (eventual consistency)">
-    Add a wait in chat: "After the POST step, wait 250ms before the GET".
+    Ask the agent to add a wait: "After the POST step, wait 250ms before the GET".
   </Accordion>
   <Accordion title="A step passes on its own, but breaks the chain">
     The step has a side effect the chain didn't account for, such as leaving a session active. Refine the step to clean up after itself, or add an explicit cleanup step: "After the GET step, DELETE the session created in step 2".
@@ -100,13 +90,10 @@ UI testing has the same idea, a use case with multiple steps, but runs browser a
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="Dynamic Variables" href="/web-portal/core/api/dynamic-variables" icon="brackets-curly">
-    Where captured values surface in the UI
+  <Card title="Endpoint Tests" href="/web-portal/core/api/endpoint-tests" icon="cube">
+    The single-call tests that chains are built from
   </Card>
-  <Card title="Dependency Chains" href="/web-portal/core/api/dependency-chains" icon="diagram-project">
-    How run order is determined
-  </Card>
-  <Card title="Auto Cleanup" href="/web-portal/core/api/auto-cleanup" icon="broom">
-    Records created during a run get deleted afterward
+  <Card title="API Calls" href="/web-portal/core/api/agent-api-calls" icon="terminal">
+    How the agent tries your endpoints before it proposes a test
   </Card>
 </Columns>

@@ -1,41 +1,51 @@
 ---
 title: "Test Lists & Schedules"
-description: "Run a group of tests together, and run a project or a test list on a cron schedule, from the CLI."
+description: "Run a saved group of tests with its environments, or schedule a list or project."
 ---
 
-Test lists and schedules work the same as in the Portal; see [Test Lists](/web-portal/maintenance/test-lists) and [Test Schedules](/web-portal/maintenance/monitoring). This page covers the commands.
+Use a test list for a selection you want to run again. A list can include tests from several projects and save a different environment for each project.
 
 ## Run a group of tests
 
+Set `PROJECT_ID` and the two test IDs to values from `project list` and `test list`. The create command prints the ID to use for `LIST_ID`.
+
 ```bash
-testsprite testlist create --name smoke --project-env <project-id>:staging
-testsprite testlist add <list-id> <test-id-1> <test-id-2>
-testsprite testlist run <list-id> --wait
+testsprite testlist create --name smoke --project-env "${PROJECT_ID}:staging"
+testsprite testlist add "$LIST_ID" "$TEST_ID_1" "$TEST_ID_2"
+testsprite run --testlist "$LIST_ID" --wait
 ```
 
-`--project-env <project-id>:<env>` sets the environment that project's tests run in; repeat it for each project in the list. To run only part of the list, pass `--case <test-id>` to `testlist run`. A loopback environment opens a [tunnel](/cli/core/local-apps) automatically.
+To run a subset, supply its test IDs before or after the list selector:
+
+```bash
+testsprite run "$TEST_ID_1" --testlist "$LIST_ID" --wait
+```
+
+Use repeatable `--project-env <project-id>:<name>` on `testlist create` or `testlist update` to save bindings. Updating the bindings replaces the set, so include each mapping you want to keep. The list launch uses these bindings and rejects `--env`, `--local` and `--target-url`. A saved loopback address opens a [tunnel](/cli/core/local-apps) automatically. List launches default to a 600-second deadline. Server concurrency defaults to 10 (1–50), or 5 through a tunnel (1–10).
+
+`testlist get "$LIST_ID"` lists the members and can include `lastRunId`. A launch can return several run receipts. Use a receipt's `runId` with `result list --run` and an individual `resultId` with `result get`.
+
+If only some requested IDs belong to the list, the JSON field `notFound` lists the others. The CLI exits `4` for this partial match. With `--wait`, it polls the matched cases first, so a failure or timeout takes precedence. If every case conflicts, for example because every case is already running, the CLI can exit `6`. If the rate limit defers any cases, it can exit `7`. Both codes also apply without `--wait`.
 
 ## Run on a schedule
 
 ```bash
 testsprite schedule create --name nightly --cron "0 3 * * *" \
-  --target-type testList --target-id <list-id>
+  --target-type testList --target-id "$LIST_ID"
 ```
 
-To schedule a whole project, use `--target-type project --target-id <project-id>`. Without `--env`, a project schedule runs on the project's Default environment each time it fires; add `--env staging` to pin it. A test-list schedule uses the list's environments and rejects `--env`; change them with `testlist update --project-env`.
+This schedule runs daily at 03:00 UTC. Set `--timezone` to use another time zone. Schedules start enabled and spend credits when they run. The CLI shows the estimated cost when the server supplies it. A plan without scheduling returns exit 13.
 
-`schedule create` prints the estimated credits per run. Schedules need a workspace plan that includes them (exit `13` otherwise).
+For a whole project, use `--target-type project --target-id "$PROJECT_ID"`. A project schedule follows the current default environment unless pinned with `--env staging`. A test-list schedule uses the list's bindings and rejects `--env`.
 
 ## Pause, change, or check a schedule
 
 ```bash
-testsprite schedule update <schedule-id> --pause
-testsprite schedule update <schedule-id> --env staging
-testsprite schedule run list <schedule-id>
+testsprite schedule get "$SCHEDULE_ID"
+testsprite schedule update "$SCHEDULE_ID" --pause
+testsprite schedule update "$SCHEDULE_ID" --resume
 ```
 
-`--resume` turns a paused schedule back on. `schedule list` shows each schedule's environment: `staging (pinned)` or `project default (inherits)`.
+`schedule list` identifies a pinned project environment by name or shows `project default (inherits)`. View execution history in the Portal. A schedule targeting a loopback environment cannot reach your machine. The run is recorded as `blocked` with `failureKind: network` and incurs no charge. Start a local frontend run with `testsprite run --project "$PROJECT_ID" --local 3000` while your app is listening.
 
-A schedule on a loopback environment can't reach your machine from the cloud. Its runs are recorded as <kbd>blocked</kbd> and not charged (`failureKind: network`); run the tests with `test run --local <port>` instead.
-
-For every flag, see [Command Reference](/cli/reference/command-reference).
+See [Test Lists](/web-portal/maintenance/test-lists) and [Test Schedules](/web-portal/maintenance/monitoring) for the Portal views.

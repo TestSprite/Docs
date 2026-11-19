@@ -1,71 +1,20 @@
 ---
 title: "Quickstart"
-description: "Install the CLI, create a test, run it against your live app, and read exactly what broke — with your coding agent or from the terminal."
+description: "Take a deployed frontend from an empty project to a reviewed checkout test, a run verdict and the evidence for one result."
 icon: "play"
 ---
 
-Install once; then either let your coding agent drive the CLI or type the commands yourself.
-
-<Tip>
-Prepend `--dry-run` to any command to try it offline with no API key. The CLI prints a canned sample in the real response shape.
-</Tip>
+Have your workspace API key and the staging URL of a deployed frontend ready. Substitute a user journey that works in your app wherever the example uses guest checkout.
 
 ## Install and set up
 
+From your repository root, install the CLI, paste your key into the setup prompt and confirm the workspace. If you're already set up, start with `auth status`. [Installation](/cli/getting-started/installation).
+
 ```bash
 npm install -g @testsprite/testsprite-cli
-testsprite setup --agent AGENT
+testsprite setup
+testsprite auth status
 ```
-
-Run it from your repo root. `setup` prompts for your API key ([mint one in the Portal](/web-portal/admin/api-keys), in the workspace you want to test in), verifies it, stores it in `~/.testsprite/credentials`, and installs the TestSprite agent skills into the project. Replace `AGENT` with `claude`, `codex`, `cursor`, `cline`, `windsurf`, `antigravity`, `kiro` or `copilot`; it takes a single target. Without `--agent`, `setup` installs for every agent it detects in the project, or `claude` if none. Run it once per project, and confirm what landed with `testsprite agent status`.
-
-For CI or other non-interactive environments:
-
-```bash
-TESTSPRITE_API_KEY=$KEY testsprite setup --from-env --yes --agent AGENT
-```
-
-<Tabs>
-  <Tab title="With a coding agent">
-    The two installed skills mean you describe behavior and ask for a verdict; the agent runs the CLI.
-
-    | Skill | Used when |
-    | :--- | :--- |
-    | `testsprite-onboard` | The repo has no tests yet: the agent reads your code, creates a project, writes about 8–15 tests, and smoke-runs only the 2–3 most important. It never runs the full suite on its own, because that costs credits. |
-    | `testsprite-verify` | Any feature or fix is about to be reported done: the agent reruns or authors a covering test, runs it to a verdict, and pulls the failure bundle on failure. |
-
-    Prompts to start with:
-
-    ```text
-    Set up TestSprite for this repo and seed a starter test suite,
-    then smoke-run the most important flow.
-    ```
-
-    ```text
-    Verify this change with TestSprite before you call it done.
-    ```
-
-    ```text
-    The TestSprite run failed — pull the failure bundle, fix the code,
-    and rerun until it passes.
-    ```
-
-    Asking for a verdict ("run it to a verdict") tells the agent a plan that was never run does not count. The agent shows you the drafted plan before creating it, ends every change with a verdict line (`passed`, `failed`, `blocked` or `inconclusive`) and a dashboard link, and says so explicitly when it could not run a test.
-
-    To keep the agent on track:
-
-    - **Pin the project.** The verify skill (not the CLI) resolves the project from `TESTSPRITE_PROJECT_ID`, then `projectId` in `.testsprite/config.json`, then a name match in `testsprite project list`, then asks you. Commit the pin to remove ambiguity: `{ "projectId": "proj_8f0f6" }`.
-    - **Keep credentials in place.** The skills check `testsprite auth status` and stop if the CLI is missing or unauthenticated; they never install software or set keys. Re-run setup if they report it.
-    - **Know the cost.** Reruns of unchanged tests are billed like a fresh run; see [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal).
-    - **Check skill health.** After upgrading the CLI, `testsprite agent status` flags `stale` or hand-`modified` skill files and exits `1` when any need attention. See [Coding Agent Integration](/cli/core/agent-integration#checking-skill-health).
-    - **Silence the nudge.** Set `TESTSPRITE_NO_SKILL_WARNING=1` if you drive the CLI by hand in a repo without the skill.
-
-    The steps below show what the agent runs.
-  </Tab>
-  <Tab title="From the terminal">
-    Follow the steps below yourself.
-  </Tab>
-</Tabs>
 
 ## Find or create a project
 
@@ -73,84 +22,95 @@ TESTSPRITE_API_KEY=$KEY testsprite setup --from-env --yes --agent AGENT
 testsprite project list
 ```
 
-```text
-ID             NAME             TYPE       FROM      CREATED
-proj_8f0f6...  Checkout App     frontend   portal    2026-05-01
-proj_2c4a1...  Orders API       backend    cli       2026-05-10
-```
-
-For a deployed frontend app:
+Reuse an existing frontend project or create one and copy the returned `projectId`.
 
 ```bash
-testsprite project create --type frontend --name "Checkout App" --url https://app.example.com
+testsprite project create --type frontend --name "Checkout" --output json
 ```
 
-For an app running on your machine, use `--local 3000` instead of `--url` (shorthand for `--url http://localhost:3000`). If your account is not yet on the V3 platform, the CLI refuses it with exit 7 and reason `local-origin-requires-v3`; use `--url` with a public URL, or create the project in the Portal. Runs against a local address open a tunnel automatically; see [Environments](/cli/core/local-apps).
-
-To test another deployment, add a named [environment](/cli/core/environments) and select it with `--env <name>`; omit `--env` for the Default.
-
-## Create and run a test
-
-Write a plan file (JSON with `projectId`, `type`, `name` and a `planSteps[]` array) describing the behavior to verify. `--run --wait` triggers a real cloud run in a real browser and blocks until the verdict:
+A new project starts empty. Set the variables below to your project ID and application URL, then add the first environment. It becomes the project default. For an existing project, `testsprite project env list "$PROJECT_ID"` shows the saved names you can use.
 
 ```bash
-testsprite test create \
-  --project proj_8f0f6 \
-  --type frontend \
-  --plan-from ./checkout-flow.plan.json \
-  --run --wait \
-  --output json
+PROJECT_ID='your-project-id'
+APP_URL='https://staging.example.com'
+testsprite project env create "$PROJECT_ID" --name staging --url "$APP_URL"
 ```
 
-Exit `0` means passed; `1` means failed or blocked (see [Exit codes](/cli/reference/exit-codes)). The `--output json` shape is a stable contract; when `projectId` and `testId` are known it includes a `dashboardUrl` for human review. See [Output & Scripting](/cli/reference/output-and-scripting).
+The example assumes a publicly reachable checkout. For a test account, see [Environments](/cli/core/environments). For a frontend on your machine, [Local apps](/cli/core/local-apps) covers planning from a diff and running through a tunnel. For an API, use a backend project and attach its API specification when requesting tests. [Creating tests](/cli/core/creating-tests).
 
-## When it fails, get the bundle
+## Request and review a plan
+
+Ask the project's TestSprite agent to propose one test. `--env staging` selects the environment for this conversation. `--steps` shows what the proposed test would do and assert.
 
 ```bash
-testsprite test failure summary test_3a9f21c7
+testsprite plan "Propose one test that completes guest checkout with a test card and checks for an order confirmation" \
+  --project "$PROJECT_ID" --env staging --steps
 ```
 
-```text
-testId              test_3a9f21c7
-status              failed
-failureKind         assertion
-snapshotId          snap_9b2c...
-rootCauseHypothesis The "Place Order" button selector changed after the recent redesign.
-recommendedFixTarget checkout.tsx line 42 — button aria-label
-```
+<Frame>
+  <img src="../../images/cli-quickstart-plan.png" alt="A plan in the terminal: the proposed test with its five steps, and testsprite apply as the next step" />
+</Frame>
 
-Then download the full bundle:
+If the agent asks a question in a chat message, answer with `testsprite reply "your answer"`. If it needs more time, follow it with `testsprite status --wait --steps`. Review the proposed actions and expected outcome. To request a revision, use `testsprite reject "what should change"`.
+
+When the conversation shows the **test plan** you want to save, apply it from the same directory. The JSON field `applied.tests` contains the saved test IDs.
 
 ```bash
-mkdir -p .testsprite
-testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
+testsprite apply --output json
 ```
 
-It holds the failing step and its neighbors, DOM snapshots as text, the test source, the root-cause hypothesis and the recommended fix target, all from one `snapshotId`.
+## Run the saved test
 
-`test failure get` always returns the latest failure. To pin a specific run, use `testsprite test artifact get <run-id>`. The bundle needs saved test code, so a test that has never passed, or has only run through a tunnel, returns exit 4 with reason `no_code`; read `testsprite test steps <test-id>` and the summary instead.
-
-## Fix and rerun
+Copy the test ID from `applied.tests`. Start the test against staging and wait for the verdict.
 
 ```bash
-testsprite test rerun test_3a9f21c7 --wait
+TEST_ID='your-saved-test-id'
+testsprite run "$TEST_ID" --env staging --wait --output json
 ```
 
-A passing rerun is banked into your suite, so the next change reruns rather than recreates. Frontend reruns auto-heal by default; add `--no-auto-heal` to replay the saved script exactly. See [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal).
+In the JSON output, `runs[].runId` identifies the execution. Each test that produced a result has its own `results[].resultId`. A completed passing run exits `0`. A completed failed run exits `1` and still prints the results. If your wait times out, use `testsprite run wait <run-id>` to resume following the execution. [Running tests](/cli/core/running-tests).
 
-## Where to go next
+## Inspect the result
+
+Use the run ID to list the execution's results. Copy the result ID for the case you want to examine.
+
+```bash
+RUN_ID='your-run-id'
+testsprite result list --run "$RUN_ID"
+```
+
+```bash
+RESULT_ID='your-result-id'
+testsprite result get "$RESULT_ID" --output json
+```
+
+These fields are an excerpt from the CLI's offline sample. You can reproduce it with `testsprite --dry-run result get res_dryrun0001 --output json`.
+
+```json
+{
+  "resultId": "res_dryrun0001",
+  "runId": "run_dryrun0001",
+  "caseKey": "test_8f2a4d10",
+  "title": "Checkout happy path",
+  "testStatus": "FAILED",
+  "error": "AssertionError: expected the order confirmation heading to be visible",
+  "fix": "Fill the card number before submitting the checkout form."
+}
+```
+
+A successful `result get` means the CLI read the result. Check `testStatus` for the verdict. Use `--out` to keep the detail and available video, screenshots and page snapshots for this result.
+
+```bash
+testsprite result get "$RESULT_ID" --out ".testsprite/results/$RESULT_ID"
+```
+
+If the application failed the expected behavior, fix it, deploy that build to staging, and run the same test ID again. If the assertion was wrong, ask the project's agent for a correction, review it and apply the revised plan.
 
 <Columns cols={2}>
-  <Card title="Coding Agent Integration" href="/cli/core/agent-integration" icon="robot">
-    Agent targets, install flags and skill health
+  <Card title="Coding agent integration" href="/cli/core/agent-integration" icon="robot">
+    Give your coding agent the same verification workflow.
   </Card>
-  <Card title="The Agent Loop" href="/cli/concepts/the-agent-loop" icon="arrows-rotate">
-    Why create, run, read, fix, rerun compounds coverage
-  </Card>
-  <Card title="Creating Tests" href="/cli/core/creating-tests" icon="file-circle-plus">
-    Plan files, code files and batch create
-  </Card>
-  <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
-    Every command, flag and exit code
+  <Card title="Reading results" href="/cli/core/reading-results" icon="clipboard-list">
+    Find earlier results and inspect sign-in or API failures.
   </Card>
 </Columns>

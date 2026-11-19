@@ -9,13 +9,13 @@ description: "How TestSprite turns each plan row into a runnable Python test, wi
 
 ## What Endpoint Tests Are
 
-An **endpoint test** is the simplest kind of API test: one HTTP call to one of your endpoints, with assertions on the response. Each row in your reviewed plan ([Plan Generation](/web-portal/core/api/api-plan-gen)) becomes one endpoint test.
+An **endpoint test** is the simplest kind of API test: one HTTP call to one of your endpoints, with assertions on the response. Each test case in the plan you applied ([Proposed Test Cases](/web-portal/core/ui/agent-plan)) becomes one endpoint test.
 
 <Frame>
   <img src="../../../images/api-testing-endpoint-test-what-is.png" alt="One endpoint test — a single POST call with assertions on the 404 response" />
 </Frame>
 
-Endpoint tests are the building blocks: [Integration Tests](/web-portal/core/api/integration-tests) chain them, [Auto Cleanup](/web-portal/core/api/auto-cleanup) removes the records they create, and the [Data Flow](/web-portal/core/api/dynamic-variables#the-data-flow-section-on-a-test) section shows the values they capture and consume.
+Endpoint tests are the building blocks: [Integration Tests](/web-portal/core/api/integration-tests) chain them into multi-step workflows.
 
 ## What Code Gets Generated
 
@@ -62,7 +62,7 @@ A rerun (single, selected, or all) sends one HTTP request per test from TestSpri
 | :--- | :--- |
 | <kbd>Passed</kbd> | Every assertion held. |
 | <kbd>Failed</kbd> | At least one assertion failed. The test detail page shows the failed line + actual vs expected. |
-| <kbd>Blocked</kbd> | The test couldn't run end to end, typically because an upstream dependency in an integration chain failed. Surfaced as `TEST BLOCKED` in the error trace. |
+| <kbd>Blocked</kbd> | The test couldn't run end to end, typically because an earlier step it needs failed, or sign-in didn't work. Surfaced as `TEST BLOCKED` in the error trace. |
 
 <Warning>
 **Blocked is not Failed.** A Blocked test was prevented from running by something upstream, so we don't know whether your endpoint passes. Fix the upstream and rerun.
@@ -84,7 +84,7 @@ See [Test Detail](/web-portal/core/working-with-test/test-detail) for the full p
 
 ## Iterating on a Test
 
-Open the test, describe the change in its description, and click **Regenerate**. For coverage on a brand-new endpoint or scenario, create a new project for it.
+Open the test, describe the change in its description, and click **Regenerate**. For coverage on a new endpoint or scenario, ask the agent; the new tests arrive as a proposal on the **Plan** tab.
 
 <Frame>
   <img src="../../../images/api-testing-endpoint-test-iterating.png" alt="The Test Description (Prompt) field and Regenerate button on an endpoint test" />
@@ -103,7 +103,7 @@ Open the test, describe the change in its description, and click **Regenerate**.
     The expected shape was guessed from incomplete data. Paste the actual response body into the test's description and click **Regenerate**. TestSprite rewrites the assertions to match.
   </Accordion>
   <Accordion title="My endpoint requires a request signature I haven't given TestSprite">
-    Explain the signing scheme in **Extra Instructions** (in **Project Settings → General**) or in **Chats**, e.g. "All requests need a `X-Signature: t=<ms>,v=<hmac-sha256-hex>` header where the body is the canonical JSON". TestSprite produces the signing helper inline.
+    Explain the signing scheme to the agent, e.g. "All requests need a `X-Signature: t=<ms>,v=<hmac-sha256-hex>` header where the body is the canonical JSON". TestSprite produces the signing helper inline.
   </Accordion>
   <Accordion title="The generated test imports a library I don't have">
     Standard generation uses `requests` + `pytest` + stdlib only. If your description implied something else (e.g. "use httpx async client"), generation may follow it. Refine it back to standard, or accept the dependency.

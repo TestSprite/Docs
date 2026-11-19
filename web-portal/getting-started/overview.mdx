@@ -1,67 +1,57 @@
 ---
 title: "Overview"
-description: "What the TestSprite Web Portal is, how a project goes from setup to a passing test suite, and what's in the dashboard."
+description: "What the TestSprite Web Portal is, how you work with its agent to go from an app to a running test suite, and what's in the dashboard."
 icon: "clipboard-list"
 ---
 
 ## What is the TestSprite Web Portal?
 
-The TestSprite Web Portal is a browser dashboard that takes a project from "I have an app" to "I have a passing test suite running on a schedule", without writing a single line of test code. It complements the [TestSprite CLI](/cli/getting-started/overview) and the [MCP Server](/mcp/getting-started/overview), which bring TestSprite into your terminal, IDE, and coding agent, by giving your whole team a shared place to set up projects, run tests, and review results.
+The TestSprite Web Portal is where you work with **TestSprite's agent**: a QA engineer that joins your project, explores your app, writes and maintains its test cases, runs them, and tells you what broke and why. You talk to it in plain language and approve what it proposes; you never write a line of test code. It complements the [TestSprite CLI](/cli/getting-started/overview) and the [MCP Server](/mcp/getting-started/overview), which bring TestSprite into your terminal, IDE, and coding agent, by giving your whole team a shared place to set up projects, run tests, and review results.
 
 <Frame>
-  <img src="../../images/Overview-Overview.png" alt="Web Portal dashboard" />
+  <img src="../../images/overview-agent.png" alt="A project open in the portal: the chat with the agent on the left, the Plan tab beside it with 16 proposed tests" />
 </Frame>
 
-TestSprite is **spec-driven**: plans come from what your product is *supposed to do* (your PRD) and what the live app *actually does* (exploration or discovery). A PRD isn't required, but it is **strongly recommended**. It's the biggest lever on plan quality.
-
-<Frame>
-  <img src="../../images/overview-spec-driven.png" alt="Test Sources in the New Project form: the PRD upload card, marked Strongly Recommended" />
-</Frame>
+TestSprite is **spec-driven**: tests come from what your product is *supposed to do* (your PRD, specs, tickets) and what the live app *actually does* (what the agent sees when it explores). A PRD isn't required, but it is **strongly recommended**. It's the biggest lever on test quality.
 
 ## What It Tests
 
-<Frame>
-  <img src="../../images/overview-type.png" alt="Choosing the test type for a new project" />
-</Frame>
-
 | Test type | What it covers | Planned from |
 | :--- | :--- | :--- |
-| <kbd>UI (frontend)</kbd> | User journeys, forms, visual states, auth flows, UI error handling | Your PRD plus exploration of the live app |
-| <kbd>API (backend)</kbd> | Functional workflows, schemas, auth, data integrity across calls, error handling, security | Your PRD, your API docs, and probes of your live API |
+| <kbd>UI (frontend)</kbd> | User journeys, forms, visual states, auth flows, UI error handling | Your docs and code, plus the agent's exploration of the live app in a browser |
+| <kbd>API (backend)</kbd> | Functional workflows, schemas, auth, data integrity across calls, error handling, security | Your docs and code, plus real calls the agent makes to your live API |
 
 ## How It Works
 
-You provide a URL, credentials, and a PRD (**strongly recommended**). TestSprite builds a feature map from the PRD, explores or discovers your app, drafts a plan you can review, generates the tests, runs them in the cloud, and gives you a report. You can also refine the tests in natural language.
-
 <Steps>
-  <Step title="Create a project">
-    Click <kbd>New Project</kbd> and enter your basic project information: your live URL, how to sign in, your PRD (**strongly recommended**), and more.
+  <Step title="Tell the agent what to test">
+    Click <kbd>New Project</kbd> and paste your app's address. Attach a PRD (**strongly recommended**), add your repository, and give it a test account if your app needs sign-in.
     <Frame>
-      <img src="../../images/overview-configure.png" alt="New Project form across its three steps: Basics, Access details, and Test Sources" />
+      <img src="../../images/ui-testing-quick-start-new-project.png" alt="New Project: What should we test?, with the chat box to paste your app's address in" />
     </Frame>
   </Step>
-  <Step title="Explore or discover">
-    For UI projects, TestSprite explores your live app. For API projects, it reads your API docs and probes the endpoints against your live API.
+  <Step title="Create the project">
+    The agent asks for what only you know, then proposes a project on the **Setup** tab. Nothing is created until you click <kbd>Create Project</kbd>. See [Setup](/web-portal/core/ui/agent-setup).
     <Frame>
-      <img src="../../images/overview-Explore.png" alt="Feature exploration in progress" />
+      <img src="../../images/ui-testing-quick-start-create-project.png" alt="1 The Ready to create card above the chat box; 2 the Setup tab beside it, with the proposed project" />
     </Frame>
   </Step>
-  <Step title="Build the feature map">
-    TestSprite maps your product's features and the use cases under each, from your PRD and what it found.
+  <Step title="Watch it explore">
+    For a web app, the agent walks your live app in a browser you can watch on the **Exploration** tab. For an API, it makes real calls. What it learns goes into the project's notes. See [Exploration & Notes](/web-portal/core/ui/agent-exploration) and [API Calls](/web-portal/core/api/agent-api-calls).
     <Frame>
-      <img src="../../images/overview-use-case.png" alt="The feature map as a flow graph" />
+      <img src="../../images/ui-testing-feature-explore-overview.png" alt="The agent exploring: its browser steps in the chat, and the Exploration tab with the live browser and Exploration Notes" />
     </Frame>
   </Step>
-  <Step title="Review the plan">
-    Click <kbd>Plan Tests</kbd> and TestSprite's testing agent plans the test cases. Keep or edit the ones you want, then click <kbd>Run all</kbd>.
+  <Step title="Review the proposed test cases">
+    The plan arrives as a proposal on the **Plan** tab. Keep, leave out, or edit each test, then click <kbd>Apply and Run</kbd>. See [Proposed Test Cases](/web-portal/core/ui/agent-plan).
     <Frame>
-      <img src="../../images/overview-plan.png" alt="Reviewing the proposed tests" />
+      <img src="../../images/overview-plan.png" alt="The Plan tab with the proposal, grouped by use case, and Apply and Run" />
     </Frame>
   </Step>
   <Step title="Run and review">
-    Tests are generated and run in the cloud. Each ends <kbd>Passed</kbd>, <kbd>Failed</kbd>, or <kbd>Blocked</kbd>, and failures come with a suggested cause and fix.
+    Tests run in the cloud. Each ends <kbd>Passed</kbd>, <kbd>Failed</kbd>, or <kbd>Blocked</kbd>, and the agent judges each failure: your app is wrong, the test is wrong, or something got in the way.
     <Frame>
-      <img src="../../images/first-test-execution.png" alt="A run in progress, with live agent actions" />
+      <img src="../../images/first-test-execution.png" alt="A run in progress" />
     </Frame>
   </Step>
   <Step title="Keep it running">
@@ -83,10 +73,58 @@ For the click-by-click version, start with the quickstart for your project type:
   </Card>
 </CardGroup>
 
+## Working with the Agent
+
+**Sessions.** Each conversation with the agent is a session, and every session belongs to one project. A project's sidebar lists its sessions; click <kbd>New Session</kbd> to start another. Sessions are yours: other members don't see them, but they do see everything the agent saved to the project. Every session starts from the project's shared notes, so a new one doesn't re-learn your app.
+
+<Frame>
+  <img src="../../images/ai-chat-overview.png" alt="A project's new session: its sessions in the sidebar, New Session, and the chat box with the model picker" />
+</Frame>
+
+**It keeps working when you leave.** Closing the tab changes nothing. The session is where you left it when you come back.
+
+**It asks before it changes anything.** The agent reads, explores and drafts on its own. Anything that changes your project or spends credits waits on a card above the chat box:
+
+<Frame>
+  <img src="../../images/ai-chat-confirm-card.png" alt="The Ready to run 16 tests card above the chat box, with Not Now and Run" />
+</Frame>
+
+| Card | What it's asking |
+| :--- | :--- |
+| **Ready to create {name}** | Create the project it proposes |
+| **Save N changes to …?** | Save its edits to the project, environments, schedules, documents or test files |
+| **N changes to the Test Plan** | Apply the test cases it proposes, with or without running them |
+| **Ready to run N tests** | Start a run, on the environment shown |
+| A card named for a secret | Type a password, token or key; it is saved encrypted and never appears in the chat |
+| **Connect GitHub / Jira / Linear?** | Connect an integration it needs |
+| A question | Pick an option, or answer in your own words |
+
+One card waits at a time. Decline one, and the agent asks what to change.
+
+**Shortcuts.** Type <kbd>/</kbd> in the chat box for commands:
+
+<Frame>
+  <img src="../../images/overview-shortcuts.png" alt="The chat box with / typed and its command menu open: /setup, /plan, /run, /failures, /new" />
+</Frame>
+
+| Command | What it does |
+| :--- | :--- |
+| <kbd>/setup</kbd> | Learn the app and write the brief |
+| <kbd>/plan</kbd> | Plan tests |
+| <kbd>/run</kbd> | Apply the plan and run it |
+| <kbd>/failures</kbd> | Judge what failed and fix the tests |
+| <kbd>/new</kbd> | Start a new session |
+
+Many pages also have buttons that ask the agent for you, such as <kbd>Find the Cause</kbd> and <kbd>Find a Fix</kbd> on a failed result.
+
+**Model and credits.** Pick the session's model in the chat box before your first message; some models need a paid plan. The line under the chat box shows the tokens and credits the session has used. A session stops when the workspace runs out of credits, and carries on once you top up.
+
+**Who can use it.** Asking the agent needs edit access to the project. Viewers can browse projects and results.
+
 ## Who It's For
 
 - **Developers:** skip the test-writing boilerplate and see your changes exercised against real flows in minutes.
-- **QA teams:** replace handwritten regression suites with a plan TestSprite derives from your live app, kept running with Test Lists and Test Schedules.
+- **QA teams:** replace handwritten regression suites with a plan the agent derives from your live app, kept running with Test Lists and Test Schedules.
 - **Engineering leads:** get reproducible reports and severity-ranked failures without building a test-writing team.
 
 ## Advanced Testing Capabilities
@@ -95,29 +133,35 @@ Beyond the core flow above:
 
 <Tabs>
   <Tab title="UI Testing (Frontend)">
-    - [Flexible sign-in](/web-portal/core/ui/ui-authentication): test account credentials, OTP (one-time password) login, or SSO (single sign-on) such as Google
+    - [Flexible sign-in](/web-portal/core/ui/agent-setup#how-the-agent-signs-in): a test account, a one-time-code login with a TestSprite-managed account, or a saved sign-in for SSO such as Google
     - [Auto-Heal](/web-portal/core/ui/auto-heal): tests recover when the page changes instead of failing
     - [Step-by-Step Replay](/web-portal/core/ui/ui-step-by-step): per-step screenshots and a video of every run
-    - [Agent Actions](/web-portal/core/ui/agent-actions): every recording from a run, grouped by status
+    - [Map View](/web-portal/core/ui/map-view): every recording from a run, grouped by status
     - [Reusable test code](/web-portal/integrations/github-integration#exporting-test-code-to-github): generated **Playwright + Python**, exportable to GitHub
   </Tab>
   <Tab title="API Testing (Backend)">
-    - [Dependency Chains](/web-portal/core/api/dependency-chains): dependent tests wait for the values they need
-    - [Auto Cleanup](/web-portal/core/api/auto-cleanup): records your tests created are removed after the run
+    - [Credentials Setup](/web-portal/core/api/agent-credentials): the agent sets up your API's auth, and secrets never pass through the chat
+    - [API Calls](/web-portal/core/api/agent-api-calls): the agent learns your API with real requests, sent the way a run sends them
     - [Auto-Auth](/web-portal/core/api/auto-auth): login tokens refresh before every run
-    - [Dynamic Variables](/web-portal/core/api/dynamic-variables): values captured in one test and reused in the next
   </Tab>
 </Tabs>
 
 ## What's Inside the Dashboard
 
+<Frame>
+  <img src="../../images/Overview-Overview.png" alt="The workspace Home, with Home, All Projects, Test Lists, Test Schedules, Settings and Recent Projects in the sidebar" />
+</Frame>
+
 | Surface | What it does |
 | :--- | :--- |
-| <kbd>Chats</kbd> | Ask for what you want in plain language and approve each action before it happens. See [AI Chat](/web-portal/ai-chat/overview) |
-| <kbd>All Projects</kbd> | Every project, grouped by type, with run status |
+| <kbd>Home</kbd> | Your recent projects, test lists and schedules, and what to do next |
+| <kbd>All Projects</kbd> | Every project, with run status. Projects the agent has proposed but you haven't created show as <kbd>Draft</kbd> |
+| <kbd>Recent Projects</kbd> | In the sidebar: jump back into a project, or click <kbd>New Project</kbd> |
 | <kbd>Test Lists</kbd> | Tests from any project, grouped into one runnable list. See [Test Lists](/web-portal/maintenance/test-lists) |
 | <kbd>Test Schedules</kbd> | Run Test Lists on a cadence. See [Test Schedules](/web-portal/maintenance/monitoring) |
-| <kbd>Workspace Settings</kbd> | Members and roles, billing, integrations, and API keys. See [Workspaces](/web-portal/admin/workspaces) |
+| <kbd>Settings</kbd> | Members and roles, plan and usage, integrations, and API keys. See [Workspaces](/web-portal/admin/workspaces) |
+
+Inside a project, the chat stays on the left and the project's pages (Sources, Test Cases, Test Runs, Insights, Settings) open as tabs beside it. See [Test Detail Page](/web-portal/core/working-with-test/test-detail).
 
 ## Where to Go Next
 
@@ -128,8 +172,8 @@ Beyond the core flow above:
   <Card title="Testing Lifecycle" href="/web-portal/concepts/testing-lifecycle" icon="circle-nodes">
     How UI and API projects differ, phase by phase
   </Card>
-  <Card title="AI Chat" href="/web-portal/ai-chat/overview" icon="comments">
-    Drive the portal in plain language
+  <Card title="UI Quickstart" href="/web-portal/core/ui/quickstart" icon="window-maximize">
+    Your first frontend project
   </Card>
   <Card title="Join the Community" href="https://discord.gg/QQB9tJ973e" icon="comments">
     Discord for users and the team

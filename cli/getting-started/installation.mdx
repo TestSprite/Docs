@@ -1,117 +1,62 @@
 ---
 title: "Installation"
-description: "Install the TestSprite CLI and sign in in under 2 minutes."
+description: "Install the TestSprite CLI, connect it to your workspace, and set up your coding agent."
 icon: "download"
 ---
 
-## Prerequisites
-
-Before installing, make sure you have:
-
-- **Node.js 20.19+, 22.13+, or 24+** (the odd-numbered releases 21.x and 23.x are not supported)
-- A **TestSprite account** — [Sign up for free <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/auth/cognito/sign-up)
-- A **TestSprite API key** (created below)
-
-<Note>
-Check your version with `node --version`; the CLI exits with a clear message at startup if Node is too old. Get a newer release from [nodejs.org <Icon icon="arrow-up-right-from-square" size={12} />](https://nodejs.org/).
-</Note>
-
 ## Install
 
-Install the CLI globally with npm:
+Use Node.js **20.19 or later in the 20.x line**, **22.13 or later in the 22.x line**, or **24 and above**. Install the CLI with npm, then check the installed version.
 
 ```bash
+node --version
 npm install -g @testsprite/testsprite-cli
-```
-
-Or run it without installing: `npx @testsprite/testsprite-cli --version`. Verify the installation:
-
-```bash
 testsprite --version
 ```
 
-```text
-0.14.0
-```
+For a one-off command, use `npx @testsprite/testsprite-cli --version`.
 
-Source, releases and issues: [GitHub](https://github.com/TestSprite/testsprite-cli).
+## Get your API key
 
-## Get Your API Key
-
-1. Sign in to your [TestSprite dashboard <Icon icon="arrow-up-right-from-square" size={12} />](https://www.testsprite.com/dashboard).
-2. Switch to the workspace the CLI should work in, then open <kbd>Workspace Settings → Connections → API Keys</kbd> and click <kbd>New API Key</kbd>.
+1. Sign in to TestSprite and select the workspace that owns the tests. If you need an account, [sign up here](https://www.testsprite.com/auth/cognito/sign-up).
+2. Open **Workspace Settings → Connections → API Keys**, then select **New API Key**. [Open API Keys](https://www.testsprite.com/dashboard-v3/settings/apikey).
 
 <Frame>
   <img src="../../images/apikey-create.png" alt="API Keys page with the New API Key button" />
 </Frame>
 
-3. Copy the key — it is shown **once only**. If you lose it, revoke it and create a new one. You can hold 2 active keys per workspace, so revoke one first if you are at the limit. The key acts in that workspace only. See [API Keys](/web-portal/admin/api-keys).
+3. Copy the key when the dialog opens. You can revoke it and create a replacement if you lose it. [API key management](/web-portal/admin/api-keys).
 
 <Frame>
   <img src="../../images/created-api-key.png" alt="API Key Created dialog with the copy button" />
 </Frame>
 
-The key gets `read:projects`, `read:tests`, `read:me`, `write:tests`, `run:tests`, `write:projects`, `read:schedules`, `write:schedules` and `run:tunnel` while you are a Member, Admin, or Owner of the workspace; a Viewer can't hold a key. Check it with `testsprite auth status`.
+## Sign in
 
-## Sign In
-
-```bash
-testsprite setup --agent AGENT
-```
-
-`setup` prompts for your API key, verifies it, and installs the agent skills into your project. Replace `AGENT` with `claude`, `cursor`, `cline`, `windsurf`, `antigravity`, `kiro`, `copilot` or `codex`; it takes a single target. Without `--agent`, it installs for every agent it detects in the project, or `claude` if none. To install for several explicitly, run `testsprite agent install cursor codex`. Run it once per project.
-
-To configure credentials only, use `testsprite setup --no-agent`.
-
-## Verify
+Run setup in the root of your repository, paste your key at the prompt, then verify the workspace.
 
 ```bash
+testsprite setup
 testsprite auth status
 ```
 
-```text
-userId: usr_1478d468
-name:   Your Name
-email:  you@example.com
-keyId:  key_a1b2c3d4
-endpoint: https://api.testsprite.com
-env:    production
-scopes: read:projects, read:tests, read:me, write:tests, run:tests, write:projects, read:schedules, write:schedules, run:tunnel
-org:    Checkout Team (Standard, member)
-routing: v3
-orgs: My workspace (org_5c1e…, personal, role: owner); Checkout Team (org_9a7d…, role: member)
-org binding: Checkout Team (org_9a7d…, role: member)
-```
+Setup validates the key, saves it to your local profile and installs skills for the coding agents it detects. With no detected agents it defaults to Claude Code. Check the `org` and `scopes` lines in the status output before creating a project or starting a run. See [Authentication](/cli/core/authentication).
 
-The `org:` line is the workspace the key acts in. It adds a note when `write:tests` or `run:tests` is missing. Run `testsprite doctor` to diagnose missing `run:tunnel` access.
+To specify one agent, run `testsprite setup --agent codex`. For credentials only, use `testsprite setup --no-agent`. You can install additional targets later with `testsprite agent install cursor codex`. [Supported agents and skill updates](/cli/core/agent-integration).
 
-## Using It in CI
+## Using it in CI
 
-Set `TESTSPRITE_API_KEY` as a secret and run setup non-interactively:
+Expose the workspace key as the CI secret `TESTSPRITE_API_KEY`. Commands read it from the environment. Check the identity before starting the job's tests.
 
 ```bash
-TESTSPRITE_API_KEY=$TS_KEY testsprite setup --from-env --yes --agent AGENT
+testsprite auth status --output json
 ```
-
-`--from-env` reads the key from the environment, and `--yes` accepts all defaults. The CLI never accepts the key as a positional argument or writes it to logs.
-
-<Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
-  Pipeline examples and exit code handling
-</Card>
-
-## Where to Go Next
 
 <Columns cols={2}>
   <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
-    Create a test, run it, and read the failure bundle end to end
+    Set up your first project, plan a test and run it.
   </Card>
-  <Card title="Authentication" href="/cli/core/authentication" icon="key">
-    Profiles, env vars, scope errors, and rotating keys
-  </Card>
-  <Card title="Key Terms" href="/cli/concepts/key-terms" icon="book">
-    Projects, tests, runs, and the object model
-  </Card>
-  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
-    Pipeline examples and non-interactive setup
+  <Card title="CI/CD integration" href="/cli/integrations/ci-cd" icon="github">
+    Run pull-request checks against a preview deployment.
   </Card>
 </Columns>

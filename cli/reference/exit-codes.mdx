@@ -1,110 +1,80 @@
 ---
 title: "Exit Codes & Errors"
-description: "Every exit code, error code, and status value the CLI emits — your branching contract for agents and CI."
+description: "Interpret CLI failures, resume a timed-out run, and retry a launch safely."
 icon: "list-ol"
 ---
 
-Agents and CI branch on the exit code; the JSON error envelope adds detail. Exit codes and error codes won't change within a major version. `--help` and `--version` exit `0`.
+Use the exit code to gate a job. A launch without waiting can succeed as soon as the server accepts it. Use `run --wait`, `run wait` or `ci run` when the job needs the test verdict. A successful `result list` or `result get` exits 0 for any verdict.
 
 ## Exit codes
 
-| Code | Meaning |
-| :--- | :--- |
-| `0` | Success |
-| `1` | Run did not pass, a `tunnel stop --all` failure, or unhandled server error (`INTERNAL`) |
-| `2` | Not yet implemented |
-| `3` | Auth error: key missing, unparseable, revoked, or missing scope |
-| `4` | Not found: ID doesn't exist or belongs to another tenant; also a server too old for `tunnel list` / `tunnel stop --all`, and `test failure get` / `test artifact get` with no bundle (reason `no_code` or `cancelled_no_artifacts`) |
-| `5` | Validation error: bad field, enum or `--output` value, payload too large, missing required flag, or flag-parse error. Includes `--local` with backend tests, local `--max-concurrency` above 10, and `tunnel stop --all` without `--confirm` |
-| `6` | Conflict or precondition: snapshot or run already in flight, idempotency body mismatch, newer `codeVersion`, `agent install` blocked (target differs, no `--force`), or a tunnel precondition (`tunnel-required`, `tunnel-offline`, `tunnel-otp-auth-unsupported`, `frontend-auth-target-origin-mismatch`). Tunnel preconditions are refused before any charge; see [Test an app on your machine](/cli/core/local-apps) |
-| `7` | Wait timeout, or feature not on the current backend |
-| `8`, `9` | Reserved |
-| `10` | Unavailable or transport failure: service down, tunnel not configured, or a tunnel disconnected, revoked, expired or taken over mid-run |
-| `11` | Rate limited |
-| `12` | Insufficient credits |
-| `13` | `FEATURE_GATED`: the workspace's plan doesn't include the feature, or the workspace is paused (`details.reason: "paused"`). Not a missing scope, which is `3` |
-| `14` | Client too old: upgrade the CLI |
-| `129` / `130` / `143` | SIGHUP / SIGINT (Ctrl-C) / SIGTERM while waiting. See [Interrupts](#interrupts-and-pipes) |
+| Code | Meaning and next step |
+| --- | --- |
+| `0` | Command succeeded. For `run cancel`, this includes an already-finished or already-cancelled execution. |
+| `1` | A test failed, was blocked or was cancelled, an execution was cancelled, or another command-specific failure occurred. Inspect result rows and execution-level diagnostics. |
+| `2` | Reserved for commands reported as unimplemented. |
+| `3` | Authentication or permission error. Check the active profile, key, role and required scope with `auth status`. |
+| `4` | Resource not found or inaccessible with this key. Check the ID type and workspace. |
+| `5` | Invalid argument, unsupported command or flag, bad payload, or a CI gate with no tests dispatched. Read the named command's help. |
+| `6` | Conflict or unmet precondition. Examples include an incompatible test already in flight, a stale approval card, an idempotency key used for a different body, and a mismatch between the sign-in origin and target. |
+| `7` | A wait timed out, a list launch had rate-deferred cases, or the backend could not honor a request. Check the error and any run receipts before retrying. |
+| `8`, `9` | Reserved. |
+| `10` | Network, service or tunnel unavailable, or an incomplete evidence download. `result get --out` keeps the files it successfully downloaded. |
+| `11` | Rate or tunnel capacity limit. Honor the retry delay, or free an unused tunnel if the binding limit was reached. |
+| `12` | Insufficient credits. Check the workspace balance with `usage`. |
+| `13` | Feature unavailable on this plan, agent disabled, or workspace paused (`details.reason: "paused"`). |
+| `14` | CLI too old for this backend. Upgrade the CLI. |
+| `129`, `130`, `143` | Interrupted by SIGHUP, SIGINT (Ctrl-C), or SIGTERM while waiting. |
 
 ## Wait timeout (exit 7)
 
-Before exiting, the CLI still prints `{ "runId": "...", "status": "running" }` to stdout.
+For an ordinary run, the command can return partial JSON with the run IDs, results observed so far and `partial: true`. Resume the existing execution:
 
-- **Ordinary run:** resume with `testsprite test wait <run-id>`.
-- **Run that owns its tunnel** (automatic, or `--local`): the timeout cancels it by default and closes the tunnel, so start a new run with a longer `--timeout`. Cancellation is best-effort and the run may already be billed.
-- **Local batch:** each run has its own timeout. A timeout (`7`) outranks failures (`1`) but not auth (`3`), conflict (`6`), transport (`10`), rate-limit (`11`) or credit (`12`) errors.
+```bash
+testsprite run wait "$RUN_ID" --timeout 900 --output json
+```
+
+If later integration results have not appeared, a wait can time out even when every listed result has passed. A shared deadline covers all requested executions. `run wait` also exits 7 when the backend cannot supply whole-execution status. An agent conversation that reached its follow timeout can be resumed with `testsprite status --wait`.
+
+## Unconfirmed run settings
+
+For a project run or `ci run`, the CLI exits `7` if the receipt fails to confirm the requested URL or environment, or reports concurrency above the requested limit. In JSON errors, `error.code` is `UNSUPPORTED` and `error.details.field` identifies the setting (`targetUrl`, `previewName`, `environment` or `maxConcurrency`). Inspect the run identified by `error.details.runId` before retrying. An unconfirmed tunnel also returns `UNSUPPORTED`. Its error message identifies the tunnel issue.
 
 ## Interrupts and pipes
 
-`129`, `130` and `143` are `128 + signal`. A signal while polling an ordinary run (`--wait`, `test wait`, `test flaky`), or a `--local` run adopted with `--tunnel-client`, **detaches**: the run keeps executing and billing, stdout gets the partial `running` object, and stderr names the run:
+An ordinary wait detaches on Ctrl-C. The execution continues and can still incur charges. Stop it explicitly with `testsprite run cancel "$RUN_ID"`.
 
-```text
-Interrupted (SIGINT). Run run_5c1d9a2b is still executing on the server and will keep running (and billing) until it finishes.
-  Re-attach with: testsprite test wait run_5c1d9a2b
-  Cancel with:    testsprite test cancel run_5c1d9a2b
-```
+A local run that owns its tunnel requests cancellation of unfinished owned executions by default and closes the tunnel on timeout or interrupt. Read the cancellation outcome before starting another run. With `--no-cancel-on-interrupt`, the tunnel still closes and remaining steps that need it can fail. A run borrowing a live tunnel can be followed while the owner keeps it open. [Cancelling Runs](/cli/core/cancelling-runs)
 
-A run on a tunnel this command opened (automatic or `--local`) is **cancelled** on the same signals by default, because the tunnel closes with the process; `--no-cancel-on-interrupt` skips the cancel but the tunnel still closes. Details and refunds: [Cancelling a Run](/cli/core/cancelling-runs).
-
-With `--output json`, stderr carries an `INTERRUPTED` envelope with `details.signal` (not in the table below). A second signal exits immediately. If a reader closes a pipe early (`... | head -n 1`), the CLI exits `0`.
+An interrupt can produce both partial JSON on stdout and an `INTERRUPTED` error with `details.signal` on stderr. Keep them separate. A closed output pipe is handled without an unhandled `EPIPE` error.
 
 ## Error codes
 
-| Code | HTTP | Exit | Retry |
-| :--- | :--- | :--- | :--- |
-| `AUTH_REQUIRED` / `AUTH_INVALID` | 401 | 3 | No |
-| `AUTH_FORBIDDEN` | 403 | 3 | No. Text mode prints `required:` / `granted:` scopes |
-| `NOT_FOUND` | 404 | 4 | No |
-| `VALIDATION_ERROR` | 400 | 5 | No |
-| `PAYLOAD_TOO_LARGE` | 413 | 5 | No |
-| `CONFLICT` | 409 | 6 | Once after 1 s (not for cancel conflicts) |
-| `IDEMPOTENCY_BODY_MISMATCH` | 409 | 6 | No: same key, different body |
-| `PRECONDITION_FAILED` | 412 | 6 | No. Re-fetch `codeVersion`, attach or restore a tunnel, or use an environment without OTP |
-| `RATE_LIMITED` | 429 | 11 | Honors `Retry-After`, 3 attempts |
-| `INSUFFICIENT_CREDITS` | 402 | 12 | No: top up |
-| `FEATURE_GATED` | 403 | 13 | No: change plan, or resume the paused workspace |
-| `CLIENT_TOO_OLD` | 426 | 14 | No: upgrade |
-| `UNSUPPORTED` | 501 | 7 | No |
-| `INTERNAL` | 500 | 1 | Once |
-| `UNAVAILABLE` | 503 | 10 | Exponential backoff, 4 attempts |
-
-`RATE_LIMITED` with `details.reason=tunnel_binding_limit` is a standing capacity refusal and is not retried: run `testsprite tunnel list`, then stop an unused binding or reuse one with `--tunnel-client`.
+| API error | Typical HTTP status | Exit |
+| --- | --- | --- |
+| `AUTH_REQUIRED`, `AUTH_INVALID`, `AUTH_FORBIDDEN` | 401, 403 | 3 |
+| `NOT_FOUND` | 404 | 4 |
+| `VALIDATION_ERROR`, `PAYLOAD_TOO_LARGE` | 400, 413 | 5 |
+| `CONFLICT`, `IDEMPOTENCY_BODY_MISMATCH`, `AMBIGUOUS_ORG` | 409 | 6 |
+| `PRECONDITION_FAILED` | 412 | 6 |
+| `UNSUPPORTED` | 501 | 7 |
+| `UNAVAILABLE` | 503 | 10 |
+| `RATE_LIMITED` | 429 | 11 |
+| `INSUFFICIENT_CREDITS` | 402 | 12 |
+| `FEATURE_GATED` | 403 | 13 |
+| `CLIENT_TOO_OLD` | 426 | 14 |
+| `INTERNAL` | 500 | 1 |
 
 ## Error output
 
-With `--output json`, errors are an envelope on stderr; text mode prints `message` and `nextAction`.
-
-```json
-{
-  "error": {
-    "code": "AUTH_REQUIRED",
-    "message": "Authentication is required.",
-    "nextAction": "Run `testsprite setup`, or set TESTSPRITE_API_KEY and run `testsprite setup --from-env` for non-interactive flows.",
-    "requestId": "req_2026_05_05_abc123",
-    "details": {}
-  }
-}
-```
+In JSON mode a command can write diagnostics (such as a request key) as well as an error envelope to stderr. The envelope's `error` object includes a machine-readable `code` and `message`; when supplied, `nextAction`, `requestId` and `details` explain how to proceed or trace the request. A completed failed run can still write all of its results to stdout.
 
 ## Statuses
 
-**Test status** is the outcome of the latest completed run: `draft` (no code yet), `ready` (has code, never run), `queued`, `running`, `passed`, `failed` (includes infra crash), `blocked` (rejected before a real verdict), `unknown`. `cancelled` is never emitted at test level; [cancelling](/cli/core/cancelling-runs) leaves the previous status.
-
-**Run status:** `queued`, `running` (non-terminal); `passed`, `failed`, `blocked`, `cancelled` (terminal). **Step status:** `passed`, `failed`, or `null` (not executed).
-
-**Run `source`:** `cli` (including `test rerun`), `portal`, `mcp`, `schedule`, `github_action`.
+- `test list` and `test get` describe test cases. To look up a case's latest result, use `result list --test <test-id> --limit 1`.
+- `result list --run <run-id>` reports execution progress in `run.status` (`running` or `finished`) and cancellation in `run.cancelled`. A finished execution can contain failures.
+- Result records use `testStatus` values such as `PASSED`, `FAILED`, `BLOCKED`, `RUNNING` or `CANCELLED`. Include `cancelled` explicitly in a list's `--status` filter to see cancellations. The corresponding verdicts in `run wait` use lowercase `status`. Steps in `result get` use `passed`, `failed` or `null`.
 
 ## Retrying safely
 
-Reuse `--idempotency-key` on write commands so retries are deduplicated server-side ([why](/cli/concepts/the-agent-loop#why-this-design-works)). Retry only exits `6` (`CONFLICT`), `10` and `11`; for the others fix the cause first (check the ID, fix the input, top up credits, change plan). For `tunnel-required`, drop `--no-wait` or pass `--local`; `tunnel-offline` needs a live binding.
-
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="Command Reference" href="/cli/reference/command-reference" icon="wrench">
-    Every command and flag
-  </Card>
-  <Card title="CI/CD Integration" href="/cli/integrations/ci-cd" icon="github">
-    Gate pipelines on exit codes
-  </Card>
-</Columns>
+Pass a consistent `--idempotency-key` when retrying the same launch. With an unconfirmed project launch, reuse the reported `retryIdempotencyKey` on the entire original command. Changing the request while keeping its key can produce `IDEMPOTENCY_BODY_MISMATCH`. If you already have a run ID, `run wait` follows that execution without starting or charging for another. [Output & Scripting](/cli/reference/output-and-scripting)

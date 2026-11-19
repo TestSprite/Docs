@@ -4,19 +4,67 @@
   "name": "TestSprite Documentation",
   "fonts": {
     "body": {
-      "family": "OpenSauceTwo",
-      "source": "https://testsprite-website-font.s3.us-east-1.amazonaws.com/fonts/OpenSauceTwoVF.woff2",
-      "format": "woff2",
+      "family": "Geist",
       "weight": 400
     },
     "heading": {
-      "family": "IBM Plex Mono"
+      "family": "Newsreader",
+      "weight": 400
     }
   },
   "css": [
-    "/styles/border-radius.css"
+    "/styles/border-radius.css",
+    "/styles/agent-loop.css"
   ],
   "redirects": [
+    {
+      "source": "/web-portal/core/ui/agent-actions",
+      "destination": "/web-portal/core/ui/map-view"
+    },
+    {
+      "source": "/web-portal/core/working-with-test/coverage-map",
+      "destination": "/web-portal/core/working-with-test/managing-test-cases"
+    },
+    {
+      "source": "/web-portal/ai-chat/overview",
+      "destination": "/web-portal/getting-started/overview#working-with-the-agent"
+    },
+    {
+      "source": "/web-portal/ai-chat/approving-actions",
+      "destination": "/web-portal/getting-started/overview#working-with-the-agent"
+    },
+    {
+      "source": "/web-portal/core/ui/ui-authentication",
+      "destination": "/web-portal/core/ui/agent-setup"
+    },
+    {
+      "source": "/web-portal/core/ui/feature-exploration",
+      "destination": "/web-portal/core/ui/agent-exploration"
+    },
+    {
+      "source": "/web-portal/core/ui/ui-plan-gen",
+      "destination": "/web-portal/core/ui/agent-plan"
+    },
+    {
+      "source": "/web-portal/core/api/api-discovery",
+      "destination": "/web-portal/core/api/agent-api-calls"
+    },
+    {
+      "source": "/web-portal/core/api/api-plan-gen",
+      "destination": "/web-portal/core/ui/agent-plan"
+    },
+    {
+      "source": "/web-portal/core/api/dynamic-variables",
+      "destination": "/web-portal/core/api/api-testing"
+    },
+    {
+      "source": "/web-portal/core/api/dependency-chains",
+      "destination": "/web-portal/core/api/api-testing"
+    },
+    {
+      "source": "/web-portal/core/api/auto-cleanup",
+      "destination": "/web-portal/core/api/api-testing"
+    },
     {
       "source": "/cli/core/local-testing",
       "destination": "/cli/core/local-apps"
@@ -27,7 +75,7 @@
     },
     {
       "source": "/web-portal/core/api/data-flow",
-      "destination": "/web-portal/core/api/dynamic-variables"
+      "destination": "/web-portal/core/api/api-testing"
     },
     {
       "source": "/web-portal/getting-started/your-first-test",
@@ -55,9 +103,9 @@
     }
   ],
   "colors": {
-    "primary": "#54B365",
-    "dark": "#54B365",
-    "light": "#54B365"
+    "primary": "#151916",
+    "dark": "#171B18",
+    "light": "#F5F5F4"
   },
   "favicon": {
     "light": "/favicon-light.svg",
@@ -65,8 +113,8 @@
   },
   "background": {
     "color": {
-      "light": "#F9FCF9",
-      "dark": "#181818"
+      "light": "#FBFBF9",
+      "dark": "#131313"
     }
   },
   "appearance": {
@@ -124,12 +172,12 @@
                 "pages": [
                   "web-portal/core/ui/ui-testing",
                   "web-portal/core/ui/quickstart",
-                  "web-portal/core/ui/ui-authentication",
-                  "web-portal/core/ui/feature-exploration",
-                  "web-portal/core/ui/ui-plan-gen",
+                  "web-portal/core/ui/agent-setup",
+                  "web-portal/core/ui/agent-exploration",
+                  "web-portal/core/ui/agent-plan",
                   "web-portal/core/ui/ui-test-gen",
                   "web-portal/core/ui/ui-step-by-step",
-                  "web-portal/core/ui/agent-actions",
+                  "web-portal/core/ui/map-view",
                   "web-portal/core/ui/ui-rerun",
                   "web-portal/core/ui/auto-heal"
                 ]
@@ -141,13 +189,10 @@
                 "pages": [
                   "web-portal/core/api/api-testing",
                   "web-portal/core/api/quickstart",
-                  "web-portal/core/api/api-discovery",
-                  "web-portal/core/api/api-plan-gen",
+                  "web-portal/core/api/agent-credentials",
+                  "web-portal/core/api/agent-api-calls",
                   "web-portal/core/api/endpoint-tests",
                   "web-portal/core/api/integration-tests",
-                  "web-portal/core/api/dynamic-variables",
-                  "web-portal/core/api/dependency-chains",
-                  "web-portal/core/api/auto-cleanup",
                   "web-portal/core/api/auto-auth",
                   "web-portal/core/api/api-rerun"
                 ]
@@ -158,7 +203,6 @@
                 "expanded": true,
                 "pages": [
                   "web-portal/core/working-with-test/test-detail",
-                  "web-portal/core/working-with-test/coverage-map",
                   "web-portal/core/working-with-test/managing-test-cases",
                   "web-portal/results/test-report",
                   "web-portal/results/project-overview"
@@ -172,15 +216,6 @@
                   "web-portal/setup/environments",
                   "web-portal/setup/project-sources",
                   "web-portal/setup/execution-settings"
-                ]
-              },
-              {
-                "group": "AI Chat",
-                "icon": "comments",
-                "expanded": true,
-                "pages": [
-                  "web-portal/ai-chat/overview",
-                  "web-portal/ai-chat/approving-actions"
                 ]
               },
               {

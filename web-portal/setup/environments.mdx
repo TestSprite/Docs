@@ -63,10 +63,6 @@ You don't paste values into test cases. When TestSprite generates test code, val
 - **Switching environments never requires regenerating tests.** Every run re-resolves the placeholders.
 - **A variable a test references must exist in every environment you run against**, or the placeholder has nothing to resolve to.
 
-<Note>
-Environment variables are **static configuration you define** (a tenant ID, a support email). [Dynamic Variables](/web-portal/core/api/dynamic-variables) are **values captured at run time** from one test's response and fed into another (a freshly created `user_id`).
-</Note>
-
 ## Per-Endpoint Authentication and Headers (Backend)
 
 A backend environment also has the **Customize Header** panel, the same tool you used when reviewing the API doc. It sets authentication and extra request headers **per endpoint**, for APIs where a login route is public, an admin group needs a different key, or every call needs an `x-org-id`.
@@ -143,8 +139,8 @@ A token in a custom variable technically works, but it loses masking, export red
   <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
     Fetch a fresh token before every run
   </Card>
-  <Card title="Dynamic Variables" href="/web-portal/core/api/dynamic-variables" icon="brackets-curly">
-    Runtime values that flow between tests
+  <Card title="Credentials Setup" href="/web-portal/core/api/agent-credentials" icon="key">
+    Let the agent set up API auth in the chat
   </Card>
   <Card title="Test Lists" href="/web-portal/maintenance/test-lists" icon="list-check">
     Curated suites with per-project environment pins

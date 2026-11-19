@@ -1,92 +1,43 @@
 ---
-title: "Rerun & Auto-Heal"
-description: "Re-run a saved test, batch-rerun a whole suite, and let AI repair UI drift automatically — all from the CLI."
+title: "Running Tests Again"
+description: "Repeat saved cases after a fix, select the cases that failed, or request strict replay of stored test code."
 ---
 
-## What rerun does
+## Repeat a saved test
 
-**Rerun** re-executes an existing test with no new plan generation. It is the main iteration loop: fix code, rerun, read the verdict, repeat.
-
-| Test type | What rerun executes |
-| :--- | :--- |
-| <kbd>Frontend</kbd> | Auto-heal is on by default: the agent re-runs the test against the live app and, if the app changed, repairs it and saves the repaired version. With `--no-auto-heal`, the saved Playwright script is replayed verbatim. |
-| <kbd>Backend</kbd> | The full dependency closure in wave order: producers, the named test, then teardown. |
-
-A fresh `test run` instead replays the saved script when it has current saved code, and otherwise lets the agent run the test. A `--local` run always uses the agent.
-
-## Rerunning a test
+After deploying a fix, start a new execution with the same **test ID** and environment. The new execution gets a new `runId` and produces a new `resultId` for the case.
 
 ```bash
-testsprite test rerun test_3a9f21c7 --wait --timeout 300
+testsprite run "$TEST_ID" --env staging --wait
+testsprite result list --test "$TEST_ID" --env staging --limit 2
 ```
 
-This uses the Default environment; add `--env <name>` for another (an unknown name fails, never falls back). Saved scripts can contain hard-coded URLs that an environment URL change does not rewrite; see [Environments](/cli/core/environments). A loopback environment opens a tunnel automatically (`rerun` has no `--local` flag; see [Environments](/cli/core/local-apps)).
+If you only want to see how an existing execution finished, use `testsprite run wait "$RUN_ID"`. It resumes waiting for that execution without launching another.
 
-Without `--wait` the command returns once the rerun is accepted; with it, it blocks until a terminal status, using the same exit codes as `test run --wait`.
+## Repeat failed cases from a run
 
-## Rerunning many
+List the previous execution's failed or blocked results. In each row, `resultId` opens the evidence and `caseKey` identifies the saved test.
 
 ```bash
-testsprite test rerun --all --project proj_8f0f6 --status failed --filter "checkout" --wait
+testsprite result list --run "$RUN_ID" --status failed,blocked --output json
 ```
 
-| Flag | Description |
-| :--- | :--- |
-| `--skip-terminal` | Skip tests already <kbd>passed</kbd>, <kbd>failed</kbd>, <kbd>blocked</kbd>, or <kbd>cancelled</kbd> |
-| `--status <list>` | Only tests with these statuses (comma-separated) |
-| `--filter <substr>` | Case-insensitive name filter |
-| `--max-concurrency <n>` | Max simultaneous reruns (1–100, default 50) |
-
-## Backend dependency closure
-
-A backend rerun expands to the **producers** (tests whose `--produces` variable the test `--needs`), the test itself, and **teardown** tests (`--category teardown` in the project), so it never runs against stale upstream state. To rerun only the named test:
+After reviewing the failures, copy the `caseKey` values you want into a new launch. Set the same environment and target to compare like with like. For a list's selected members, reuse its saved environment mappings with `--testlist`.
 
 ```bash
-testsprite test rerun test_3a9f21c7 --skip-dependencies --wait
+testsprite run "$TEST_ID_A" "$TEST_ID_B" --env staging --wait
 ```
 
-<Warning>
-`--skip-dependencies` can make a backend test fail if it relies on data a producer creates. Use it only when the fixtures are already in place.
-</Warning>
+A backend run can include dependent work such as fixture setup and cleanup. Use `--skip-dependencies` on the named backend cases only when the required state already exists.
 
-## Auto-heal
+## Auto-heal and strict replay
 
-When the UI has shifted since the test was written (a button renamed, a form gained a field), the verbatim script fails even though the feature works. Auto-heal detects the drift and repairs the script so the test passes; if the feature itself is broken, the test stays <kbd>failed</kbd>. When a step is repaired, the new version replaces the saved one.
-
-It is on by default for every frontend CLI rerun on every plan, and ignored for backend tests, whose failures are almost always real assertion or fixture issues. Opt out to replay the saved script exactly:
+On supported frontend runs, the server can repair stale generated test code when the UI changes and save the revised code. For a regression check that must exercise the existing stored code, request strict replay on a hosted target.
 
 ```bash
-testsprite test rerun test_3a9f21c7 --wait --no-auto-heal
+testsprite run "$TEST_ID" --env staging --no-auto-heal --wait
 ```
 
-For a deterministic regression gate, use `--no-auto-heal` or `test flaky` (which always replays without healing). A strict replay of a test with no saved code can be refused instead of started.
+Check the CLI output for an advisory if the server could not honor strict replay. Availability depends on the workspace and whether the case has replayable code. If the server reports `no_stored_code`, run the case once without the flag to generate code. Frontend runs through a local tunnel use the agent execution path. You can inspect generated code in the Portal. [Testing Local Apps](/cli/core/local-apps)
 
-<AccordionGroup>
-  <Accordion title="When auto-heal helps" icon="circle-check">
-    Minor UI refactors that moved or renamed things: a relabeled button, a sidebar collapsed into a menu, a custom dropdown replaced by a design-system component. The saved script refers to stale selectors or text, and auto-heal re-binds the test to the new UI.
-  </Accordion>
-  <Accordion title="When auto-heal doesn't help" icon="circle-xmark">
-    A real product bug: the form rejects valid input, an API returns 500, the redirect lands on the wrong page. Recovery fails and the test stays <kbd>failed</kbd>. Pull the failure bundle (`testsprite test failure get <test-id>`) to see what broke.
-  </Accordion>
-</AccordionGroup>
-
-## Credits
-
-A rerun is billed the same as a fresh run, whether or not auto-heal repairs a step; there is no discounted replay tier. Check current costs with `testsprite usage`. With insufficient credits the command exits `12`; top up under <kbd>Workspace Settings → Billing → Usage</kbd> in the Portal. See [Exit Codes](/cli/reference/exit-codes).
-
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="Running Tests" href="/cli/core/running-tests" icon="play">
-    Fresh runs, `--target-url`, and exit codes
-  </Card>
-  <Card title="Reading Results" href="/cli/core/reading-results" icon="list-check">
-    Failure bundles, step logs, and run history after a rerun
-  </Card>
-  <Card title="Exit Codes" href="/cli/reference/exit-codes" icon="square-code">
-    Exit 12 and everything else the CLI can emit
-  </Card>
-  <Card title="Agent Integration" href="/cli/core/agent-integration" icon="robot">
-    Wire the rerun loop into your coding agent's verify-fix cycle
-  </Card>
-</Columns>
+If the expected behavior itself changed, request a revision through the project's agent so you can review the new assertion. [Editing and Deleting Tests](/cli/core/editing-tests)

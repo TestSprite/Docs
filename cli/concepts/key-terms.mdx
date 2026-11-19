@@ -1,132 +1,63 @@
 ---
 title: "Key Terms"
-description: "Core CLI concepts — workspaces, API keys, projects, environments, tests, runs, statuses, credits, scopes, and failure bundles."
+description: "How projects, environments, saved tests, executions and individual results fit together in CLI 0.17."
 ---
 
 ## Workspace
 
-Every project, test, and API key belongs to one **workspace**, and its runs draw on that workspace's credits. One is created for you at signup, your **default workspace**, and you can create more or be invited into others. Each workspace has its own plan (Free or paid), members, roles, and credit balance; the default workspace can't be deleted or transferred. The CLI has no "switch workspace" command: a key acts in the workspace it was minted in, and `testsprite auth status` shows which one. To work in several workspaces, keep one [profile](/cli/core/authentication#profiles) per workspace. See [Workspaces](/web-portal/admin/workspaces).
+A workspace owns your projects, API keys and credits. `testsprite auth status` shows which workspace and permissions the active key uses. If you belong to several workspaces, configure a profile for each key. [Authentication](/cli/core/authentication).
 
 ## Project
 
-A **project** is the named container for your tests, identified by a stable `projectId`. It has a type (`frontend` or `backend`), its [environments](#environment), and its tests.
-
-The URL you give `project create` becomes the project's **Default environment**: the app a frontend test opens, or the API base URL a backend test calls. A frontend project can use a loopback URL such as `http://localhost:3000` (`--url`, or `--local <port>`); a backend project's URL must be public.
+A project holds frontend or backend tests and their environments. A new project has a `projectId`. Add an environment to specify where its tests should run. [Projects](/cli/core/projects).
 
 ```bash
-testsprite project create --type frontend --name "Checkout App" --url https://app.example.com
-testsprite project list
+testsprite project create --type frontend --name Checkout
 ```
-
-For local apps, see [Test an app on your machine](/cli/core/local-apps).
 
 ## Environment
 
-An **environment** is a named target inside a project: the URL to test plus what a run needs there, such as sign-in settings and custom variables. Every run selects one; without `--env` it uses the **Default environment** (`project env list` shows `DEFAULT yes`). A **temporary environment** is created for a `--target-url` or an unmatched `--local` port and removed when the run finishes; it does not count toward your environment limit. Free and Starter allow one environment per project, Standard 3, Pro and Enterprise unlimited. See [Environments](/cli/core/environments).
+An environment gives a deployment a name and stores its URL and sign-in settings. The first environment you add becomes the **Default environment**. Use `--env <name>` on a plan or run to select a saved environment. In a planning conversation, the agent continues to use that selection on later turns. [Environments](/cli/core/environments).
+
+Set `PROJECT_ID` to the ID returned by `project create`.
+
+```bash
+testsprite project env create "$PROJECT_ID" --name staging --url https://staging.example.com
+```
 
 ## Test
 
-A **test** lives in a project and is what the CLI runs, reruns, and reads results from. It has a stable `testId`, a type, a [status](#status), and a run history from every surface that ran it (see [Run Source](#run-source)).
-
-- **Frontend**: an ordered plan of browser steps (`planSteps[]`).
-- **Backend**: executable code, typically Python, with optional variable dependencies (`--produces` / `--needs`).
-
-```bash
-testsprite test get test_3a9f21c7
-testsprite test run test_3a9f21c7 --wait
-```
+A test is a saved case with a title, version and steps. The project's TestSprite agent proposes changes to it. Review the proposal and apply it to save the case in the suite. The case ID under `id` in `test list` and `test get` is the test ID you pass to `run`. [Creating tests](/cli/core/creating-tests).
 
 ## Run and Run ID
 
-A **run** is one execution of a test, from trigger to terminal verdict (`passed`, `failed`, `blocked`, or `cancelled`). `test run` and `test rerun` each start one and print its `runId`, which exists before the cloud engine starts; history marks reruns. A run keeps its own steps and artifacts (DOM snapshots as text, root-cause hypothesis, recommended fix target), and a later run never overwrites them.
+One run is one execution and can contain multiple tests. The run ID identifies that execution throughout its lifecycle. Each test result in it gets a separate result ID for reading its verdict and evidence. Running the same saved test again preserves its test ID and creates a new result. [Running tests](/cli/core/running-tests).
 
-```bash
-testsprite test wait run_5c1d...          # resume waiting on an in-flight run
-testsprite test artifact get run_5c1d...  # failure bundle pinned to this run
-```
+| ID | What it identifies | Where to use it |
+| --- | --- | --- |
+| Test ID | A saved case | `testsprite run <test-id> --wait`, `testsprite test get <test-id>` |
+| `runId` | One execution | `testsprite run wait <run-id>`, `testsprite run cancel <run-id>`, `testsprite result list --run <run-id>` |
+| `resultId` | One case's outcome in an execution | `testsprite result get <result-id>` |
 
-`test failure get <test-id>` always returns the *latest* failure, which can change if runs overlap.
+The output of a run contains execution receipts under `runs[]` and individual outcomes under `results[]`. To find a case's latest result in staging, use `testsprite result list --test <test-id> --env staging --limit 1`.
 
 ## Status
 
-The normalized state of a test or run, shown in text mode and in `--output json`.
+`result list --run` reports the execution's progress in `run.status`. A finished execution can contain a mix of passing and failing results. The `testStatus` field on each result is `RUNNING`, `PASSED`, `FAILED`, `BLOCKED` or `CANCELLED`. To list cancelled results, include `cancelled` in the `--status` filter. A saved test definition is available independently of any result. [Reading results](/cli/core/reading-results).
 
-| Value | Meaning | Terminal? |
-| :--- | :--- | :--- |
-| <kbd>draft</kbd> | No executable code yet | No |
-| <kbd>ready</kbd> | Has code or a plan, never run | No |
-| <kbd>queued</kbd> | Run accepted; engine not yet started | No |
-| <kbd>running</kbd> | Execution in flight | No |
-| <kbd>passed</kbd> | Latest completed run passed | Yes |
-| <kbd>failed</kbd> | Latest completed run failed (including infrastructure crash) | Yes |
-| <kbd>blocked</kbd> | Run rejected before a real verdict | Yes |
-| <kbd>cancelled</kbd> | Run cancelled before a verdict | Yes |
-| <kbd>unknown</kbd> | Status cannot be derived | — |
+<a id="failure-bundle"></a>
 
-Run status is the subset `queued`, `running`, `passed`, `failed`, `blocked`, `cancelled`. `--wait` stops at a terminal status: exit 0 for `passed`; exit 1 for `failed`, `blocked`, or `cancelled` (see [Exit Codes](/cli/reference/exit-codes)).
+## Result evidence
 
-Without `--env`, `test list` and `test get` show each test's latest result in the project's default environment, and `--status` filters on that. Pass `--env <name>` to read another environment.
-
-```bash
-testsprite test list --project proj_8f0f6 --status failed,blocked
-```
-
-## Run Source
-
-Every run is tagged with the surface that triggered it: `cli` (including reruns), `portal`, `schedule`, `github_action`, or `mcp` (projects created from MCP). Filter history with `--source`:
-
-```bash
-testsprite test result test_3a9f21c7 --history --source cli --since 7d
-```
+`result get` reads the outcome for a specific result ID. For browser failures it can include the failed step, page snapshots, screenshots and video. Backend results can include captured API output and a traceback. The result may also include a cause and suggested fix. Download the available files with `testsprite result get <result-id> --out <directory>`. [Reading results](/cli/core/reading-results).
 
 ## Credits
 
-**Credits** are the unit of test execution. `testsprite usage` reports the balance of your active key's workspace, and commands exit non-zero when the balance is insufficient ([Exit Codes](/cli/reference/exit-codes)).
+Executions use the workspace's credits. `testsprite usage` shows the workspace wallet. An insufficient balance returns exit code `12`. [Exit codes](/cli/reference/exit-codes).
 
-- A fresh `test run` charges credits. A `test rerun` is billed the same, whether or not auto-heal repairs anything. See [Rerun & Auto-Heal](/cli/core/rerun-and-auto-heal).
-- Backend runs consume credits per the workspace's plan. The API does not expose the per-run cost, so check `testsprite usage` before a large batch.
+<a id="api-key"></a>
+<a id="scopes"></a>
 
-## API Key
+## API key and scopes
 
-The credential stored in `~/.testsprite/credentials` and sent with every request. A key is minted in one workspace and tied to your membership there: what you create with it belongs to that workspace and draws on its balance, and it stops working if you leave or are removed. Keys need the Member role or above. Keys starting with `sk-user-` predate workspace keys and always act in your default workspace. `testsprite auth status` shows the identity, workspace, and scopes of the active key. See [API Keys](/web-portal/admin/api-keys).
-
-## Scopes
-
-**Scopes** are the permissions an API key carries. A key has every scope while you are a Member, Admin, or Owner of its workspace, and none as a Viewer. The CLI checks them before write and run requests and, when denied, prints the required scope and the ones your key holds. In short: test writes need `write:tests`, project and environment writes `write:projects`, schedule writes `write:schedules`, and starting, rerunning, or cancelling a run `run:tests`. Existing keys can use `--local`. See [Authentication → Scopes](/cli/core/authentication#scopes) for the full table.
-
-## Failure Bundle
-
-A **failure bundle** is one run-scoped package for understanding a failure, assembled by the backend and downloaded in one command. It holds:
-
-- the failing step and its ±1 neighbors
-- DOM snapshots as text, each with a short description
-- the test source (plan or code) at run time
-- a root-cause hypothesis and a recommended fix target
-- for backend tests: captured stdout (`apiOutput`) and the Python traceback (`trace`)
-
-Every item shares one `snapshotId`; the CLI never mixes data from two runs.
-
-```bash
-mkdir -p .testsprite
-testsprite test failure get test_3a9f21c7 --out ./.testsprite/failure
-testsprite test failure summary test_3a9f21c7   # one-screen triage card
-```
-
-`--failed-only` trims the bundle to the failing step and its neighbors. See [Reading Results](/cli/core/reading-results#pinning-to-a-specific-run) for `failure get` vs `artifact get`.
-
-## Where to Go Next
-
-<Columns cols={2}>
-  <Card title="The Agent Loop" href="/cli/concepts/the-agent-loop" icon="arrows-rotate">
-    The verification loop and where the CLI fits
-  </Card>
-  <Card title="Quickstart" href="/cli/getting-started/quickstart" icon="play">
-    Create a test, run it, and read the result
-  </Card>
-  <Card title="Reading Results" href="/cli/core/reading-results" icon="clipboard-list">
-    Statuses, failure bundles, run history
-  </Card>
-  <Card title="Command Reference" href="/cli/reference/command-reference" icon="terminal">
-    Every command and flag
-  </Card>
-</Columns>
+An API key grants the CLI access to a workspace. Scopes control individual operations, such as `read:tests` for results, `run:tests` for execution and `write:projects` for creating environments. Check the active scopes with `testsprite auth status`. [API keys](/web-portal/admin/api-keys).

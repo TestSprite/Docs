@@ -1,17 +1,33 @@
 ---
 title: "Key Terms"
-description: "The core concepts of the TestSprite Web Portal: workspaces, projects, tests, runs, plans, environments, lists, and schedules."
+description: "The core concepts of the TestSprite Web Portal: workspaces, projects, the agent and its sessions, tests, runs, plans, environments, lists, and schedules."
 ---
 
-The handful of terms the rest of the docs build on. Feature-specific terms, like dynamic variables or auto-cleanup, are explained on their own pages.
+The handful of terms the rest of the docs build on. Feature-specific terms, like auto-heal or auto-auth, are explained on their own pages.
 
 ## Workspace
 
-The container everything else lives in. You have a **personal workspace**, and you can belong to **team workspaces**; the active one decides which projects you see. In a team workspace, each member has one role (Viewer, Member, Admin, or Owner). See [Workspaces](/web-portal/admin/workspaces) and [Members & Roles](/web-portal/admin/members-and-roles).
+The container everything else lives in: projects, tests, runs, and API keys. One is created for you at signup, and you can create more or be invited into others; the active one decides which projects you see. Every workspace works the same way, and each member has one role (Viewer, Member, Admin, or Owner). See [Workspaces](/web-portal/admin/workspaces) and [Members & Roles](/web-portal/admin/members-and-roles).
 
 ## Project
 
-One application under test, or one slice of it (a single micro-frontend or API surface). A project is either **UI** (frontend) or **API** (backend) and holds its configuration, tests, and run history. Create one with <kbd>New Project</kbd> on <kbd>All Projects</kbd>. See [Test Detail Page](/web-portal/core/working-with-test/test-detail).
+One application under test, or one slice of it (a single micro-frontend or API surface). A project is either **UI** (frontend) or **API** (backend) and holds its configuration, tests, and run history. Click <kbd>New Project</kbd> and tell the agent what to test; it proposes the project, and you create it. Until then it is a **Draft**. See [Setup](/web-portal/core/ui/agent-setup).
+
+## Agent
+
+TestSprite's agent is who you work with in the portal: it explores your app, writes and maintains the test cases, runs them, and judges what failed. It reads and drafts on its own, and asks before it changes your project or spends credits. See [Working with the Agent](/web-portal/getting-started/overview#working-with-the-agent).
+
+## Session
+
+One conversation with the agent, on one project. A project can have many sessions, listed in its sidebar; yours are private to you. Whatever a session saves to the project is shared with the team.
+
+## Card
+
+How the agent asks for your decision: a card above the chat box to create a project, save changes, apply a test plan, start a run, type a secret, or answer a question. One waits at a time.
+
+## Exploration Notes
+
+What the agent has learned about your app: its flows, how sign-in works, its test data, and what counts as correct. Every session on the project starts from them. See [Exploration & Notes](/web-portal/core/ui/agent-exploration#exploration-notes).
 
 ## Test Case
 
@@ -21,13 +37,9 @@ A single executable check. UI tests are multi-step user journeys (sign in, navig
 
 One execution of a set of tests. A run records a verdict per test, step-by-step screenshots and video (UI) or HTTP requests and responses (API), and a suggested cause and fix for each failure. Runs are listed on the project's <kbd>Test Runs</kbd> page.
 
-## Feature Map
-
-The features of your product and the use cases under each, built from your PRD and what TestSprite explored or discovered. It's what plans are scoped to. You'll find it, and can edit it, on the project's <kbd>Test Coverage</kbd> page. See [Coverage Map](/web-portal/core/working-with-test/coverage-map).
-
 ## Test Plan
 
-The test cases TestSprite's testing agent plans from the feature map, before anything runs. You review, edit, add, or remove them in **Review proposed tests**, which opens after you click <kbd>Plan Tests</kbd>.
+The project's test cases, grouped by use case. The agent proposes changes to it, which show on the **Plan** tab first; nothing changes until you apply them. See [Proposed Test Cases](/web-portal/core/ui/agent-plan).
 
 ## Environment
 

@@ -5,7 +5,7 @@ icon: "wrench"
 ---
 
 <Tip>
-Run `testsprite doctor` first. It checks your CLI version, Node runtime, profile, endpoint, credentials, connectivity, and verify-skill install.
+Run `testsprite doctor` first. It checks your CLI version, Node runtime, profile, endpoint, credentials, connectivity, Git ignore configuration and installed verification guidance.
 </Tip>
 
 <AccordionGroup>
@@ -15,54 +15,53 @@ The binary isn't on your `PATH`. Check `node --version` (20.19+, 22.13+, or 24+;
 </Accordion>
 
 <Accordion title="Auth error (exit 3) / AUTH_FORBIDDEN" icon="key">
-The key is missing, invalid, or lacks a scope. Run `testsprite auth status`, then reconfigure with `testsprite setup --no-agent` (or `TESTSPRITE_API_KEY=sk-... testsprite setup --from-env --yes --no-agent`). On `AUTH_FORBIDDEN`, `details.requiredScope` names the missing scope. [Scopes](/cli/core/authentication#scopes) follow your role in the key's workspace: a Viewer's key is refused everything, so ask an Admin or the Owner to make you a Member ([Members & Roles](/web-portal/admin/members-and-roles)). A key also stops working when you leave or are removed from its workspace. In CI, `TESTSPRITE_API_KEY` overrides the credentials file.
+Run `testsprite auth status` to check the active key, workspace and scopes. If the key is invalid, configure a current one with `testsprite setup --no-agent`. In CI, `TESTSPRITE_API_KEY` overrides a profile's saved key. If the command reports `AUTH_FORBIDDEN`, compare `details.requiredScope` with the key's granted scopes and ask a workspace Admin or Owner to check your access. [Authentication and Scopes](/cli/core/authentication#scopes)
 </Accordion>
 
-<Accordion title="A project or environment --url is rejected (exit 5)" icon="globe">
-`project create|update --url` and `project env create|update --url` accept a public `http(s)` URL or, for a frontend project, a loopback `http` origin with an explicit port and no path (`http://localhost:3000`, `http://127.0.0.1:3000`, `http://[::1]:3000`). They refuse `https` loopback, `0.0.0.0`, link-local, RFC 1918 addresses, and any loopback URL on a backend project.
-
-To test a local app, see [Test an app on your machine](/cli/core/local-apps). To move a local-only project to a deployed site, use `--target-url` on a single run, or `testsprite project update <project-id> --url https://app.example.com` to change the Default environment. `project env create` fails with exit `13` (`FEATURE_GATED`) on Free and Starter, which allow one environment per project.
+<Accordion title="An older command or flag exits 5" icon="terminal">
+Run `testsprite --version` and `testsprite --help`. In 0.17, use `testsprite run --project "$PROJECT_ID" --wait` to run a project, `testsprite run "$TEST_ID" --wait` for a test, and `testsprite run --testlist "$LIST_ID" --wait` for a list. Request test changes with `plan` and approve them with `apply`. Use `result list` and `result get` to read outcomes. If your coding agent keeps suggesting old commands, run `testsprite agent status` and refresh its target with `testsprite agent install <target> --force`.
 </Accordion>
 
-<Accordion title="--target-url rejected (exit 5 or 6)" icon="globe">
-**Exit 5:** the URL is not a public `http(s)` address or a loopback `http` origin with a port, it is combined with `--local`, or the reachability probe found the host clearly unreachable. If the probe is wrong for your network, pass `--skip-preflight`.
+<Accordion title="An environment URL is rejected (exit 5 or 13)" icon="globe">
+Set the URL on `project env create` or `project env update`. Use a public HTTP(S) address, or a frontend loopback HTTP origin with an explicit port and no path, such as `http://localhost:3000`. An unsupported private address, HTTPS loopback, or backend loopback is a validation error. Creating an environment over your plan's limit returns `FEATURE_GATED` (exit 13).
 
-**Exit 6, `frontend-auth-target-origin-mismatch`:** the environment that supplies the sign-in (the one passed with `--env`, or a Default with a recorded session) uses a recorded browser session, OTP, or login-once step, and the target is on a different origin. Nothing is charged. Use an environment whose URL has the target's origin, or save the target as an environment. See [Running Tests](/cli/core/running-tests#run-against-a-url-without-creating-an-environment).
+To change an existing default named `staging`, use `testsprite project env update "$PROJECT_ID" staging --url https://staging.example.com`. For work on your machine, see [Local Apps](/cli/core/local-apps).
 </Accordion>
 
-<Accordion title="test run --wait timed out (exit 7)" icon="clock">
-- **Ordinary run, or a `--local` run adopted via `--tunnel-client`:** not a failure. The run is still going; resume with `testsprite test wait <run-id> --timeout 600 --output json`.
-- **Self-started `--local` run (default):** the timeout requests cancellation and closes the tunnel. Check the reported outcome (`status: "cancelled"`); if cancellation failed, run `testsprite test cancel <run-id>`. Then start a new run with a longer `--timeout`, because `test wait` cannot reopen the tunnel. Credits may already be charged.
-- **With `--no-cancel-on-interrupt`:** nothing was cancelled. The run keeps going and billing in the cloud, and steps that need your machine fail. Check it with `test wait <run-id>`, or stop it with `testsprite test cancel <run-id>`.
+<Accordion title="The launch rejects --target-url (exit 5 or 6)" icon="globe">
+Check for an invalid URL, a conflicting `--local` flag, or an unreachable target. If the CLI's reachability probe is wrong for your network, `--skip-preflight` skips it. An ordinary backend launch uses its saved environment's API URL.
+
+For `frontend-auth-target-origin-mismatch` (exit 6), the target and the origin required by the environment's recorded session, OTP or login-once step differ. Use an environment configured for the target origin. List launches always take their target from the list's saved bindings. [Environments](/cli/core/environments)
+</Accordion>
+
+<Accordion title="The run timed out (exit 7)" icon="clock">
+- **Public run or a borrowed tunnel that is still open.** Read `.runs[].runId` from the partial JSON and follow it with `testsprite run wait "$RUN_ID" --timeout 900`. Later integration results may still be pending.
+- **Tunnel opened by this command.** The CLI requests cancellation by default and closes its tunnel. Read the reported outcome. If the execution is still running, `testsprite run cancel "$RUN_ID"` stops it. Start a new local run to reopen a tunnel.
+- **Unsupported execution status.** If the error says the server cannot report whole-execution status, a longer timeout cannot supply it. Check that your configured endpoint supports CLI 0.17.
 
 See [Cancelling Runs](/cli/core/cancelling-runs).
 </Accordion>
 
-<Accordion title="test artifact get / test failure get has no bundle (exit 4 or 6)" icon="file-magnifying-glass">
-`details.reason` says why:
+<Accordion title="A result was not found (exit 4), or evidence is incomplete (exit 10)" icon="file-magnifying-glass">
+`run wait` and `run cancel` take a run ID. `result get` takes a result ID. Run `testsprite result list --run "$RUN_ID" --status passed,failed,running,blocked,cancelled` and choose a result belonging to that execution. Confirm the active workspace with `testsprite auth status` if it still returns 4.
 
-- `no_failing_run`: the run passed.
-- `run_not_terminal` (exit 6): the run is still going; use `testsprite test wait <run-id>`.
-- `cancelled_no_artifacts`: the run was cancelled first.
-- `no_code`: the bundle is built from saved code, and none exists. A frontend test that has never passed, or has only run with `--local`, has none.
-
-For `no_code` and `cancelled_no_artifacts`, use `testsprite test steps <test-id> --run-id <run-id>` and `testsprite test failure summary <test-id>`.
+Download to a dedicated directory with `testsprite result get "$RESULT_ID" --out ".testsprite/results/$RESULT_ID"`. A partial download writes `result.json` and available evidence and exits 10. Retry the same result in the same directory. If a failed file was available from an earlier download of that result, the CLI keeps it and marks the entry `kept: true` in the download's `failed` array.
 </Accordion>
 
-<Accordion title="Precondition failed (exit 6) on test code put" icon="code-merge">
-The code changed since you fetched it. Run `testsprite test code get <test-id>`, reapply your edit, and put again. `--expected-version <v>` pins a version; `--force` skips the guard (last writer wins).
+<Accordion title="A launch was interrupted before it returned a run ID" icon="rotate">
+A project listed in `unconfirmedProjects` may already have launched. Replay the complete original command with the returned `retryIdempotencyKey` as `--idempotency-key`. Use `run wait` for any known run IDs. [Output & Scripting](/cli/reference/output-and-scripting)
 </Accordion>
 
-<Accordion title="Delete or tunnel stop refused (exit 5)" icon="trash">
-`test delete`, `test delete-batch`, and `tunnel stop --all` need `--confirm`; without it the CLI exits 5 before any request. `--max-concurrency` accepts 1–10 when a tunnel is in use; a larger value is refused before any run starts.
+<Accordion title="A tunnel launch rejects the concurrency setting (exit 5)" icon="route">
+For a project or named local tests, set `--max-concurrency` between 1 and 15. A saved list through a tunnel accepts 1–10. Both default to 5. Specify the limit on the launch.
 </Accordion>
 
 <Accordion title="Tunnel limit reached (exit 11)" icon="route">
-Each user can have 5 live tunnel bindings across all keys. This error is not retried automatically. Run `testsprite tunnel list`, then `testsprite tunnel stop <client-id>` for an unused one. `tunnel stop --all --confirm` revokes every binding, including ones other terminals or CI jobs are using. Bindings that are provably dead are released automatically before the limit is enforced.
+Run `testsprite tunnel list`, then `testsprite tunnel stop <client-id>` for an unused binding. You can also attach a run to an existing tunnel with `--tunnel-client`. Revoking all your bindings with `tunnel stop --all --confirm` also affects other terminals and CI jobs using them.
 </Accordion>
 
-<Accordion title="Rate limited (exit 11) / batch rerun deferred[]" icon="gauge-high">
-The per-key run-rate limit shed some work. Back off and retry; the CLI already retries a few times. For a batch rerun, retry the tests listed in `deferred[]` with a **fresh** `--idempotency-key`.
+<Accordion title="Rate limited (exit 11)" icon="gauge-high">
+Honor the retry delay. A standing rate limit remains exit 11. A transient throttle that consumes the shared `run wait` deadline returns exit 7. Resume the wait with the existing run ID.
 </Accordion>
 
 <Accordion title="Insufficient credits (exit 12)" icon="credit-card">
@@ -74,7 +73,7 @@ Every write and run is refused, with `details.reason: "paused"`, while the key's
 </Accordion>
 
 <Accordion title="Preview a command without running it" icon="flask">
-Append `--dry-run --output json`. It makes no network calls or file writes and returns canned data in the real response shape.
+Append `--dry-run --output json` to preview requests or sample data. When credentials are configured and no target is explicit, a launch preview may read saved environment metadata to check for an automatic tunnel. It starts no run.
 </Accordion>
 
 </AccordionGroup>

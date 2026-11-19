@@ -1,78 +1,107 @@
 ---
 title: "Quickstart"
-description: "Walk through your first API project end to end, from project creation to a passing HTTP suite, in about 10 minutes."
+description: "Walk through your first API project end to end, from telling the agent about your API to a run of Python tests, in about 10 minutes."
 ---
 
-By the end of this guide you'll have an API project that's been discovered, planned, generated as Python tests, and run against your live API, with every request and response captured. No code on your side.
+By the end of this guide you'll have an API project the agent has learned, planned, written as Python tests, and run against your live API, with every request and response captured. No code on your side.
 
 <Info>
 **Doing UI testing instead?** See the [UI Quickstart](/web-portal/core/ui/quickstart).
 </Info>
 
-## Step 1: Project Setup
+## Step 1: Tell the Agent About Your API
 
-From **All Projects**, click <kbd>New Project</kbd>. The form has three steps: **Basics**, **Access details**, and **Extra Context**. On **Basics**, set the **Test Type** to <kbd>Backend API</kbd>, then enter your **Base Endpoint** and a **project name**.
+Click <kbd>New Project</kbd>. The page asks **"What should we test?"** Give the agent your API's base address and say it is an API.
 
-<Frame>
-  <img src="../../../images/api-testing-quick-start-configure.png" alt="The Basics step of the New Project form, with Backend API selected, Base Endpoint, and Project Name" />
-</Frame>
-
-## Step 2: Review Discovered Endpoints
-
-On **Access details**, click <kbd>Upload API docs</kbd> (OpenAPI, Swagger, Postman, or free-form docs). Discovery starts as soon as the file is uploaded, and your endpoints appear grouped by resource family in the **Set Up Your Tests** dialog.
+```text
+Test our orders API at https://api.staging.example.com. Focus on orders and refunds.
+```
 
 <Frame>
-  <img src="../../../images/api-testing-quick-start-discover-endpoint.png" alt="Discovered endpoint list" />
+  <img src="../../../images/api-testing-quick-start-new-project.png" alt="The New Project page with the orders API's address typed in the chat box" />
 </Frame>
 
-For each endpoint you can remove it (trash icon), fix its path (click the row), and set its **Authentication Type**: **Basic**, **Bearer**, **API-key**, or **None**. If discovery missed one, click <kbd>Add API</kbd>; with no docs at all, use <kbd>Add Endpoints Manually</kbd> on **Access details** instead.
+Use the <kbd>+</kbd> menu to give it more to work from:
 
-When you're done, click <kbd>Save N endpoints</kbd> and continue to **Extra Context**.
-
-## Step 3: PRD Upload & Extra Instructions
-
-On **Extra Context**, choose <kbd>I have a PRD</kbd> and upload your **PRD** (**strongly recommended**; any product-spec document works). Optionally, add <kbd>Extra Instructions</kbd> to steer what gets tested, such as *"skip /admin"* or *"focus on the checkout flow"*. Then click <kbd>Create project</kbd>.
-
-<Frame>
-  <img src="../../../images/api-testing-extra-context.png" alt="The Extra Context step: Test Sources with the PRD upload, and Advanced Context with Test Files" />
-</Frame>
+| Add | Why |
+| :--- | :--- |
+| <kbd>Documents</kbd> | An OpenAPI / Swagger file, a Postman collection, written API docs, or a PRD |
+| <kbd>GitHub Repository</kbd> | The agent reads the routes and handlers in your backend's code |
 
 <Tip>
-**PRDs aren't only for UI.** They let TestSprite test the *intent* of each endpoint, not just its shape: "covers the order-placement scenarios your product supports", not just "covers `POST /orders`". Skip it for a quick demo; upload one for real coverage.
+**A PRD isn't only for UI.** It lets the agent test what each endpoint is *for*, not just its shape: the order-placement scenarios your product supports, not just `POST /orders`.
 </Tip>
 
-## Step 4: Feature & Use-Case Extraction
+## Step 2: Create the Project
 
-The new project opens on **Test Coverage**, with a flow graph of the features TestSprite found in your PRD and API docs and the use cases under each. Test cases are scoped to these use cases. Click <kbd>Regenerate from sources</kbd> to redo the analysis, for example after editing the file.
-
-<Frame>
-  <img src="../../../images/api-testing-quick-start-use-case.png" alt="Use-case flow graph on Test Coverage, extracted from the PRD" />
-</Frame>
-
-## Step 5: Review and Adjust the Plan
-
-Click <kbd>Plan Tests</kbd> and TestSprite's testing agent plans the tests, grouped by use case and covering categories such as functional / happy path, authorization, error handling and edge cases, and (where relevant) boundary / load and security probes.
+The agent asks once for what only you know: whether this is production, how the API authenticates, and what to cover first. Then a card reads **Ready to create {name}**. Click <kbd>Review</kbd> to check it on the **Setup** tab, and <kbd>Create Project</kbd> when it looks right.
 
 <Frame>
-  <img src="../../../images/api-testing-quick-start-review-plan.png" alt="API plan review" />
+  <img src="../../../images/api-testing-quick-start-configure.png" alt="The Ready to create Orders API card in the chat, with the proposed project on the Setup tab beside it" />
 </Frame>
 
-Untick any tests that don't apply, edit titles or descriptions in natural language, and click <kbd>Run all</kbd>. On a first run, keeping everything selected is usually right; if a use case has more tests than you want, untick individual low-value ones rather than the whole use case.
+## Step 3: Set Up Credentials
 
-## Step 6: Watch Tests Generate and Run
+Tell the agent how your API authenticates. It writes the environment and asks you to confirm it, then asks for each secret on its own card. Type the token, key or password there: it is saved straight to the environment, encrypted, and never appears in the chat.
 
-TestSprite generates a Python test per plan row, verifies each one, and runs them against your API. Each row shows <kbd>Planned</kbd>, <kbd>Running</kbd>, <kbd>Passed</kbd>, <kbd>Failed</kbd>, or <kbd>Blocked</kbd>. Tests that depend on each other run in the right order; see [Dependency Chains](/web-portal/core/api/dependency-chains).
+<Frame>
+  <img src="../../../images/api-testing-credentials-secret-card.png" alt="A card above the chat box asking for the bearer token for Staging: the token field, Save and Not Now" />
+</Frame>
+
+<Warning>
+Don't paste a token or password into a message. Use the card.
+</Warning>
+
+<Card title="Credentials Setup" href="/web-portal/core/api/agent-credentials" icon="key">
+  Every auth type the agent supports, and what you type for each
+</Card>
+
+## Step 4: Watch It Call Your API
+
+The agent learns your API by calling it for real, the same way a test run does. Each try shows in the chat as a step like *"Calling GET /orders and 3 more"*, and the **Exploration** tab lists every endpoint it called with the status that came back.
+
+<Frame>
+  <img src="../../../images/api-testing-api-calls.png" alt="The Exploration tab on an API project: API Calls lists each endpoint the agent called, with its status and how many times" />
+</Frame>
+
+<Card title="API Calls" href="/web-portal/core/api/agent-api-calls" icon="terminal">
+  How the calls are sent, and what the agent won't do
+</Card>
+
+## Step 5: Review the Proposed Test Cases
+
+When the plan is ready, a card reads **N changes to the Test Plan**. Click <kbd>Review Changes</kbd> to open it on the **Plan** tab, grouped by use case. The tests cover what fits your API: happy paths, authorization, error handling and edge cases, and multi-step workflows. Each one's code has already passed once against your API.
+
+Untick any test you don't want, or edit one before it is saved. **Your tests stay as they are until you apply.**
+
+<Frame>
+  <img src="../../../images/api-testing-quick-start-review-plan.png" alt="The Plan tab beside the session: 48 proposed tests grouped by use case, with Apply and Run 48 Tests" />
+</Frame>
+
+<Card title="Proposed Test Cases" href="/web-portal/core/ui/agent-plan" icon="list-check">
+  Reviewing, editing, rejecting and applying a proposal
+</Card>
+
+## Step 6: Apply and Run
+
+Click <kbd>Apply and Run N Tests</kbd>. The run docks under the chat box; click <kbd>Watch</kbd> to open it. Each test shows <kbd>Queued</kbd>, <kbd>Running</kbd>, then <kbd>Passed</kbd>, <kbd>Failed</kbd>, or <kbd>Blocked</kbd>.
 
 <Frame>
   <img src="../../../images/api-testing-quick-start-review-run.png" alt="API tests executing" />
 </Frame>
 
-## Step 7: Review and Refine
+## Step 7: Review the Results
 
-Click any test to open its detail page: the generated **Code**, its **Stdout** (the HTTP calls and what your API returned), the **error trace** where an assertion failed, and an **AI cause-and-fix** suggestion. To change a test, edit its description and click <kbd>Regenerate</kbd>.
+Click any test to open its detail page: the generated **Code**, its **Stdout** (the HTTP calls and what your API returned), the **error trace** where an assertion failed, and an **AI cause-and-fix** suggestion.
 
 <Frame>
   <img src="../../../images/api-testing-quick-start-review-result.png" alt="API test detail page" />
+</Frame>
+
+When tests fail, click <kbd>Have the Agent Look</kbd> on the card above the chat box. The agent judges each failure: your API is wrong, the test is wrong (it fixes the test and says what it changed), or something got in the way, such as an expired token.
+
+<Frame>
+  <img src="../../../images/api-testing-quick-start-agent-look.png" alt="After a run with failures, the card above the chat box with Have the Agent Look" />
 </Frame>
 
 The run's **Test Report** rolls up pass / fail / blocked counts with cause-and-fix highlights, ready to share with the team.
@@ -81,25 +110,21 @@ The run's **Test Report** rolls up pass / fail / blocked counts with cause-and-f
   <img src="../../../images/api-testing-quick-start-report.png" alt="Test Report summary view" />
 </Frame>
 
-## Step 8: Cleanup Runs Automatically
-
-After the run, TestSprite removes the records your tests created (users, orders, sessions) so the next run starts fresh. The run's **Cleanup** tab shows what got deleted. See [Auto Cleanup](/web-portal/core/api/auto-cleanup).
-
-## Step 9: Rerun and Schedule
+## Step 8: Rerun and Schedule
 
 To run again, use <kbd>Run test</kbd> on a single test or <kbd>Run all</kbd> on the **Test Cases** toolbar. See [Rerun](/web-portal/core/api/api-rerun), and set up [Auto-Auth](/web-portal/core/api/auto-auth) so tokens refresh before every run.
 
 ## Where to Go Next
 
 <Columns cols={2}>
-  <Card title="API Discovery" href="/web-portal/core/api/api-discovery" icon="magnifying-glass">
-    Deep dive on the discovery phase
-  </Card>
-  <Card title="Plan Generation & Editing" href="/web-portal/core/api/api-plan-gen" icon="list-check">
-    The mechanics of plan review
+  <Card title="Endpoint Tests" href="/web-portal/core/api/endpoint-tests" icon="cube">
+    What a generated API test looks like
   </Card>
   <Card title="Integration Tests" href="/web-portal/core/api/integration-tests" icon="link">
     Multi-step workflows that chain endpoints
+  </Card>
+  <Card title="Auto-Auth" href="/web-portal/core/api/auto-auth" icon="arrows-rotate">
+    Keep tokens fresh on every run
   </Card>
   <Card title="Test Schedules" href="/web-portal/maintenance/monitoring" icon="clock">
     Run on a cadence to catch regressions

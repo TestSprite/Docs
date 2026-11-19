@@ -1,22 +1,20 @@
 ---
 title: "Testing Lifecycle"
-description: "The phases every UI and API project goes through, and where the two differ."
+description: "The phases every UI and API project goes through with the agent, and where the two differ."
 ---
 
-Every project moves through the same phases, and either way the plan is grounded in how your product actually behaves: UI projects **explore** your live app, and API projects **discover** endpoints from your docs and probe them against your live API.
+Every project moves through the same phases, in one conversation with the agent. Either way the tests are grounded in how your product actually behaves: for a web app the agent **explores** it in a browser, and for an API it **calls** it for real.
 
 <Card>
 ```mermaid
 flowchart LR
-    A[Setup + PRD] --> N[Configure<br/>sign-in / credentials]
-    N --> S[Add Sources]
-    S --> B{Project type?}
-    B -->|UI| C[Explore]
-    B -->|API| H[Discover]
-    C --> M[Feature Map]
-    H --> M
-    M --> D[Plan]
-    D --> E[Run]
+    A[Tell the agent<br/>what to test] --> N[Setup<br/>project · sign-in / credentials]
+    N --> B{Project type?}
+    B -->|UI| C[Explore<br/>in a live browser]
+    B -->|API| H[Call the API]
+    C --> D[Proposed<br/>test cases]
+    H --> D
+    D --> E[Apply and Run]
     E --> F[Review]
     F --> T[Notify + Ticket]
     F --> G[Iterate]
@@ -28,33 +26,33 @@ flowchart LR
 
 | Phase | What happens | Learn more |
 | :--- | :--- | :--- |
-| **Setup** | Create the project with <kbd>New Project</kbd>, set how TestSprite signs in, and add sources: your PRD (**strongly recommended**), and for API projects your API docs | [Project Sources](/web-portal/setup/project-sources) |
-| **Explore / Discover** | UI: agents walk your live app. API: TestSprite reads your endpoints from the docs and probes them against your live API | [Feature Exploration](/web-portal/core/ui/feature-exploration), [API Discovery](/web-portal/core/api/api-discovery) |
-| **Feature map** | Features and use cases, shown on <kbd>Test Coverage</kbd>, where you can edit them | [Coverage Map](/web-portal/core/working-with-test/coverage-map) |
-| **Plan** | After you click <kbd>Plan Tests</kbd>, the testing agent plans test cases scoped to the feature map. You keep, edit, or remove them | [UI](/web-portal/core/ui/ui-plan-gen), [API](/web-portal/core/api/api-plan-gen) |
-| **Run** | Tests are generated and run in the cloud. API tests pass captured values to the tests that depend on them | [Dependency Chains](/web-portal/core/api/dependency-chains) |
-| **Review** | A verdict per test, with recordings (UI) or requests and responses (API), and a suggested cause and fix for failures | [Test Detail Page](/web-portal/core/working-with-test/test-detail) |
+| **Setup** | Click <kbd>New Project</kbd> and tell the agent what to test. It asks for what only you know, then proposes a project with its environment and sign-in; you create it. Add sources as you go: your PRD (**strongly recommended**), your repository, and for API projects your API docs | [Setup](/web-portal/core/ui/agent-setup), [Credentials Setup](/web-portal/core/api/agent-credentials) |
+| **Explore** | UI: the agent walks your live app in a browser you can watch. API: it makes real calls to your endpoints. What it learns goes into the project's notes, which every later session starts from | [Exploration & Notes](/web-portal/core/ui/agent-exploration), [API Calls](/web-portal/core/api/agent-api-calls) |
+| **Plan** | The agent proposes test cases, grouped by use case. You keep, leave out, or edit each one. Nothing changes until you apply | [Proposed Test Cases](/web-portal/core/ui/agent-plan) |
+| **Run** | You start the run from a card; tests run in the cloud on the environment you pick | [UI](/web-portal/core/ui/ui-test-gen), [API](/web-portal/core/api/endpoint-tests) |
+| **Review** | A verdict per test, with recordings (UI) or requests and responses (API). Ask the agent to look, and it judges each failure: the app is wrong, the test is wrong, or something got in the way | [Test Report](/web-portal/results/test-report) |
 | **Notify** | Post run summaries to Slack and turn failures into tickets | [Slack](/web-portal/integrations/slack-notifications), [Ticketing](/web-portal/integrations/ticketing) |
-| **Iterate** | Edit a test's description, ask in <kbd>Chats</kbd>, or re-run a single test to confirm a fix | [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases) |
+| **Iterate** | Ask the agent for more coverage or a fix, edit a test yourself, or re-run a single test to confirm a fix | [Managing Test Cases](/web-portal/core/working-with-test/managing-test-cases) |
+
+The phases aren't a fixed pipeline. The agent goes back to exploring whenever it needs to, such as when you ask about a new feature or a failure needs a closer look.
 
 ## UI vs API: What's Different
 
 | Phase | UI Testing | API Testing |
 | :--- | :--- | :--- |
-| **Exploration** | Agents walk your live app, page by page | TestSprite calls your endpoints and records the real responses (**Probe response** and **Raw call records** on <kbd>Test Coverage</kbd>) |
-| **Plan grounding** | Real screens and copy observed during exploration | Your API docs and instructions, plus the responses observed from your live API |
+| **Exploration** | The agent walks your live app in a cloud browser, shown live on the **Exploration** tab | The agent sends real requests, the same way a run does; the **Exploration** tab lists each call and its status |
+| **Plan grounding** | Real screens and copy the agent saw, plus your docs and code | Real responses from your API, plus your API docs and code. Each proposed test's code has already passed once |
 | **Execution artifacts** | Video recordings, step-by-step screenshots, console output | HTTP requests/responses, status codes, response bodies |
-| **Authentication** | Sign-in to your app: test account credentials, OTP (one-time password) login, or SSO (single sign-on) such as Google | Credentials on the requests: a token, API key, or a refresh grant TestSprite renews before each run |
-| **Failure analysis** | AI cause-and-fix with screenshot of the failing step | AI cause-and-fix with the offending request/response diff |
-| **Cleanup** | Not applicable, no persistent resources created | Automatic post-run sweep of created records, files, and sessions |
+| **Authentication** | Sign-in to your app: a test account, a one-time-code login with a TestSprite-managed account, or a saved sign-in for SSO such as Google | Credentials on the requests: a token, an API key, or a sign-in flow TestSprite renews before each run |
+| **Failure analysis** | Cause-and-fix with a screenshot of the failing step | Cause-and-fix with the offending request and response |
 
 ## Where to Go Next
 
 <Columns cols={2}>
   <Card title="UI Quickstart" href="/web-portal/core/ui/quickstart" icon="window-maximize">
-    The UI flow, click by click
+    The UI flow, step by step
   </Card>
   <Card title="API Quickstart" href="/web-portal/core/api/quickstart" icon="terminal">
-    The API flow, click by click
+    The API flow, step by step
   </Card>
 </Columns>
