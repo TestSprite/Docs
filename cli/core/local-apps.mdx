@@ -1,13 +1,15 @@
 ---
 title: "Testing Local Apps"
-description: "Plan frontend tests from local changes, then run them against your app through a TestSprite tunnel."
+description: "Plan and run frontend tests against an app on your machine through a TestSprite tunnel."
 ---
 
-A TestSprite tunnel lets the cloud test runner use a frontend app on your machine. Start the app and keep it running until the execution finishes. Your key needs permission to run tests and open tunnels. [Authentication](/cli/core/authentication#scopes)
+A TestSprite tunnel lets the project's agent and the cloud test runner use a frontend app on your machine. Start the app and keep it running while the agent explores it and until the execution finishes. Your key needs permission to run tests and open tunnels. [Authentication](/cli/core/authentication#scopes)
+
+Local testing is for web apps. A backend project's environment must point at a publicly deployed API, and the CLI refuses a local address for one.
 
 ## A project for a local-only app
 
-Create a frontend project. Copy its `projectId`, then create an environment for the port where your app listens.
+Create a frontend project. Copy its `projectId`, then save the address where your app listens as an environment. The address may include the app's entry path, such as `http://localhost:3000/app`.
 
 ```bash
 testsprite project create --type frontend --name "Local checkout" --output json
@@ -15,17 +17,27 @@ testsprite project create --type frontend --name "Local checkout" --output json
 
 ```bash
 export PROJECT_ID="your-project-id"
-testsprite project env create "$PROJECT_ID" --name local-dev --local 3000
+testsprite project env create "$PROJECT_ID" --name local-dev --url http://localhost:3000
 ```
 
-The hosted project agent cannot browse your localhost during planning. From the Git checkout, attach a diff and, if available, a requirements file with `--file`. These give it the expected behavior to plan from. To have it browse the app while planning, name a publicly reachable environment in your request.
+`--local 3000` is shorthand for `--url http://localhost:3000`.
+
+## Plan against the running app
+
+In another terminal, start a tunnel and leave it running. The agent's browser opens your app through it. Without a tunnel, the agent stops and asks for one: start it, then run `testsprite reply "The tunnel is running."`.
+
+```bash
+testsprite tunnel start
+```
+
+Back in the first terminal, ask for tests. From the Git checkout, `--diff` attaches your change and `--file` adds a requirements file.
 
 ```bash
 testsprite plan "Check that guest checkout shows the confirmation screen" \
   --project "$PROJECT_ID" --diff --steps
 ```
 
-Review the proposed tests and their assertions. Once the plan matches what you want, save it. Then use a saved ID from `applied.tests` to run one case, or run the project against the local environment.
+The agent explores the project's default environment. If `local-dev` is not the default, name it in your request, such as "… on the local-dev environment". Review the proposed tests and their assertions. Once the plan matches what you want, save it. `apply` prints the command that runs what it saved. You can also run the project against the local environment.
 
 ```bash
 testsprite apply --output json
@@ -34,30 +46,28 @@ testsprite run --project "$PROJECT_ID" --env local-dev --wait
 
 ## Automatic tunnel
 
-A saved loopback environment or an explicit local target opens a tunnel and implies waiting. For an existing frontend case, try one of these alternatives.
+A run on a saved loopback environment opens its own tunnel and waits for the verdict. Omit `--env` when the local environment is the project's default.
 
 ```bash
 testsprite run "$TEST_ID" --env local-dev
-testsprite run "$TEST_ID" --local 3000
-testsprite run "$TEST_ID" --target-url http://localhost:3000
 ```
 
-`--local` uses a loopback host and port. To select the exact host, use `--local-host localhost`, `127.0.0.1`, or `::1` with `--local`. `--target-url` accepts a loopback HTTP origin with an explicit port and no path, for example `http://[::1]:3000`. Choose one of `--local` or `--target-url` per run. Backend tests require a reachable API environment.
+A run takes its address from the environment: `run --local`, `run --local-host` and `run --target-url` were removed in CLI 0.18.0. Backend tests need a publicly deployed API environment.
 
-The CLI normally checks the listener before dispatch, waits for the verdict, and closes the tunnel on exit. An owned tunnel requests cancellation of its unfinished executions on Ctrl-C or timeout. `--no-wait` on an environment that requires an automatic tunnel is refused. A CLI-run loopback environment supports public access or username/password sign-in. [Cancelling a Run](/cli/core/cancelling-runs)
+The CLI normally checks the listener before dispatch, waits for the verdict, and closes the tunnel on exit. `--skip-preflight` skips the listener check. An owned tunnel requests cancellation of its unfinished executions on Ctrl-C or timeout. `--no-wait` on an environment that requires an automatic tunnel is refused. A CLI-run loopback environment supports public access or username/password sign-in. [Cancelling a Run](/cli/core/cancelling-runs)
 
 ## Several tests
 
 ```bash
-testsprite run "$TEST_ID_A" "$TEST_ID_B" --local 3000 --max-concurrency 3
-testsprite run --project "$PROJECT_ID" --filter checkout --local 3000
+testsprite run "$TEST_ID_A" "$TEST_ID_B" --env local-dev --max-concurrency 3
+testsprite run --project "$PROJECT_ID" --filter checkout --env local-dev
 ```
 
 Named or project launches share a tunnel and use a server dispatch limit per execution. For tunneled project or named tests the default is five, the maximum is 15, and the default wait deadline is 1200 seconds. Saved lists use their environment mappings, a separate tunnel cap of 10, and a default deadline of 600 seconds. The wait deadline covers the whole invocation.
 
 ## Long-lived tunnels
 
-To reuse one tunnel across runs, start it in a separate terminal. It prints a client ID and stays in the foreground.
+To reuse one tunnel across runs, start it in a separate terminal. It prints a client ID and stays in the foreground. It is the same tunnel the agent uses while it plans.
 
 ```bash
 testsprite tunnel start --ttl 3600
@@ -67,7 +77,7 @@ Use that ID from a second terminal. The process that started the tunnel owns it.
 
 ```bash
 testsprite tunnel status "$CLIENT_ID"
-testsprite run "$TEST_ID" --local 3000 --tunnel-client "$CLIENT_ID"
+testsprite run "$TEST_ID" --env local-dev --tunnel-client "$CLIENT_ID"
 ```
 
 ## Tunnel limit

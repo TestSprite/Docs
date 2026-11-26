@@ -21,7 +21,7 @@ testsprite plan "Cover order creation and rejection of a missing product ID" \
   --project "$PROJECT_ID" --file ./openapi.yaml --steps
 ```
 
-`--file` is repeatable for requirements, tickets, or API specs. From a Git checkout, `--diff` attaches your change. For a local-only app, the hosted agent works from that material. You can run its saved frontend cases against your machine through a tunnel. [Testing Local Apps](/cli/core/local-apps)
+`--file` is repeatable for requirements, tickets, or API specs. From a Git checkout, `--diff` attaches your change. For a frontend app on your machine, keep `testsprite tunnel start` running in another terminal: the agent opens the app through that tunnel, and its saved cases run through one too. [Testing Local Apps](/cli/core/local-apps)
 
 ## Review the proposal
 

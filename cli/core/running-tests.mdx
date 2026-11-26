@@ -48,15 +48,16 @@ For an ordinary cloud run, Ctrl-C detaches and the run keeps executing. A timeou
 
 `--timeout` accepts 1–3600 seconds. The default wait is 600 seconds for public runs and 1200 for project or named runs through a tunnel. Saved-list launches and `run wait` default to 600 seconds.
 
-## Run against a URL without creating an environment
+## Run against another address
 
-To run a frontend case against a deployed preview, supply its public HTTP(S) URL. `--env staging` supplies staging's sign-in settings. A login tied to a different origin can be refused before dispatch. The CLI checks the target's reachability before launch.
+A run's address is its environment's. To test another deployment, save it as an environment with the sign-in it needs, then select it with `--env`. `run --target-url` was removed in CLI 0.18.0.
 
 ```bash
-testsprite run "$TEST_ID" --env staging --target-url https://preview.example.com --wait
+testsprite project env create "$PROJECT_ID" --name preview --url https://preview.example.com
+testsprite run "$TEST_ID" --env preview --wait
 ```
 
-For a backend project, select an environment whose base URL points at the API you intend to test. An ordinary backend launch uses that environment's URL and ignores a `--target-url` override. A CI pull-request preview can instead clone an environment at its preview URL. For a frontend app on your machine, use `--local <port>`. [Environments](/cli/core/environments) · [Testing Local Apps](/cli/core/local-apps)
+In a GitHub pull request, `ci run --env <name> --target-url <url>` runs against the preview in a temporary copy of that environment. For a backend project, select an environment whose base URL points at the API you intend to test. For a frontend app on your machine, save its loopback address as an environment. [Environments](/cli/core/environments) · [CI/CD](/cli/integrations/ci-cd) · [Testing Local Apps](/cli/core/local-apps)
 
 ## Exit codes
 

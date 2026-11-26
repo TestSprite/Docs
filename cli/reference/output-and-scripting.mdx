@@ -71,8 +71,8 @@ testsprite ci run --project "$PROJECT_ID" --env staging --timeout 900 \
 Preview a public launch without submitting it:
 
 ```bash
-testsprite run --project "$PROJECT_ID" --target-url https://staging.example.com \
+testsprite run --project "$PROJECT_ID" --env staging \
   --dry-run --output json
 ```
 
-A dry-run launch can return empty ID arrays and the requests it would make. An authenticated launch preview without an explicit target may read saved environment metadata. For sample result data without credentials, use `testsprite result get example --dry-run --output json`.
+A dry-run launch can return empty ID arrays and the requests it would make. An authenticated launch preview may read saved environment metadata. For sample result data without credentials, use `testsprite result get example --dry-run --output json`.
