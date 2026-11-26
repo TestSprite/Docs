@@ -28,7 +28,7 @@ testsprite project env create "$PROJECT_ID" --name staging --url https://staging
 testsprite project env get "$PROJECT_ID" staging
 ```
 
-For an API, choose `--type backend` and give the environment the API's base URL. For a frontend app running on your machine, start it and use `--local <port>` when creating the environment. A new project starts without tests. Once the target is ready, ask its agent for the first cases. [Creating Tests](/cli/core/creating-tests)
+For an API, choose `--type backend` and give the environment the base URL where the API is publicly deployed. For a frontend app running on your machine, start it and save its address, such as `--url http://localhost:3000`, when creating the environment. A new project starts without tests. Once the target is ready, ask its agent for the first cases. [Creating Tests](/cli/core/creating-tests)
 
 ## Update project settings
 

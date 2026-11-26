@@ -13,7 +13,7 @@ Use `testsprite --help` to list commands and `testsprite <command> --help` for t
 | `--output <mode>` | Choose `text` (default) or `json` for scripts. |
 | `--profile <name>` | Select a profile from `~/.testsprite/credentials` (default `default`). |
 | `--verbose`, `--debug` | Log retries and polling, or HTTP diagnostics, to stderr. |
-| `--dry-run` | Preview the command. A launch with credentials and no explicit target may read the saved environment to check for a tunnel. It starts no run. |
+| `--dry-run` | Preview the command. A launch with credentials may read the saved environment to check for a tunnel. It starts no run. |
 | `--request-timeout <seconds>` | Limit each HTTP request (1–600 seconds, default 120). |
 | `-V, --version`, `-h, --help` | Print the version or help. |
 
@@ -59,7 +59,7 @@ testsprite project env get "$PROJECT_ID" staging
 ```
 
 - `project list` and `project get <id>` show project metadata. `project update` accepts a name, agent instructions and frontend locator preferences. Use `project delete <id> --confirm` to permanently remove a project.
-- `project env create` takes `--url` or, for a local frontend, `--local <port>`. On a frontend environment set `--sign-in public|account|otp|manual`; use `--username` and `--password-file` for a test account. Change an existing environment's sign-in mode in the Portal.
+- `project env create` takes `--url`; for a frontend on this machine, `--local <port>` is shorthand for `--url http://localhost:<port>`. A backend project's environment must point at a publicly deployed API. On a frontend environment set `--sign-in public|account|otp|manual`; use `--username` and `--password-file` for a test account. Change an existing environment's sign-in mode in the Portal.
 - `project env update <project-id> <name>` can change the URL, account credentials, variables or name. `--var KEY=VALUE` sets a non-secret value. Use `project env set-default <project-id> <name>` to switch the default and `project env delete <project-id> <name> --confirm` to remove an environment.
 - On a backend environment, `create` and `update` accept `--auth none|bearer|basic|apikey`, `--credential-file <path>`, repeatable `--header "Name: value"`, `--header-file <path>`, or `--auto-auth-file <path>` for a sign-in that refreshes the credential. Reads redact secrets.
 
@@ -101,10 +101,9 @@ A project selector excludes positional test IDs and list selection. With no sele
 
 | Launch option | Behavior |
 | --- | --- |
-| `--env <name>` | Use this environment's URL and settings for a project or named tests. The default is the project's default environment. |
-| `--target-url <url>` | Frontend tests can run against a public URL or a loopback HTTP origin. The CLI uses the environment for that origin, or a temporary environment removed after the run. With `--env`, it uses the named environment's settings. A sign-in bound to a different origin can return `frontend-auth-target-origin-mismatch` (exit 6). |
-| `--local <port>`, `--tunnel-client <id>` | Reach a frontend on this machine through an automatic tunnel or attach to a running tunnel. `--local` implies waiting. `--no-wait` refuses a launch needing an automatic tunnel. |
-| `--local-host <host>`, `--skip-preflight` | Select a loopback host with `--local` (`localhost`, `127.0.0.1` or `::1`), or skip the pre-charge reachability probe when the machine running the CLI cannot make a representative check. |
+| `--env <name>` | Use this environment's URL and settings for a project or named tests. The default is the project's default environment. A loopback environment opens a tunnel and implies waiting. |
+| `--tunnel-client <id>` | Attach a run on a local environment to a tunnel started with `tunnel start` instead of opening one. `--no-wait` refuses a launch needing an automatic tunnel. |
+| `--skip-preflight` | Skip the check that a local environment's app is listening before its tunnel opens. |
 | `--no-cancel-on-interrupt` | Leave unfinished work running when a tunnel owned by a project/named invocation closes. Steps needing that tunnel can then fail. |
 | `--allow-empty` | Accept zero dispatched tests for a project or multi-ID batch. The default is exit 5. |
 | `--wait`, `--timeout <s>` | Wait for the execution, including later integration results. One deadline covers all executions (1–3600 seconds). Default 600 seconds, or 1200 for a project/named launch through a tunnel. Lists default to 600 in either case. |
@@ -149,4 +148,4 @@ testsprite result get "$RESULT_ID" --out ".testsprite/results/$RESULT_ID" --fail
 ## Coding agents and tunnels
 
 - `agent list` shows available targets and skills. `agent install [targets...]` writes guidance for your coding agent, and `agent status` checks the installed guidance. Refresh a stale target with `agent install <target> --force`. See [Coding Agent Integration](/cli/core/agent-integration).
-- `tunnel start` opens a foreground tunnel. Use its client ID with `run --local <port> --tunnel-client <id>` and a project or test selector. `tunnel list` shows active bindings, `tunnel status <client-id>` checks one and `tunnel stop <client-id>` revokes it. `tunnel stop --all --confirm` revokes all your bindings, including those used by other jobs. See [Local Apps](/cli/core/local-apps).
+- `tunnel start` opens a foreground tunnel. The agent opens an app on this machine through it while it plans, and `run --env <name> --tunnel-client <id>` with a project or test selector attaches a run to it. `tunnel list` shows active bindings, `tunnel status <client-id>` checks one and `tunnel stop <client-id>` revokes it. `tunnel stop --all --confirm` revokes all your bindings, including those used by other jobs. See [Local Apps](/cli/core/local-apps).

@@ -57,7 +57,7 @@ To verify the whole suite, use `testsprite run --project <project-id> --env stag
 
 ## Ask for missing coverage
 
-In your Git repository, state an observable expectation. Attach the diff with `--diff` or a specification with `--file <path>`. The project's agent can explore a reachable frontend deployment. For a local-only app, give it the diff or requirements to plan from, then run the saved frontend tests through a tunnel. [Local apps](/cli/core/local-apps).
+In your Git repository, state an observable expectation. Attach the diff with `--diff` or a specification with `--file <path>`. The project's agent can explore a reachable frontend deployment, or a frontend app on your machine through a tunnel you start with `testsprite tunnel start`. [Local apps](/cli/core/local-apps).
 
 ```bash
 testsprite plan "An expired coupon shows an error and leaves the cart total unchanged" \

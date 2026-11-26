@@ -14,7 +14,7 @@ testsprite project env get "$PROJECT_ID" staging
 testsprite project env update "$PROJECT_ID" staging --url https://new-staging.example.com
 ```
 
-Creation requires exactly one target, `--url` or `--local <port>`. Remote targets must be publicly reachable HTTP(S) URLs. Local environments are for frontend apps. To change the default, run `testsprite project env set-default "$PROJECT_ID" staging`. To delete another environment, use `project env delete` with the name and `--confirm`. The default must be reassigned before deletion. [Testing Local Apps](/cli/core/local-apps)
+Creation requires a target, `--url <url>`; `--local <port>` is shorthand for `--url http://localhost:<port>`. Remote targets must be publicly reachable HTTP(S) URLs. A local address is for a frontend app and may include its entry path. A backend project's environment must point at a publicly deployed API, so the CLI refuses a local address for one. To change the default, run `testsprite project env set-default "$PROJECT_ID" staging`. To delete another environment, use `project env delete` with the name and `--confirm`. The default must be reassigned before deletion. [Testing Local Apps](/cli/core/local-apps)
 
 ## Sign-in modes
 
@@ -57,6 +57,6 @@ testsprite result list --test "$TEST_ID" --env staging --limit 1
 
 `--env` selects the target for a named test or a project run. Saved test lists instead use their stored environment mappings. A planning conversation works on the project's default environment unless your request names another. When the agent proposes a run, `apply --env <name>` starts it on a different environment.
 
-### Ad-hoc targets and temporary environments
+### Preview targets and temporary environments
 
-For a frontend preview, `--target-url` supplies a URL for one run. Without `--env`, TestSprite reuses an environment at the same origin or creates a temporary environment that takes its sign-in settings from the default. Temporary environments are hidden from the project's list and are removed after the run. With `--env`, the selected environment supplies the settings. A recorded session, OTP, or login-once setup can require the original origin. [Running Tests](/cli/core/running-tests#run-against-a-url-without-creating-an-environment)
+A run uses its environment's address. To test another address, save it as an environment and select it with `--env`. In a GitHub pull request, `ci run --env <name> --target-url <url>` runs against the preview in a temporary copy of that environment. A `ci run --target-url` without `--env` reuses an environment at the same origin, or creates a temporary environment that takes its sign-in settings from the default. Temporary environments are hidden from the project's list and are removed after the run. A recorded session, OTP, or login-once setup can require the original origin. [CI/CD](/cli/integrations/ci-cd)

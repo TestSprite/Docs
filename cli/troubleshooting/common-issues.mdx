@@ -19,17 +19,17 @@ Run `testsprite auth status` to check the active key, workspace and scopes. If t
 </Accordion>
 
 <Accordion title="An older command or flag exits 5" icon="terminal">
-Run `testsprite --version` and `testsprite --help`. In 0.17, use `testsprite run --project "$PROJECT_ID" --wait` to run a project, `testsprite run "$TEST_ID" --wait` for a test, and `testsprite run --testlist "$LIST_ID" --wait` for a list. Request test changes with `plan` and approve them with `apply`. Use `result list` and `result get` to read outcomes. If your coding agent keeps suggesting old commands, run `testsprite agent status` and refresh its target with `testsprite agent install <target> --force`.
+Run `testsprite --version` and `testsprite --help`. In 0.17, use `testsprite run --project "$PROJECT_ID" --wait` to run a project, `testsprite run "$TEST_ID" --wait` for a test, and `testsprite run --testlist "$LIST_ID" --wait` for a list. Request test changes with `plan` and approve them with `apply`. Use `result list` and `result get` to read outcomes. In 0.18, `run --local`, `run --local-host` and `run --target-url` were removed: save the address on an environment and pass `--env`. If your coding agent keeps suggesting old commands, run `testsprite agent status` and refresh its target with `testsprite agent install <target> --force`.
 </Accordion>
 
 <Accordion title="An environment URL is rejected (exit 5 or 13)" icon="globe">
-Set the URL on `project env create` or `project env update`. Use a public HTTP(S) address, or a frontend loopback HTTP origin with an explicit port and no path, such as `http://localhost:3000`. An unsupported private address, HTTPS loopback, or backend loopback is a validation error. Creating an environment over your plan's limit returns `FEATURE_GATED` (exit 13).
+Set the URL on `project env create` or `project env update`. Use a public HTTP(S) address, or a frontend loopback HTTP address with an explicit port, such as `http://localhost:3000` (an entry path may follow). An unsupported private address or HTTPS loopback is a validation error. A backend project refuses a local address: its environment must point at a publicly deployed API. Creating an environment over your plan's limit returns `FEATURE_GATED` (exit 13).
 
 To change an existing default named `staging`, use `testsprite project env update "$PROJECT_ID" staging --url https://staging.example.com`. For work on your machine, see [Local Apps](/cli/core/local-apps).
 </Accordion>
 
-<Accordion title="The launch rejects --target-url (exit 5 or 6)" icon="globe">
-Check for an invalid URL, a conflicting `--local` flag, or an unreachable target. If the CLI's reachability probe is wrong for your network, `--skip-preflight` skips it. An ordinary backend launch uses its saved environment's API URL.
+<Accordion title="ci run rejects --target-url (exit 5 or 6)" icon="globe">
+Check for an invalid URL or an unreachable preview. A loopback or private address is refused. If the CLI's reachability probe is wrong for your network, `--skip-preflight` skips it. `run` itself no longer takes `--target-url`: save the address as an environment and select it with `--env`.
 
 For `frontend-auth-target-origin-mismatch` (exit 6), the target and the origin required by the environment's recorded session, OTP or login-once step differ. Use an environment configured for the target origin. List launches always take their target from the list's saved bindings. [Environments](/cli/core/environments)
 </Accordion>
@@ -73,7 +73,7 @@ Every write and run is refused, with `details.reason: "paused"`, while the key's
 </Accordion>
 
 <Accordion title="Preview a command without running it" icon="flask">
-Append `--dry-run --output json` to preview requests or sample data. When credentials are configured and no target is explicit, a launch preview may read saved environment metadata to check for an automatic tunnel. It starts no run.
+Append `--dry-run --output json` to preview requests or sample data. When credentials are configured, a launch preview may read saved environment metadata to check for an automatic tunnel. It starts no run.
 </Accordion>
 
 </AccordionGroup>

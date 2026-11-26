@@ -21,7 +21,7 @@ To run a subset, supply its test IDs before or after the list selector:
 testsprite run "$TEST_ID_1" --testlist "$LIST_ID" --wait
 ```
 
-Use repeatable `--project-env <project-id>:<name>` on `testlist create` or `testlist update` to save bindings. Updating the bindings replaces the set, so include each mapping you want to keep. The list launch uses these bindings and rejects `--env`, `--local` and `--target-url`. A saved loopback address opens a [tunnel](/cli/core/local-apps) automatically. List launches default to a 600-second deadline. Server concurrency defaults to 10 (1–50), or 5 through a tunnel (1–10).
+Use repeatable `--project-env <project-id>:<name>` on `testlist create` or `testlist update` to save bindings. Updating the bindings replaces the set, so include each mapping you want to keep. The list launch uses these bindings and rejects `--env`. A saved loopback address opens a [tunnel](/cli/core/local-apps) automatically. List launches default to a 600-second deadline. Server concurrency defaults to 10 (1–50), or 5 through a tunnel (1–10).
 
 `testlist get "$LIST_ID"` lists the members and can include `lastRunId`. A launch can return several run receipts. Use a receipt's `runId` with `result list --run` and an individual `resultId` with `result get`.
 
@@ -46,6 +46,6 @@ testsprite schedule update "$SCHEDULE_ID" --pause
 testsprite schedule update "$SCHEDULE_ID" --resume
 ```
 
-`schedule list` identifies a pinned project environment by name or shows `project default (inherits)`. View execution history in the Portal. A schedule targeting a loopback environment cannot reach your machine. The run is recorded as `blocked` with `failureKind: network` and incurs no charge. Start a local frontend run with `testsprite run --project "$PROJECT_ID" --local 3000` while your app is listening.
+`schedule list` identifies a pinned project environment by name or shows `project default (inherits)`. View execution history in the Portal. A schedule targeting a loopback environment cannot reach your machine. The run is recorded as `blocked` with `failureKind: network` and incurs no charge. Start a local frontend run with `testsprite run --project "$PROJECT_ID" --env local-dev` while your app is listening.
 
 See [Test Lists](/web-portal/maintenance/test-lists) and [Test Schedules](/web-portal/maintenance/monitoring) for the Portal views.
